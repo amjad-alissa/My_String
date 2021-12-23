@@ -1,0 +1,64 @@
+        -:    0:Source:F:/Files/vcpkg/installed/x86-windows/include/boost/test/tree/test_case_counter.hpp
+        -:    0:Graph:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcno
+        -:    0:Data:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1://  (C) Copyright Gennadiy Rozental 2001.
+        -:    2://  Distributed under the Boost Software License, Version 1.0.
+        -:    3://  (See accompanying file LICENSE_1_0.txt or copy at
+        -:    4://  http://www.boost.org/LICENSE_1_0.txt)
+        -:    5:
+        -:    6://  See http://www.boost.org/libs/test for the library home page.
+        -:    7://
+        -:    8:/// @file
+        -:    9:/// Defines @ref test_case_counter
+        -:   10:// ***************************************************************************
+        -:   11:
+        -:   12:#ifndef BOOST_TEST_TREE_TEST_CASE_COUNTER_HPP_100211GER
+        -:   13:#define BOOST_TEST_TREE_TEST_CASE_COUNTER_HPP_100211GER
+        -:   14:
+        -:   15:// Boost.Test
+        -:   16:#include <boost/test/detail/config.hpp>
+        -:   17:#include <boost/test/utils/class_properties.hpp>
+        -:   18:
+        -:   19:#include <boost/test/tree/test_unit.hpp>
+        -:   20:#include <boost/test/tree/visitor.hpp>
+        -:   21:
+        -:   22:#include <boost/test/detail/suppress_warnings.hpp>
+        -:   23:
+        -:   24://____________________________________________________________________________//
+        -:   25:
+        -:   26:namespace boost {
+        -:   27:namespace unit_test {
+        -:   28:
+        -:   29:// ************************************************************************** //
+        -:   30:// **************                test_case_counter             ************** //
+        -:   31:// ************************************************************************** //
+        -:   32:
+        -:   33:///! Counts the number of enabled test cases
+        -:   34:class test_case_counter : public test_tree_visitor {
+        -:   35:public:
+        -:   36:    // Constructor
+        1:   37:    test_case_counter() : p_count( 0 ) {}
+        1:   37-block  0
+        1:   37-block  1
+    $$$$$:   37-block  2
+        -:   38:
+        1:   39:    BOOST_READONLY_PROPERTY( counter_t, (test_case_counter)) p_count;
+        1:   39-block  0
+        -:   40:private:
+        -:   41:    // test tree visitor interface
+       10:   42:    virtual void    visit( test_case const& tc )                { if( tc.is_enabled() ) ++p_count.value; }
+       10:   42-block  0
+       10:   42-block  1
+        2:   43:    virtual bool    test_suite_start( test_suite const& ts )    { return ts.is_enabled(); }
+        2:   43-block  0
+        -:   44:};
+        -:   45:
+        -:   46:} // namespace unit_test
+        -:   47:} // namespace boost
+        -:   48:
+        -:   49:#include <boost/test/detail/enable_warnings.hpp>
+        -:   50:
+        -:   51:#endif // BOOST_TEST_TREE_TEST_CASE_COUNTER_HPP_100211GER
+        -:   52:

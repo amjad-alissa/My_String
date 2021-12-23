@@ -1,0 +1,242 @@
+        -:    0:Source:F:/Files/vcpkg/installed/x86-windows/include/boost/test/impl/progress_monitor.ipp
+        -:    0:Graph:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcno
+        -:    0:Data:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1://  (C) Copyright Gennadiy Rozental 2001.
+        -:    2://  Distributed under the Boost Software License, Version 1.0.
+        -:    3://  (See accompanying file LICENSE_1_0.txt or copy at
+        -:    4://  http://www.boost.org/LICENSE_1_0.txt)
+        -:    5:
+        -:    6://  See http://www.boost.org/libs/test for the library home page.
+        -:    7://
+        -:    8://  File        : $RCSfile$
+        -:    9://
+        -:   10://  Version     : $Revision$
+        -:   11://
+        -:   12://  Description : implements simple text based progress monitor
+        -:   13:// ***************************************************************************
+        -:   14:
+        -:   15:#ifndef BOOST_TEST_PROGRESS_MONITOR_IPP_020105GER
+        -:   16:#define BOOST_TEST_PROGRESS_MONITOR_IPP_020105GER
+        -:   17:
+        -:   18:// Boost.Test
+        -:   19:#include <boost/test/progress_monitor.hpp>
+        -:   20:#include <boost/test/unit_test_parameters.hpp>
+        -:   21:
+        -:   22:#include <boost/test/utils/setcolor.hpp>
+        -:   23:
+        -:   24:#include <boost/test/tree/test_unit.hpp>
+        -:   25:#include <boost/test/tree/test_case_counter.hpp>
+        -:   26:#include <boost/test/tree/traverse.hpp>
+        -:   27:
+        -:   28:// Boost
+        -:   29:#include <boost/scoped_ptr.hpp>
+        -:   30:
+        -:   31:#include <boost/test/detail/suppress_warnings.hpp>
+        -:   32:
+        -:   33://____________________________________________________________________________//
+        -:   34:
+        -:   35:namespace boost {
+        -:   36:namespace unit_test {
+        -:   37:
+        -:   38:// ************************************************************************** //
+        -:   39:// **************                progress_monitor              ************** //
+        -:   40:// ************************************************************************** //
+        -:   41:
+        -:   42:struct progress_display {
+    #####:   43:    progress_display( counter_t expected_count, std::ostream& os )
+    #####:   44:    : m_os(os)
+        -:   45:    , m_count( 0 )
+        -:   46:    , m_expected_count( expected_count )
+        -:   47:    , m_next_tic_count( 0 )
+    #####:   48:    , m_tic( 0 )
+        -:   49:    {
+        -:   50:
+    #####:   51:        m_os << "\n0%   10   20   30   40   50   60   70   80   90   100%"
+    #####:   52:             << "\n|----|----|----|----|----|----|----|----|----|----|"
+    %%%%%:   52-block  0
+    #####:   53:             << std::endl;
+        -:   54:
+    #####:   55:        if( !m_expected_count )
+    #####:   56:            m_expected_count = 1;  // prevent divide by zero
+    %%%%%:   56-block  0
+    #####:   57:    }
+        -:   58:
+    #####:   59:    unsigned long  operator+=( unsigned long increment )
+        -:   60:    {
+    #####:   61:        if( (m_count += increment) < m_next_tic_count )
+    %%%%%:   61-block  0
+    #####:   62:            return m_count;
+    %%%%%:   62-block  0
+        -:   63:
+        -:   64:        // use of floating point ensures that both large and small counts
+        -:   65:        // work correctly.  static_cast<>() is also used several places
+        -:   66:        // to suppress spurious compiler warnings.
+    #####:   67:        unsigned int tics_needed =  static_cast<unsigned int>(
+    #####:   68:            (static_cast<double>(m_count)/m_expected_count)*50.0 );
+    %%%%%:   68-block  0
+        -:   69:
+    #####:   70:        do {
+    %%%%%:   70-block  0
+    #####:   71:            m_os << '*' << std::flush;
+    %%%%%:   71-block  0
+    #####:   72:        } while( ++m_tic < tics_needed );
+        -:   73:
+    #####:   74:        m_next_tic_count = static_cast<unsigned long>((m_tic/50.0) * m_expected_count);
+        -:   75:
+    #####:   76:        if( m_count == m_expected_count ) {
+    %%%%%:   76-block  0
+    #####:   77:            if( m_tic < 51 )
+    %%%%%:   77-block  0
+    #####:   78:                m_os << '*';
+    %%%%%:   78-block  0
+        -:   79:
+    #####:   80:            m_os << std::endl;
+    %%%%%:   80-block  0
+        -:   81:        }
+        -:   82:
+    #####:   83:        return m_count;
+    %%%%%:   83-block  0
+        -:   84:    }
+    #####:   85:    unsigned long   operator++()           { return operator+=( 1 ); }
+    %%%%%:   85-block  0
+    #####:   86:    unsigned long   count() const          { return m_count; }
+    %%%%%:   86-block  0
+        -:   87:
+        -:   88:private:
+        -:   89:    BOOST_DELETED_FUNCTION(progress_display(progress_display const&))
+        -:   90:    BOOST_DELETED_FUNCTION(progress_display& operator=(progress_display const&))
+        -:   91:
+        -:   92:    std::ostream&   m_os;  // may not be present in all imps
+        -:   93:
+        -:   94:    unsigned long   m_count;
+        -:   95:    unsigned long   m_expected_count;
+        -:   96:    unsigned long   m_next_tic_count;
+        -:   97:    unsigned int    m_tic;
+        -:   98:};
+        -:   99:
+        -:  100:namespace {
+        -:  101:
+        -:  102:struct progress_monitor_impl {
+        -:  103:    // Constructor
+    #####:  104:    progress_monitor_impl()
+    #####:  105:    : m_stream( &std::cout )
+    #####:  106:    , m_color_output( false )
+    %%%%%:  106-block  0
+        -:  107:    {
+    #####:  108:    }
+        -:  109:
+        -:  110:    std::ostream*                   m_stream;
+        -:  111:    scoped_ptr<progress_display>    m_progress_display;
+        -:  112:    bool                            m_color_output;
+        -:  113:};
+        -:  114:
+    #####:  115:progress_monitor_impl& s_pm_impl() { static progress_monitor_impl the_inst; return the_inst; }
+    %%%%%:  115-block  0
+    %%%%%:  115-block  1
+    %%%%%:  115-block  2
+    %%%%%:  115-block  3
+        -:  116:
+        -:  117:#define PM_SCOPED_COLOR() \
+        -:  118:    BOOST_TEST_SCOPE_SETCOLOR( s_pm_impl().m_color_output, *s_pm_impl().m_stream, term_attr::BRIGHT, term_color::MAGENTA )
+        -:  119:
+        -:  120:} // local namespace
+        -:  121:
+        -:  122://____________________________________________________________________________//
+        -:  123:
+        1:  124:BOOST_TEST_SINGLETON_CONS_IMPL(progress_monitor_t)
+        1:  124-block  0
+        1:  124-block  1
+        1:  124-block  2
+        1:  124-block  3
+        -:  125:
+        -:  126://____________________________________________________________________________//
+        -:  127:
+        -:  128:void
+    #####:  129:progress_monitor_t::test_start( counter_t test_cases_amount )
+        -:  130:{
+    #####:  131:    s_pm_impl().m_color_output = runtime_config::get<bool>( runtime_config::btrt_color_output );
+    %%%%%:  131-block  0
+    %%%%%:  131-block  1
+    $$$$$:  131-block  2
+        -:  132:
+    #####:  133:    PM_SCOPED_COLOR();
+    $$$$$:  133-block  0
+        -:  134:
+    #####:  135:    s_pm_impl().m_progress_display.reset( new progress_display( test_cases_amount, *s_pm_impl().m_stream ) );
+    %%%%%:  135-block  0
+    %%%%%:  135-block  1
+    %%%%%:  135-block  2
+    $$$$$:  135-block  3
+    #####:  136:}
+        -:  137:
+        -:  138://____________________________________________________________________________//
+        -:  139:
+        -:  140:void
+    #####:  141:progress_monitor_t::test_aborted()
+        -:  142:{
+    #####:  143:    PM_SCOPED_COLOR();
+    %%%%%:  143-block  0
+    %%%%%:  143-block  1
+    $$$$$:  143-block  2
+        -:  144:
+    #####:  145:    (*s_pm_impl().m_progress_display) += s_pm_impl().m_progress_display->count();
+    %%%%%:  145-block  0
+    #####:  146:}
+        -:  147:
+        -:  148://____________________________________________________________________________//
+        -:  149:
+        -:  150:void
+    #####:  151:progress_monitor_t::test_unit_finish( test_unit const& tu, unsigned long )
+        -:  152:{
+    #####:  153:    PM_SCOPED_COLOR();
+    %%%%%:  153-block  0
+    %%%%%:  153-block  1
+    $$$$$:  153-block  2
+        -:  154:
+    #####:  155:    if( tu.p_type == TUT_CASE )
+    %%%%%:  155-block  0
+    #####:  156:        ++(*s_pm_impl().m_progress_display);
+    %%%%%:  156-block  0
+    #####:  157:}
+        -:  158:
+        -:  159://____________________________________________________________________________//
+        -:  160:
+        -:  161:void
+    #####:  162:progress_monitor_t::test_unit_skipped( test_unit const& tu, const_string /*reason*/ )
+        -:  163:{
+    #####:  164:    PM_SCOPED_COLOR();
+    %%%%%:  164-block  0
+    $$$$$:  164-block  1
+        -:  165:
+    #####:  166:    test_case_counter tcc;
+    %%%%%:  166-block  0
+    %%%%%:  166-block  1
+    $$$$$:  166-block  2
+    #####:  167:    traverse_test_tree( tu, tcc );
+    %%%%%:  167-block  0
+        -:  168:
+    #####:  169:    (*s_pm_impl().m_progress_display) += tcc.p_count;
+    %%%%%:  169-block  0
+    #####:  170:}
+        -:  171:
+        -:  172://____________________________________________________________________________//
+        -:  173:
+        -:  174:void
+    #####:  175:progress_monitor_t::set_stream( std::ostream& ostr )
+        -:  176:{
+    #####:  177:    s_pm_impl().m_stream = &ostr;
+    %%%%%:  177-block  0
+    #####:  178:}
+        -:  179:
+        -:  180://____________________________________________________________________________//
+        -:  181:
+        -:  182:#undef PM_SCOPED_COLOR
+        -:  183:
+        -:  184:} // namespace unit_test
+        -:  185:} // namespace boost
+        -:  186:
+        -:  187:#include <boost/test/detail/enable_warnings.hpp>
+        -:  188:
+        -:  189:#endif // BOOST_TEST_PROGRESS_MONITOR_IPP_020105GER

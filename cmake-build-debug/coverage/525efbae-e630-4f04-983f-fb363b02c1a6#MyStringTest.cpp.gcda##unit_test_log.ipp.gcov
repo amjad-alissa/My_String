@@ -1,0 +1,1829 @@
+        -:    0:Source:F:/Files/vcpkg/installed/x86-windows/include/boost/test/impl/unit_test_log.ipp
+        -:    0:Graph:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcno
+        -:    0:Data:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1://  (C) Copyright Gennadiy Rozental 2001.
+        -:    2://  Distributed under the Boost Software License, Version 1.0.
+        -:    3://  (See accompanying file LICENSE_1_0.txt or copy at
+        -:    4://  http://www.boost.org/LICENSE_1_0.txt)
+        -:    5:
+        -:    6://  See http://www.boost.org/libs/test for the library home page.
+        -:    7://
+        -:    8://  File        : $RCSfile$
+        -:    9://
+        -:   10://  Version     : $Revision$
+        -:   11://
+        -:   12://  Description : implemets Unit Test Log
+        -:   13:// ***************************************************************************
+        -:   14:
+        -:   15:#ifndef BOOST_TEST_UNIT_TEST_LOG_IPP_012205GER
+        -:   16:#define BOOST_TEST_UNIT_TEST_LOG_IPP_012205GER
+        -:   17:
+        -:   18:// Boost.Test
+        -:   19:#include <boost/test/unit_test_log.hpp>
+        -:   20:#include <boost/test/unit_test_log_formatter.hpp>
+        -:   21:#include <boost/test/execution_monitor.hpp>
+        -:   22:#include <boost/test/framework.hpp>
+        -:   23:#include <boost/test/unit_test_parameters.hpp>
+        -:   24:
+        -:   25:#include <boost/test/utils/basic_cstring/compare.hpp>
+        -:   26:#include <boost/test/utils/foreach.hpp>
+        -:   27:
+        -:   28:#include <boost/test/output/compiler_log_formatter.hpp>
+        -:   29:#include <boost/test/output/xml_log_formatter.hpp>
+        -:   30:#include <boost/test/output/junit_log_formatter.hpp>
+        -:   31:
+        -:   32:// Boost
+        -:   33:#include <boost/shared_ptr.hpp>
+        -:   34:#include <boost/io/ios_state.hpp>
+        -:   35:typedef ::boost::io::ios_base_all_saver io_saver_type;
+        -:   36:
+        -:   37:#include <boost/test/detail/suppress_warnings.hpp>
+        -:   38:
+        -:   39://____________________________________________________________________________//
+        -:   40:
+        -:   41:namespace boost {
+        -:   42:namespace unit_test {
+        -:   43:
+        -:   44:// ************************************************************************** //
+        -:   45:// **************             entry_value_collector            ************** //
+        -:   46:// ************************************************************************** //
+        -:   47:
+        -:   48:namespace ut_detail {
+        -:   49:
+        -:   50:entry_value_collector const&
+    #####:   51:entry_value_collector::operator<<( lazy_ostream const& v ) const
+        -:   52:{
+    #####:   53:    unit_test_log << v;
+    %%%%%:   53-block  0
+        -:   54:
+    #####:   55:    return *this;
+        -:   56:}
+        -:   57:
+        -:   58://____________________________________________________________________________//
+        -:   59:
+        -:   60:entry_value_collector const&
+    #####:   61:entry_value_collector::operator<<( const_string v ) const
+        -:   62:{
+    #####:   63:    unit_test_log << v;
+    %%%%%:   63-block  0
+        -:   64:
+    #####:   65:    return *this;
+    %%%%%:   65-block  0
+    %%%%%:   65-block  1
+        -:   66:}
+        -:   67:
+        -:   68://____________________________________________________________________________//
+        -:   69:
+    #####:   70:entry_value_collector::~entry_value_collector()
+        -:   71:{
+    #####:   72:    if( m_last )
+    %%%%%:   72-block  0
+    #####:   73:        unit_test_log << log::end();
+    %%%%%:   73-block  0
+    #####:   74:}
+        -:   75:
+        -:   76://____________________________________________________________________________//
+        -:   77:
+        -:   78:} // namespace ut_detail
+        -:   79:
+        -:   80:// ************************************************************************** //
+        -:   81:// **************                 unit_test_log                ************** //
+        -:   82:// ************************************************************************** //
+        -:   83:
+        -:   84:namespace {
+        -:   85:
+        -:   86:// log data
+        -:   87:struct unit_test_log_data_helper_impl {
+        -:   88:  typedef boost::shared_ptr<unit_test_log_formatter> formatter_ptr;
+        -:   89:  typedef boost::shared_ptr<io_saver_type>           saver_ptr;
+        -:   90:
+        -:   91:  bool                m_enabled;
+        -:   92:  output_format       m_format;
+        -:   93:  std::ostream*       m_stream;
+        -:   94:  saver_ptr           m_stream_state_saver;
+        -:   95:  formatter_ptr       m_log_formatter;
+        -:   96:  bool                m_entry_in_progress;
+        -:   97:
+        3:   98:  unit_test_log_data_helper_impl(unit_test_log_formatter* p_log_formatter, output_format format, bool enabled = false)
+        3:   99:    : m_enabled( enabled )
+        -:  100:    , m_format( format )
+        -:  101:    , m_stream( &std::cout )
+        3:  102:    , m_stream_state_saver( new io_saver_type( std::cout ) )
+        -:  103:    , m_log_formatter()
+        6:  104:    , m_entry_in_progress( false )
+        3:  104-block  0
+    $$$$$:  104-block  1
+    $$$$$:  104-block  2
+        -:  105:  {
+        3:  106:    m_log_formatter.reset(p_log_formatter);
+        3:  107:    m_log_formatter->set_log_level(log_all_errors);
+        3:  107-block  0
+        3:  108:  }
+        3:  108-block  0
+        -:  109:
+        -:  110:  // helper functions
+      420:  111:  std::ostream&       stream()
+        -:  112:  {
+      420:  113:      return *m_stream;
+      420:  113-block  0
+        -:  114:  }
+        -:  115:
+      306:  116:  log_level get_log_level() const
+        -:  117:  {
+      306:  118:      return m_log_formatter->get_log_level();
+      306:  118-block  0
+        -:  119:  }
+        -:  120:};
+        -:  121:
+        -:  122:struct unit_test_log_impl {
+        -:  123:    // Constructor
+        1:  124:    unit_test_log_impl()
+        1:  125:    {
+        1:  125-block  0
+        1:  125-block  1
+    $$$$$:  125-block  2
+    $$$$$:  125-block  3
+    $$$$$:  125-block  4
+        1:  126:      m_log_formatter_data.push_back( unit_test_log_data_helper_impl(new output::compiler_log_formatter, OF_CLF, true) ); // only this one is active by default,
+        1:  126-block  0
+        1:  126-block  1
+        1:  126-block  2
+        1:  126-block  3
+    $$$$$:  126-block  4
+    $$$$$:  126-block  5
+        1:  127:      m_log_formatter_data.push_back( unit_test_log_data_helper_impl(new output::xml_log_formatter, OF_XML, false) );
+        1:  127-block  0
+        1:  127-block  1
+        1:  127-block  2
+        1:  127-block  3
+    $$$$$:  127-block  4
+    $$$$$:  127-block  5
+    $$$$$:  127-block  6
+        1:  128:      m_log_formatter_data.push_back( unit_test_log_data_helper_impl(new output::junit_log_formatter, OF_JUNIT, false) );
+        1:  128-block  0
+        1:  128-block  1
+        1:  128-block  2
+    $$$$$:  128-block  3
+    $$$$$:  128-block  4
+        1:  129:    }
+        -:  130:
+        -:  131:    typedef std::vector<unit_test_log_data_helper_impl> v_formatter_data_t;
+        -:  132:    v_formatter_data_t m_log_formatter_data;
+        -:  133:
+        -:  134:    // entry data
+        -:  135:    log_entry_data      m_entry_data;
+        -:  136:
+      140:  137:    bool has_entry_in_progress() const {
+      644:  138:        BOOST_TEST_FOREACH( unit_test_log_data_helper_impl const&, current_logger_data, m_log_formatter_data ) {
+      140:  138-block  0
+      140:  138-block  1
+      140:  138-block  2
+      140:  138-block  3
+      140:  138-block  4
+      392:  138-block  5
+      392:  138-block  6
+      392:  138-block  7
+      308:  138-block  8
+       84:  138-block  9
+      392:  138-block 10
+      308:  138-block 11
+      308:  138-block 12
+      308:  138-block 13
+      560:  138-block 14
+      252:  138-block 15
+      252:  138-block 16
+      252:  138-block 17
+      252:  138-block 18
+    $$$$$:  138-block 19
+    $$$$$:  138-block 20
+    $$$$$:  138-block 21
+    $$$$$:  138-block 22
+      308:  139:            if( current_logger_data.m_entry_in_progress )
+      308:  139-block  0
+       56:  140:                return true;
+       56:  140-block  0
+        -:  141:        }
+       84:  142:        return false;
+       84:  142-block  0
+        -:  143:    }
+        -:  144:
+        -:  145:    // check point data
+        -:  146:    log_checkpoint_data m_checkpoint_data;
+        -:  147:
+      110:  148:    void                set_checkpoint( const_string file, std::size_t line_num, const_string msg )
+        -:  149:    {
+      110:  150:        assign_op( m_checkpoint_data.m_message, msg, 0 );
+      110:  150-block  0
+      110:  151:        m_checkpoint_data.m_file_name   = file;
+      110:  151-block  0
+      110:  152:        m_checkpoint_data.m_line_num    = line_num;
+      110:  153:    }
+        -:  154:};
+        -:  155:
+    13433:  156:unit_test_log_impl& s_log_impl() { static unit_test_log_impl the_inst; return the_inst; }
+    13433:  156-block  0
+        1:  156-block  1
+        1:  156-block  2
+        1:  156-block  3
+    13433:  156-block  4
+    13433:  156-block  5
+    $$$$$:  156-block  6
+    $$$$$:  156-block  7
+        -:  157:
+        -:  158:} // local namespace
+        -:  159:
+        -:  160://____________________________________________________________________________//
+        -:  161:
+        1:  162:BOOST_TEST_SINGLETON_CONS_IMPL( unit_test_log_t )
+        1:  162-block  0
+        1:  162-block  1
+        1:  162-block  2
+        1:  162-block  3
+        -:  163:
+        -:  164://____________________________________________________________________________//
+        -:  165:
+        -:  166:void
+        1:  167:unit_test_log_t::test_start( counter_t test_cases_amount )
+        -:  168:{
+       7*:  169:    BOOST_TEST_FOREACH( unit_test_log_data_helper_impl&, current_logger_data, s_log_impl().m_log_formatter_data ) {
+        1:  169-block  0
+        1:  169-block  1
+        1:  169-block  2
+        1:  169-block  3
+        1:  169-block  4
+        1:  169-block  5
+        1:  169-block  6
+        4:  169-block  7
+        4:  169-block  8
+        4:  169-block  9
+        4:  169-block 10
+        4:  169-block 11
+        3:  169-block 12
+        1:  169-block 13
+        4:  169-block 14
+        3:  169-block 15
+        3:  169-block 16
+        3:  169-block 17
+        3:  169-block 18
+        6:  169-block 19
+        3:  169-block 20
+        3:  169-block 21
+        3:  169-block 22
+        3:  169-block 23
+        3:  169-block 24
+    %%%%%:  169-block 25
+    %%%%%:  169-block 26
+        3:  169-block 27
+    $$$$$:  169-block 28
+    $$$$$:  169-block 29
+    $$$$$:  169-block 30
+    $$$$$:  169-block 31
+        3:  170:      if( !current_logger_data.m_enabled || current_logger_data.get_log_level() == log_nothing )
+        3:  170-block  0
+        1:  170-block  1
+        2:  170-block  2
+        1:  170-block  3
+        3:  170-block  4
+        2:  171:          continue;
+        2:  171-block  0
+        -:  172:
+        1:  173:      current_logger_data.m_log_formatter->log_start( current_logger_data.stream(), test_cases_amount );
+        1:  173-block  0
+        -:  174:
+        2:  175:      current_logger_data.m_log_formatter->log_build_info(
+        -:  176:          current_logger_data.stream(),
+        1:  177:          runtime_config::get<bool>( runtime_config::btrt_build_info ));
+        1:  177-block  0
+    $$$$$:  177-block  1
+        -:  178:
+        -:  179:      //current_logger_data.stream().flush();
+        -:  180:
+        1:  181:      current_logger_data.m_entry_in_progress = false;
+        1:  181-block  0
+        -:  182:    }
+        1:  183:}
+        1:  183-block  0
+        -:  184:
+        -:  185://____________________________________________________________________________//
+        -:  186:
+        -:  187:void
+        1:  188:unit_test_log_t::test_finish()
+        -:  189:{
+       7*:  190:    BOOST_TEST_FOREACH( unit_test_log_data_helper_impl&, current_logger_data, s_log_impl().m_log_formatter_data ) {
+        1:  190-block  0
+        1:  190-block  1
+        1:  190-block  2
+        1:  190-block  3
+        1:  190-block  4
+        1:  190-block  5
+        1:  190-block  6
+        4:  190-block  7
+        4:  190-block  8
+        4:  190-block  9
+        4:  190-block 10
+        4:  190-block 11
+        3:  190-block 12
+        1:  190-block 13
+        4:  190-block 14
+        3:  190-block 15
+        3:  190-block 16
+        3:  190-block 17
+        3:  190-block 18
+        6:  190-block 19
+        3:  190-block 20
+        3:  190-block 21
+        3:  190-block 22
+        3:  190-block 23
+        3:  190-block 24
+    %%%%%:  190-block 25
+    %%%%%:  190-block 26
+        3:  190-block 27
+    $$$$$:  190-block 28
+    $$$$$:  190-block 29
+    $$$$$:  190-block 30
+    $$$$$:  190-block 31
+        3:  191:      if( !current_logger_data.m_enabled || current_logger_data.get_log_level() == log_nothing )
+        3:  191-block  0
+        1:  191-block  1
+        2:  191-block  2
+        1:  191-block  3
+        3:  191-block  4
+        2:  192:          continue;
+        2:  192-block  0
+        -:  193:
+        1:  194:      current_logger_data.m_log_formatter->log_finish( current_logger_data.stream() );
+        1:  194-block  0
+        -:  195:
+        1:  196:      current_logger_data.stream().flush();
+        -:  197:    }
+        1:  198:}
+        1:  198-block  0
+        -:  199:
+        -:  200://____________________________________________________________________________//
+        -:  201:
+        -:  202:void
+    #####:  203:unit_test_log_t::test_aborted()
+        -:  204:{
+    #####:  205:    BOOST_TEST_LOG_ENTRY( log_messages ) << "Test is aborted";
+    %%%%%:  205-block  0
+    %%%%%:  205-block  1
+    %%%%%:  205-block  2
+    %%%%%:  205-block  3
+    %%%%%:  205-block  4
+    %%%%%:  205-block  5
+    $$$$$:  205-block  6
+    $$$$$:  205-block  7
+    $$$$$:  205-block  8
+    $$$$$:  205-block  9
+    #####:  206:}
+        -:  207:
+        -:  208://____________________________________________________________________________//
+        -:  209:
+        -:  210:void
+       12:  211:unit_test_log_t::test_unit_start( test_unit const& tu )
+        -:  212:{
+       12:  213:    if( s_log_impl().has_entry_in_progress() )
+       12:  213-block  0
+    #####:  214:        *this << log::end();
+    %%%%%:  214-block  0
+    %%%%%:  214-block  1
+    $$$$$:  214-block  2
+      84*:  215:    BOOST_TEST_FOREACH( unit_test_log_data_helper_impl&, current_logger_data, s_log_impl().m_log_formatter_data ) {
+       12:  215-block  0
+       12:  215-block  1
+       12:  215-block  2
+       12:  215-block  3
+       12:  215-block  4
+       12:  215-block  5
+       12:  215-block  6
+       48:  215-block  7
+       48:  215-block  8
+       48:  215-block  9
+       48:  215-block 10
+       48:  215-block 11
+       36:  215-block 12
+       12:  215-block 13
+       48:  215-block 14
+       36:  215-block 15
+       36:  215-block 16
+       36:  215-block 17
+       36:  215-block 18
+       72:  215-block 19
+       36:  215-block 20
+       36:  215-block 21
+       36:  215-block 22
+       36:  215-block 23
+       36:  215-block 24
+    %%%%%:  215-block 25
+    %%%%%:  215-block 26
+       36:  215-block 27
+    $$$$$:  215-block 28
+    $$$$$:  215-block 29
+    $$$$$:  215-block 30
+    $$$$$:  215-block 31
+       36:  216:        if( !current_logger_data.m_enabled || current_logger_data.get_log_level() > log_test_units )
+       36:  216-block  0
+       12:  216-block  1
+       24:  216-block  2
+       12:  216-block  3
+       36:  216-block  4
+       24:  217:            continue;
+       24:  217-block  0
+       12:  218:        current_logger_data.m_log_formatter->test_unit_start( current_logger_data.stream(), tu );
+       12:  218-block  0
+        -:  219:    }
+       12:  220:}
+       12:  220-block  0
+        -:  221:
+        -:  222://____________________________________________________________________________//
+        -:  223:
+        -:  224:void
+       12:  225:unit_test_log_t::test_unit_finish( test_unit const& tu, unsigned long elapsed )
+        -:  226:{
+       12:  227:    s_log_impl().m_checkpoint_data.clear();
+       12:  227-block  0
+        -:  228:
+       12:  229:    if( s_log_impl().has_entry_in_progress() )
+    #####:  230:        *this << log::end();
+    %%%%%:  230-block  0
+    %%%%%:  230-block  1
+    $$$$$:  230-block  2
+        -:  231:
+      84*:  232:    BOOST_TEST_FOREACH( unit_test_log_data_helper_impl&, current_logger_data, s_log_impl().m_log_formatter_data ) {
+       12:  232-block  0
+       12:  232-block  1
+       12:  232-block  2
+       12:  232-block  3
+       12:  232-block  4
+       12:  232-block  5
+       12:  232-block  6
+       48:  232-block  7
+       48:  232-block  8
+       48:  232-block  9
+       48:  232-block 10
+       48:  232-block 11
+       36:  232-block 12
+       12:  232-block 13
+       48:  232-block 14
+       36:  232-block 15
+       36:  232-block 16
+       36:  232-block 17
+       36:  232-block 18
+       72:  232-block 19
+       36:  232-block 20
+       36:  232-block 21
+       36:  232-block 22
+       36:  232-block 23
+       36:  232-block 24
+    %%%%%:  232-block 25
+    %%%%%:  232-block 26
+       36:  232-block 27
+    $$$$$:  232-block 28
+    $$$$$:  232-block 29
+    $$$$$:  232-block 30
+    $$$$$:  232-block 31
+        -:  233:
+       36:  234:        if( !current_logger_data.m_enabled || current_logger_data.get_log_level() > log_test_units )
+       36:  234-block  0
+       12:  234-block  1
+       24:  234-block  2
+       12:  234-block  3
+       36:  234-block  4
+       24:  235:            continue;
+       24:  235-block  0
+        -:  236:
+       12:  237:        current_logger_data.m_log_formatter->test_unit_finish( current_logger_data.stream(), tu, elapsed );
+       12:  237-block  0
+        -:  238:    }
+       12:  239:}
+       12:  239-block  0
+        -:  240:
+        -:  241://____________________________________________________________________________//
+        -:  242:
+        -:  243:void
+    #####:  244:unit_test_log_t::test_unit_skipped( test_unit const& tu, const_string reason )
+        -:  245:{
+    #####:  246:    if( s_log_impl().has_entry_in_progress() )
+    %%%%%:  246-block  0
+    #####:  247:        *this << log::end();
+    %%%%%:  247-block  0
+    %%%%%:  247-block  1
+    $$$$$:  247-block  2
+        -:  248:
+    #####:  249:    BOOST_TEST_FOREACH( unit_test_log_data_helper_impl&, current_logger_data, s_log_impl().m_log_formatter_data ) {
+    %%%%%:  249-block  0
+    %%%%%:  249-block  1
+    %%%%%:  249-block  2
+    %%%%%:  249-block  3
+    %%%%%:  249-block  4
+    %%%%%:  249-block  5
+    %%%%%:  249-block  6
+    %%%%%:  249-block  7
+    %%%%%:  249-block  8
+    %%%%%:  249-block  9
+    %%%%%:  249-block 10
+    %%%%%:  249-block 11
+    %%%%%:  249-block 12
+    %%%%%:  249-block 13
+    %%%%%:  249-block 14
+    %%%%%:  249-block 15
+    %%%%%:  249-block 16
+    %%%%%:  249-block 17
+    %%%%%:  249-block 18
+    %%%%%:  249-block 19
+    %%%%%:  249-block 20
+    %%%%%:  249-block 21
+    %%%%%:  249-block 22
+    %%%%%:  249-block 23
+    %%%%%:  249-block 24
+    %%%%%:  249-block 25
+    %%%%%:  249-block 26
+    %%%%%:  249-block 27
+    $$$$$:  249-block 28
+    $$$$$:  249-block 29
+    $$$$$:  249-block 30
+    $$$$$:  249-block 31
+    #####:  250:        if( !current_logger_data.m_enabled || current_logger_data.get_log_level() > log_test_units )
+    %%%%%:  250-block  0
+    %%%%%:  250-block  1
+    %%%%%:  250-block  2
+    %%%%%:  250-block  3
+    %%%%%:  250-block  4
+    #####:  251:            continue;
+    %%%%%:  251-block  0
+        -:  252:
+    #####:  253:        current_logger_data.m_log_formatter->test_unit_skipped( current_logger_data.stream(), tu, reason );
+    %%%%%:  253-block  0
+    %%%%%:  253-block  1
+    $$$$$:  253-block  2
+        -:  254:    }
+    #####:  255:}
+    %%%%%:  255-block  0
+        -:  256:
+        -:  257:void
+    #####:  258:unit_test_log_t::test_unit_aborted( test_unit const& tu )
+        -:  259:{
+    #####:  260:    if( s_log_impl().has_entry_in_progress() )
+    %%%%%:  260-block  0
+    #####:  261:        *this << log::end();
+    %%%%%:  261-block  0
+    %%%%%:  261-block  1
+    $$$$$:  261-block  2
+        -:  262:
+    #####:  263:    BOOST_TEST_FOREACH( unit_test_log_data_helper_impl&, current_logger_data, s_log_impl().m_log_formatter_data ) {
+    %%%%%:  263-block  0
+    %%%%%:  263-block  1
+    %%%%%:  263-block  2
+    %%%%%:  263-block  3
+    %%%%%:  263-block  4
+    %%%%%:  263-block  5
+    %%%%%:  263-block  6
+    %%%%%:  263-block  7
+    %%%%%:  263-block  8
+    %%%%%:  263-block  9
+    %%%%%:  263-block 10
+    %%%%%:  263-block 11
+    %%%%%:  263-block 12
+    %%%%%:  263-block 13
+    %%%%%:  263-block 14
+    %%%%%:  263-block 15
+    %%%%%:  263-block 16
+    %%%%%:  263-block 17
+    %%%%%:  263-block 18
+    %%%%%:  263-block 19
+    %%%%%:  263-block 20
+    %%%%%:  263-block 21
+    %%%%%:  263-block 22
+    %%%%%:  263-block 23
+    %%%%%:  263-block 24
+    %%%%%:  263-block 25
+    %%%%%:  263-block 26
+    %%%%%:  263-block 27
+    $$$$$:  263-block 28
+    $$$$$:  263-block 29
+    $$$$$:  263-block 30
+    $$$$$:  263-block 31
+    #####:  264:        if( !current_logger_data.m_enabled || current_logger_data.get_log_level() > log_test_units )
+    %%%%%:  264-block  0
+    %%%%%:  264-block  1
+    %%%%%:  264-block  2
+    %%%%%:  264-block  3
+    %%%%%:  264-block  4
+    #####:  265:            continue;
+    %%%%%:  265-block  0
+        -:  266:
+    #####:  267:        current_logger_data.m_log_formatter->test_unit_aborted(current_logger_data.stream(), tu );
+    %%%%%:  267-block  0
+        -:  268:    }
+    #####:  269:}
+    %%%%%:  269-block  0
+        -:  270:
+        -:  271:void
+    #####:  272:unit_test_log_t::test_unit_timed_out( test_unit const& tu )
+        -:  273:{
+    #####:  274:    if( s_log_impl().has_entry_in_progress() )
+    %%%%%:  274-block  0
+    #####:  275:        *this << log::end();
+    %%%%%:  275-block  0
+    %%%%%:  275-block  1
+    $$$$$:  275-block  2
+        -:  276:
+    #####:  277:    BOOST_TEST_FOREACH( unit_test_log_data_helper_impl&, current_logger_data, s_log_impl().m_log_formatter_data ) {
+    %%%%%:  277-block  0
+    %%%%%:  277-block  1
+    %%%%%:  277-block  2
+    %%%%%:  277-block  3
+    %%%%%:  277-block  4
+    %%%%%:  277-block  5
+    %%%%%:  277-block  6
+    %%%%%:  277-block  7
+    %%%%%:  277-block  8
+    %%%%%:  277-block  9
+    %%%%%:  277-block 10
+    %%%%%:  277-block 11
+    %%%%%:  277-block 12
+    %%%%%:  277-block 13
+    %%%%%:  277-block 14
+    %%%%%:  277-block 15
+    %%%%%:  277-block 16
+    %%%%%:  277-block 17
+    %%%%%:  277-block 18
+    %%%%%:  277-block 19
+    %%%%%:  277-block 20
+    %%%%%:  277-block 21
+    %%%%%:  277-block 22
+    %%%%%:  277-block 23
+    %%%%%:  277-block 24
+    %%%%%:  277-block 25
+    %%%%%:  277-block 26
+    %%%%%:  277-block 27
+    $$$$$:  277-block 28
+    $$$$$:  277-block 29
+    $$$$$:  277-block 30
+    $$$$$:  277-block 31
+    #####:  278:        if( !current_logger_data.m_enabled || current_logger_data.get_log_level() > log_test_units )
+    %%%%%:  278-block  0
+    %%%%%:  278-block  1
+    %%%%%:  278-block  2
+    %%%%%:  278-block  3
+    %%%%%:  278-block  4
+    #####:  279:            continue;
+    %%%%%:  279-block  0
+        -:  280:
+    #####:  281:        current_logger_data.m_log_formatter->test_unit_timed_out(current_logger_data.stream(), tu );
+    %%%%%:  281-block  0
+        -:  282:    }
+    #####:  283:}
+    %%%%%:  283-block  0
+        -:  284:
+        -:  285://____________________________________________________________________________//
+        -:  286:
+        -:  287:void
+    #####:  288:unit_test_log_t::exception_caught( execution_exception const& ex )
+        -:  289:{
+        -:  290:    log_level l =
+    #####:  291:        ex.code() <= execution_exception::cpp_exception_error   ? log_cpp_exception_errors :
+    %%%%%:  291-block  0
+    %%%%%:  291-block  1
+    %%%%%:  291-block  2
+    #####:  292:        (ex.code() <= execution_exception::timeout_error        ? log_system_errors
+    %%%%%:  292-block  0
+    %%%%%:  292-block  1
+    %%%%%:  292-block  2
+    #####:  293:                                                                : log_fatal_errors );
+        -:  294:
+    #####:  295:    if( s_log_impl().has_entry_in_progress() )
+    %%%%%:  295-block  0
+    #####:  296:        *this << log::end();
+    %%%%%:  296-block  0
+    %%%%%:  296-block  1
+    $$$$$:  296-block  2
+        -:  297:
+    #####:  298:    BOOST_TEST_FOREACH( unit_test_log_data_helper_impl&, current_logger_data, s_log_impl().m_log_formatter_data ) {
+    %%%%%:  298-block  0
+    %%%%%:  298-block  1
+    %%%%%:  298-block  2
+    %%%%%:  298-block  3
+    %%%%%:  298-block  4
+    %%%%%:  298-block  5
+    %%%%%:  298-block  6
+    %%%%%:  298-block  7
+    %%%%%:  298-block  8
+    %%%%%:  298-block  9
+    %%%%%:  298-block 10
+    %%%%%:  298-block 11
+    %%%%%:  298-block 12
+    %%%%%:  298-block 13
+    %%%%%:  298-block 14
+    %%%%%:  298-block 15
+    %%%%%:  298-block 16
+    %%%%%:  298-block 17
+    %%%%%:  298-block 18
+    %%%%%:  298-block 19
+    %%%%%:  298-block 20
+    %%%%%:  298-block 21
+    %%%%%:  298-block 22
+    %%%%%:  298-block 23
+    %%%%%:  298-block 24
+    %%%%%:  298-block 25
+    %%%%%:  298-block 26
+    %%%%%:  298-block 27
+    $$$$$:  298-block 28
+    $$$$$:  298-block 29
+    $$$$$:  298-block 30
+    $$$$$:  298-block 31
+        -:  299:
+    #####:  300:      if( current_logger_data.m_enabled && l >= current_logger_data.get_log_level() ) {
+    %%%%%:  300-block  0
+    %%%%%:  300-block  1
+    %%%%%:  300-block  2
+    %%%%%:  300-block  3
+    %%%%%:  300-block  4
+        -:  301:
+    #####:  302:          current_logger_data.m_log_formatter->log_exception_start( current_logger_data.stream(), s_log_impl().m_checkpoint_data, ex );
+    %%%%%:  302-block  0
+        -:  303:
+    #####:  304:          log_entry_context( l );
+        -:  305:
+    #####:  306:          current_logger_data.m_log_formatter->log_exception_finish( current_logger_data.stream() );
+        -:  307:      }
+        -:  308:    }
+    #####:  309:    clear_entry_context();
+    %%%%%:  309-block  0
+    #####:  310:}
+        -:  311:
+        -:  312://____________________________________________________________________________//
+        -:  313:
+        -:  314:void
+      110:  315:unit_test_log_t::set_checkpoint( const_string file, std::size_t line_num, const_string msg )
+        -:  316:{
+      110:  317:    s_log_impl().set_checkpoint( file, line_num, msg );
+      110:  317-block  0
+    $$$$$:  317-block  1
+      110:  318:}
+      110:  318-block  0
+        -:  319:
+        -:  320://____________________________________________________________________________//
+        -:  321:
+        -:  322:char
+     3864:  323:set_unix_slash( char in )
+        -:  324:{
+     3864:  325:    return in == '\\' ? '/' : in;
+     3864:  325-block  0
+     3528:  325-block  1
+      336:  325-block  2
+     3864:  325-block  3
+        -:  326:}
+        -:  327:
+        -:  328:unit_test_log_t&
+       56:  329:unit_test_log_t::operator<<( log::begin const& b )
+        -:  330:{
+       56:  331:    if( s_log_impl().has_entry_in_progress() )
+       56:  331-block  0
+    #####:  332:        *this << log::end();
+    %%%%%:  332-block  0
+    %%%%%:  332-block  1
+    $$$$$:  332-block  2
+        -:  333:
+     392*:  334:    BOOST_TEST_FOREACH( unit_test_log_data_helper_impl&, current_logger_data, s_log_impl().m_log_formatter_data ) {
+       56:  334-block  0
+       56:  334-block  1
+       56:  334-block  2
+       56:  334-block  3
+       56:  334-block  4
+       56:  334-block  5
+       56:  334-block  6
+      224:  334-block  7
+      224:  334-block  8
+      224:  334-block  9
+      224:  334-block 10
+      224:  334-block 11
+      168:  334-block 12
+       56:  334-block 13
+      224:  334-block 14
+      168:  334-block 15
+      168:  334-block 16
+      168:  334-block 17
+      168:  334-block 18
+      336:  334-block 19
+      168:  334-block 20
+      168:  334-block 21
+      168:  334-block 22
+      168:  334-block 23
+      168:  334-block 24
+    %%%%%:  334-block 25
+    %%%%%:  334-block 26
+      168:  334-block 27
+    $$$$$:  334-block 28
+    $$$$$:  334-block 29
+    $$$$$:  334-block 30
+    $$$$$:  334-block 31
+    $$$$$:  334-block 32
+      168:  335:        if( current_logger_data.m_enabled ) {
+      168:  335-block  0
+       56:  336:            current_logger_data.m_stream_state_saver->restore();
+       56:  336-block  0
+        -:  337:        }
+        -:  338:    }
+        -:  339:
+       56:  340:    s_log_impl().m_entry_data.clear();
+       56:  340-block  0
+        -:  341:
+       56:  342:    assign_op( s_log_impl().m_entry_data.m_file_name, b.m_file_name, 0 );
+       56:  342-block  0
+        -:  343:
+        -:  344:    // normalize file name
+      112:  345:    std::transform( s_log_impl().m_entry_data.m_file_name.begin(), s_log_impl().m_entry_data.m_file_name.end(),
+       56:  346:                    s_log_impl().m_entry_data.m_file_name.begin(),
+       56:  346-block  0
+      168:  347:                    &set_unix_slash );
+        -:  348:
+       56:  349:    s_log_impl().m_entry_data.m_line_num = b.m_line_num;
+        -:  350:
+       56:  351:    return *this;
+       56:  351-block  0
+        -:  352:}
+        -:  353:
+        -:  354://____________________________________________________________________________//
+        -:  355:
+        -:  356:unit_test_log_t&
+       56:  357:unit_test_log_t::operator<<( log::end const& )
+        -:  358:{
+       56:  359:    if( s_log_impl().has_entry_in_progress() ) {
+       56:  359-block  0
+       56:  360:        log_entry_context( s_log_impl().m_entry_data.m_level );
+       56:  360-block  0
+        -:  361:
+     392*:  362:        BOOST_TEST_FOREACH( unit_test_log_data_helper_impl&, current_logger_data, s_log_impl().m_log_formatter_data ) {
+       56:  362-block  0
+       56:  362-block  1
+       56:  362-block  2
+       56:  362-block  3
+       56:  362-block  4
+       56:  362-block  5
+      224:  362-block  6
+      224:  362-block  7
+      224:  362-block  8
+      224:  362-block  9
+      224:  362-block 10
+      168:  362-block 11
+       56:  362-block 12
+      224:  362-block 13
+      168:  362-block 14
+      168:  362-block 15
+      168:  362-block 16
+      168:  362-block 17
+      336:  362-block 18
+      168:  362-block 19
+      168:  362-block 20
+      168:  362-block 21
+      168:  362-block 22
+    %%%%%:  362-block 23
+    %%%%%:  362-block 24
+      168:  362-block 25
+    $$$$$:  362-block 26
+    $$$$$:  362-block 27
+    $$$$$:  362-block 28
+    $$$$$:  362-block 29
+      168:  363:            if( current_logger_data.m_enabled && current_logger_data.m_entry_in_progress ) {
+      168:  363-block  0
+       56:  363-block  1
+       56:  364:                current_logger_data.m_log_formatter->log_entry_finish( current_logger_data.stream() );
+       56:  364-block  0
+        -:  365:            }
+      168:  366:            current_logger_data.m_entry_in_progress = false;
+      168:  366-block  0
+        -:  367:        }
+        -:  368:    }
+        -:  369:
+       56:  370:    clear_entry_context();
+       56:  370-block  0
+        -:  371:
+       56:  372:    return *this;
+       56:  372-block  0
+        -:  373:}
+        -:  374:
+        -:  375://____________________________________________________________________________//
+        -:  376:
+        -:  377:unit_test_log_t&
+       56:  378:unit_test_log_t::operator<<( log_level l )
+        -:  379:{
+       56:  380:    s_log_impl().m_entry_data.m_level = l;
+       56:  380-block  0
+        -:  381:
+       56:  382:    return *this;
+        -:  383:}
+        -:  384:
+        -:  385://____________________________________________________________________________//
+        -:  386:
+        -:  387:ut_detail::entry_value_collector
+    #####:  388:unit_test_log_t::operator()( log_level l )
+        -:  389:{
+    #####:  390:    *this << l;
+    %%%%%:  390-block  0
+        -:  391:
+    #####:  392:    return ut_detail::entry_value_collector();
+        -:  393:}
+        -:  394:
+        -:  395://____________________________________________________________________________//
+        -:  396:
+        -:  397:bool
+      280:  398:unit_test_log_t::log_entry_start(output_format log_format)
+        -:  399:{
+     280*:  400:    BOOST_TEST_FOREACH( unit_test_log_data_helper_impl&, current_logger_data, s_log_impl().m_log_formatter_data ) {
+      280:  400-block  0
+      280:  400-block  1
+      280:  400-block  2
+      280:  400-block  3
+      280:  400-block  4
+      280:  400-block  5
+      280:  400-block  6
+      280:  400-block  7
+      280:  400-block  8
+      280:  400-block  9
+      280:  400-block 10
+      280:  400-block 11
+      280:  400-block 12
+    %%%%%:  400-block 13
+      280:  400-block 14
+      280:  400-block 15
+      280:  400-block 16
+      280:  400-block 17
+      280:  400-block 18
+      280:  400-block 19
+    %%%%%:  400-block 20
+    %%%%%:  400-block 21
+    %%%%%:  400-block 22
+    %%%%%:  400-block 23
+    %%%%%:  400-block 24
+    %%%%%:  400-block 25
+    %%%%%:  400-block 26
+    %%%%%:  400-block 27
+    $$$$$:  400-block 28
+    $$$$$:  400-block 29
+    $$$$$:  400-block 30
+    $$$$$:  400-block 31
+        -:  401:
+     280*:  402:        if( current_logger_data.m_format != log_format )
+      280:  402-block  0
+    #####:  403:            continue;
+    %%%%%:  403-block  0
+        -:  404:
+      280:  405:        if( current_logger_data.m_entry_in_progress )
+      280:  405-block  0
+      224:  406:            return true;
+      224:  406-block  0
+        -:  407:
+       56:  408:        if( !current_logger_data.m_enabled )
+       56:  408-block  0
+    #####:  409:            return false;
+    %%%%%:  409-block  0
+        -:  410:
+       56:  411:        switch( s_log_impl().m_entry_data.m_level ) {
+       56:  411-block  0
+       56:  412:        case log_successful_tests:
+      112:  413:            current_logger_data.m_log_formatter->log_entry_start( current_logger_data.stream(), s_log_impl().m_entry_data,
+       56:  413-block  0
+       56:  414:                                                  unit_test_log_formatter::BOOST_UTL_ET_INFO );
+       56:  415:            break;
+    #####:  416:        case log_messages:
+    #####:  417:            current_logger_data.m_log_formatter->log_entry_start( current_logger_data.stream(), s_log_impl().m_entry_data,
+    %%%%%:  417-block  0
+    #####:  418:                                                  unit_test_log_formatter::BOOST_UTL_ET_MESSAGE );
+    #####:  419:            break;
+    #####:  420:        case log_warnings:
+    #####:  421:            current_logger_data.m_log_formatter->log_entry_start( current_logger_data.stream(), s_log_impl().m_entry_data,
+    %%%%%:  421-block  0
+    #####:  422:                                                  unit_test_log_formatter::BOOST_UTL_ET_WARNING );
+    #####:  423:            break;
+    #####:  424:        case log_all_errors:
+        -:  425:        case log_cpp_exception_errors:
+        -:  426:        case log_system_errors:
+    #####:  427:            current_logger_data.m_log_formatter->log_entry_start( current_logger_data.stream(), s_log_impl().m_entry_data,
+    %%%%%:  427-block  0
+    #####:  428:                                                  unit_test_log_formatter::BOOST_UTL_ET_ERROR );
+    #####:  429:            break;
+    #####:  430:        case log_fatal_errors:
+    #####:  431:            current_logger_data.m_log_formatter->log_entry_start( current_logger_data.stream(), s_log_impl().m_entry_data,
+    %%%%%:  431-block  0
+    #####:  432:                                                  unit_test_log_formatter::BOOST_UTL_ET_FATAL_ERROR );
+    #####:  433:            break;
+    #####:  434:        case log_nothing:
+        -:  435:        case log_test_units:
+        -:  436:        case invalid_log_level:
+    #####:  437:            return false;
+    %%%%%:  437-block  0
+        -:  438:        }
+        -:  439:
+       56:  440:        current_logger_data.m_entry_in_progress = true;
+       56:  441:        return true;
+       56:  441-block  0
+        -:  442:    }
+        -:  443:
+    #####:  444:    return false;
+    %%%%%:  444-block  0
+        -:  445:}
+        -:  446:
+        -:  447://____________________________________________________________________________//
+        -:  448:
+        -:  449:unit_test_log_t&
+      276:  450:unit_test_log_t::operator<<( const_string value )
+        -:  451:{
+    1932*:  452:    BOOST_TEST_FOREACH( unit_test_log_data_helper_impl&, current_logger_data, s_log_impl().m_log_formatter_data ) {
+      276:  452-block  0
+      276:  452-block  1
+      276:  452-block  2
+      276:  452-block  3
+      276:  452-block  4
+      276:  452-block  5
+      276:  452-block  6
+     1104:  452-block  7
+     1104:  452-block  8
+     1104:  452-block  9
+     1104:  452-block 10
+     1104:  452-block 11
+      828:  452-block 12
+      276:  452-block 13
+     1104:  452-block 14
+      828:  452-block 15
+      828:  452-block 16
+      828:  452-block 17
+      828:  452-block 18
+     1656:  452-block 19
+      828:  452-block 20
+      828:  452-block 21
+      828:  452-block 22
+      828:  452-block 23
+      828:  452-block 24
+    %%%%%:  452-block 25
+    %%%%%:  452-block 26
+      828:  452-block 27
+    $$$$$:  452-block 28
+    $$$$$:  452-block 29
+    $$$$$:  452-block 30
+    $$$$$:  452-block 31
+      828:  453:        if( current_logger_data.m_enabled && s_log_impl().m_entry_data.m_level >= current_logger_data.get_log_level() && !value.empty() && log_entry_start(current_logger_data.m_format) )
+      828:  453-block  0
+      276:  453-block  1
+      276:  453-block  2
+      276:  453-block  3
+      276:  453-block  4
+      552:  453-block  5
+      828:  453-block  6
+      276:  454:            current_logger_data.m_log_formatter->log_entry_value( current_logger_data.stream(), value );
+      276:  454-block  0
+      276:  454-block  1
+    $$$$$:  454-block  2
+        -:  455:
+        -:  456:    }
+      276:  457:    return *this;
+      276:  457-block  0
+      276:  457-block  1
+        -:  458:}
+        -:  459:
+        -:  460://____________________________________________________________________________//
+        -:  461:
+        -:  462:unit_test_log_t&
+        4:  463:unit_test_log_t::operator<<( lazy_ostream const& value )
+        -:  464:{
+      28*:  465:    BOOST_TEST_FOREACH( unit_test_log_data_helper_impl&, current_logger_data, s_log_impl().m_log_formatter_data ) {
+        4:  465-block  0
+        4:  465-block  1
+        4:  465-block  2
+        4:  465-block  3
+        4:  465-block  4
+        4:  465-block  5
+        4:  465-block  6
+       16:  465-block  7
+       16:  465-block  8
+       16:  465-block  9
+       16:  465-block 10
+       16:  465-block 11
+       12:  465-block 12
+        4:  465-block 13
+       16:  465-block 14
+       12:  465-block 15
+       12:  465-block 16
+       12:  465-block 17
+       12:  465-block 18
+       24:  465-block 19
+       12:  465-block 20
+       12:  465-block 21
+       12:  465-block 22
+       12:  465-block 23
+       12:  465-block 24
+    %%%%%:  465-block 25
+    %%%%%:  465-block 26
+       12:  465-block 27
+    $$$$$:  465-block 28
+    $$$$$:  465-block 29
+    $$$$$:  465-block 30
+    $$$$$:  465-block 31
+       12:  466:        if( current_logger_data.m_enabled && s_log_impl().m_entry_data.m_level >= current_logger_data.get_log_level() && !value.empty() ) {
+       12:  466-block  0
+        4:  466-block  1
+        4:  466-block  2
+        4:  466-block  3
+        8:  466-block  4
+       12:  466-block  5
+        4:  467:            if( log_entry_start(current_logger_data.m_format) ) {
+        4:  467-block  0
+        4:  468:                current_logger_data.m_log_formatter->log_entry_value( current_logger_data.stream(), value );
+        4:  468-block  0
+        -:  469:            }
+        -:  470:        }
+        -:  471:    }
+        4:  472:    return *this;
+        4:  472-block  0
+        4:  472-block  1
+        -:  473:}
+        -:  474:
+        -:  475://____________________________________________________________________________//
+        -:  476:
+        -:  477:void
+       56:  478:unit_test_log_t::log_entry_context( log_level l )
+        -:  479:{
+       56:  480:    framework::context_generator const& context = framework::get_context();
+       56:  480-block  0
+       56:  481:    if( context.is_empty() )
+       56:  481-block  0
+       56:  482:        return;
+       56:  482-block  0
+        -:  483:
+    #####:  484:    const_string frame;
+    %%%%%:  484-block  0
+        -:  485:
+    #####:  486:    BOOST_TEST_FOREACH( unit_test_log_data_helper_impl&, current_logger_data, s_log_impl().m_log_formatter_data ) {
+    %%%%%:  486-block  0
+    %%%%%:  486-block  1
+    %%%%%:  486-block  2
+    %%%%%:  486-block  3
+    %%%%%:  486-block  4
+    %%%%%:  486-block  5
+    %%%%%:  486-block  6
+    %%%%%:  486-block  7
+    %%%%%:  486-block  8
+    %%%%%:  486-block  9
+    %%%%%:  486-block 10
+    %%%%%:  486-block 11
+    %%%%%:  486-block 12
+    %%%%%:  486-block 13
+    %%%%%:  486-block 14
+    %%%%%:  486-block 15
+    %%%%%:  486-block 16
+    %%%%%:  486-block 17
+    %%%%%:  486-block 18
+    %%%%%:  486-block 19
+    %%%%%:  486-block 20
+    %%%%%:  486-block 21
+    %%%%%:  486-block 22
+    %%%%%:  486-block 23
+    %%%%%:  486-block 24
+    %%%%%:  486-block 25
+    %%%%%:  486-block 26
+    %%%%%:  486-block 27
+    %%%%%:  486-block 28
+    %%%%%:  486-block 29
+    %%%%%:  486-block 30
+    $$$$$:  486-block 31
+    $$$$$:  486-block 32
+    $$$$$:  486-block 33
+    $$$$$:  486-block 34
+    $$$$$:  486-block 35
+    #####:  487:        if( current_logger_data.m_enabled ) {
+    %%%%%:  487-block  0
+    #####:  488:            current_logger_data.m_log_formatter->entry_context_start( current_logger_data.stream(), l );
+    %%%%%:  488-block  0
+        -:  489:        }
+        -:  490:    }
+        -:  491:
+    #####:  492:    while( !(frame=context.next()).is_empty() )
+    %%%%%:  492-block  0
+    %%%%%:  492-block  1
+    %%%%%:  492-block  2
+        -:  493:    {
+    #####:  494:        BOOST_TEST_FOREACH( unit_test_log_data_helper_impl&, current_logger_data, s_log_impl().m_log_formatter_data ) {
+    %%%%%:  494-block  0
+    %%%%%:  494-block  1
+    %%%%%:  494-block  2
+    %%%%%:  494-block  3
+    %%%%%:  494-block  4
+    %%%%%:  494-block  5
+    %%%%%:  494-block  6
+    %%%%%:  494-block  7
+    %%%%%:  494-block  8
+    %%%%%:  494-block  9
+    %%%%%:  494-block 10
+    %%%%%:  494-block 11
+    %%%%%:  494-block 12
+    %%%%%:  494-block 13
+    %%%%%:  494-block 14
+    %%%%%:  494-block 15
+    %%%%%:  494-block 16
+    %%%%%:  494-block 17
+    %%%%%:  494-block 18
+    %%%%%:  494-block 19
+    %%%%%:  494-block 20
+    %%%%%:  494-block 21
+    %%%%%:  494-block 22
+    %%%%%:  494-block 23
+    %%%%%:  494-block 24
+    %%%%%:  494-block 25
+    %%%%%:  494-block 26
+    %%%%%:  494-block 27
+    %%%%%:  494-block 28
+    %%%%%:  494-block 29
+    %%%%%:  494-block 30
+    $$$$$:  494-block 31
+    $$$$$:  494-block 32
+    $$$$$:  494-block 33
+    $$$$$:  494-block 34
+    $$$$$:  494-block 35
+    #####:  495:            if( current_logger_data.m_enabled ) {
+    %%%%%:  495-block  0
+    #####:  496:                current_logger_data.m_log_formatter->log_entry_context( current_logger_data.stream(), l, frame );
+    %%%%%:  496-block  0
+    %%%%%:  496-block  1
+    $$$$$:  496-block  2
+        -:  497:            }
+        -:  498:        }
+        -:  499:    }
+        -:  500:
+    #####:  501:    BOOST_TEST_FOREACH( unit_test_log_data_helper_impl&, current_logger_data, s_log_impl().m_log_formatter_data ) {
+    %%%%%:  501-block  0
+    %%%%%:  501-block  1
+    %%%%%:  501-block  2
+    %%%%%:  501-block  3
+    %%%%%:  501-block  4
+    %%%%%:  501-block  5
+    %%%%%:  501-block  6
+    %%%%%:  501-block  7
+    %%%%%:  501-block  8
+    %%%%%:  501-block  9
+    %%%%%:  501-block 10
+    %%%%%:  501-block 11
+    %%%%%:  501-block 12
+    %%%%%:  501-block 13
+    %%%%%:  501-block 14
+    %%%%%:  501-block 15
+    %%%%%:  501-block 16
+    %%%%%:  501-block 17
+    %%%%%:  501-block 18
+    %%%%%:  501-block 19
+    %%%%%:  501-block 20
+    %%%%%:  501-block 21
+    %%%%%:  501-block 22
+    %%%%%:  501-block 23
+    %%%%%:  501-block 24
+    %%%%%:  501-block 25
+    %%%%%:  501-block 26
+    %%%%%:  501-block 27
+    %%%%%:  501-block 28
+    %%%%%:  501-block 29
+    %%%%%:  501-block 30
+    $$$$$:  501-block 31
+    $$$$$:  501-block 32
+    $$$$$:  501-block 33
+    $$$$$:  501-block 34
+    $$$$$:  501-block 35
+    #####:  502:        if( current_logger_data.m_enabled ) {
+    %%%%%:  502-block  0
+    #####:  503:            current_logger_data.m_log_formatter->entry_context_finish( current_logger_data.stream(), l );
+    %%%%%:  503-block  0
+        -:  504:        }
+        -:  505:    }
+        -:  506:}
+        -:  507:
+        -:  508://____________________________________________________________________________//
+        -:  509:
+        -:  510:void
+       56:  511:unit_test_log_t::clear_entry_context()
+        -:  512:{
+       56:  513:    framework::clear_context();
+       56:  513-block  0
+       56:  514:}
+        -:  515:
+        -:  516://____________________________________________________________________________//
+        -:  517:
+        -:  518:void
+    #####:  519:unit_test_log_t::set_stream( std::ostream& str )
+        -:  520:{
+    #####:  521:    if( s_log_impl().has_entry_in_progress() )
+    %%%%%:  521-block  0
+    #####:  522:        return;
+    %%%%%:  522-block  0
+        -:  523:
+    #####:  524:    BOOST_TEST_FOREACH( unit_test_log_data_helper_impl&, current_logger_data, s_log_impl().m_log_formatter_data ) {
+    %%%%%:  524-block  0
+    %%%%%:  524-block  1
+    %%%%%:  524-block  2
+    %%%%%:  524-block  3
+    %%%%%:  524-block  4
+    %%%%%:  524-block  5
+    %%%%%:  524-block  6
+    %%%%%:  524-block  7
+    %%%%%:  524-block  8
+    %%%%%:  524-block  9
+    %%%%%:  524-block 10
+    %%%%%:  524-block 11
+    %%%%%:  524-block 12
+    %%%%%:  524-block 13
+    %%%%%:  524-block 14
+    %%%%%:  524-block 15
+    %%%%%:  524-block 16
+    %%%%%:  524-block 17
+    %%%%%:  524-block 18
+    %%%%%:  524-block 19
+    %%%%%:  524-block 20
+    %%%%%:  524-block 21
+    %%%%%:  524-block 22
+    %%%%%:  524-block 23
+    %%%%%:  524-block 24
+    %%%%%:  524-block 25
+    %%%%%:  524-block 26
+    $$$$$:  524-block 27
+    $$$$$:  524-block 28
+    $$$$$:  524-block 29
+    $$$$$:  524-block 30
+    #####:  525:        current_logger_data.m_stream = &str;
+    #####:  526:        current_logger_data.m_stream_state_saver.reset( new io_saver_type( str ) );
+    %%%%%:  526-block  0
+        -:  527:    }
+        -:  528:}
+        -:  529:
+        -:  530://____________________________________________________________________________//
+        -:  531:
+        -:  532:void
+        2:  533:unit_test_log_t::set_stream( output_format log_format, std::ostream& str )
+        -:  534:{
+        2:  535:    if( s_log_impl().has_entry_in_progress() )
+        2:  535-block  0
+    #####:  536:        return;
+    %%%%%:  536-block  0
+        -:  537:
+       4*:  538:    BOOST_TEST_FOREACH( unit_test_log_data_helper_impl&, current_logger_data, s_log_impl().m_log_formatter_data ) {
+        2:  538-block  0
+        2:  538-block  1
+        2:  538-block  2
+        2:  538-block  3
+        2:  538-block  4
+        2:  538-block  5
+        2:  538-block  6
+        4:  538-block  7
+        2:  538-block  8
+        2:  538-block  9
+        2:  538-block 10
+        2:  538-block 11
+        2:  538-block 12
+        2:  538-block 13
+        4:  538-block 14
+        2:  538-block 15
+        2:  538-block 16
+        2:  538-block 17
+        2:  538-block 18
+        2:  538-block 19
+    %%%%%:  538-block 20
+        2:  538-block 21
+    %%%%%:  538-block 22
+    %%%%%:  538-block 23
+    %%%%%:  538-block 24
+        2:  538-block 25
+        2:  538-block 26
+        2:  538-block 27
+    $$$$$:  538-block 28
+    $$$$$:  538-block 29
+    $$$$$:  538-block 30
+    $$$$$:  538-block 31
+        2:  539:        if( current_logger_data.m_format == log_format) {
+        2:  539-block  0
+        2:  540:            current_logger_data.m_stream = &str;
+        2:  541:            current_logger_data.m_stream_state_saver.reset( new io_saver_type( str ) );
+        2:  541-block  0
+        2:  542:            break;
+        -:  543:        }
+        -:  544:    }
+        -:  545:}
+        -:  546:
+        -:  547:std::ostream*
+    #####:  548:unit_test_log_t::get_stream( output_format log_format ) const
+        -:  549:{
+    #####:  550:    BOOST_TEST_FOREACH( unit_test_log_data_helper_impl&, current_logger_data, s_log_impl().m_log_formatter_data ) {
+    %%%%%:  550-block  0
+    %%%%%:  550-block  1
+    %%%%%:  550-block  2
+    %%%%%:  550-block  3
+    %%%%%:  550-block  4
+    %%%%%:  550-block  5
+    %%%%%:  550-block  6
+    %%%%%:  550-block  7
+    %%%%%:  550-block  8
+    %%%%%:  550-block  9
+    %%%%%:  550-block 10
+    %%%%%:  550-block 11
+    %%%%%:  550-block 12
+    %%%%%:  550-block 13
+    %%%%%:  550-block 14
+    %%%%%:  550-block 15
+    %%%%%:  550-block 16
+    %%%%%:  550-block 17
+    %%%%%:  550-block 18
+    %%%%%:  550-block 19
+    %%%%%:  550-block 20
+    %%%%%:  550-block 21
+    %%%%%:  550-block 22
+    %%%%%:  550-block 23
+    %%%%%:  550-block 24
+    %%%%%:  550-block 25
+    %%%%%:  550-block 26
+    %%%%%:  550-block 27
+    $$$$$:  550-block 28
+    $$$$$:  550-block 29
+    $$$$$:  550-block 30
+    $$$$$:  550-block 31
+    #####:  551:        if( current_logger_data.m_format == log_format) {
+    %%%%%:  551-block  0
+    #####:  552:            return current_logger_data.m_stream;
+    %%%%%:  552-block  0
+        -:  553:        }
+        -:  554:    }
+    #####:  555:    return 0;
+    %%%%%:  555-block  0
+        -:  556:}
+        -:  557:
+        -:  558://____________________________________________________________________________//
+        -:  559:
+        -:  560:void
+    #####:  561:unit_test_log_t::set_threshold_level( log_level lev )
+        -:  562:{
+    #####:  563:    if( s_log_impl().has_entry_in_progress() || lev == invalid_log_level )
+    %%%%%:  563-block  0
+    %%%%%:  563-block  1
+    %%%%%:  563-block  2
+    %%%%%:  563-block  3
+    %%%%%:  563-block  4
+    #####:  564:        return;
+    %%%%%:  564-block  0
+        -:  565:
+    #####:  566:    BOOST_TEST_FOREACH( unit_test_log_data_helper_impl&, current_logger_data, s_log_impl().m_log_formatter_data ) {
+    %%%%%:  566-block  0
+    %%%%%:  566-block  1
+    %%%%%:  566-block  2
+    %%%%%:  566-block  3
+    %%%%%:  566-block  4
+    %%%%%:  566-block  5
+    %%%%%:  566-block  6
+    %%%%%:  566-block  7
+    %%%%%:  566-block  8
+    %%%%%:  566-block  9
+    %%%%%:  566-block 10
+    %%%%%:  566-block 11
+    %%%%%:  566-block 12
+    %%%%%:  566-block 13
+    %%%%%:  566-block 14
+    %%%%%:  566-block 15
+    %%%%%:  566-block 16
+    %%%%%:  566-block 17
+    %%%%%:  566-block 18
+    %%%%%:  566-block 19
+    %%%%%:  566-block 20
+    %%%%%:  566-block 21
+    %%%%%:  566-block 22
+    %%%%%:  566-block 23
+    %%%%%:  566-block 24
+    %%%%%:  566-block 25
+    %%%%%:  566-block 26
+    $$$$$:  566-block 27
+    $$$$$:  566-block 28
+    $$$$$:  566-block 29
+    $$$$$:  566-block 30
+    #####:  567:        current_logger_data.m_log_formatter->set_log_level( lev );
+    %%%%%:  567-block  0
+        -:  568:    }
+        -:  569:}
+        -:  570:
+        -:  571://____________________________________________________________________________//
+        -:  572:
+        -:  573:void
+        1:  574:unit_test_log_t::set_threshold_level( output_format log_format, log_level lev )
+        -:  575:{
+       1*:  576:    if( s_log_impl().has_entry_in_progress() || lev == invalid_log_level )
+        1:  576-block  0
+        1:  576-block  1
+    %%%%%:  576-block  2
+        1:  576-block  3
+        1:  576-block  4
+    #####:  577:        return;
+    %%%%%:  577-block  0
+        -:  578:
+       2*:  579:    BOOST_TEST_FOREACH( unit_test_log_data_helper_impl&, current_logger_data, s_log_impl().m_log_formatter_data ) {
+        1:  579-block  0
+        1:  579-block  1
+        1:  579-block  2
+        1:  579-block  3
+        1:  579-block  4
+        1:  579-block  5
+        1:  579-block  6
+        2:  579-block  7
+        1:  579-block  8
+        1:  579-block  9
+        1:  579-block 10
+        1:  579-block 11
+        1:  579-block 12
+        1:  579-block 13
+        2:  579-block 14
+        1:  579-block 15
+        1:  579-block 16
+        1:  579-block 17
+        1:  579-block 18
+        1:  579-block 19
+    %%%%%:  579-block 20
+        1:  579-block 21
+    %%%%%:  579-block 22
+    %%%%%:  579-block 23
+    %%%%%:  579-block 24
+        1:  579-block 25
+        1:  579-block 26
+        1:  579-block 27
+    $$$$$:  579-block 28
+    $$$$$:  579-block 29
+    $$$$$:  579-block 30
+    $$$$$:  579-block 31
+        1:  580:        if( current_logger_data.m_format == log_format) {
+        1:  580-block  0
+        1:  581:            current_logger_data.m_log_formatter->set_log_level( lev );
+        1:  581-block  0
+        1:  582:            break;
+        -:  583:        }
+        -:  584:    }
+        -:  585:}
+        -:  586:
+        -:  587://____________________________________________________________________________//
+        -:  588:
+        -:  589:void
+        1:  590:unit_test_log_t::set_format( output_format log_format )
+        -:  591:{
+        1:  592:    if( s_log_impl().has_entry_in_progress() )
+        1:  592-block  0
+    #####:  593:        return;
+    %%%%%:  593-block  0
+        -:  594:
+       7*:  595:    BOOST_TEST_FOREACH( unit_test_log_data_helper_impl&, current_logger_data, s_log_impl().m_log_formatter_data ) {
+        1:  595-block  0
+        1:  595-block  1
+        1:  595-block  2
+        1:  595-block  3
+        1:  595-block  4
+        1:  595-block  5
+        1:  595-block  6
+        4:  595-block  7
+        4:  595-block  8
+        4:  595-block  9
+        4:  595-block 10
+        4:  595-block 11
+        3:  595-block 12
+        1:  595-block 13
+        4:  595-block 14
+        3:  595-block 15
+        3:  595-block 16
+        3:  595-block 17
+        3:  595-block 18
+        6:  595-block 19
+        3:  595-block 20
+        3:  595-block 21
+        3:  595-block 22
+        3:  595-block 23
+    %%%%%:  595-block 24
+    %%%%%:  595-block 25
+        3:  595-block 26
+    $$$$$:  595-block 27
+    $$$$$:  595-block 28
+    $$$$$:  595-block 29
+    $$$$$:  595-block 30
+        3:  596:        current_logger_data.m_enabled = current_logger_data.m_format == log_format;
+        3:  596-block  0
+        -:  597:    }
+        -:  598:}
+        -:  599:
+        -:  600://____________________________________________________________________________//
+        -:  601:
+        -:  602:void
+    #####:  603:unit_test_log_t::add_format( output_format log_format )
+        -:  604:{
+    #####:  605:    if( s_log_impl().has_entry_in_progress() )
+    %%%%%:  605-block  0
+    #####:  606:        return;
+    %%%%%:  606-block  0
+        -:  607:
+    #####:  608:    BOOST_TEST_FOREACH( unit_test_log_data_helper_impl&, current_logger_data, s_log_impl().m_log_formatter_data ) {
+    %%%%%:  608-block  0
+    %%%%%:  608-block  1
+    %%%%%:  608-block  2
+    %%%%%:  608-block  3
+    %%%%%:  608-block  4
+    %%%%%:  608-block  5
+    %%%%%:  608-block  6
+    %%%%%:  608-block  7
+    %%%%%:  608-block  8
+    %%%%%:  608-block  9
+    %%%%%:  608-block 10
+    %%%%%:  608-block 11
+    %%%%%:  608-block 12
+    %%%%%:  608-block 13
+    %%%%%:  608-block 14
+    %%%%%:  608-block 15
+    %%%%%:  608-block 16
+    %%%%%:  608-block 17
+    %%%%%:  608-block 18
+    %%%%%:  608-block 19
+    %%%%%:  608-block 20
+    %%%%%:  608-block 21
+    %%%%%:  608-block 22
+    %%%%%:  608-block 23
+    %%%%%:  608-block 24
+    %%%%%:  608-block 25
+    %%%%%:  608-block 26
+    %%%%%:  608-block 27
+    $$$$$:  608-block 28
+    $$$$$:  608-block 29
+    $$$$$:  608-block 30
+    $$$$$:  608-block 31
+    #####:  609:        if( current_logger_data.m_format == log_format) {
+    %%%%%:  609-block  0
+    #####:  610:            current_logger_data.m_enabled = true;
+    #####:  611:            break;
+    %%%%%:  611-block  0
+        -:  612:        }
+        -:  613:    }
+        -:  614:}
+        -:  615:
+        -:  616://____________________________________________________________________________//
+        -:  617:
+        -:  618:unit_test_log_formatter*
+        1:  619:unit_test_log_t::get_formatter( output_format log_format ) {
+       1*:  620:    BOOST_TEST_FOREACH( unit_test_log_data_helper_impl&, current_logger_data, s_log_impl().m_log_formatter_data ) {
+        1:  620-block  0
+        1:  620-block  1
+        1:  620-block  2
+        1:  620-block  3
+        1:  620-block  4
+        1:  620-block  5
+        1:  620-block  6
+        1:  620-block  7
+        1:  620-block  8
+        1:  620-block  9
+        1:  620-block 10
+        1:  620-block 11
+        1:  620-block 12
+    %%%%%:  620-block 13
+        1:  620-block 14
+        1:  620-block 15
+        1:  620-block 16
+        1:  620-block 17
+        1:  620-block 18
+        1:  620-block 19
+    %%%%%:  620-block 20
+    %%%%%:  620-block 21
+    %%%%%:  620-block 22
+    %%%%%:  620-block 23
+    %%%%%:  620-block 24
+    %%%%%:  620-block 25
+    %%%%%:  620-block 26
+    %%%%%:  620-block 27
+    $$$$$:  620-block 28
+    $$$$$:  620-block 29
+    $$$$$:  620-block 30
+    $$$$$:  620-block 31
+        1:  621:        if( current_logger_data.m_format == log_format) {
+        1:  621-block  0
+        1:  622:            return current_logger_data.m_log_formatter.get();
+        1:  622-block  0
+        -:  623:        }
+        -:  624:    }
+    #####:  625:    return 0;
+    %%%%%:  625-block  0
+        -:  626:}
+        -:  627:
+        -:  628:
+        -:  629:void
+    #####:  630:unit_test_log_t::add_formatter( unit_test_log_formatter* the_formatter )
+        -:  631:{
+        -:  632:    // remove only user defined logger
+    #####:  633:    for(unit_test_log_impl::v_formatter_data_t::iterator it(s_log_impl().m_log_formatter_data.begin()),
+    %%%%%:  633-block  0
+    %%%%%:  633-block  1
+    #####:  634:            ite(s_log_impl().m_log_formatter_data.end());
+    %%%%%:  634-block  0
+    #####:  635:        it != ite;
+    %%%%%:  635-block  0
+    #####:  636:        ++it)
+    %%%%%:  636-block  0
+        -:  637:    {
+    #####:  638:        if( it->m_format == OF_CUSTOM_LOGGER) {
+    %%%%%:  638-block  0
+    #####:  639:            s_log_impl().m_log_formatter_data.erase(it);
+    %%%%%:  639-block  0
+    %%%%%:  639-block  1
+    $$$$$:  639-block  2
+    #####:  640:            break;
+    %%%%%:  640-block  0
+        -:  641:        }
+        -:  642:    }
+        -:  643:
+    #####:  644:    if( the_formatter ) {
+    %%%%%:  644-block  0
+    #####:  645:        s_log_impl().m_log_formatter_data.push_back( unit_test_log_data_helper_impl(the_formatter, OF_CUSTOM_LOGGER, true) );
+    %%%%%:  645-block  0
+    %%%%%:  645-block  1
+    $$$$$:  645-block  2
+        -:  646:    }
+    #####:  647:}
+    %%%%%:  647-block  0
+        -:  648:
+        -:  649:void
+    #####:  650:unit_test_log_t::set_formatter( unit_test_log_formatter* the_formatter )
+        -:  651:{
+        -:  652:    // remove only user defined logger
+    #####:  653:    log_level current_level = invalid_log_level;
+    #####:  654:    std::ostream *current_stream = 0;
+    #####:  655:    output_format previous_format = OF_INVALID;
+    #####:  656:    for(unit_test_log_impl::v_formatter_data_t::iterator it(s_log_impl().m_log_formatter_data.begin()),
+    %%%%%:  656-block  0
+    %%%%%:  656-block  1
+    #####:  657:            ite(s_log_impl().m_log_formatter_data.end());
+    %%%%%:  657-block  0
+    #####:  658:        it != ite;
+    %%%%%:  658-block  0
+    #####:  659:        ++it)
+    %%%%%:  659-block  0
+        -:  660:    {
+    #####:  661:        if( it->m_enabled ) {
+    %%%%%:  661-block  0
+    #####:  662:            if( current_level == invalid_log_level || it->m_format < previous_format || it->m_format == OF_CUSTOM_LOGGER) {
+    %%%%%:  662-block  0
+    %%%%%:  662-block  1
+    %%%%%:  662-block  2
+    %%%%%:  662-block  3
+    %%%%%:  662-block  4
+    %%%%%:  662-block  5
+    #####:  663:                current_level = it->get_log_level();
+    %%%%%:  663-block  0
+    #####:  664:                current_stream = &(it->stream());
+    %%%%%:  664-block  0
+    #####:  665:                previous_format = it->m_format;
+        -:  666:            }
+        -:  667:        }
+        -:  668:    }
+        -:  669:
+    #####:  670:    if( the_formatter ) {
+    %%%%%:  670-block  0
+    #####:  671:        add_formatter(the_formatter);
+    %%%%%:  671-block  0
+    #####:  672:        set_format(OF_CUSTOM_LOGGER);
+    #####:  673:        set_threshold_level(OF_CUSTOM_LOGGER, current_level);
+    #####:  674:        set_stream(OF_CUSTOM_LOGGER, *current_stream);
+        -:  675:    }
+    #####:  676:}
+    %%%%%:  676-block  0
+        -:  677:
+        -:  678://____________________________________________________________________________//
+        -:  679:
+        -:  680:// ************************************************************************** //
+        -:  681:// **************            unit_test_log_formatter           ************** //
+        -:  682:// ************************************************************************** //
+        -:  683:
+        -:  684:void
+    #####:  685:unit_test_log_formatter::log_entry_value( std::ostream& ostr, lazy_ostream const& value )
+        -:  686:{
+    #####:  687:    log_entry_value( ostr, (wrap_stringstream().ref() << value).str() );
+    %%%%%:  687-block  0
+    %%%%%:  687-block  1
+    %%%%%:  687-block  2
+    %%%%%:  687-block  3
+    $$$$$:  687-block  4
+    $$$$$:  687-block  5
+    #####:  688:}
+        -:  689:
+        -:  690:void
+        3:  691:unit_test_log_formatter::set_log_level(log_level new_log_level)
+        -:  692:{
+        3:  693:    m_log_level = new_log_level;
+        3:  694:}
+        -:  695:
+        -:  696:log_level
+      306:  697:unit_test_log_formatter::get_log_level() const
+        -:  698:{
+      306:  699:    return m_log_level;
+      306:  699-block  0
+        -:  700:}
+        -:  701:
+        -:  702://____________________________________________________________________________//
+        -:  703:
+        -:  704:} // namespace unit_test
+        -:  705:} // namespace boost
+        -:  706:
+        -:  707:#include <boost/test/detail/enable_warnings.hpp>
+        -:  708:
+        -:  709:#endif // BOOST_TEST_UNIT_TEST_LOG_IPP_012205GER
+        -:  710:

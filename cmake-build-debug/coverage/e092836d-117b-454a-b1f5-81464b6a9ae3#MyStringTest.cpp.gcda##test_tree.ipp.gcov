@@ -1,0 +1,1010 @@
+        -:    0:Source:F:/Files/vcpkg/installed/x86-windows/include/boost/test/impl/test_tree.ipp
+        -:    0:Graph:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcno
+        -:    0:Data:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1://  (C) Copyright Gennadiy Rozental 2001.
+        -:    2://  Distributed under the Boost Software License, Version 1.0.
+        -:    3://  (See accompanying file LICENSE_1_0.txt or copy at
+        -:    4://  http://www.boost.org/LICENSE_1_0.txt)
+        -:    5:
+        -:    6://  See http://www.boost.org/libs/test for the library home page.
+        -:    7://
+        -:    8:/// @file
+        -:    9:/// Provides core implementation for Unit Test Framework.
+        -:   10:/// Extensions can be provided in separate files
+        -:   11:// ***************************************************************************
+        -:   12:
+        -:   13:#ifndef BOOST_TEST_UNIT_TEST_SUITE_IPP_012205GER
+        -:   14:#define BOOST_TEST_UNIT_TEST_SUITE_IPP_012205GER
+        -:   15:
+        -:   16:// Boost.Test
+        -:   17:#include <boost/detail/workaround.hpp>
+        -:   18:
+        -:   19:#include <boost/test/framework.hpp>
+        -:   20:#include <boost/test/results_collector.hpp>
+        -:   21:
+        -:   22:#include <boost/test/tree/test_unit.hpp>
+        -:   23:#include <boost/test/tree/visitor.hpp>
+        -:   24:#include <boost/test/tree/traverse.hpp>
+        -:   25:#include <boost/test/tree/auto_registration.hpp>
+        -:   26:#include <boost/test/tree/global_fixture.hpp>
+        -:   27:
+        -:   28:#include <boost/test/utils/foreach.hpp>
+        -:   29:#include <boost/test/utils/basic_cstring/io.hpp>
+        -:   30:
+        -:   31:#include <boost/test/unit_test_parameters.hpp>
+        -:   32:
+        -:   33:// STL
+        -:   34:#include <algorithm>
+        -:   35:#include <vector>
+        -:   36:#include <set>
+        -:   37:
+        -:   38:#include <boost/test/detail/suppress_warnings.hpp>
+        -:   39:
+        -:   40://____________________________________________________________________________//
+        -:   41:
+        -:   42:namespace boost {
+        -:   43:namespace unit_test {
+        -:   44:
+        -:   45:// ************************************************************************** //
+        -:   46:// **************                   test_unit                  ************** //
+        -:   47:// ************************************************************************** //
+        -:   48:
+       11:   49:test_unit::test_unit( const_string name, const_string file_name, std::size_t line_num, test_unit_type t )
+        -:   50:: p_type( t )
+        -:   51:, p_type_name( t == TUT_CASE ? "case" : "suite" )
+        -:   52:, p_file_name( file_name )
+        -:   53:, p_line_num( line_num )
+        -:   54:, p_id( INV_TEST_UNIT_ID )
+        -:   55:, p_parent_id( INV_TEST_UNIT_ID )
+       22:   56:, p_name( std::string( name.begin(), name.size() ) )
+       11:   56-block  0
+    $$$$$:   56-block  1
+    $$$$$:   56-block  2
+    $$$$$:   56-block  3
+    $$$$$:   56-block  4
+        -:   57:, p_timeout( 0 )
+        -:   58:, p_expected_failures( 0 )
+        -:   59:, p_default_status( RS_INHERIT )
+        -:   60:, p_run_status( RS_INVALID )
+       33:   61:, p_sibling_rank(0)
+       11:   61-block  0
+       10:   61-block  1
+        1:   61-block  2
+       11:   61-block  3
+       11:   61-block  4
+       11:   61-block  5
+       11:   61-block  6
+       11:   61-block  7
+       11:   61-block  8
+       11:   61-block  9
+       11:   61-block 10
+       11:   61-block 11
+       11:   61-block 12
+       11:   61-block 13
+    $$$$$:   61-block 14
+    $$$$$:   61-block 15
+    $$$$$:   61-block 16
+    $$$$$:   61-block 17
+    $$$$$:   61-block 18
+    $$$$$:   61-block 19
+        -:   62:{
+       11:   63:}
+       11:   63-block  0
+        -:   64:
+        -:   65://____________________________________________________________________________//
+        -:   66:
+        1:   67:test_unit::test_unit( const_string module_name )
+        -:   68:: p_type( TUT_SUITE )
+        -:   69:, p_type_name( "module" )
+        -:   70:, p_line_num( 0 )
+        -:   71:, p_id( INV_TEST_UNIT_ID )
+        -:   72:, p_parent_id( INV_TEST_UNIT_ID )
+        2:   73:, p_name( std::string( module_name.begin(), module_name.size() ) )
+        1:   73-block  0
+    $$$$$:   73-block  1
+    $$$$$:   73-block  2
+    $$$$$:   73-block  3
+    $$$$$:   73-block  4
+        -:   74:, p_timeout( 0 )
+        -:   75:, p_expected_failures( 0 )
+        -:   76:, p_default_status( RS_INHERIT )
+        -:   77:, p_run_status( RS_INVALID )
+        3:   78:, p_sibling_rank(0)
+        1:   78-block  0
+        1:   78-block  1
+        1:   78-block  2
+        1:   78-block  3
+        1:   78-block  4
+        1:   78-block  5
+        1:   78-block  6
+        1:   78-block  7
+        1:   78-block  8
+        1:   78-block  9
+        1:   78-block 10
+    $$$$$:   78-block 11
+    $$$$$:   78-block 12
+    $$$$$:   78-block 13
+    $$$$$:   78-block 14
+    $$$$$:   78-block 15
+    $$$$$:   78-block 16
+        -:   79:{
+        1:   80:}
+        1:   80-block  0
+        -:   81:
+        -:   82://____________________________________________________________________________//
+        -:   83:
+    #####:   84:test_unit::~test_unit()
+        -:   85:{
+    #####:   86:    framework::deregister_test_unit( this );
+    %%%%%:   86-block  0
+    #####:   87:}
+        -:   88:
+        -:   89://____________________________________________________________________________//
+        -:   90:
+        -:   91:void
+    #####:   92:test_unit::depends_on( test_unit* tu )
+        -:   93:{
+    #####:   94:    BOOST_TEST_SETUP_ASSERT( p_id != framework::master_test_suite().p_id, 
+    %%%%%:   94-block  0
+    %%%%%:   94-block  1
+    %%%%%:   94-block  2
+    $$$$$:   94-block  3
+    $$$$$:   94-block  4
+        -:   95:                             "Can't add dependency to the master test suite" );
+        -:   96:
+    #####:   97:    p_dependencies.value.push_back( tu->p_id );
+    %%%%%:   97-block  0
+    #####:   98:}
+        -:   99:
+        -:  100://____________________________________________________________________________//
+        -:  101:
+        -:  102:void
+    #####:  103:test_unit::add_precondition( precondition_t const& pc )
+        -:  104:{
+    #####:  105:    p_preconditions.value.push_back( pc );
+    %%%%%:  105-block  0
+    #####:  106:}
+        -:  107:
+        -:  108://____________________________________________________________________________//
+        -:  109:
+        -:  110:test_tools::assertion_result
+       12:  111:test_unit::check_preconditions() const
+        -:  112:{
+      12*:  113:    BOOST_TEST_FOREACH( test_unit_id, dep_id, p_dependencies.get() ) {
+       12:  113-block  0
+       12:  113-block  1
+       12:  113-block  2
+       12:  113-block  3
+       12:  113-block  4
+       12:  113-block  5
+       12:  113-block  6
+       12:  113-block  7
+    %%%%%:  113-block  8
+       12:  113-block  9
+       12:  113-block 10
+    %%%%%:  113-block 11
+    %%%%%:  113-block 12
+    %%%%%:  113-block 13
+    %%%%%:  113-block 14
+    %%%%%:  113-block 15
+    %%%%%:  113-block 16
+    %%%%%:  113-block 17
+    %%%%%:  113-block 18
+    %%%%%:  113-block 19
+    $$$$$:  113-block 20
+    $$$$$:  113-block 21
+    $$$$$:  113-block 22
+    $$$$$:  113-block 23
+    $$$$$:  113-block 24
+    #####:  114:        test_unit const& dep = framework::get( dep_id, TUT_ANY );
+    %%%%%:  114-block  0
+        -:  115:
+    #####:  116:        if( !dep.is_enabled() ) {
+    #####:  117:            test_tools::assertion_result res(false);
+    %%%%%:  117-block  0
+    $$$$$:  117-block  1
+    #####:  118:            res.message() << "dependency test " << dep.p_type_name << " \"" << dep.full_name() << "\" is disabled";
+    %%%%%:  118-block  0
+    %%%%%:  118-block  1
+    %%%%%:  118-block  2
+    %%%%%:  118-block  3
+    %%%%%:  118-block  4
+    %%%%%:  118-block  5
+    %%%%%:  118-block  6
+    %%%%%:  118-block  7
+    $$$$$:  118-block  8
+    $$$$$:  118-block  9
+    #####:  119:            return res;
+        -:  120:        }
+        -:  121:
+    #####:  122:        test_results const& test_rslt = unit_test::results_collector.results( dep_id );
+    %%%%%:  122-block  0
+    #####:  123:        if( !test_rslt.passed() ) {
+    #####:  124:            test_tools::assertion_result res(false);
+    %%%%%:  124-block  0
+    $$$$$:  124-block  1
+    #####:  125:            res.message() << "dependency test " << dep.p_type_name << " \"" << dep.full_name() << (test_rslt.skipped() ? "\" was skipped":"\" has failed");
+    %%%%%:  125-block  0
+    %%%%%:  125-block  1
+    %%%%%:  125-block  2
+    %%%%%:  125-block  3
+    %%%%%:  125-block  4
+    %%%%%:  125-block  5
+    %%%%%:  125-block  6
+    %%%%%:  125-block  7
+    %%%%%:  125-block  8
+    %%%%%:  125-block  9
+    %%%%%:  125-block 10
+    %%%%%:  125-block 11
+    $$$$$:  125-block 12
+    $$$$$:  125-block 13
+    $$$$$:  125-block 14
+    #####:  126:            return res;
+        -:  127:        }
+        -:  128:
+    #####:  129:        if( test_rslt.p_test_cases_skipped > 0 ) {
+    %%%%%:  129-block  0
+    #####:  130:            test_tools::assertion_result res(false);
+    %%%%%:  130-block  0
+    $$$$$:  130-block  1
+    #####:  131:            res.message() << "dependency test " << dep.p_type_name << " \"" << dep.full_name() << "\" has skipped test cases";
+    %%%%%:  131-block  0
+    %%%%%:  131-block  1
+    %%%%%:  131-block  2
+    %%%%%:  131-block  3
+    %%%%%:  131-block  4
+    %%%%%:  131-block  5
+    %%%%%:  131-block  6
+    %%%%%:  131-block  7
+    $$$$$:  131-block  8
+    $$$$$:  131-block  9
+    #####:  132:            return res;
+        -:  133:        }
+        -:  134:    }
+        -:  135:
+      12*:  136:    BOOST_TEST_FOREACH( precondition_t, precondition, p_preconditions.get() ) {
+       12:  136-block  0
+       12:  136-block  1
+       12:  136-block  2
+       12:  136-block  3
+       12:  136-block  4
+       12:  136-block  5
+       12:  136-block  6
+       12:  136-block  7
+    %%%%%:  136-block  8
+       12:  136-block  9
+       12:  136-block 10
+    %%%%%:  136-block 11
+    %%%%%:  136-block 12
+    %%%%%:  136-block 13
+    %%%%%:  136-block 14
+    %%%%%:  136-block 15
+    %%%%%:  136-block 16
+    %%%%%:  136-block 17
+    %%%%%:  136-block 18
+    %%%%%:  136-block 19
+    $$$$$:  136-block 20
+    $$$$$:  136-block 21
+    $$$$$:  136-block 22
+    $$$$$:  136-block 23
+    $$$$$:  136-block 24
+    #####:  137:        test_tools::assertion_result res = precondition( p_id );
+    %%%%%:  137-block  0
+    $$$$$:  137-block  1
+    #####:  138:        if( !res ) {
+    %%%%%:  138-block  0
+    %%%%%:  138-block  1
+    #####:  139:            test_tools::assertion_result res_out(false);
+    %%%%%:  139-block  0
+    $$$$$:  139-block  1
+    #####:  140:            res_out.message() << "precondition failed";
+    %%%%%:  140-block  0
+    %%%%%:  140-block  1
+    #####:  141:            if( !res.has_empty_message() )
+    %%%%%:  141-block  0
+    #####:  142:                res_out.message() << ": " << res.message();
+    %%%%%:  142-block  0
+    %%%%%:  142-block  1
+    %%%%%:  142-block  2
+    %%%%%:  142-block  3
+    #####:  143:            return res_out;
+    %%%%%:  143-block  0
+        -:  144:        }
+        -:  145:    }
+        -:  146:
+       12:  147:    return true;
+       12:  147-block  0
+        -:  148:}
+        -:  149:
+        -:  150://____________________________________________________________________________//
+        -:  151:
+        -:  152:void
+    #####:  153:test_unit::increase_exp_fail( counter_t num )
+        -:  154:{
+    #####:  155:    p_expected_failures.value += num;
+        -:  156:
+    #####:  157:    if( p_parent_id != INV_TEST_UNIT_ID )
+    %%%%%:  157-block  0
+    #####:  158:        framework::get<test_suite>( p_parent_id ).increase_exp_fail( num );
+    %%%%%:  158-block  0
+    #####:  159:}
+        -:  160:
+        -:  161://____________________________________________________________________________//
+        -:  162:
+        -:  163:std::string
+    #####:  164:test_unit::full_name() const
+        -:  165:{
+    #####:  166:    if( p_parent_id == INV_TEST_UNIT_ID || p_parent_id == framework::master_test_suite().p_id )
+    %%%%%:  166-block  0
+    %%%%%:  166-block  1
+    %%%%%:  166-block  2
+    %%%%%:  166-block  3
+    %%%%%:  166-block  4
+    %%%%%:  166-block  5
+    %%%%%:  166-block  6
+    %%%%%:  166-block  7
+    #####:  167:        return p_name;
+    %%%%%:  167-block  0
+    %%%%%:  167-block  1
+        -:  168:
+    #####:  169:    std::string res = framework::get<test_suite>( p_parent_id ).full_name();
+    %%%%%:  169-block  0
+    %%%%%:  169-block  1
+    $$$$$:  169-block  2
+    #####:  170:    res.append("/");
+    %%%%%:  170-block  0
+        -:  171:
+    #####:  172:    res.append( p_name );
+    %%%%%:  172-block  0
+        -:  173:
+    #####:  174:    return res;
+    %%%%%:  174-block  0
+        -:  175:}
+        -:  176:
+        -:  177://____________________________________________________________________________//
+        -:  178:
+        -:  179:void
+    #####:  180:test_unit::add_label( const_string l )
+        -:  181:{
+    #####:  182:    p_labels.value.push_back( std::string() + l );
+    %%%%%:  182-block  0
+    %%%%%:  182-block  1
+    %%%%%:  182-block  2
+    $$$$$:  182-block  3
+    $$$$$:  182-block  4
+    $$$$$:  182-block  5
+    #####:  183:}
+        -:  184:
+        -:  185://____________________________________________________________________________//
+        -:  186:
+        -:  187:bool
+    #####:  188:test_unit::has_label( const_string l ) const
+        -:  189:{
+    #####:  190:    return std::find( p_labels->begin(), p_labels->end(), l ) != p_labels->end();
+    %%%%%:  190-block  0
+    %%%%%:  190-block  1
+    %%%%%:  190-block  2
+        -:  191:}
+        -:  192:
+        -:  193://____________________________________________________________________________//
+        -:  194:
+        -:  195:// ************************************************************************** //
+        -:  196:// **************                   test_case                  ************** //
+        -:  197:// ************************************************************************** //
+        -:  198:
+    #####:  199:test_case::test_case( const_string name, boost::function<void ()> const& test_func )
+        -:  200:: test_unit( name, "", 0, static_cast<test_unit_type>(type) )
+    #####:  201:, p_test_func( test_func )
+    %%%%%:  201-block  0
+    %%%%%:  201-block  1
+    $$$$$:  201-block  2
+    $$$$$:  201-block  3
+    $$$$$:  201-block  4
+    $$$$$:  201-block  5
+        -:  202:{
+    #####:  203:    framework::register_test_unit( this );
+    %%%%%:  203-block  0
+    #####:  204:}
+    %%%%%:  204-block  0
+        -:  205:
+        -:  206://____________________________________________________________________________//
+        -:  207:
+       10:  208:test_case::test_case( const_string name, const_string file_name, std::size_t line_num, boost::function<void ()> const& test_func )
+        -:  209:: test_unit( name, file_name, line_num, static_cast<test_unit_type>(type) )
+       10:  210:, p_test_func( test_func )
+       10:  210-block  0
+       10:  210-block  1
+    $$$$$:  210-block  2
+    $$$$$:  210-block  3
+    $$$$$:  210-block  4
+    $$$$$:  210-block  5
+        -:  211:{
+       10:  212:    framework::register_test_unit( this );
+       10:  212-block  0
+       10:  213:}
+       10:  213-block  0
+        -:  214:
+        -:  215://____________________________________________________________________________//
+        -:  216:
+        -:  217:// ************************************************************************** //
+        -:  218:// **************                  test_suite                  ************** //
+        -:  219:// ************************************************************************** //
+        -:  220:
+        -:  221://____________________________________________________________________________//
+        -:  222:
+        1:  223:test_suite::test_suite( const_string name, const_string file_name, std::size_t line_num )
+        1:  224:: test_unit( ut_detail::normalize_test_case_name( name ), file_name, line_num, static_cast<test_unit_type>(type) )
+        1:  224-block  0
+        1:  224-block  1
+        1:  224-block  2
+    $$$$$:  224-block  3
+    $$$$$:  224-block  4
+    $$$$$:  224-block  5
+    $$$$$:  224-block  6
+    $$$$$:  224-block  7
+    $$$$$:  224-block  8
+    $$$$$:  224-block  9
+    $$$$$:  224-block 10
+    $$$$$:  224-block 11
+        -:  225:{
+        1:  226:    framework::register_test_unit( this );
+        1:  227:}
+        1:  227-block  0
+        -:  228:
+        -:  229://____________________________________________________________________________//
+        -:  230:
+        1:  231:test_suite::test_suite( const_string module_name )
+        1:  232:: test_unit( module_name )
+        1:  232-block  0
+        1:  232-block  1
+    $$$$$:  232-block  2
+    $$$$$:  232-block  3
+    $$$$$:  232-block  4
+    $$$$$:  232-block  5
+    $$$$$:  232-block  6
+        -:  233:{
+        1:  234:    framework::register_test_unit( this );
+        1:  235:}
+        1:  235-block  0
+        -:  236:
+        -:  237://____________________________________________________________________________//
+        -:  238:
+        -:  239:void
+       11:  240:test_suite::add( test_unit* tu, counter_t expected_failures, unsigned timeout )
+        -:  241:{
+       11:  242:    tu->p_timeout.value = timeout;
+        -:  243:
+       11:  244:    m_children.push_back( tu->p_id );
+       11:  244-block  0
+       11:  245:    tu->p_parent_id.value = p_id;
+        -:  246:
+       11:  247:    if( tu->p_expected_failures != 0 )
+    #####:  248:        increase_exp_fail( tu->p_expected_failures );
+    %%%%%:  248-block  0
+        -:  249:
+       11:  250:    if( expected_failures )
+       11:  250-block  0
+    #####:  251:        tu->increase_exp_fail( expected_failures );
+    %%%%%:  251-block  0
+       11:  252:}
+        -:  253:
+        -:  254://____________________________________________________________________________//
+        -:  255:
+        -:  256:void
+    #####:  257:test_suite::add( test_unit_generator const& gen, unsigned timeout )
+        -:  258:{
+        -:  259:    test_unit* tu;
+    #####:  260:    while((tu = gen.next()) != 0)
+    %%%%%:  260-block  0
+    #####:  261:        add( tu, 0, timeout );
+    %%%%%:  261-block  0
+    #####:  262:}
+        -:  263:
+        -:  264://____________________________________________________________________________//
+        -:  265:
+        -:  266:void
+    #####:  267:test_suite::add( test_unit_generator const& gen, decorator::collector_t& decorators )
+        -:  268:{
+        -:  269:    test_unit* tu;
+    #####:  270:    while((tu = gen.next()) != 0) {
+    %%%%%:  270-block  0
+    #####:  271:        decorators.store_in( *tu );
+    %%%%%:  271-block  0
+    #####:  272:        add( tu, 0 );
+        -:  273:    }
+    #####:  274:    decorators.reset();
+    %%%%%:  274-block  0
+    #####:  275:}
+        -:  276:
+        -:  277://____________________________________________________________________________//
+        -:  278:
+        -:  279:void
+    #####:  280:test_suite::add( boost::shared_ptr<test_unit_generator> gen_ptr, decorator::collector_t& decorators )
+        -:  281:{
+    #####:  282:    std::pair<boost::shared_ptr<test_unit_generator>, std::vector<decorator::base_ptr> > tmp_p(gen_ptr, decorators.get_lazy_decorators() );
+    %%%%%:  282-block  0
+    %%%%%:  282-block  1
+    %%%%%:  282-block  2
+    $$$$$:  282-block  3
+    #####:  283:    m_generators.push_back(tmp_p);
+    #####:  284:    decorators.reset();
+    %%%%%:  284-block  0
+    #####:  285:}
+        -:  286:
+        -:  287://____________________________________________________________________________//
+        -:  288:
+        -:  289:void
+        2:  290:test_suite::generate( )
+        -:  291:{
+        -:  292:    typedef std::pair<boost::shared_ptr<test_unit_generator>, std::vector<decorator::base_ptr> > element_t;
+        -:  293:  
+       2*:  294:    for(std::vector<element_t>::iterator it(m_generators.begin()), ite(m_generators.end());
+        2:  294-block  0
+        2:  295:        it < ite;
+        2:  295-block  0
+    #####:  296:        ++it)
+    %%%%%:  296-block  0
+        -:  297:    {
+        -:  298:      test_unit* tu;
+    #####:  299:      while((tu = it->first->next()) != 0) {
+    %%%%%:  299-block  0
+    %%%%%:  299-block  1
+    %%%%%:  299-block  2
+    #####:  300:          tu->p_decorators.value.insert( tu->p_decorators.value.end(), it->second.begin(), it->second.end() );
+    %%%%%:  300-block  0
+    $$$$$:  300-block  1
+    $$$$$:  300-block  2
+        -:  301:          //it->second.store_in( *tu );
+    #####:  302:          add( tu, 0 );
+    %%%%%:  302-block  0
+        -:  303:      }
+        -:  304:
+        -:  305:    }
+        2:  306:    m_generators.clear();
+        2:  306-block  0
+        -:  307:    
+        -:  308:    #if 0
+        -:  309:    test_unit* tu;
+        -:  310:    while((tu = gen.next()) != 0) {
+        -:  311:        decorators.store_in( *tu );
+        -:  312:        add( tu, 0 );
+        -:  313:    }
+        -:  314:    #endif
+        2:  315:}
+        -:  316:
+        -:  317://____________________________________________________________________________//
+        -:  318:
+        -:  319:void
+        2:  320:test_suite::check_for_duplicate_test_cases() {
+        -:  321:    // check for clashing names #12597
+        4:  322:    std::set<std::string> names;
+        2:  322-block  0
+        2:  322-block  1
+    $$$$$:  322-block  2
+       13:  323:    for( test_unit_id_list::const_iterator it(m_children.begin()), ite(m_children.end());
+       13:  324:         it < ite;
+       13:  324-block  0
+       11:  325:         ++it) {
+       22:  326:         std::string name = framework::get(*it, TUT_ANY).p_name;
+       11:  326-block  0
+       11:  326-block  1
+       11:  326-block  2
+    $$$$$:  326-block  3
+       11:  327:         std::pair<std::set<std::string>::iterator, bool> ret = names.insert(name);
+       11:  327-block  0
+      11*:  328:         BOOST_TEST_SETUP_ASSERT(ret.second,
+       11:  328-block  0
+    %%%%%:  328-block  1
+    %%%%%:  328-block  2
+    %%%%%:  328-block  3
+    %%%%%:  328-block  4
+    %%%%%:  328-block  5
+    %%%%%:  328-block  6
+    %%%%%:  328-block  7
+    $$$$$:  328-block  8
+    $$$$$:  328-block  9
+    $$$$$:  328-block 10
+    $$$$$:  328-block 11
+    $$$$$:  328-block 12
+    $$$$$:  328-block 13
+    $$$$$:  328-block 14
+    $$$$$:  328-block 15
+    $$$$$:  328-block 16
+    $$$$$:  328-block 17
+    $$$$$:  328-block 18
+    $$$$$:  328-block 19
+    $$$$$:  328-block 20
+    $$$$$:  328-block 21
+    $$$$$:  328-block 22
+        -:  329:            "test unit with name '"
+        -:  330:            + name
+        -:  331:            + std::string("' registered multiple times in the test suite '")
+        -:  332:            + this->p_name.value
+        -:  333:            + "'");
+        -:  334:    }
+        -:  335:
+        4:  336:    return;
+        2:  336-block  0
+        2:  336-block  1
+        -:  337:}
+        -:  338:
+        -:  339://____________________________________________________________________________//
+        -:  340:
+        -:  341:void
+    #####:  342:test_suite::remove( test_unit_id id )
+        -:  343:{
+    #####:  344:    test_unit_id_list::iterator it = std::find( m_children.begin(), m_children.end(), id );
+    %%%%%:  344-block  0
+        -:  345:
+    #####:  346:    if( it != m_children.end() )
+    %%%%%:  346-block  0
+    #####:  347:        m_children.erase( it );
+    %%%%%:  347-block  0
+    %%%%%:  347-block  1
+    $$$$$:  347-block  2
+    #####:  348:}
+    %%%%%:  348-block  0
+        -:  349:
+        -:  350://____________________________________________________________________________//
+        -:  351:
+        -:  352:test_unit_id
+        1:  353:test_suite::get( const_string tu_name ) const
+        -:  354:{
+       1*:  355:    BOOST_TEST_FOREACH( test_unit_id, id, m_children ) {
+        1:  355-block  0
+        1:  355-block  1
+        1:  355-block  2
+        1:  355-block  3
+        1:  355-block  4
+        1:  355-block  5
+        1:  355-block  6
+        1:  355-block  7
+    %%%%%:  355-block  8
+        1:  355-block  9
+        1:  355-block 10
+    %%%%%:  355-block 11
+    %%%%%:  355-block 12
+    %%%%%:  355-block 13
+    %%%%%:  355-block 14
+    %%%%%:  355-block 15
+    %%%%%:  355-block 16
+    %%%%%:  355-block 17
+    %%%%%:  355-block 18
+    $$$$$:  355-block 19
+    $$$$$:  355-block 20
+    $$$$$:  355-block 21
+    $$$$$:  355-block 22
+    #####:  356:        if( tu_name == framework::get( id, ut_detail::test_id_2_unit_type( id ) ).p_name.get() )
+    %%%%%:  356-block  0
+    #####:  357:            return id;
+    %%%%%:  357-block  0
+        -:  358:    }
+        -:  359:
+        1:  360:    return INV_TEST_UNIT_ID;
+        1:  360-block  0
+        -:  361:}
+        -:  362:
+        -:  363://____________________________________________________________________________//
+        -:  364:
+        -:  365:// ************************************************************************** //
+        -:  366:// **************               master_test_suite              ************** //
+        -:  367:// ************************************************************************** //
+        -:  368:
+        1:  369:master_test_suite_t::master_test_suite_t()
+        -:  370:: test_suite( "Master Test Suite" )
+        -:  371:, argc( 0 )
+        1:  372:, argv( 0 )
+        1:  372-block  0
+        -:  373:{
+        1:  374:    p_default_status.value = RS_ENABLED;
+        1:  375:}
+        1:  375-block  0
+        -:  376:
+        -:  377:// ************************************************************************** //
+        -:  378:// **************               traverse_test_tree             ************** //
+        -:  379:// ************************************************************************** //
+        -:  380:
+        -:  381:void
+       50:  382:traverse_test_tree( test_case const& tc, test_tree_visitor& V, bool ignore_status )
+        -:  383:{
+      50*:  384:    if( tc.is_enabled() || ignore_status )
+       50:  384-block  0
+       30:  384-block  1
+       50:  384-block  2
+    %%%%%:  384-block  3
+       50:  384-block  4
+       50:  385:        V.visit( tc );
+       50:  385-block  0
+       50:  386:}
+        -:  387:
+        -:  388://____________________________________________________________________________//
+        -:  389:
+        -:  390:void
+       12:  391:traverse_test_tree( test_suite const& suite, test_tree_visitor& V, bool ignore_status )
+        -:  392:{
+        -:  393:    // skip disabled test suite unless we asked to ignore this condition
+      12*:  394:    if( !ignore_status && !suite.is_enabled() )
+       12:  394-block  0
+        5:  394-block  1
+    %%%%%:  394-block  2
+       12:  394-block  3
+       12:  394-block  4
+    #####:  395:        return;
+    %%%%%:  395-block  0
+        -:  396:
+        -:  397:    // Invoke test_suite_start callback
+       12:  398:    if( !V.test_suite_start( suite ) )
+       12:  398-block  0
+        2:  399:        return;
+        2:  399-block  0
+        -:  400:
+        -:  401:    // Recurse into children
+       10:  402:    std::size_t total_children = suite.m_children.size();
+       10:  402-block  0
+       65:  403:    for( std::size_t i=0; i < total_children; ) {
+       65:  403-block  0
+       55:  403-block  1
+        -:  404:        // this statement can remove the test unit from this list
+       55:  405:        traverse_test_tree( suite.m_children[i], V, ignore_status );
+       55:  405-block  0
+       55:  406:        if( total_children > suite.m_children.size() )
+    #####:  407:            total_children = suite.m_children.size();
+    %%%%%:  407-block  0
+        -:  408:        else
+       55:  409:            ++i;
+       55:  409-block  0
+        -:  410:    }
+        -:  411:
+        -:  412:    // Invoke test_suite_finish callback
+       10:  413:    V.test_suite_finish( suite );
+       10:  413-block  0
+        -:  414:}
+        -:  415:
+        -:  416://____________________________________________________________________________//
+        -:  417:
+        -:  418:void
+       60:  419:traverse_test_tree( test_unit_id id, test_tree_visitor& V, bool ignore_status )
+        -:  420:{
+       60:  421:    if( ut_detail::test_id_2_unit_type( id ) == TUT_CASE )
+       60:  421-block  0
+       50:  422:        traverse_test_tree( framework::get<test_case>( id ), V, ignore_status );
+       50:  422-block  0
+        -:  423:    else
+       10:  424:        traverse_test_tree( framework::get<test_suite>( id ), V, ignore_status );
+       10:  424-block  0
+       60:  425:}
+        -:  426:
+        -:  427://____________________________________________________________________________//
+        -:  428:
+        -:  429:// ************************************************************************** //
+        -:  430:// **************               object generators              ************** //
+        -:  431:// ************************************************************************** //
+        -:  432:
+        -:  433:namespace ut_detail {
+        -:  434:
+        -:  435:std::string
+       11:  436:normalize_test_case_name( const_string name )
+        -:  437:{
+       11:  438:    std::string norm_name( name.begin(), name.size() );
+       11:  438-block  0
+    $$$$$:  438-block  1
+        -:  439:
+       11:  440:    if( name[0] == '&' )
+    #####:  441:        norm_name = norm_name.substr( 1 );
+    %%%%%:  441-block  0
+    %%%%%:  441-block  1
+        -:  442:
+        -:  443:    // trim spaces
+       11:  444:    std::size_t first_not_space = norm_name.find_first_not_of(' ');
+       11:  444-block  0
+       11:  445:    if( first_not_space ) {
+    #####:  446:        norm_name.erase(0, first_not_space);
+    %%%%%:  446-block  0
+        -:  447:    }
+        -:  448:
+       11:  449:    std::size_t last_not_space = norm_name.find_last_not_of(' ');
+       11:  449-block  0
+       11:  450:    if( last_not_space !=std::string::npos ) {
+       11:  451:        norm_name.erase(last_not_space + 1);
+       11:  451-block  0
+        -:  452:    }
+        -:  453:
+        -:  454:    // sanitize all chars that might be used in runtime filters
+        -:  455:    static const char to_replace[] = { ':', '*', '@', '+', '!', '/' };
+       11:  456:    for(std::size_t index = 0;
+       11:  456-block  0
+       77:  457:        index < sizeof(to_replace)/sizeof(to_replace[0]);
+       77:  457-block  0
+        -:  458:        index++) {
+       66:  459:        std::replace(norm_name.begin(), norm_name.end(), to_replace[index], '_');
+       66:  459-block  0
+        -:  460:    }
+        -:  461:
+       11:  462:    return norm_name;
+       11:  462-block  0
+       11:  462-block  1
+        -:  463:}
+        -:  464:
+        -:  465://____________________________________________________________________________//
+        -:  466:
+        -:  467:// ************************************************************************** //
+        -:  468:// **************           auto_test_unit_registrar           ************** //
+        -:  469:// ************************************************************************** //
+        -:  470:
+       10:  471:auto_test_unit_registrar::auto_test_unit_registrar( test_case* tc, decorator::collector_t& decorators, counter_t exp_fail )
+        -:  472:{
+       10:  473:    framework::current_auto_test_suite().add( tc, exp_fail );
+       10:  473-block  0
+        -:  474:
+       10:  475:    decorators.store_in( *tc );
+       10:  476:    decorators.reset();
+       10:  477:}
+        -:  478:
+        -:  479://____________________________________________________________________________//
+        -:  480:
+        1:  481:auto_test_unit_registrar::auto_test_unit_registrar( const_string ts_name, const_string ts_file, std::size_t ts_line, decorator::collector_t& decorators )
+        -:  482:{
+        1:  483:    test_unit_id id = framework::current_auto_test_suite().get( ts_name );
+        1:  483-block  0
+    $$$$$:  483-block  1
+        -:  484:
+        -:  485:    test_suite* ts;
+        -:  486:
+        1:  487:    if( id != INV_TEST_UNIT_ID ) {
+        1:  487-block  0
+    #####:  488:        ts = &framework::get<test_suite>( id );
+    %%%%%:  488-block  0
+    #####:  489:        BOOST_ASSERT( ts->p_parent_id == framework::current_auto_test_suite().p_id );
+    %%%%%:  489-block  0
+    %%%%%:  489-block  1
+        -:  490:    }
+        -:  491:    else {
+        1:  492:        ts = new test_suite( ts_name, ts_file, ts_line );
+        1:  492-block  0
+        1:  492-block  1
+    $$$$$:  492-block  2
+    $$$$$:  492-block  3
+       1*:  493:        framework::current_auto_test_suite().add( ts );
+        1:  493-block  0
+        1:  493-block  1
+    %%%%%:  493-block  2
+        1:  493-block  3
+        -:  494:    }
+        -:  495:
+        1:  496:    decorators.store_in( *ts );
+        1:  496-block  0
+        1:  497:    decorators.reset();
+        -:  498:
+        1:  499:    framework::current_auto_test_suite( ts );
+        1:  500:}
+        -:  501:
+        -:  502://____________________________________________________________________________//
+        -:  503:
+    #####:  504:auto_test_unit_registrar::auto_test_unit_registrar( test_unit_generator const& tc_gen, decorator::collector_t& decorators )
+        -:  505:{
+    #####:  506:    framework::current_auto_test_suite().add( tc_gen, decorators );
+    %%%%%:  506-block  0
+    #####:  507:}
+        -:  508:
+        -:  509://____________________________________________________________________________//
+        -:  510:
+    #####:  511:auto_test_unit_registrar::auto_test_unit_registrar( boost::shared_ptr<test_unit_generator> tc_gen, decorator::collector_t& decorators )
+        -:  512:{
+    #####:  513:    framework::current_auto_test_suite().add( tc_gen, decorators );
+    %%%%%:  513-block  0
+    %%%%%:  513-block  1
+    $$$$$:  513-block  2
+    #####:  514:}
+        -:  515:
+        -:  516:
+        -:  517://____________________________________________________________________________//
+        -:  518:
+        1:  519:auto_test_unit_registrar::auto_test_unit_registrar( int )
+        -:  520:{
+        1:  521:    framework::current_auto_test_suite( 0, false );
+        1:  521-block  0
+        1:  522:}
+        -:  523:
+        -:  524://____________________________________________________________________________//
+        -:  525:
+        -:  526:} // namespace ut_detail
+        -:  527:
+        -:  528:// ************************************************************************** //
+        -:  529:// **************                global_fixture                ************** //
+        -:  530:// ************************************************************************** //
+        -:  531:
+    #####:  532:global_fixture::global_fixture(): registered(false)
+    %%%%%:  532-block  0
+    $$$$$:  532-block  1
+        -:  533:{
+    #####:  534:    framework::register_global_fixture( *this );
+    #####:  535:    registered = true;
+    #####:  536:}
+    %%%%%:  536-block  0
+        -:  537:
+    #####:  538:void global_fixture::unregister_from_framework() {
+        -:  539:    // not accessing the framework singleton after deregistering -> release
+        -:  540:    // of the observer from the framework
+    #####:  541:    if(registered) {
+    %%%%%:  541-block  0
+    #####:  542:        framework::deregister_global_fixture( *this );
+    %%%%%:  542-block  0
+        -:  543:    }
+    #####:  544:    registered = false;
+    #####:  545:}
+        -:  546:
+    #####:  547:global_fixture::~global_fixture()
+        -:  548:{
+    #####:  549:    this->unregister_from_framework();
+    #####:  550:}
+------------------
+_ZN5boost9unit_test14global_fixtureD0Ev:
+    #####:  547:global_fixture::~global_fixture()
+        -:  548:{
+        -:  549:    this->unregister_from_framework();
+    #####:  550:}
+    %%%%%:  550-block  0
+------------------
+_ZN5boost9unit_test14global_fixtureD2Ev:
+    #####:  547:global_fixture::~global_fixture()
+        -:  548:{
+    #####:  549:    this->unregister_from_framework();
+    %%%%%:  549-block  0
+    #####:  550:}
+------------------
+        -:  551:
+        -:  552:// ************************************************************************** //
+        -:  553:// **************            global_configuration              ************** //
+        -:  554:// ************************************************************************** //
+        -:  555:
+    #####:  556:global_configuration::global_configuration(): registered(false)
+    %%%%%:  556-block  0
+    $$$$$:  556-block  1
+        -:  557:{
+    #####:  558:    framework::register_observer( *this );
+    #####:  559:    registered = true;
+    #####:  560:}
+    %%%%%:  560-block  0
+        -:  561:
+    #####:  562:void global_configuration::unregister_from_framework()
+        -:  563:{
+        -:  564:    // not accessing the framework singleton after deregistering -> release
+        -:  565:    // of the observer from the framework
+    #####:  566:    if(registered) {
+    %%%%%:  566-block  0
+    #####:  567:        framework::deregister_observer( *this );
+    %%%%%:  567-block  0
+        -:  568:    }
+    #####:  569:    registered = false;
+    #####:  570:}
+        -:  571:
+    #####:  572:global_configuration::~global_configuration()
+        -:  573:{
+    #####:  574:    this->unregister_from_framework();
+    #####:  575:}
+------------------
+_ZN5boost9unit_test20global_configurationD0Ev:
+    #####:  572:global_configuration::~global_configuration()
+        -:  573:{
+        -:  574:    this->unregister_from_framework();
+    #####:  575:}
+    %%%%%:  575-block  0
+------------------
+_ZN5boost9unit_test20global_configurationD2Ev:
+    #####:  572:global_configuration::~global_configuration()
+        -:  573:{
+    #####:  574:    this->unregister_from_framework();
+    %%%%%:  574-block  0
+    #####:  575:}
+------------------
+        -:  576:
+        -:  577://____________________________________________________________________________//
+        -:  578:
+        -:  579:} // namespace unit_test
+        -:  580:} // namespace boost
+        -:  581:
+        -:  582:#include <boost/test/detail/enable_warnings.hpp>
+        -:  583:
+        -:  584:#endif // BOOST_TEST_UNIT_TEST_SUITE_IPP_012205GER

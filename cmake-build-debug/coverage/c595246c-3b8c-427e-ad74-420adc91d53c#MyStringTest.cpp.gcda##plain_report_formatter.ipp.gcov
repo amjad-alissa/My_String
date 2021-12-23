@@ -1,0 +1,426 @@
+        -:    0:Source:F:/Files/vcpkg/installed/x86-windows/include/boost/test/impl/plain_report_formatter.ipp
+        -:    0:Graph:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcno
+        -:    0:Data:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1://  (C) Copyright Gennadiy Rozental 2001.
+        -:    2://  Distributed under the Boost Software License, Version 1.0.
+        -:    3://  (See accompanying file LICENSE_1_0.txt or copy at
+        -:    4://  http://www.boost.org/LICENSE_1_0.txt)
+        -:    5:
+        -:    6://  See http://www.boost.org/libs/test for the library home page.
+        -:    7://
+        -:    8://  File        : $RCSfile$
+        -:    9://
+        -:   10://  Version     : $Revision$
+        -:   11://
+        -:   12://  Description : plain report formatter definition
+        -:   13:// ***************************************************************************
+        -:   14:
+        -:   15:#ifndef BOOST_TEST_PLAIN_REPORT_FORMATTER_IPP_020105GER
+        -:   16:#define BOOST_TEST_PLAIN_REPORT_FORMATTER_IPP_020105GER
+        -:   17:
+        -:   18:// Boost.Test
+        -:   19:#include <boost/test/output/plain_report_formatter.hpp>
+        -:   20:#include <boost/test/utils/custom_manip.hpp>
+        -:   21:#include <boost/test/results_collector.hpp>
+        -:   22:#include <boost/test/unit_test_parameters.hpp>
+        -:   23:
+        -:   24:#include <boost/test/tree/test_unit.hpp>
+        -:   25:
+        -:   26:#include <boost/test/utils/basic_cstring/io.hpp>
+        -:   27:#include <boost/test/utils/setcolor.hpp>
+        -:   28:
+        -:   29:// STL
+        -:   30:#include <iomanip>
+        -:   31:#include <boost/config/no_tr1/cmath.hpp>
+        -:   32:#include <iostream>
+        -:   33:
+        -:   34:#include <boost/test/detail/suppress_warnings.hpp>
+        -:   35:
+        -:   36:# ifdef BOOST_NO_STDC_NAMESPACE
+        -:   37:namespace std { using ::log10; }
+        -:   38:# endif
+        -:   39:
+        -:   40://____________________________________________________________________________//
+        -:   41:
+        -:   42:namespace boost {
+        -:   43:namespace unit_test {
+        -:   44:namespace output {
+        -:   45:
+        -:   46:namespace {
+        -:   47:
+        -:   48:typedef utils::custom_manip<struct quote_t> quote;
+        -:   49:
+        -:   50:template<typename T>
+        -:   51:inline std::ostream&
+    #####:   52:operator<<( utils::custom_printer<quote> const& p, T const& value )
+        -:   53:{
+    #####:   54:    *p << '"' << value << '"';
+    %%%%%:   54-block  0
+        -:   55:
+    #####:   56:    return *p;
+        -:   57:}
+        -:   58:
+        -:   59://____________________________________________________________________________//
+        -:   60:
+        -:   61:void
+    #####:   62:print_stat_value( std::ostream& ostr, counter_t v, counter_t indent, counter_t total, const_string name, const_string res )
+        -:   63:{
+    #####:   64:    if( v == 0 )
+    %%%%%:   64-block  0
+    #####:   65:        return;
+    %%%%%:   65-block  0
+        -:   66:
+    #####:   67:    if( total > 0 )
+    %%%%%:   67-block  0
+    #####:   68:        ostr << std::setw( static_cast<int>(indent) ) << "" << v << ' ' << name << ( v != 1 ? "s" : "" )
+    %%%%%:   68-block  0
+    #####:   69:             << " out of " << total << ' ' << res << '\n';
+    %%%%%:   69-block  0
+    %%%%%:   69-block  1
+    %%%%%:   69-block  2
+        -:   70:    else
+    #####:   71:        ostr << std::setw( static_cast<int>(indent) ) << "" << v << ' ' << res << ' ' << name << ( v != 1 ? "s" : "" ) << '\n';
+    %%%%%:   71-block  0
+    %%%%%:   71-block  1
+    %%%%%:   71-block  2
+    %%%%%:   71-block  3
+        -:   72:}
+        -:   73:
+        -:   74://____________________________________________________________________________//
+        -:   75:
+        -:   76:} // local namespace
+        -:   77:
+        -:   78:// ************************************************************************** //
+        -:   79:// **************             plain_report_formatter           ************** //
+        -:   80:// ************************************************************************** //
+        -:   81:
+        -:   82:void
+        1:   83:plain_report_formatter::results_report_start( std::ostream& ostr )
+        -:   84:{
+        1:   85:    m_indent = 0;
+        1:   86:    m_color_output = runtime_config::get<bool>( runtime_config::btrt_color_output );
+        1:   86-block  0
+        1:   87:    ostr << '\n';
+        1:   87-block  0
+        1:   88:}
+        -:   89:
+        -:   90://____________________________________________________________________________//
+        -:   91:
+        -:   92:void
+        1:   93:plain_report_formatter::results_report_finish( std::ostream& ostr )
+        -:   94:{
+        1:   95:    ostr.flush();
+        1:   95-block  0
+        1:   96:}
+        -:   97:
+        -:   98://____________________________________________________________________________//
+        -:   99:
+        -:  100:void
+    #####:  101:plain_report_formatter::test_unit_report_start( test_unit const& tu, std::ostream& ostr )
+        -:  102:{
+    #####:  103:    test_results const& tr = results_collector.results( tu.p_id );
+    %%%%%:  103-block  0
+        -:  104:
+    #####:  105:    const_string descr;
+    %%%%%:  105-block  0
+        -:  106:
+    #####:  107:    if( tr.passed() )
+    %%%%%:  107-block  0
+    %%%%%:  107-block  1
+    #####:  108:        descr = "has passed";
+    %%%%%:  108-block  0
+    #####:  109:    else if( tr.p_skipped )
+    %%%%%:  109-block  0
+    #####:  110:        descr = "was skipped";
+    %%%%%:  110-block  0
+    #####:  111:    else if( tr.p_timed_out )
+    %%%%%:  111-block  0
+    #####:  112:        descr = "has timed out";
+    %%%%%:  112-block  0
+    #####:  113:    else if( tr.p_aborted )
+    %%%%%:  113-block  0
+    #####:  114:        descr = "was aborted";
+    %%%%%:  114-block  0
+        -:  115:    else
+    #####:  116:        descr = "has failed";
+    %%%%%:  116-block  0
+        -:  117:
+    #####:  118:    ostr << std::setw( static_cast<int>(m_indent) ) << ""
+    #####:  119:         << "Test " << tu.p_type_name << ' ' << quote() << tu.full_name() << ' ' << descr;
+    %%%%%:  119-block  0
+    %%%%%:  119-block  1
+    %%%%%:  119-block  2
+    %%%%%:  119-block  3
+    %%%%%:  119-block  4
+    %%%%%:  119-block  5
+    %%%%%:  119-block  6
+    %%%%%:  119-block  7
+    %%%%%:  119-block  8
+    %%%%%:  119-block  9
+    %%%%%:  119-block 10
+    $$$$$:  119-block 11
+    $$$$$:  119-block 12
+    $$$$$:  119-block 13
+    $$$$$:  119-block 14
+        -:  120:
+    #####:  121:    if( tr.p_skipped ) {
+    #####:  122:        ostr  << "\n";
+    %%%%%:  122-block  0
+    #####:  123:        m_indent += 2;
+    #####:  124:        return;
+    %%%%%:  124-block  0
+        -:  125:    }
+        -:  126:
+        -:  127:    // aborted test case within failed ones, timed-out TC exclusive with failed/aborted
+    #####:  128:    counter_t total_assertions  = tr.p_assertions_passed + tr.p_assertions_failed;
+    %%%%%:  128-block  0
+    #####:  129:    counter_t total_tc          = tr.p_test_cases_passed + tr.p_test_cases_warned + tr.p_test_cases_failed + tr.p_test_cases_skipped + tr.p_test_cases_timed_out;
+        -:  130:
+    #####:  131:    if( total_assertions > 0 || total_tc > 0 || tr.p_warnings_failed > 0)
+    %%%%%:  131-block  0
+    %%%%%:  131-block  1
+    %%%%%:  131-block  2
+    %%%%%:  131-block  3
+    %%%%%:  131-block  4
+    #####:  132:        ostr << " with:";
+    %%%%%:  132-block  0
+        -:  133:
+    #####:  134:    ostr << '\n';
+    %%%%%:  134-block  0
+    #####:  135:    m_indent += 2;
+        -:  136:
+    #####:  137:    print_stat_value( ostr, tr.p_test_cases_passed , m_indent, total_tc        , "test case", "passed" );
+    %%%%%:  137-block  0
+    %%%%%:  137-block  1
+    %%%%%:  137-block  2
+    $$$$$:  137-block  3
+    $$$$$:  137-block  4
+    #####:  138:    print_stat_value( ostr, tr.p_test_cases_warned , m_indent, total_tc        , "test case", "passed with warnings" );
+    %%%%%:  138-block  0
+    %%%%%:  138-block  1
+    %%%%%:  138-block  2
+    $$$$$:  138-block  3
+    $$$$$:  138-block  4
+    #####:  139:    print_stat_value( ostr, tr.p_test_cases_failed , m_indent, total_tc        , "test case", "failed" );
+    %%%%%:  139-block  0
+    %%%%%:  139-block  1
+    %%%%%:  139-block  2
+    $$$$$:  139-block  3
+    $$$$$:  139-block  4
+    #####:  140:    print_stat_value( ostr, tr.p_test_cases_timed_out, m_indent, total_tc      , "test case", "timed-out" );
+    %%%%%:  140-block  0
+    %%%%%:  140-block  1
+    %%%%%:  140-block  2
+    $$$$$:  140-block  3
+    $$$$$:  140-block  4
+    #####:  141:    print_stat_value( ostr, tr.p_test_suites_timed_out, m_indent, tr.p_test_suites, "test suite", "timed-out" );
+    %%%%%:  141-block  0
+    %%%%%:  141-block  1
+    %%%%%:  141-block  2
+    $$$$$:  141-block  3
+    $$$$$:  141-block  4
+    #####:  142:    print_stat_value( ostr, tr.p_test_cases_skipped, m_indent, total_tc        , "test case", "skipped" );
+    %%%%%:  142-block  0
+    %%%%%:  142-block  1
+    %%%%%:  142-block  2
+    $$$$$:  142-block  3
+    $$$$$:  142-block  4
+    #####:  143:    print_stat_value( ostr, tr.p_test_cases_aborted, m_indent, total_tc        , "test case", "aborted" );
+    %%%%%:  143-block  0
+    %%%%%:  143-block  1
+    %%%%%:  143-block  2
+    $$$$$:  143-block  3
+    $$$$$:  143-block  4
+    #####:  144:    print_stat_value( ostr, tr.p_assertions_passed , m_indent, total_assertions, "assertion", "passed" );
+    %%%%%:  144-block  0
+    %%%%%:  144-block  1
+    %%%%%:  144-block  2
+    $$$$$:  144-block  3
+    $$$$$:  144-block  4
+    #####:  145:    print_stat_value( ostr, tr.p_assertions_failed , m_indent, total_assertions, "assertion", "failed" );
+    %%%%%:  145-block  0
+    %%%%%:  145-block  1
+    %%%%%:  145-block  2
+    $$$$$:  145-block  3
+    $$$$$:  145-block  4
+    #####:  146:    print_stat_value( ostr, tr.p_warnings_failed   , m_indent, 0               , "warning"  , "failed" );
+    %%%%%:  146-block  0
+    %%%%%:  146-block  1
+    %%%%%:  146-block  2
+    $$$$$:  146-block  3
+    $$$$$:  146-block  4
+    #####:  147:    print_stat_value( ostr, tr.p_expected_failures , m_indent, 0               , "failure"  , "expected" );
+    %%%%%:  147-block  0
+    %%%%%:  147-block  1
+    %%%%%:  147-block  2
+    $$$$$:  147-block  3
+    $$$$$:  147-block  4
+        -:  148:
+    #####:  149:    ostr << '\n';
+    %%%%%:  149-block  0
+        -:  150:}
+        -:  151:
+        -:  152://____________________________________________________________________________//
+        -:  153:
+        -:  154:void
+    #####:  155:plain_report_formatter::test_unit_report_finish( test_unit const&, std::ostream& )
+        -:  156:{
+    #####:  157:    m_indent -= 2;
+    #####:  158:}
+        -:  159:
+        -:  160://____________________________________________________________________________//
+        -:  161:
+        -:  162:void
+        1:  163:plain_report_formatter::do_confirmation_report( test_unit const& tu, std::ostream& ostr )
+        -:  164:{
+        1:  165:    test_results const& tr = results_collector.results( tu.p_id );
+        1:  165-block  0
+        -:  166:
+        1:  167:    if( tr.passed() ) {
+        1:  167-block  0
+        1:  167-block  1
+        1:  168:        BOOST_TEST_SCOPE_SETCOLOR( m_color_output, ostr, term_attr::BRIGHT, term_color::GREEN );
+        1:  168-block  0
+    $$$$$:  168-block  1
+        -:  169:
+        1:  170:        ostr << "*** No errors detected\n";
+        1:  170-block  0
+        1:  171:        return;
+        1:  171-block  0
+        -:  172:    }
+        -:  173:
+    #####:  174:    BOOST_TEST_SCOPE_SETCOLOR( m_color_output, ostr, term_attr::BRIGHT, term_color::RED );
+    %%%%%:  174-block  0
+    $$$$$:  174-block  1
+        -:  175:
+    #####:  176:    if( tr.p_skipped ) {
+    %%%%%:  176-block  0
+    #####:  177:        ostr << "*** The test " << tu.p_type_name << ' ' << quote() << tu.full_name() << " was skipped"
+    %%%%%:  177-block  0
+    %%%%%:  177-block  1
+    %%%%%:  177-block  2
+    %%%%%:  177-block  3
+    %%%%%:  177-block  4
+    %%%%%:  177-block  5
+    %%%%%:  177-block  6
+    $$$$$:  177-block  7
+    $$$$$:  177-block  8
+    $$$$$:  177-block  9
+    $$$$$:  177-block 10
+    #####:  178:             << "; see standard output for details\n";
+    %%%%%:  178-block  0
+    %%%%%:  178-block  1
+    #####:  179:        return;
+        -:  180:    }
+        -:  181:
+    #####:  182:    if( tr.p_timed_out ) {
+    %%%%%:  182-block  0
+    #####:  183:        ostr << "*** The test " << tu.p_type_name << ' ' << quote() << tu.full_name() << " has timed out"
+    %%%%%:  183-block  0
+    %%%%%:  183-block  1
+    %%%%%:  183-block  2
+    %%%%%:  183-block  3
+    %%%%%:  183-block  4
+    %%%%%:  183-block  5
+    %%%%%:  183-block  6
+    $$$$$:  183-block  7
+    $$$$$:  183-block  8
+    $$$$$:  183-block  9
+    $$$$$:  183-block 10
+    #####:  184:             << "; see standard output for details\n";
+    %%%%%:  184-block  0
+    %%%%%:  184-block  1
+    #####:  185:        return;
+        -:  186:    }
+        -:  187:
+    #####:  188:    if( tr.p_aborted ) {
+    %%%%%:  188-block  0
+    #####:  189:        ostr << "*** The test " << tu.p_type_name << ' ' << quote() << tu.full_name() << " was aborted"
+    %%%%%:  189-block  0
+    %%%%%:  189-block  1
+    %%%%%:  189-block  2
+    %%%%%:  189-block  3
+    %%%%%:  189-block  4
+    %%%%%:  189-block  5
+    %%%%%:  189-block  6
+    $$$$$:  189-block  7
+    $$$$$:  189-block  8
+    $$$$$:  189-block  9
+    $$$$$:  189-block 10
+    #####:  190:             << "; see standard output for details\n";
+    %%%%%:  190-block  0
+    %%%%%:  190-block  1
+        -:  191:    }
+        -:  192:
+    #####:  193:    if( tr.p_assertions_failed == 0 ) {
+    %%%%%:  193-block  0
+    #####:  194:        if( !tr.p_aborted )
+    %%%%%:  194-block  0
+    #####:  195:            ostr << "*** Errors were detected in the test " << tu.p_type_name << ' ' << quote() << tu.full_name()
+    %%%%%:  195-block  0
+    %%%%%:  195-block  1
+    %%%%%:  195-block  2
+    %%%%%:  195-block  3
+    %%%%%:  195-block  4
+    %%%%%:  195-block  5
+    %%%%%:  195-block  6
+    $$$$$:  195-block  7
+    $$$$$:  195-block  8
+    $$$$$:  195-block  9
+    $$$$$:  195-block 10
+    #####:  196:                 << "; see standard output for details\n";
+    %%%%%:  196-block  0
+    #####:  197:        return;
+    %%%%%:  197-block  0
+        -:  198:    }
+        -:  199:
+    #####:  200:    counter_t num_failures = tr.p_assertions_failed;
+    %%%%%:  200-block  0
+        -:  201:
+    #####:  202:    ostr << "*** " << num_failures << " failure" << ( num_failures != 1 ? "s are" : " is" ) << " detected";
+    %%%%%:  202-block  0
+    %%%%%:  202-block  1
+    %%%%%:  202-block  2
+    %%%%%:  202-block  3
+    %%%%%:  202-block  4
+    %%%%%:  202-block  5
+    %%%%%:  202-block  6
+        -:  203:
+    #####:  204:    if( tr.p_expected_failures > 0 )
+    %%%%%:  204-block  0
+    #####:  205:        ostr << " (" << tr.p_expected_failures << " failure" << ( tr.p_expected_failures != 1 ? "s are" : " is" ) << " expected)";
+    %%%%%:  205-block  0
+    %%%%%:  205-block  1
+    %%%%%:  205-block  2
+    %%%%%:  205-block  3
+    %%%%%:  205-block  4
+    %%%%%:  205-block  5
+    %%%%%:  205-block  6
+    %%%%%:  205-block  7
+        -:  206:
+    #####:  207:    ostr << " in the test " << tu.p_type_name << " " << quote() << tu.full_name() << "\n";
+    %%%%%:  207-block  0
+    %%%%%:  207-block  1
+    %%%%%:  207-block  2
+    %%%%%:  207-block  3
+    %%%%%:  207-block  4
+    %%%%%:  207-block  5
+    %%%%%:  207-block  6
+    %%%%%:  207-block  7
+    $$$$$:  207-block  8
+    $$$$$:  207-block  9
+    $$$$$:  207-block 10
+    $$$$$:  207-block 11
+        -:  208:}
+        -:  209:
+        -:  210://____________________________________________________________________________//
+        -:  211:
+        -:  212:} // namespace output
+        -:  213:} // namespace unit_test
+        -:  214:} // namespace boost
+        -:  215:
+        -:  216:#include <boost/test/detail/enable_warnings.hpp>
+        -:  217:
+        -:  218:#endif // BOOST_TEST_PLAIN_REPORT_FORMATTER_IPP_020105GER

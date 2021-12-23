@@ -1,0 +1,184 @@
+        -:    0:Source:F:/Files/vcpkg/installed/x86-windows/include/boost/test/utils/timer.hpp
+        -:    0:Graph:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcno
+        -:    0:Data:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1://  (C) Copyright Raffi Enficiaud 2019.
+        -:    2://  Distributed under the Boost Software License, Version 1.0.
+        -:    3://  (See accompanying file LICENSE_1_0.txt or copy at
+        -:    4://  http://www.boost.org/LICENSE_1_0.txt)
+        -:    5:
+        -:    6://  See http://www.boost.org/libs/test for the library home page.
+        -:    7://
+        -:    8://  Description : timer and elapsed types
+        -:    9:// ***************************************************************************
+        -:   10:
+        -:   11:#ifndef BOOST_TEST_UTILS_TIMER_HPP
+        -:   12:#define BOOST_TEST_UTILS_TIMER_HPP
+        -:   13:
+        -:   14:#include <boost/config.hpp>
+        -:   15:#include <boost/cstdint.hpp>
+        -:   16:#include <utility>
+        -:   17:#include <ctime>
+        -:   18:
+        -:   19:# if defined(_WIN32) || defined(__CYGWIN__)
+        -:   20:#   define BOOST_TEST_TIMER_WINDOWS_API
+        -:   21:# elif defined(__MACH__)// && !defined(CLOCK_MONOTONIC)
+        -:   22:#   // we compile for all macs the same, CLOCK_MONOTONIC introduced in 10.12
+        -:   23:#   define BOOST_TEST_TIMER_MACH_API
+        -:   24:# else
+        -:   25:#   define BOOST_TEST_TIMER_POSIX_API
+        -:   26:#   if !defined(CLOCK_MONOTONIC)
+        -:   27:#     error "CLOCK_MONOTONIC not defined"
+        -:   28:#   endif
+        -:   29:# endif
+        -:   30:
+        -:   31:# if defined(BOOST_TEST_TIMER_WINDOWS_API)
+        -:   32:#   include <windows.h>
+        -:   33:# elif defined(BOOST_TEST_TIMER_MACH_API)
+        -:   34:#   include <mach/mach_time.h>
+        -:   35://#   include <mach/mach.h>      /* host_get_clock_service, mach_... */
+        -:   36:# else
+        -:   37:#   include <sys/time.h>
+        -:   38:# endif
+        -:   39:
+        -:   40:# ifdef BOOST_NO_STDC_NAMESPACE
+        -:   41:  namespace std { using ::clock_t; using ::clock; }
+        -:   42:# endif
+        -:   43:
+        -:   44:namespace boost {
+        -:   45:namespace unit_test {
+        -:   46:namespace timer {
+        -:   47:
+        -:   48:  struct elapsed_time
+        -:   49:  {
+        -:   50:    typedef boost::int_least64_t nanosecond_type;
+        -:   51:
+        -:   52:    nanosecond_type wall;
+        -:   53:    nanosecond_type system;
+        -:   54:    void clear() {
+        -:   55:      wall = 0;
+        -:   56:      system = 0;
+        -:   57:    }
+        -:   58:  };
+        -:   59:
+        -:   60:  inline double
+       32:   61:  microsecond_wall_time( elapsed_time const& elapsed )
+        -:   62:  {
+       32:   63:      return elapsed.wall / 1E3;
+       32:   63-block  0
+        -:   64:  }
+        -:   65:
+        -:   66:  inline double
+        -:   67:  second_wall_time( elapsed_time const& elapsed )
+        -:   68:  {
+        -:   69:      return elapsed.wall / 1E9;
+        -:   70:  }
+        -:   71:
+        -:   72:  namespace details {
+        -:   73:    #if defined(BOOST_TEST_TIMER_WINDOWS_API)
+        1:   74:    elapsed_time::nanosecond_type get_tick_freq() {
+        -:   75:        LARGE_INTEGER freq;
+        1:   76:        ::QueryPerformanceFrequency( &freq );
+        1:   76-block  0
+        1:   77:        return static_cast<elapsed_time::nanosecond_type>(freq.QuadPart);
+        1:   77-block  0
+        1:   77-block  1
+        -:   78:    }
+        -:   79:    #elif defined(BOOST_TEST_TIMER_MACH_API)
+        -:   80:    std::pair<elapsed_time::nanosecond_type, elapsed_time::nanosecond_type> get_time_base() {
+        -:   81:        mach_timebase_info_data_t timebase;
+        -:   82:        if(mach_timebase_info(&timebase) == 0)
+        -:   83:            return std::pair<elapsed_time::nanosecond_type, elapsed_time::nanosecond_type>(timebase.numer, timebase.denom);
+        -:   84:        return std::pair<elapsed_time::nanosecond_type, elapsed_time::nanosecond_type>(0, 1);
+        -:   85:    }
+        -:   86:    #endif
+        -:   87:  }
+        -:   88:
+        -:   89:  //! Simple timing class
+        -:   90:  //!
+        -:   91:  //! This class measures the wall clock time.
+        -:   92:  class timer
+        -:   93:  {
+        -:   94:  public:
+       12:   95:    timer()
+       12:   96:    {
+       12:   97:        restart();
+       12:   97-block  0
+       12:   98:    }
+       12:   99:    void restart()
+        -:  100:    {
+       12:  101:        _start_time_clock = std::clock();
+       12:  101-block  0
+        -:  102:    #if defined(BOOST_TEST_TIMER_WINDOWS_API)
+       12:  103:        ::QueryPerformanceCounter(&_start_time_wall);
+        -:  104:    #elif defined(BOOST_TEST_TIMER_MACH_API)
+        -:  105:        _start_time_wall = mach_absolute_time();
+        -:  106:    #else
+        -:  107:        if( ::clock_gettime( CLOCK_MONOTONIC, &_start_time_wall ) != 0 )
+        -:  108:        {
+        -:  109:            _start_time_wall.tv_nsec = -1;
+        -:  110:            _start_time_wall.tv_sec = -1;
+        -:  111:        }
+        -:  112:    #endif
+       12:  113:    }
+        -:  114:
+        -:  115:    // return elapsed time in seconds
+       32:  116:    elapsed_time elapsed() const
+        -:  117:    {
+        -:  118:      typedef elapsed_time::nanosecond_type nanosecond_type;
+        -:  119:      static const double clock_to_nano_seconds = 1E9 / CLOCKS_PER_SEC;
+        -:  120:      elapsed_time return_value;
+        -:  121:
+        -:  122:      // processor / system time
+       32:  123:      return_value.system = static_cast<nanosecond_type>(double(std::clock() - _start_time_clock) * clock_to_nano_seconds);
+       32:  123-block  0
+        -:  124:
+        -:  125:#if defined(BOOST_TEST_TIMER_WINDOWS_API)
+       32:  126:      static const nanosecond_type tick_per_sec = details::get_tick_freq();
+        1:  126-block  0
+        1:  126-block  1
+        1:  126-block  2
+    $$$$$:  126-block  3
+    $$$$$:  126-block  4
+        -:  127:      LARGE_INTEGER end_time;
+       32:  128:      ::QueryPerformanceCounter(&end_time);
+       32:  128-block  0
+       32:  129:      return_value.wall = static_cast<nanosecond_type>(((end_time.QuadPart - _start_time_wall.QuadPart) * 1E9) / tick_per_sec);
+        -:  130:#elif defined(BOOST_TEST_TIMER_MACH_API)
+        -:  131:      static std::pair<nanosecond_type, nanosecond_type> timebase = details::get_time_base();
+        -:  132:      nanosecond_type clock = mach_absolute_time() - _start_time_wall;
+        -:  133:      return_value.wall = static_cast<nanosecond_type>((clock * timebase.first) / timebase.second);
+        -:  134:#else
+        -:  135:      struct timespec end_time;
+        -:  136:      if( ::clock_gettime( CLOCK_MONOTONIC, &end_time ) == 0 )
+        -:  137:      {
+        -:  138:          return_value.wall = static_cast<nanosecond_type>((end_time.tv_sec - _start_time_wall.tv_sec) * 1E9 + (end_time.tv_nsec - _start_time_wall.tv_nsec));
+        -:  139:      }
+        -:  140:#endif
+        -:  141:
+       64:  142:      return return_value;
+       32:  142-block  0
+       32:  142-block  1
+        -:  143:    }
+        -:  144:
+        -:  145:   private:
+        -:  146:      std::clock_t _start_time_clock;
+        -:  147:    #if defined(BOOST_TEST_TIMER_WINDOWS_API)
+        -:  148:      LARGE_INTEGER _start_time_wall;
+        -:  149:    #elif defined(BOOST_TEST_TIMER_MACH_API)
+        -:  150:      elapsed_time::nanosecond_type _start_time_wall;
+        -:  151:    #else
+        -:  152:      struct timespec _start_time_wall;
+        -:  153:    #endif
+        -:  154:  };
+        -:  155:
+        -:  156:
+        -:  157://____________________________________________________________________________//
+        -:  158:
+        -:  159:} // namespace timer
+        -:  160:} // namespace unit_test
+        -:  161:} // namespace boost
+        -:  162:
+        -:  163:#endif // BOOST_TEST_UTILS_TIMER_HPP
+        -:  164:

@@ -1,0 +1,121 @@
+        -:    0:Source:F:/Files/vcpkg/installed/x86-windows/include/boost/test/utils/iterator/input_iterator_facade.hpp
+        -:    0:Graph:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcno
+        -:    0:Data:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1://  (C) Copyright Gennadiy Rozental 2001.
+        -:    2://  Distributed under the Boost Software License, Version 1.0.
+        -:    3://  (See accompanying file LICENSE_1_0.txt or copy at
+        -:    4://  http://www.boost.org/LICENSE_1_0.txt)
+        -:    5:
+        -:    6://  See http://www.boost.org/libs/test for the library home page.
+        -:    7://
+        -:    8://!@file
+        -:    9://! Input iterator facade
+        -:   10:// ***************************************************************************
+        -:   11:
+        -:   12:#ifndef BOOST_TEST_UTILS_INPUT_ITERATOR_FACADE_HPP
+        -:   13:#define BOOST_TEST_UTILS_INPUT_ITERATOR_FACADE_HPP
+        -:   14:
+        -:   15:// Boost
+        -:   16:#include <boost/iterator/iterator_facade.hpp>
+        -:   17:
+        -:   18:#include <boost/test/detail/suppress_warnings.hpp>
+        -:   19:
+        -:   20://____________________________________________________________________________//
+        -:   21:
+        -:   22:namespace boost {
+        -:   23:namespace unit_test {
+        -:   24:namespace utils {
+        -:   25:
+        -:   26:// ************************************************************************** //
+        -:   27:// **************          input_iterator_core_access          ************** //
+        -:   28:// ************************************************************************** //
+        -:   29:
+        -:   30:class input_iterator_core_access
+        -:   31:{
+        -:   32:#if defined(BOOST_NO_MEMBER_TEMPLATE_FRIENDS) || BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x551))
+        -:   33:public:
+        -:   34:#else
+        -:   35:    template <class I, class V, class R, class TC> friend class input_iterator_facade;
+        -:   36:#endif
+        -:   37:
+        -:   38:    template <class Facade>
+       11:   39:    static bool get( Facade& f )
+        -:   40:    {
+       11:   41:        return f.get();
+       11:   41-block  0
+        -:   42:    }
+        -:   43:
+        -:   44:private:
+        -:   45:    // objects of this class are useless
+        -:   46:    input_iterator_core_access(); //undefined
+        -:   47:};
+        -:   48:
+        -:   49:// ************************************************************************** //
+        -:   50:// **************            input_iterator_facade             ************** //
+        -:   51:// ************************************************************************** //
+        -:   52:
+        -:   53:template<typename Derived,
+        -:   54:         typename ValueType,
+        -:   55:         typename Reference = ValueType const&,
+        -:   56:         typename Traversal = single_pass_traversal_tag>
+        -:   57:class input_iterator_facade : public iterator_facade<Derived,ValueType,Traversal,Reference>
+        -:   58:{
+        -:   59:public:
+        -:   60:    // Constructor
+       15:   61:    input_iterator_facade() : m_valid( false ), m_value() {}
+       15:   61-block  0
+        -:   62:
+        -:   63:protected: // provide access to the Derived
+        5:   64:    void                init()
+        -:   65:    {
+        5:   66:        m_valid = true;
+        5:   67:        increment();
+        5:   67-block  0
+        5:   68:    }
+        -:   69:
+        -:   70:    // Data members
+        -:   71:    mutable bool        m_valid;
+        -:   72:    ValueType           m_value;
+        -:   73:
+        -:   74:private:
+        -:   75:    friend class boost::iterator_core_access;
+        -:   76:
+        -:   77:    // iterator facade interface implementation
+       11:   78:    void                increment()
+        -:   79:    {
+        -:   80:        // we make post-end incrementation indefinetly safe
+       11:   81:        if( m_valid )
+       11:   81-block  0
+       11:   82:            m_valid = input_iterator_core_access::get( *static_cast<Derived*>(this) );
+       11:   82-block  0
+       11:   83:    }
+        9:   84:    Reference           dereference() const
+        -:   85:    {
+        9:   86:        return m_value;
+        9:   86-block  0
+        -:   87:    }
+        -:   88:
+        -:   89:    // iterator facade interface implementation
+       11:   90:    bool                equal( input_iterator_facade const& rhs ) const
+        -:   91:    {
+        -:   92:        // two invalid iterator equals, inequal otherwise
+       11:   93:        return !m_valid && !rhs.m_valid;
+       11:   93-block  0
+        5:   93-block  1
+        5:   93-block  2
+        6:   93-block  3
+       11:   93-block  4
+        -:   94:    }
+        -:   95:};
+        -:   96:
+        -:   97:} // namespace utils
+        -:   98:} // namespace unit_test
+        -:   99:} // namespace boost
+        -:  100:
+        -:  101://____________________________________________________________________________//
+        -:  102:
+        -:  103:#include <boost/test/detail/enable_warnings.hpp>
+        -:  104:
+        -:  105:#endif // BOOST_TEST_UTILS_INPUT_ITERATOR_FACADE_HPP

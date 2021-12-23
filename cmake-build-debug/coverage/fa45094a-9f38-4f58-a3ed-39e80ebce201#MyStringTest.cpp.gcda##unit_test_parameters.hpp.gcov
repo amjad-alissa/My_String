@@ -1,0 +1,274 @@
+        -:    0:Source:F:/Files/vcpkg/installed/x86-windows/include/boost/test/unit_test_parameters.hpp
+        -:    0:Graph:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcno
+        -:    0:Data:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1://  (C) Copyright Gennadiy Rozental 2001.
+        -:    2://  Distributed under the Boost Software License, Version 1.0.
+        -:    3://  (See accompanying file LICENSE_1_0.txt or copy at
+        -:    4://  http://www.boost.org/LICENSE_1_0.txt)
+        -:    5:
+        -:    6://  See http://www.boost.org/libs/test for the library home page.
+        -:    7://
+        -:    8:/// @file
+        -:    9:/// @brief Provides access to various Unit Test Framework runtime parameters
+        -:   10:///
+        -:   11:/// Primarily for use by the framework itself
+        -:   12:// ***************************************************************************
+        -:   13:
+        -:   14:#ifndef BOOST_TEST_UNIT_TEST_PARAMETERS_HPP_071894GER
+        -:   15:#define BOOST_TEST_UNIT_TEST_PARAMETERS_HPP_071894GER
+        -:   16:
+        -:   17:// Boost.Test
+        -:   18:#include <boost/test/detail/global_typedef.hpp>
+        -:   19:#include <boost/test/utils/runtime/argument.hpp>
+        -:   20:#include <boost/make_shared.hpp>
+        -:   21:
+        -:   22:// Boost
+        -:   23:#include <boost/function/function0.hpp>
+        -:   24:
+        -:   25:// STL
+        -:   26:#include <iostream>
+        -:   27:#include <fstream>
+        -:   28:
+        -:   29:#include <boost/test/detail/suppress_warnings.hpp>
+        -:   30:
+        -:   31://____________________________________________________________________________//
+        -:   32:
+        -:   33:namespace boost {
+        -:   34:namespace unit_test {
+        -:   35:namespace runtime_config {
+        -:   36:
+        -:   37:// ************************************************************************** //
+        -:   38:// **************                 runtime_config               ************** //
+        -:   39:// ************************************************************************** //
+        -:   40:
+        -:   41:// UTF parameters
+        -:   42:BOOST_TEST_DECL extern std::string btrt_auto_start_dbg;
+        -:   43:BOOST_TEST_DECL extern std::string btrt_break_exec_path;
+        -:   44:BOOST_TEST_DECL extern std::string btrt_build_info;
+        -:   45:BOOST_TEST_DECL extern std::string btrt_catch_sys_errors;
+        -:   46:BOOST_TEST_DECL extern std::string btrt_color_output;
+        -:   47:BOOST_TEST_DECL extern std::string btrt_detect_fp_except;
+        -:   48:BOOST_TEST_DECL extern std::string btrt_detect_mem_leaks;
+        -:   49:BOOST_TEST_DECL extern std::string btrt_list_content;
+        -:   50:BOOST_TEST_DECL extern std::string btrt_list_labels;
+        -:   51:BOOST_TEST_DECL extern std::string btrt_log_format;
+        -:   52:BOOST_TEST_DECL extern std::string btrt_log_level;
+        -:   53:BOOST_TEST_DECL extern std::string btrt_log_sink;
+        -:   54:BOOST_TEST_DECL extern std::string btrt_combined_logger;
+        -:   55:BOOST_TEST_DECL extern std::string btrt_output_format;
+        -:   56:BOOST_TEST_DECL extern std::string btrt_random_seed;
+        -:   57:BOOST_TEST_DECL extern std::string btrt_report_format;
+        -:   58:BOOST_TEST_DECL extern std::string btrt_report_level;
+        -:   59:BOOST_TEST_DECL extern std::string btrt_report_mem_leaks;
+        -:   60:BOOST_TEST_DECL extern std::string btrt_report_sink;
+        -:   61:BOOST_TEST_DECL extern std::string btrt_result_code;
+        -:   62:BOOST_TEST_DECL extern std::string btrt_run_filters;
+        -:   63:BOOST_TEST_DECL extern std::string btrt_save_test_pattern;
+        -:   64:BOOST_TEST_DECL extern std::string btrt_show_progress;
+        -:   65:BOOST_TEST_DECL extern std::string btrt_use_alt_stack;
+        -:   66:BOOST_TEST_DECL extern std::string btrt_wait_for_debugger;
+        -:   67:BOOST_TEST_DECL extern std::string btrt_help;
+        -:   68:BOOST_TEST_DECL extern std::string btrt_usage;
+        -:   69:BOOST_TEST_DECL extern std::string btrt_version;
+        -:   70:
+        -:   71:BOOST_TEST_DECL void init( int& argc, char** argv );
+        -:   72:
+        -:   73:// ************************************************************************** //
+        -:   74:// **************              runtime_param::get              ************** //
+        -:   75:// ************************************************************************** //
+        -:   76:
+        -:   77:/// Access to arguments
+        -:   78:BOOST_TEST_DECL runtime::arguments_store const& argument_store();
+        -:   79:
+        -:   80:template<typename T>
+        -:   81:inline T const&
+      74*:   82:get( runtime::cstring parameter_name )
+        -:   83:{
+      74*:   84:    return argument_store().get<T>( parameter_name );
+        -:   85:}
+------------------
+_ZN5boost9unit_test14runtime_config3getImEERKT_NS0_13basic_cstringIKcEE:
+        1:   82:get( runtime::cstring parameter_name )
+        -:   83:{
+        1:   84:    return argument_store().get<T>( parameter_name );
+        1:   84-block  0
+        1:   84-block  1
+        1:   84-block  2
+        -:   85:}
+------------------
+_ZN5boost9unit_test14runtime_config3getINS0_12report_levelEEERKT_NS0_13basic_cstringIKcEE:
+        1:   82:get( runtime::cstring parameter_name )
+        -:   83:{
+        1:   84:    return argument_store().get<T>( parameter_name );
+        1:   84-block  0
+        1:   84-block  1
+        1:   84-block  2
+        -:   85:}
+------------------
+_ZN5boost9unit_test14runtime_config3getINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEERKT_NS0_13basic_cstringIKcEE:
+        1:   82:get( runtime::cstring parameter_name )
+        -:   83:{
+        1:   84:    return argument_store().get<T>( parameter_name );
+        1:   84-block  0
+        1:   84-block  1
+        1:   84-block  2
+        -:   85:}
+------------------
+_ZN5boost9unit_test14runtime_config3getINS0_13output_formatEEERKT_NS0_13basic_cstringIKcEE:
+        2:   82:get( runtime::cstring parameter_name )
+        -:   83:{
+        2:   84:    return argument_store().get<T>( parameter_name );
+        2:   84-block  0
+        2:   84-block  1
+        2:   84-block  2
+        -:   85:}
+------------------
+_ZN5boost9unit_test14runtime_config3getINS0_9log_levelEEERKT_NS0_13basic_cstringIKcEE:
+    #####:   82:get( runtime::cstring parameter_name )
+        -:   83:{
+    #####:   84:    return argument_store().get<T>( parameter_name );
+    %%%%%:   84-block  0
+    %%%%%:   84-block  1
+    %%%%%:   84-block  2
+        -:   85:}
+------------------
+_ZN5boost9unit_test14runtime_config3getIjEERKT_NS0_13basic_cstringIKcEE:
+        3:   82:get( runtime::cstring parameter_name )
+        -:   83:{
+        3:   84:    return argument_store().get<T>( parameter_name );
+        3:   84-block  0
+        3:   84-block  1
+        3:   84-block  2
+        -:   85:}
+------------------
+_ZN5boost9unit_test14runtime_config3getISt6vectorINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESaIS9_EEEERKT_NS0_13basic_cstringIKcEE:
+        4:   82:get( runtime::cstring parameter_name )
+        -:   83:{
+        4:   84:    return argument_store().get<T>( parameter_name );
+        4:   84-block  0
+        4:   84-block  1
+        4:   84-block  2
+        -:   85:}
+------------------
+_ZN5boost9unit_test14runtime_config3getIbEERKT_NS0_13basic_cstringIKcEE:
+       62:   82:get( runtime::cstring parameter_name )
+        -:   83:{
+       62:   84:    return argument_store().get<T>( parameter_name );
+       62:   84-block  0
+       62:   84-block  1
+       62:   84-block  2
+        -:   85:}
+------------------
+        -:   86:
+        2:   87:inline bool has( runtime::cstring parameter_name )
+        -:   88:{
+        2:   89:    return argument_store().has( parameter_name );
+        2:   89-block  0
+        2:   89-block  1
+        2:   89-block  2
+        2:   89-block  3
+        -:   90:}
+        -:   91:
+        -:   92:/// For public access
+        -:   93:BOOST_TEST_DECL bool save_pattern();
+        -:   94:
+        -:   95:// ************************************************************************** //
+        -:   96:// **************                  stream_holder               ************** //
+        -:   97:// ************************************************************************** //
+        -:   98:
+        -:   99:class stream_holder {
+        -:  100:public:
+        -:  101:    // Constructor
+        2:  102:    explicit        stream_holder( std::ostream& default_stream = std::cout )
+        2:  103:    : m_stream( &default_stream )
+        2:  103-block  0
+        -:  104:    {
+        2:  105:    }
+        -:  106:
+        2:  107:    void            setup( const const_string& stream_name,
+        -:  108:                           boost::function<void ()> const &cleaner_callback = boost::function<void ()>() )
+        -:  109:    {
+        2:  110:        if(stream_name.empty())
+        2:  110-block  0
+    #####:  111:            return;
+    %%%%%:  111-block  0
+        -:  112:
+        2:  113:        if( stream_name == "stderr" ) {
+        2:  113-block  0
+        1:  114:            m_stream = &std::cerr;
+        1:  115:            if(cleaner_callback) {
+        1:  115-block  0
+    #####:  116:                m_cleaner = boost::make_shared<callback_cleaner>(cleaner_callback);
+    %%%%%:  116-block  0
+        -:  117:            }
+        -:  118:            else {
+        1:  119:                m_cleaner.reset();
+        1:  119-block  0
+        -:  120:            }
+        -:  121:        }
+        1:  122:        else if( stream_name == "stdout" ) {
+        1:  122-block  0
+        1:  123:            m_stream = &std::cout;
+        1:  124:            if (cleaner_callback) {
+        1:  124-block  0
+        1:  125:                m_cleaner = boost::make_shared<callback_cleaner>(cleaner_callback);
+        1:  125-block  0
+        -:  126:            }
+        -:  127:            else {
+    #####:  128:                m_cleaner.reset();
+    %%%%%:  128-block  0
+        -:  129:            }
+        -:  130:        }
+        -:  131:        else {
+    #####:  132:            m_cleaner = boost::make_shared<callback_cleaner>(cleaner_callback);
+    %%%%%:  132-block  0
+    #####:  133:            m_cleaner->m_file.open( std::string(stream_name.begin(), stream_name.end()).c_str() );
+    %%%%%:  133-block  0
+    %%%%%:  133-block  1
+    $$$$$:  133-block  2
+    $$$$$:  133-block  3
+    $$$$$:  133-block  4
+    #####:  134:            m_stream = &m_cleaner->m_file;
+        -:  135:        }
+        -:  136:    }
+        -:  137:
+        -:  138:    // Access methods
+        2:  139:    std::ostream&   ref() const { return *m_stream; }
+        2:  139-block  0
+        -:  140:
+        -:  141:private:
+        -:  142:    struct callback_cleaner {
+        1:  143:        callback_cleaner(boost::function<void ()> cleaner_callback)
+        1:  144:        : m_cleaner_callback(cleaner_callback)
+        1:  145:        , m_file() {
+        1:  145-block  0
+    $$$$$:  145-block  1
+        1:  146:        }
+        1:  146-block  0
+        1:  147:        ~callback_cleaner() {
+        1:  147-block  0
+        1:  148:            if( m_cleaner_callback )
+        1:  148-block  0
+        1:  149:                m_cleaner_callback();
+        1:  149-block  0
+        1:  150:        }
+        -:  151:        boost::function<void ()> m_cleaner_callback;
+        -:  152:        std::ofstream m_file;
+        -:  153:    };
+        -:  154:
+        -:  155:    // Data members
+        -:  156:    boost::shared_ptr<callback_cleaner>   m_cleaner;
+        -:  157:    std::ostream*                         m_stream;
+        -:  158:};
+        -:  159:
+        -:  160:} // namespace runtime_config
+        -:  161:} // namespace unit_test
+        -:  162:} // namespace boost
+        -:  163:
+        -:  164://____________________________________________________________________________//
+        -:  165:
+        -:  166:#include <boost/test/detail/enable_warnings.hpp>
+        -:  167:
+        -:  168:#endif // BOOST_TEST_UNIT_TEST_PARAMETERS_HPP_071894GER

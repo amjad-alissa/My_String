@@ -1,0 +1,8 @@
+F:/SoftwareProjects/CLionProjects/C++/My_String/cmake-build-debug/CMakeFiles/edit_cache.dir
+F:/SoftwareProjects/CLionProjects/C++/My_String/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+F:/SoftwareProjects/CLionProjects/C++/My_String/cmake-build-debug/src/CMakeFiles/My_String_src.dir
+F:/SoftwareProjects/CLionProjects/C++/My_String/cmake-build-debug/src/CMakeFiles/edit_cache.dir
+F:/SoftwareProjects/CLionProjects/C++/My_String/cmake-build-debug/src/CMakeFiles/rebuild_cache.dir
+F:/SoftwareProjects/CLionProjects/C++/My_String/cmake-build-debug/test/CMakeFiles/Boost_Tests_run.dir
+F:/SoftwareProjects/CLionProjects/C++/My_String/cmake-build-debug/test/CMakeFiles/edit_cache.dir
+F:/SoftwareProjects/CLionProjects/C++/My_String/cmake-build-debug/test/CMakeFiles/rebuild_cache.dir

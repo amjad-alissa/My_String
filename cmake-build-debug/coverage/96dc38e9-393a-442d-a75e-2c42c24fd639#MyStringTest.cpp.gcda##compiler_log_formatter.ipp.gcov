@@ -1,0 +1,452 @@
+        -:    0:Source:F:/Files/vcpkg/installed/x86-windows/include/boost/test/impl/compiler_log_formatter.ipp
+        -:    0:Graph:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcno
+        -:    0:Data:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1://  (C) Copyright Gennadiy Rozental 2001.
+        -:    2://  Distributed under the Boost Software License, Version 1.0.
+        -:    3://  (See accompanying file LICENSE_1_0.txt or copy at
+        -:    4://  http://www.boost.org/LICENSE_1_0.txt)
+        -:    5:
+        -:    6://  See http://www.boost.org/libs/test for the library home page.
+        -:    7://
+        -:    8://  File        : $RCSfile$
+        -:    9://
+        -:   10://  Version     : $Revision$
+        -:   11://
+        -:   12://  Description : implements compiler like Log formatter
+        -:   13:// ***************************************************************************
+        -:   14:
+        -:   15:#ifndef BOOST_TEST_COMPILER_LOG_FORMATTER_IPP_020105GER
+        -:   16:#define BOOST_TEST_COMPILER_LOG_FORMATTER_IPP_020105GER
+        -:   17:
+        -:   18:// Boost.Test
+        -:   19:#include <boost/test/output/compiler_log_formatter.hpp>
+        -:   20:
+        -:   21:#include <boost/test/framework.hpp>
+        -:   22:#include <boost/test/execution_monitor.hpp>
+        -:   23:#include <boost/test/unit_test_parameters.hpp>
+        -:   24:
+        -:   25:#include <boost/test/tree/test_unit.hpp>
+        -:   26:
+        -:   27:#include <boost/test/utils/basic_cstring/io.hpp>
+        -:   28:#include <boost/test/utils/lazy_ostream.hpp>
+        -:   29:#include <boost/test/utils/setcolor.hpp>
+        -:   30:
+        -:   31:
+        -:   32:// Boost
+        -:   33:#include <boost/version.hpp>
+        -:   34:
+        -:   35:// STL
+        -:   36:#include <iostream>
+        -:   37:
+        -:   38:#include <boost/test/detail/suppress_warnings.hpp>
+        -:   39:
+        -:   40://____________________________________________________________________________//
+        -:   41:
+        -:   42:namespace boost {
+        -:   43:namespace unit_test {
+        -:   44:namespace output {
+        -:   45:
+        -:   46:// ************************************************************************** //
+        -:   47:// **************            compiler_log_formatter            ************** //
+        -:   48:// ************************************************************************** //
+        -:   49:
+        -:   50:namespace {
+        -:   51:
+        -:   52:std::string
+    #####:   53:test_phase_identifier()
+        -:   54:{
+    #####:   55:    return framework::test_in_progress() ? framework::current_test_unit().full_name() : std::string( "Test setup" );
+    %%%%%:   55-block  0
+    %%%%%:   55-block  1
+    %%%%%:   55-block  2
+    %%%%%:   55-block  3
+    %%%%%:   55-block  4
+    %%%%%:   55-block  5
+    %%%%%:   55-block  6
+    %%%%%:   55-block  7
+    $$$$$:   55-block  8
+    $$$$$:   55-block  9
+        -:   56:}
+        -:   57:
+        -:   58:} // local namespace
+        -:   59:
+        -:   60://____________________________________________________________________________//
+        -:   61:
+        -:   62:void
+        1:   63:compiler_log_formatter::log_start( std::ostream& output, counter_t test_cases_amount )
+        -:   64:{
+        1:   65:    m_color_output = runtime_config::get<bool>( runtime_config::btrt_color_output );
+        1:   65-block  0
+        -:   66:
+        1:   67:    if( test_cases_amount > 0 )
+        1:   67-block  0
+        1:   68:        output  << "Running " << test_cases_amount << " test "
+        1:   68-block  0
+       1*:   69:                << (test_cases_amount > 1 ? "cases" : "case") << "...\n";
+        1:   69-block  0
+    %%%%%:   69-block  1
+        1:   69-block  2
+        1:   70:}
+        1:   70-block  0
+        -:   71:
+        -:   72://____________________________________________________________________________//
+        -:   73:
+        -:   74:void
+        1:   75:compiler_log_formatter::log_finish( std::ostream& ostr )
+        -:   76:{
+        1:   77:    ostr.flush();
+        1:   77-block  0
+        1:   78:}
+        -:   79:
+        -:   80://____________________________________________________________________________//
+        -:   81:
+        -:   82:void
+        1:   83:compiler_log_formatter::log_build_info( std::ostream& output, bool log_build_info )
+        -:   84:{
+        1:   85:    if(log_build_info) {
+        1:   85-block  0
+        -:   86:        output  << "Platform: " << BOOST_PLATFORM            << '\n'
+        -:   87:                << "Compiler: " << BOOST_COMPILER            << '\n'
+        -:   88:                << "STL     : " << BOOST_STDLIB              << '\n'
+    #####:   89:                << "Boost   : " << BOOST_VERSION/100000      << "."
+    %%%%%:   89-block  0
+    #####:   90:                                << BOOST_VERSION/100 % 1000  << "."
+    #####:   91:                                << BOOST_VERSION % 100       << std::endl;
+        -:   92:    }
+        1:   93:}
+        -:   94:
+        -:   95://____________________________________________________________________________//
+        -:   96:
+        -:   97:void
+       12:   98:compiler_log_formatter::test_unit_start( std::ostream& output, test_unit const& tu )
+        -:   99:{
+       24:  100:    BOOST_TEST_SCOPE_SETCOLOR( m_color_output, output, term_attr::BRIGHT, term_color::BLUE );
+       12:  100-block  0
+       12:  100-block  1
+    $$$$$:  100-block  2
+        -:  101:
+       12:  102:    print_prefix( output, tu.p_file_name, tu.p_line_num );
+       12:  102-block  0
+    $$$$$:  102-block  1
+        -:  103:
+       12:  104:    output << "Entering test " << tu.p_type_name << " \"" << tu.p_name << "\"" << std::endl;
+       12:  104-block  0
+       12:  104-block  1
+       12:  104-block  2
+       12:  104-block  3
+       12:  104-block  4
+       12:  104-block  5
+       12:  105:}
+        -:  106:
+        -:  107://____________________________________________________________________________//
+        -:  108:
+        -:  109:void
+       12:  110:compiler_log_formatter::test_unit_finish( std::ostream& output, test_unit const& tu, unsigned long elapsed )
+        -:  111:{
+       24:  112:    BOOST_TEST_SCOPE_SETCOLOR( m_color_output, output, term_attr::BRIGHT, term_color::BLUE );
+       12:  112-block  0
+       12:  112-block  1
+    $$$$$:  112-block  2
+        -:  113:
+       12:  114:    print_prefix( output, tu.p_file_name, tu.p_line_num );
+       12:  114-block  0
+    $$$$$:  114-block  1
+        -:  115:
+       12:  116:    output << "Leaving test " << tu.p_type_name << " \"" << tu.p_name << "\"";
+       12:  116-block  0
+       12:  116-block  1
+       12:  116-block  2
+       12:  116-block  3
+       12:  116-block  4
+        -:  117:
+       12:  118:    if( elapsed > 0 ) {
+       12:  118-block  0
+       12:  119:        output << "; testing time: ";
+       12:  119-block  0
+       12:  120:        if( elapsed % 1000 == 0 )
+       12:  120-block  0
+    #####:  121:            output << elapsed/1000 << "ms";
+    %%%%%:  121-block  0
+    %%%%%:  121-block  1
+        -:  122:        else
+       12:  123:            output << elapsed << "us";
+       12:  123-block  0
+       12:  123-block  1
+        -:  124:    }
+        -:  125:
+       12:  126:    output << std::endl;
+       12:  126-block  0
+       12:  127:}
+        -:  128:
+        -:  129://____________________________________________________________________________//
+        -:  130:
+        -:  131:void
+    #####:  132:compiler_log_formatter::test_unit_skipped( std::ostream& output, test_unit const& tu, const_string reason )
+        -:  133:{
+    #####:  134:    BOOST_TEST_SCOPE_SETCOLOR( m_color_output, output, term_attr::BRIGHT, term_color::YELLOW );
+    %%%%%:  134-block  0
+    $$$$$:  134-block  1
+        -:  135:
+    #####:  136:    print_prefix( output, tu.p_file_name, tu.p_line_num );
+    %%%%%:  136-block  0
+    $$$$$:  136-block  1
+        -:  137:
+    #####:  138:    output  << "Test " << tu.p_type_name << " \"" << tu.full_name() << "\"" << " is skipped because " << reason << std::endl;
+    %%%%%:  138-block  0
+    %%%%%:  138-block  1
+    %%%%%:  138-block  2
+    %%%%%:  138-block  3
+    %%%%%:  138-block  4
+    %%%%%:  138-block  5
+    %%%%%:  138-block  6
+    %%%%%:  138-block  7
+    %%%%%:  138-block  8
+    %%%%%:  138-block  9
+    $$$$$:  138-block 10
+    $$$$$:  138-block 11
+    #####:  139:}
+        -:  140:
+        -:  141://____________________________________________________________________________//
+        -:  142:
+        -:  143:void
+    #####:  144:compiler_log_formatter::log_exception_start( std::ostream& output, log_checkpoint_data const& checkpoint_data, execution_exception const& ex )
+        -:  145:{
+    #####:  146:    execution_exception::location const& loc = ex.where();
+    %%%%%:  146-block  0
+        -:  147:
+    #####:  148:    print_prefix( output, loc.m_file_name, loc.m_line_num );
+    $$$$$:  148-block  0
+        -:  149:
+        -:  150:    {
+    #####:  151:        BOOST_TEST_SCOPE_SETCOLOR( m_color_output, output, term_attr::UNDERLINE, term_color::RED );
+    %%%%%:  151-block  0
+    $$$$$:  151-block  1
+        -:  152:
+    #####:  153:        output << "fatal error: in \"" << (loc.m_function.is_empty() ? test_phase_identifier() : loc.m_function ) << "\": "
+    %%%%%:  153-block  0
+    %%%%%:  153-block  1
+    %%%%%:  153-block  2
+    %%%%%:  153-block  3
+    %%%%%:  153-block  4
+    $$$$$:  153-block  5
+    $$$$$:  153-block  6
+    $$$$$:  153-block  7
+    $$$$$:  153-block  8
+    #####:  154:               << ex.what();
+    %%%%%:  154-block  0
+    %%%%%:  154-block  1
+    %%%%%:  154-block  2
+    %%%%%:  154-block  3
+    %%%%%:  154-block  4
+    %%%%%:  154-block  5
+    %%%%%:  154-block  6
+    $$$$$:  154-block  7
+        -:  155:    }
+        -:  156:
+    #####:  157:    if( !checkpoint_data.m_file_name.is_empty() ) {
+    #####:  158:        output << '\n';
+    %%%%%:  158-block  0
+    #####:  159:        print_prefix( output, checkpoint_data.m_file_name, checkpoint_data.m_line_num );
+    %%%%%:  159-block  0
+    $$$$$:  159-block  1
+        -:  160:
+    #####:  161:        BOOST_TEST_SCOPE_SETCOLOR( m_color_output, output, term_attr::BRIGHT, term_color::CYAN );
+    %%%%%:  161-block  0
+    %%%%%:  161-block  1
+    $$$$$:  161-block  2
+        -:  162:
+    #####:  163:        output << "last checkpoint";
+    %%%%%:  163-block  0
+    #####:  164:        if( !checkpoint_data.m_message.empty() )
+    %%%%%:  164-block  0
+    #####:  165:            output << ": " << checkpoint_data.m_message;
+    %%%%%:  165-block  0
+    %%%%%:  165-block  1
+        -:  166:    }
+    #####:  167:}
+    %%%%%:  167-block  0
+        -:  168:
+        -:  169://____________________________________________________________________________//
+        -:  170:
+        -:  171:void
+    #####:  172:compiler_log_formatter::log_exception_finish( std::ostream& output )
+        -:  173:{
+    #####:  174:    output << std::endl;
+    %%%%%:  174-block  0
+    #####:  175:}
+        -:  176:
+        -:  177://____________________________________________________________________________//
+        -:  178:
+        -:  179:void
+       56:  180:compiler_log_formatter::log_entry_start( std::ostream& output, log_entry_data const& entry_data, log_entry_types let )
+        -:  181:{
+        -:  182:    using namespace utils;
+        -:  183:
+       56:  184:    switch( let ) {
+       56:  184-block  0
+       56:  185:        case BOOST_UTL_ET_INFO:
+       56:  186:            print_prefix( output, entry_data.m_file_name, entry_data.m_line_num );
+       56:  186-block  0
+    $$$$$:  186-block  1
+       56:  187:            output << setcolor( m_color_output, term_attr::BRIGHT, term_color::GREEN );
+       56:  187-block  0
+    $$$$$:  187-block  1
+       56:  188:            output << "info: ";
+       56:  188-block  0
+       56:  189:            break;
+    #####:  190:        case BOOST_UTL_ET_MESSAGE:
+    #####:  191:            output << setcolor( m_color_output, term_attr::BRIGHT, term_color::CYAN );
+    %%%%%:  191-block  0
+    $$$$$:  191-block  1
+    #####:  192:            break;
+    %%%%%:  192-block  0
+    #####:  193:        case BOOST_UTL_ET_WARNING:
+    #####:  194:            print_prefix( output, entry_data.m_file_name, entry_data.m_line_num );
+    %%%%%:  194-block  0
+    $$$$$:  194-block  1
+    #####:  195:            output << setcolor( m_color_output, term_attr::BRIGHT, term_color::YELLOW );
+    %%%%%:  195-block  0
+    $$$$$:  195-block  1
+    #####:  196:            output << "warning: in \"" << test_phase_identifier() << "\": ";
+    %%%%%:  196-block  0
+    %%%%%:  196-block  1
+    %%%%%:  196-block  2
+    $$$$$:  196-block  3
+    $$$$$:  196-block  4
+    #####:  197:            break;
+    #####:  198:        case BOOST_UTL_ET_ERROR:
+    #####:  199:            print_prefix( output, entry_data.m_file_name, entry_data.m_line_num );
+    %%%%%:  199-block  0
+    $$$$$:  199-block  1
+    #####:  200:            output << setcolor( m_color_output, term_attr::BRIGHT, term_color::RED );
+    %%%%%:  200-block  0
+    $$$$$:  200-block  1
+    #####:  201:            output << "error: in \"" << test_phase_identifier() << "\": ";
+    %%%%%:  201-block  0
+    %%%%%:  201-block  1
+    %%%%%:  201-block  2
+    $$$$$:  201-block  3
+    $$$$$:  201-block  4
+    #####:  202:            break;
+    #####:  203:        case BOOST_UTL_ET_FATAL_ERROR:
+    #####:  204:            print_prefix( output, entry_data.m_file_name, entry_data.m_line_num );
+    %%%%%:  204-block  0
+    $$$$$:  204-block  1
+    #####:  205:            output << setcolor( m_color_output, term_attr::UNDERLINE, term_color::RED );
+    %%%%%:  205-block  0
+    $$$$$:  205-block  1
+    #####:  206:            output << "fatal error: in \"" << test_phase_identifier() << "\": ";
+    %%%%%:  206-block  0
+    %%%%%:  206-block  1
+    %%%%%:  206-block  2
+    $$$$$:  206-block  3
+    #####:  207:            break;
+        -:  208:    }
+       56:  209:}
+       56:  209-block  0
+        -:  210:
+        -:  211://____________________________________________________________________________//
+        -:  212:
+        -:  213:void
+      276:  214:compiler_log_formatter::log_entry_value( std::ostream& output, const_string value )
+        -:  215:{
+      276:  216:    output << value;
+      276:  216-block  0
+      276:  217:}
+        -:  218:
+        -:  219://____________________________________________________________________________//
+        -:  220:
+        -:  221:void
+        4:  222:compiler_log_formatter::log_entry_value( std::ostream& output, lazy_ostream const& value )
+        -:  223:{
+        4:  224:    output << value;
+        4:  224-block  0
+        4:  225:}
+        -:  226:
+        -:  227://____________________________________________________________________________//
+        -:  228:
+        -:  229:void
+       56:  230:compiler_log_formatter::log_entry_finish( std::ostream& output )
+        -:  231:{
+       56:  232:    if( m_color_output )
+       56:  232-block  0
+    #####:  233:        output << utils::setcolor(m_color_output);
+    %%%%%:  233-block  0
+    %%%%%:  233-block  1
+        -:  234:
+       56:  235:    output << std::endl;
+       56:  235-block  0
+       56:  236:}
+        -:  237:
+        -:  238:
+        -:  239://____________________________________________________________________________//
+        -:  240:
+        -:  241:void
+       80:  242:compiler_log_formatter::print_prefix( std::ostream& output, const_string file_name, std::size_t line_num )
+        -:  243:{
+       80:  244:    if( !file_name.empty() ) {
+       80:  244-block  0
+        -:  245:#ifdef __APPLE_CC__
+        -:  246:        // Xcode-compatible logging format, idea by Richard Dingwall at
+        -:  247:        // <http://richarddingwall.name/2008/06/01/using-the-boost-unit-test-framework-with-xcode-3/>.
+        -:  248:        output << file_name << ':' << line_num << ": ";
+        -:  249:#else
+       78:  250:        output << file_name << '(' << line_num << "): ";
+       78:  250-block  0
+        -:  251:#endif
+        -:  252:    }
+       80:  253:}
+        -:  254:
+        -:  255://____________________________________________________________________________//
+        -:  256:
+        -:  257:void
+    #####:  258:compiler_log_formatter::entry_context_start( std::ostream& output, log_level l )
+        -:  259:{
+    #####:  260:    if( l == log_messages ) {
+    %%%%%:  260-block  0
+    #####:  261:        output << "\n[context:";
+    %%%%%:  261-block  0
+        -:  262:    }
+        -:  263:    else {
+    #####:  264:        output << (l == log_successful_tests ? "\nAssertion" : "\nFailure" ) << " occurred in a following context:";
+    %%%%%:  264-block  0
+    %%%%%:  264-block  1
+    %%%%%:  264-block  2
+    %%%%%:  264-block  3
+        -:  265:    }
+    #####:  266:}
+        -:  267:
+        -:  268://____________________________________________________________________________//
+        -:  269:
+        -:  270:void
+    #####:  271:compiler_log_formatter::entry_context_finish( std::ostream& output, log_level l )
+        -:  272:{
+    #####:  273:    if( l == log_messages ) {
+    %%%%%:  273-block  0
+    #####:  274:        output << "]";
+    %%%%%:  274-block  0
+        -:  275:    }
+    #####:  276:    output.flush();
+    %%%%%:  276-block  0
+    #####:  277:}
+        -:  278:
+        -:  279://____________________________________________________________________________//
+        -:  280:
+        -:  281:void
+    #####:  282:compiler_log_formatter::log_entry_context( std::ostream& output, log_level /*l*/, const_string context_descr )
+        -:  283:{
+    #####:  284:    output << "\n    " << context_descr;
+    %%%%%:  284-block  0
+    #####:  285:}
+        -:  286:
+        -:  287://____________________________________________________________________________//
+        -:  288:
+        -:  289:} // namespace output
+        -:  290:} // namespace unit_test
+        -:  291:} // namespace boost
+        -:  292:
+        -:  293:#include <boost/test/detail/enable_warnings.hpp>
+        -:  294:
+        -:  295:#endif // BOOST_TEST_COMPILER_LOG_FORMATTER_IPP_020105GER

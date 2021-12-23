@@ -1,0 +1,150 @@
+        -:    0:Source:F:/Files/vcpkg/installed/x86-windows/include/boost/exception/get_error_info.hpp
+        -:    0:Graph:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcno
+        -:    0:Data:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1://Copyright (c) 2006-2009 Emil Dotchevski and Reverge Studios, Inc.
+        -:    2:
+        -:    3://Distributed under the Boost Software License, Version 1.0. (See accompanying
+        -:    4://file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+        -:    5:
+        -:    6:#ifndef UUID_1A590226753311DD9E4CCF6156D89593
+        -:    7:#define UUID_1A590226753311DD9E4CCF6156D89593
+        -:    8:
+        -:    9:#include <boost/config.hpp>
+        -:   10:#include <boost/exception/exception.hpp>
+        -:   11:#include <boost/exception/detail/error_info_impl.hpp>
+        -:   12:#include <boost/exception/detail/type_info.hpp>
+        -:   13:#include <boost/exception/detail/shared_ptr.hpp>
+        -:   14:#include <boost/assert.hpp>
+        -:   15:
+        -:   16:#if (__GNUC__*100+__GNUC_MINOR__>301) && !defined(BOOST_EXCEPTION_ENABLE_WARNINGS)
+        -:   17:#pragma GCC system_header
+        -:   18:#endif
+        -:   19:#if defined(_MSC_VER) && !defined(BOOST_EXCEPTION_ENABLE_WARNINGS)
+        -:   20:#pragma warning(push,1)
+        -:   21:#endif
+        -:   22:
+        -:   23:namespace
+        -:   24:boost
+        -:   25:    {
+        -:   26:    namespace
+        -:   27:    exception_detail
+        -:   28:        {
+        -:   29:        template <class ErrorInfo>
+        -:   30:        struct
+        -:   31:        get_info
+        -:   32:            {
+        -:   33:            static
+        -:   34:            typename ErrorInfo::value_type *
+        -:   35:            get( exception const & x )
+        -:   36:                {
+        -:   37:                if( exception_detail::error_info_container * c=x.data_.get() )
+        -:   38:                    if( shared_ptr<exception_detail::error_info_base> eib = c->get(BOOST_EXCEPTION_STATIC_TYPEID(ErrorInfo)) )
+        -:   39:                        {
+        -:   40:#ifndef BOOST_NO_RTTI
+        -:   41:                        BOOST_ASSERT( 0!=dynamic_cast<ErrorInfo *>(eib.get()) );
+        -:   42:#endif
+        -:   43:                        ErrorInfo * w = static_cast<ErrorInfo *>(eib.get());
+        -:   44:                        return &w->value();
+        -:   45:                        }
+        -:   46:                return 0;
+        -:   47:                }
+        -:   48:            };
+        -:   49:
+        -:   50:        template <>
+        -:   51:        struct
+        -:   52:        get_info<throw_function>
+        -:   53:            {
+        -:   54:            static
+        -:   55:            char const * *
+    #####:   56:            get( exception const & x )
+        -:   57:                {
+    #####:   58:                return x.throw_function_ ? &x.throw_function_ : 0;
+    %%%%%:   58-block  0
+    %%%%%:   58-block  1
+    %%%%%:   58-block  2
+    %%%%%:   58-block  3
+        -:   59:                }
+        -:   60:            };
+        -:   61:
+        -:   62:        template <>
+        -:   63:        struct
+        -:   64:        get_info<throw_file>
+        -:   65:            {
+        -:   66:            static
+        -:   67:            char const * *
+    #####:   68:            get( exception const & x )
+        -:   69:                {
+    #####:   70:                return x.throw_file_ ? &x.throw_file_ : 0;
+    %%%%%:   70-block  0
+    %%%%%:   70-block  1
+    %%%%%:   70-block  2
+    %%%%%:   70-block  3
+        -:   71:                }
+        -:   72:            };
+        -:   73:
+        -:   74:        template <>
+        -:   75:        struct
+        -:   76:        get_info<throw_line>
+        -:   77:            {
+        -:   78:            static
+        -:   79:            int *
+    #####:   80:            get( exception const & x )
+        -:   81:                {
+    #####:   82:                return x.throw_line_!=-1 ? &x.throw_line_ : 0;
+    %%%%%:   82-block  0
+    %%%%%:   82-block  1
+    %%%%%:   82-block  2
+    %%%%%:   82-block  3
+        -:   83:                }
+        -:   84:            };
+        -:   85:
+        -:   86:        template <class T,class R>
+        -:   87:        struct
+        -:   88:        get_error_info_return_type
+        -:   89:            {
+        -:   90:            typedef R * type;
+        -:   91:            };
+        -:   92:
+        -:   93:        template <class T,class R>
+        -:   94:        struct
+        -:   95:        get_error_info_return_type<T const,R>
+        -:   96:            {
+        -:   97:            typedef R const * type;
+        -:   98:            };
+        -:   99:        }
+        -:  100:
+        -:  101:#ifdef BOOST_NO_RTTI
+        -:  102:    template <class ErrorInfo>
+        -:  103:    inline
+        -:  104:    typename ErrorInfo::value_type const *
+        -:  105:    get_error_info( boost::exception const & x )
+        -:  106:        {
+        -:  107:        return exception_detail::get_info<ErrorInfo>::get(x);
+        -:  108:        }
+        -:  109:    template <class ErrorInfo>
+        -:  110:    inline
+        -:  111:    typename ErrorInfo::value_type *
+        -:  112:    get_error_info( boost::exception & x )
+        -:  113:        {
+        -:  114:        return exception_detail::get_info<ErrorInfo>::get(x);
+        -:  115:        }
+        -:  116:#else
+        -:  117:    template <class ErrorInfo,class E>
+        -:  118:    inline
+        -:  119:    typename exception_detail::get_error_info_return_type<E,typename ErrorInfo::value_type>::type
+    #####:  120:    get_error_info( E & some_exception )
+        -:  121:        {
+    #####:  122:        if( exception const * x = dynamic_cast<exception const *>(&some_exception) )
+    #####:  123:            return exception_detail::get_info<ErrorInfo>::get(*x);
+        -:  124:        else
+    #####:  125:            return 0;
+        -:  126:        }
+        -:  127:#endif
+        -:  128:    }
+        -:  129:
+        -:  130:#if defined(_MSC_VER) && !defined(BOOST_EXCEPTION_ENABLE_WARNINGS)
+        -:  131:#pragma warning(pop)
+        -:  132:#endif
+        -:  133:#endif

@@ -1,0 +1,491 @@
+        -:    0:Source:F:/Files/vcpkg/installed/x86-windows/include/boost/test/impl/unit_test_main.ipp
+        -:    0:Graph:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcno
+        -:    0:Data:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1://  (C) Copyright Gennadiy Rozental 2001.
+        -:    2://  Distributed under the Boost Software License, Version 1.0.
+        -:    3://  (See accompanying file LICENSE_1_0.txt or copy at
+        -:    4://  http://www.boost.org/LICENSE_1_0.txt)
+        -:    5:
+        -:    6://  See http://www.boost.org/libs/test for the library home page.
+        -:    7://
+        -:    8://  File        : $RCSfile$
+        -:    9://
+        -:   10://  Version     : $Revision$
+        -:   11://
+        -:   12://  Description : main function implementation for Unit Test Framework
+        -:   13:// ***************************************************************************
+        -:   14:
+        -:   15:#ifndef BOOST_TEST_UNIT_TEST_MAIN_IPP_012205GER
+        -:   16:#define BOOST_TEST_UNIT_TEST_MAIN_IPP_012205GER
+        -:   17:
+        -:   18:// Boost.Test
+        -:   19:#include <boost/test/framework.hpp>
+        -:   20:#include <boost/test/results_collector.hpp>
+        -:   21:#include <boost/test/results_reporter.hpp>
+        -:   22:
+        -:   23:#include <boost/test/tree/visitor.hpp>
+        -:   24:#include <boost/test/tree/test_unit.hpp>
+        -:   25:#include <boost/test/tree/traverse.hpp>
+        -:   26:
+        -:   27:#include <boost/test/unit_test_parameters.hpp>
+        -:   28:
+        -:   29:#include <boost/test/utils/foreach.hpp>
+        -:   30:#include <boost/test/utils/basic_cstring/io.hpp>
+        -:   31:
+        -:   32:// Boost
+        -:   33:#include <boost/cstdlib.hpp>
+        -:   34:
+        -:   35:// STL
+        -:   36:#include <cstdio>
+        -:   37:#include <stdexcept>
+        -:   38:#include <iostream>
+        -:   39:#include <iomanip>
+        -:   40:#include <iterator>
+        -:   41:#include <set>
+        -:   42:
+        -:   43:#include <boost/test/detail/suppress_warnings.hpp>
+        -:   44:
+        -:   45://____________________________________________________________________________//
+        -:   46:
+        -:   47:namespace boost {
+        -:   48:namespace unit_test {
+        -:   49:
+        -:   50:namespace ut_detail {
+        -:   51:
+        -:   52:// ************************************************************************** //
+        -:   53:// **************             hrf_content_reporter             ************** //
+        -:   54:// ************************************************************************** //
+        -:   55:
+        -:   56:struct hrf_content_reporter : test_tree_visitor {
+    #####:   57:    explicit        hrf_content_reporter( std::ostream& os ) : m_os( os ), m_indent( -4 ) {} // skip master test suite
+    %%%%%:   57-block  0
+        -:   58:
+        -:   59:private:
+    #####:   60:    void            report_test_unit( test_unit const& tu )
+        -:   61:    {
+    #####:   62:        m_os << std::setw( m_indent ) << "" << tu.p_name;
+    %%%%%:   62-block  0
+    #####:   63:        m_os << (tu.p_default_status == test_unit::RS_ENABLED ? "*" : " ");
+    %%%%%:   63-block  0
+    %%%%%:   63-block  1
+    %%%%%:   63-block  2
+    %%%%%:   63-block  3
+        -:   64:        //m_os << '[' << tu.p_sibling_rank << ']';
+    #####:   65:        if( !tu.p_description->empty() )
+    %%%%%:   65-block  0
+    #####:   66:            m_os << ": " << tu.p_description;
+    %%%%%:   66-block  0
+        -:   67:
+    #####:   68:        m_os << "\n";
+    %%%%%:   68-block  0
+    #####:   69:    }
+    #####:   70:    virtual void    visit( test_case const& tc ) { report_test_unit( tc ); }
+    %%%%%:   70-block  0
+    #####:   71:    virtual bool    test_suite_start( test_suite const& ts )
+        -:   72:    {
+    #####:   73:        if( m_indent >= 0 )
+    %%%%%:   73-block  0
+    #####:   74:            report_test_unit( ts );
+    %%%%%:   74-block  0
+    #####:   75:        m_indent += 4;
+    #####:   76:        return true;
+    %%%%%:   76-block  0
+        -:   77:    }
+    #####:   78:    virtual void    test_suite_finish( test_suite const& )
+        -:   79:    {
+    #####:   80:        m_indent -= 4;
+    #####:   81:    }
+        -:   82:
+        -:   83:    // Data members
+        -:   84:    std::ostream&   m_os;
+        -:   85:    int             m_indent;
+        -:   86:};
+        -:   87:
+        -:   88:// ************************************************************************** //
+        -:   89:// **************             dot_content_reporter             ************** //
+        -:   90:// ************************************************************************** //
+        -:   91:
+        -:   92:struct dot_content_reporter : test_tree_visitor {
+    #####:   93:    explicit        dot_content_reporter( std::ostream& os ) : m_os( os ) {}
+    %%%%%:   93-block  0
+        -:   94:
+        -:   95:private:
+    #####:   96:    void            report_test_unit( test_unit const& tu )
+        -:   97:    {
+    #####:   98:        bool master_ts = tu.p_parent_id == INV_TEST_UNIT_ID;
+    %%%%%:   98-block  0
+        -:   99:
+    #####:  100:        m_os << "tu" << tu.p_id;
+        -:  101:
+    #####:  102:        m_os << (master_ts ? "[shape=ellipse,peripheries=2" : "[shape=Mrecord" );
+    %%%%%:  102-block  0
+    %%%%%:  102-block  1
+    %%%%%:  102-block  2
+        -:  103:
+    #####:  104:        m_os << ",fontname=Helvetica";
+        -:  105:
+    #####:  106:        m_os << (tu.p_default_status == test_unit::RS_ENABLED ? ",color=green" : ",color=yellow");
+    %%%%%:  106-block  0
+    %%%%%:  106-block  1
+    %%%%%:  106-block  2
+    %%%%%:  106-block  3
+    $$$$$:  106-block  4
+        -:  107:
+    #####:  108:        if( master_ts )
+    %%%%%:  108-block  0
+    #####:  109:            m_os << ",label=\"" << tu.p_name << "\"];\n";
+    %%%%%:  109-block  0
+        -:  110:        else {
+    #####:  111:            m_os << ",label=\"" << tu.p_name << "|" << tu.p_file_name << "(" << tu.p_line_num << ")";
+    %%%%%:  111-block  0
+    #####:  112:            if( tu.p_timeout > 0  )
+    #####:  113:                m_os << "|timeout=" << tu.p_timeout;
+    %%%%%:  113-block  0
+    #####:  114:            if( tu.p_expected_failures != 0  )
+    %%%%%:  114-block  0
+    #####:  115:                m_os << "|expected failures=" << tu.p_expected_failures;
+    %%%%%:  115-block  0
+    #####:  116:            if( !tu.p_labels->empty() ) {
+    %%%%%:  116-block  0
+    #####:  117:                m_os << "|labels:";
+    %%%%%:  117-block  0
+        -:  118:
+    #####:  119:                BOOST_TEST_FOREACH( std::string const&, l, tu.p_labels.get() )
+    %%%%%:  119-block  0
+    %%%%%:  119-block  1
+    %%%%%:  119-block  2
+    %%%%%:  119-block  3
+    %%%%%:  119-block  4
+    %%%%%:  119-block  5
+    %%%%%:  119-block  6
+    %%%%%:  119-block  7
+    %%%%%:  119-block  8
+    %%%%%:  119-block  9
+    %%%%%:  119-block 10
+    %%%%%:  119-block 11
+    %%%%%:  119-block 12
+    %%%%%:  119-block 13
+    %%%%%:  119-block 14
+    %%%%%:  119-block 15
+    %%%%%:  119-block 16
+    %%%%%:  119-block 17
+    $$$$$:  119-block 18
+    $$$$$:  119-block 19
+    $$$$$:  119-block 20
+    $$$$$:  119-block 21
+    $$$$$:  119-block 22
+    #####:  120:                    m_os << " @" << l;
+    %%%%%:  120-block  0
+        -:  121:            }
+    #####:  122:            m_os << "\"];\n";
+    %%%%%:  122-block  0
+        -:  123:        }
+        -:  124:
+    #####:  125:        if( !master_ts )
+    %%%%%:  125-block  0
+    #####:  126:            m_os << "tu" << tu.p_parent_id << " -> " << "tu" << tu.p_id << ";\n";
+    %%%%%:  126-block  0
+        -:  127:
+    #####:  128:        BOOST_TEST_FOREACH( test_unit_id, dep_id, tu.p_dependencies.get() ) {
+    %%%%%:  128-block  0
+    %%%%%:  128-block  1
+    %%%%%:  128-block  2
+    %%%%%:  128-block  3
+    %%%%%:  128-block  4
+    %%%%%:  128-block  5
+    %%%%%:  128-block  6
+    %%%%%:  128-block  7
+    %%%%%:  128-block  8
+    %%%%%:  128-block  9
+    %%%%%:  128-block 10
+    %%%%%:  128-block 11
+    %%%%%:  128-block 12
+    %%%%%:  128-block 13
+    %%%%%:  128-block 14
+    %%%%%:  128-block 15
+    %%%%%:  128-block 16
+    %%%%%:  128-block 17
+    %%%%%:  128-block 18
+    $$$$$:  128-block 19
+    $$$$$:  128-block 20
+    $$$$$:  128-block 21
+    $$$$$:  128-block 22
+    #####:  129:            test_unit const& dep = framework::get( dep_id, TUT_ANY );
+    %%%%%:  129-block  0
+        -:  130:
+    #####:  131:            m_os << "tu" << tu.p_id << " -> " << "tu" << dep.p_id << "[color=red,style=dotted,constraint=false];\n";
+        -:  132:        }
+        -:  133:
+    #####:  134:    }
+    %%%%%:  134-block  0
+    #####:  135:    virtual void    visit( test_case const& tc )
+        -:  136:    { 
+    #####:  137:        report_test_unit( tc );
+    %%%%%:  137-block  0
+    #####:  138:    }
+    #####:  139:    virtual bool    test_suite_start( test_suite const& ts )
+        -:  140:    {
+    #####:  141:        if( ts.p_parent_id == INV_TEST_UNIT_ID )
+    %%%%%:  141-block  0
+    #####:  142:            m_os << "digraph G {rankdir=LR;\n";
+    %%%%%:  142-block  0
+        -:  143:
+    #####:  144:        report_test_unit( ts );
+    %%%%%:  144-block  0
+        -:  145:
+    #####:  146:        m_os << "{\n";
+        -:  147:
+    #####:  148:        return true;
+        -:  149:    }
+    #####:  150:    virtual void    test_suite_finish( test_suite const& ts )
+        -:  151:    {
+    #####:  152:        m_os << "}\n";
+    %%%%%:  152-block  0
+    #####:  153:        if( ts.p_parent_id == INV_TEST_UNIT_ID )
+    #####:  154:            m_os << "}\n";
+    %%%%%:  154-block  0
+    #####:  155:    }
+        -:  156:
+        -:  157:    std::ostream&   m_os;
+        -:  158:};
+        -:  159:
+        -:  160:// ************************************************************************** //
+        -:  161:// **************               labels_collector               ************** //
+        -:  162:// ************************************************************************** //
+        -:  163:
+        -:  164:struct labels_collector : test_tree_visitor {
+    #####:  165:    std::set<std::string> const& labels() const { return m_labels; }
+    %%%%%:  165-block  0
+        -:  166:
+        -:  167:private:
+    #####:  168:    virtual bool            visit( test_unit const& tu ) 
+        -:  169:    {
+    #####:  170:        m_labels.insert( tu.p_labels->begin(), tu.p_labels->end() );
+    %%%%%:  170-block  0
+    #####:  171:        return true;
+        -:  172:    }
+        -:  173:
+        -:  174:    // Data members
+        -:  175:    std::set<std::string>   m_labels;
+        -:  176:};
+        -:  177:
+        -:  178:struct framework_shutdown_helper {
+        1:  179:    ~framework_shutdown_helper() {
+        -:  180:        try {
+        1:  181:            framework::shutdown();
+        1:  181-block  0
+        -:  182:        }
+    =====:  183:        catch(...) {
+    $$$$$:  183-block  0
+    =====:  184:            std::cerr << "Boost.Test shutdown exception caught" << std::endl;
+        -:  185:        }
+        1:  186:    }
+        1:  186-block  0
+        -:  187:};
+        -:  188:
+        -:  189:} // namespace ut_detail
+        -:  190:
+        -:  191:// ************************************************************************** //
+        -:  192:// **************                  unit_test_main              ************** //
+        -:  193:// ************************************************************************** //
+        -:  194:
+        -:  195:
+        -:  196:
+        -:  197:int BOOST_TEST_DECL
+        1:  198:unit_test_main( init_unit_test_func init_func, int argc, char* argv[] )
+        -:  199:{
+        1:  200:    int result_code = 0;
+        -:  201:
+        1:  202:    ut_detail::framework_shutdown_helper shutdown_helper;
+        1:  202-block  0
+    $$$$$:  202-block  1
+        -:  203:
+        -:  204:    BOOST_TEST_I_TRY {
+        -:  205:        
+        1:  206:        framework::init( init_func, argc, argv );
+        1:  206-block  0
+        -:  207:
+        1:  208:        if( runtime_config::get<bool>( runtime_config::btrt_wait_for_debugger ) ) {
+        1:  208-block  0
+        1:  208-block  1
+    $$$$$:  208-block  2
+    #####:  209:            results_reporter::get_stream() << "Press any key to continue..." << std::endl;
+    %%%%%:  209-block  0
+    %%%%%:  209-block  1
+    %%%%%:  209-block  2
+        -:  210:
+        -:  211:            // getchar is defined as a macro in uClibc. Use parenthesis to fix
+        -:  212:            // gcc bug 58952 for gcc <= 4.8.2.
+    #####:  213:            (std::getchar)();
+    %%%%%:  213-block  0
+    #####:  214:            results_reporter::get_stream() << "Continuing..." << std::endl;
+    %%%%%:  214-block  0
+    %%%%%:  214-block  1
+    %%%%%:  214-block  2
+        -:  215:        }
+        -:  216:
+        1:  217:        framework::finalize_setup_phase();
+        1:  217-block  0
+        -:  218:
+        1:  219:        output_format list_cont = runtime_config::get<output_format>( runtime_config::btrt_list_content );
+        1:  219-block  0
+    $$$$$:  219-block  1
+        1:  220:        if( list_cont != unit_test::OF_INVALID ) {
+        1:  220-block  0
+    #####:  221:            if( list_cont == unit_test::OF_DOT ) {
+    %%%%%:  221-block  0
+    #####:  222:                ut_detail::dot_content_reporter reporter( results_reporter::get_stream() );
+    %%%%%:  222-block  0
+    %%%%%:  222-block  1
+    %%%%%:  222-block  2
+    $$$$$:  222-block  3
+        -:  223:
+    #####:  224:                traverse_test_tree( framework::master_test_suite().p_id, reporter, true );
+    %%%%%:  224-block  0
+        -:  225:            }
+        -:  226:            else {
+    #####:  227:                ut_detail::hrf_content_reporter reporter( results_reporter::get_stream() );
+    %%%%%:  227-block  0
+    %%%%%:  227-block  1
+    %%%%%:  227-block  2
+    $$$$$:  227-block  3
+        -:  228:
+    #####:  229:                traverse_test_tree( framework::master_test_suite().p_id, reporter, true );
+    %%%%%:  229-block  0
+        -:  230:            }
+        -:  231:
+    #####:  232:            return boost::exit_success;
+    %%%%%:  232-block  0
+        -:  233:        }
+        -:  234:
+        1:  235:        if( runtime_config::get<bool>( runtime_config::btrt_list_labels ) ) {
+        1:  235-block  0
+        1:  235-block  1
+    $$$$$:  235-block  2
+    #####:  236:            ut_detail::labels_collector collector;
+    %%%%%:  236-block  0
+    $$$$$:  236-block  1
+        -:  237:
+    #####:  238:            traverse_test_tree( framework::master_test_suite().p_id, collector, true );
+    %%%%%:  238-block  0
+        -:  239:
+    #####:  240:            results_reporter::get_stream() << "Available labels:\n  ";
+    %%%%%:  240-block  0
+    %%%%%:  240-block  1
+    #####:  241:            std::copy( collector.labels().begin(), collector.labels().end(), 
+    #####:  242:                       std::ostream_iterator<std::string>( results_reporter::get_stream(), "\n  " ) );
+    %%%%%:  242-block  0
+    %%%%%:  242-block  1
+    $$$$$:  242-block  2
+    #####:  243:            results_reporter::get_stream() << "\n";
+    %%%%%:  243-block  0
+    %%%%%:  243-block  1
+        -:  244:
+    #####:  245:            return boost::exit_success;
+    %%%%%:  245-block  0
+        -:  246:        }
+        -:  247:
+        1:  248:        framework::run();
+        1:  248-block  0
+        -:  249:
+        2:  250:        result_code = !runtime_config::get<bool>( runtime_config::btrt_result_code )
+        1:  250-block  0
+        1:  250-block  1
+    $$$$$:  250-block  2
+       1*:  251:                        ? boost::exit_success
+        1:  251-block  0
+    %%%%%:  251-block  1
+        1:  252:                        : results_collector.results( framework::master_test_suite().p_id ).result_code();
+        1:  252-block  0
+        1:  252-block  1
+        1:  252-block  2
+        1:  252-block  3
+        -:  253:    }
+    =====:  254:    BOOST_TEST_I_CATCH( framework::nothing_to_test, ex ) {
+    $$$$$:  254-block  0
+    =====:  255:        result_code = ex.m_result_code;
+        -:  256:    }
+    =====:  257:    BOOST_TEST_I_CATCH( framework::internal_error, ex ) {
+    $$$$$:  257-block  0
+    $$$$$:  257-block  1
+    =====:  258:        results_reporter::get_stream() << "Boost.Test framework internal error: " << ex.what() << std::endl;
+    $$$$$:  258-block  0
+    $$$$$:  258-block  1
+    $$$$$:  258-block  2
+        -:  259:
+    =====:  260:        result_code = boost::exit_exception_failure;
+    $$$$$:  260-block  0
+        -:  261:    }
+    =====:  262:    BOOST_TEST_I_CATCH( framework::setup_error, ex ) {
+    $$$$$:  262-block  0
+    $$$$$:  262-block  1
+    =====:  263:        results_reporter::get_stream() << "Test setup error: " << ex.what() << std::endl;
+    $$$$$:  263-block  0
+    $$$$$:  263-block  1
+    $$$$$:  263-block  2
+        -:  264:
+    =====:  265:        result_code = boost::exit_exception_failure;
+    $$$$$:  265-block  0
+        -:  266:    }
+    =====:  267:    BOOST_TEST_I_CATCH( std::logic_error, ex ) {
+    $$$$$:  267-block  0
+    $$$$$:  267-block  1
+    =====:  268:        results_reporter::get_stream() << "Test setup error: " << ex.what() << std::endl;
+    $$$$$:  268-block  0
+    $$$$$:  268-block  1
+    $$$$$:  268-block  2
+        -:  269:
+    =====:  270:        result_code = boost::exit_exception_failure;
+    $$$$$:  270-block  0
+        -:  271:    }
+    =====:  272:    BOOST_TEST_I_CATCHALL() {
+    $$$$$:  272-block  0
+    $$$$$:  272-block  1
+    =====:  273:        results_reporter::get_stream() << "Boost.Test framework internal error: unknown reason" << std::endl;
+    $$$$$:  273-block  0
+    $$$$$:  273-block  1
+        -:  274:
+    =====:  275:        result_code = boost::exit_exception_failure;
+    $$$$$:  275-block  0
+        -:  276:    }
+        -:  277:
+        1:  278:    return result_code;
+        1:  278-block  0
+        -:  279:}
+        -:  280:
+        -:  281:} // namespace unit_test
+        -:  282:} // namespace boost
+        -:  283:
+        -:  284:#if !defined(BOOST_TEST_DYN_LINK) && !defined(BOOST_TEST_NO_MAIN)
+        -:  285:
+        -:  286:// ************************************************************************** //
+        -:  287:// **************        main function for tests using lib     ************** //
+        -:  288:// ************************************************************************** //
+        -:  289:
+        -:  290:int BOOST_TEST_CALL_DECL
+        1:  291:main( int argc, char* argv[] )
+        -:  292:{
+        -:  293:    // prototype for user's unit test init function
+        -:  294:#ifdef BOOST_TEST_ALTERNATIVE_INIT_API
+        -:  295:    extern bool init_unit_test();
+        -:  296:
+        -:  297:    boost::unit_test::init_unit_test_func init_func = &init_unit_test;
+        -:  298:#else
+        -:  299:    extern ::boost::unit_test::test_suite* init_unit_test_suite( int argc, char* argv[] );
+        -:  300:
+        1:  301:    boost::unit_test::init_unit_test_func init_func = &init_unit_test_suite;
+        -:  302:#endif
+        -:  303:
+        1:  304:    return ::boost::unit_test::unit_test_main( init_func, argc, argv );
+        1:  304-block  0
+        -:  305:}
+        -:  306:
+        -:  307:#endif // !BOOST_TEST_DYN_LINK && !BOOST_TEST_NO_MAIN
+        -:  308:
+        -:  309://____________________________________________________________________________//
+        -:  310:
+        -:  311:#include <boost/test/detail/enable_warnings.hpp>
+        -:  312:
+        -:  313:#endif // BOOST_TEST_UNIT_TEST_MAIN_IPP_012205GER

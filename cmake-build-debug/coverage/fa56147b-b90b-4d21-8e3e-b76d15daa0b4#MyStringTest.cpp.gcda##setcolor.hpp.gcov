@@ -1,0 +1,396 @@
+        -:    0:Source:F:/Files/vcpkg/installed/x86-windows/include/boost/test/utils/setcolor.hpp
+        -:    0:Graph:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcno
+        -:    0:Data:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1://  (C) Copyright Gennadiy Rozental 2001.
+        -:    2://  Distributed under the Boost Software License, Version 1.0.
+        -:    3://  (See accompanying file LICENSE_1_0.txt or copy at
+        -:    4://  http://www.boost.org/LICENSE_1_0.txt)
+        -:    5:
+        -:    6://  See http://www.boost.org/libs/test for the library home page.
+        -:    7://
+        -:    8://  File        : $RCSfile$
+        -:    9://
+        -:   10://  Version     : $Revision$
+        -:   11://
+        -:   12://  Description : contains definition for setcolor iostream manipulator
+        -:   13:// ***************************************************************************
+        -:   14:
+        -:   15:#ifndef BOOST_TEST_UTILS_SETCOLOR_HPP
+        -:   16:#define BOOST_TEST_UTILS_SETCOLOR_HPP
+        -:   17:
+        -:   18:// Boost.Test
+        -:   19:#include <boost/test/detail/config.hpp>
+        -:   20:
+        -:   21:#include <boost/core/ignore_unused.hpp>
+        -:   22:
+        -:   23:// STL
+        -:   24:#include <iostream>
+        -:   25:#include <cstdio>
+        -:   26:
+        -:   27:#include <boost/test/detail/suppress_warnings.hpp>
+        -:   28:
+        -:   29:#ifdef _WIN32
+        -:   30:  #include <windows.h>
+        -:   31:
+        -:   32:  #if defined(__MINGW32__) && !defined(COMMON_LVB_UNDERSCORE)
+        -:   33:    // mingw badly mimicking windows.h
+        -:   34:    #define COMMON_LVB_UNDERSCORE 0x8000
+        -:   35:  #endif
+        -:   36:#endif
+        -:   37:
+        -:   38://____________________________________________________________________________//
+        -:   39:
+        -:   40:namespace boost {
+        -:   41:namespace unit_test {
+        -:   42:namespace utils {
+        -:   43:
+        -:   44:// ************************************************************************** //
+        -:   45:// **************                    term_attr                 ************** //
+        -:   46:// ************************************************************************** //
+        -:   47:
+        -:   48:struct term_attr { enum _ {
+        -:   49:    NORMAL    = 0,
+        -:   50:    BRIGHT    = 1,
+        -:   51:    DIM       = 2,
+        -:   52:    UNDERLINE = 4,
+        -:   53:    BLINK     = 5,
+        -:   54:    REVERSE   = 7,
+        -:   55:    CROSSOUT  = 9
+        -:   56:}; };
+        -:   57:
+        -:   58:// ************************************************************************** //
+        -:   59:// **************                   term_color                 ************** //
+        -:   60:// ************************************************************************** //
+        -:   61:
+        -:   62:struct term_color { enum _ {
+        -:   63:    BLACK    = 0,
+        -:   64:    RED      = 1,
+        -:   65:    GREEN    = 2,
+        -:   66:    YELLOW   = 3,
+        -:   67:    BLUE     = 4,
+        -:   68:    MAGENTA  = 5,
+        -:   69:    CYAN     = 6,
+        -:   70:    WHITE    = 7,
+        -:   71:    ORIGINAL = 9
+        -:   72:}; };
+        -:   73:
+        -:   74:// ************************************************************************** //
+        -:   75:// **************                    setcolor                  ************** //
+        -:   76:// ************************************************************************** //
+        -:   77:
+        -:   78:#ifndef _WIN32
+        -:   79:class setcolor {
+        -:   80:public:
+        -:   81:    // Constructor
+        -:   82:    explicit    setcolor( bool is_color_output = false,
+        -:   83:                          term_attr::_  attr = term_attr::NORMAL,
+        -:   84:                          term_color::_ fg   = term_color::ORIGINAL,
+        -:   85:                          term_color::_ bg   = term_color::ORIGINAL )
+        -:   86:    : m_is_color_output(is_color_output)
+        -:   87:    {
+        -:   88:        m_command_size = std::sprintf( m_control_command, "%c[%c;3%c;4%cm",
+        -:   89:          0x1B,
+        -:   90:          static_cast<char>(attr + '0'),
+        -:   91:          static_cast<char>(fg + '0'),
+        -:   92:          static_cast<char>(bg + '0'));
+        -:   93:    }
+        -:   94:
+        -:   95:    friend std::ostream&
+        -:   96:    operator<<( std::ostream& os, setcolor const& sc )
+        -:   97:    {
+        -:   98:       if (sc.m_is_color_output && (&os == &std::cout || &os == &std::cerr)) {
+        -:   99:          return os.write( sc.m_control_command, sc.m_command_size );
+        -:  100:       }
+        -:  101:       return os;
+        -:  102:    }
+        -:  103:
+        -:  104:private:
+        -:  105:    // Data members
+        -:  106:    bool        m_is_color_output;
+        -:  107:    char        m_control_command[13];
+        -:  108:    int         m_command_size;
+        -:  109:};
+        -:  110:
+        -:  111:#else
+        -:  112:
+        -:  113:class setcolor {
+        -:  114:
+        -:  115:protected:
+      106:  116:  void set_console_color(std::ostream& os, WORD *attributes = NULL) const {
+      106:  117:    if (!m_is_color_output) {
+      106:  117-block  0
+      106:  118:      return;
+      106:  118-block  0
+        -:  119:    }
+        -:  120:    DWORD console_type;
+    #####:  121:    if (&os == &std::cout) {
+    %%%%%:  121-block  0
+    #####:  122:      console_type = STD_OUTPUT_HANDLE;
+    %%%%%:  122-block  0
+        -:  123:    }
+    #####:  124:    else if (&os == &std::cerr) {
+    %%%%%:  124-block  0
+    #####:  125:      console_type =  STD_ERROR_HANDLE;
+    %%%%%:  125-block  0
+        -:  126:    }
+        -:  127:    else {
+    #####:  128:      return;
+    %%%%%:  128-block  0
+        -:  129:    }
+    #####:  130:    HANDLE hConsole = GetStdHandle(console_type);
+    %%%%%:  130-block  0
+        -:  131:
+    #####:  132:    if(hConsole == INVALID_HANDLE_VALUE || hConsole == NULL )
+    %%%%%:  132-block  0
+    %%%%%:  132-block  1
+    #####:  133:      return;
+    %%%%%:  133-block  0
+        -:  134:
+    #####:  135:    if(attributes != NULL) {
+    %%%%%:  135-block  0
+    #####:  136:      SetConsoleTextAttribute(hConsole, *attributes);
+    %%%%%:  136-block  0
+    #####:  137:      return;
+    %%%%%:  137-block  0
+        -:  138:    }
+        -:  139:
+        -:  140:    CONSOLE_SCREEN_BUFFER_INFO consoleInfo;
+    #####:  141:    GetConsoleScreenBufferInfo(hConsole, &consoleInfo);
+    %%%%%:  141-block  0
+    #####:  142:    saved_attributes = consoleInfo.wAttributes;
+        -:  143:
+    #####:  144:    WORD fg_attr = 0;
+    #####:  145:    switch(m_fg)
+    %%%%%:  145-block  0
+        -:  146:    {
+    #####:  147:    case term_color::WHITE:
+    #####:  148:      fg_attr = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;
+    #####:  149:      break;
+    %%%%%:  149-block  0
+    #####:  150:    case term_color::BLACK:
+    #####:  151:      fg_attr = 0;
+    #####:  152:      break;
+    %%%%%:  152-block  0
+    #####:  153:    case term_color::RED:
+    #####:  154:      fg_attr = FOREGROUND_RED;
+    #####:  155:      break;
+    %%%%%:  155-block  0
+    #####:  156:    case term_color::GREEN:
+    #####:  157:      fg_attr = FOREGROUND_GREEN;
+    #####:  158:      break;
+    %%%%%:  158-block  0
+    #####:  159:    case term_color::CYAN:
+    #####:  160:      fg_attr = FOREGROUND_GREEN | FOREGROUND_BLUE;
+    #####:  161:      break;
+    %%%%%:  161-block  0
+    #####:  162:    case term_color::MAGENTA:
+    #####:  163:      fg_attr = FOREGROUND_RED | FOREGROUND_BLUE;
+    #####:  164:      break;
+    %%%%%:  164-block  0
+    #####:  165:    case term_color::BLUE:
+    #####:  166:      fg_attr = FOREGROUND_BLUE;
+    #####:  167:      break;
+    %%%%%:  167-block  0
+    #####:  168:    case term_color::YELLOW:
+    #####:  169:      fg_attr = FOREGROUND_RED | FOREGROUND_GREEN;
+    #####:  170:      break;
+    %%%%%:  170-block  0
+    #####:  171:    case term_color::ORIGINAL:    
+        -:  172:    default:
+    #####:  173:      fg_attr = saved_attributes & (FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+    #####:  174:      break;
+    %%%%%:  174-block  0
+        -:  175:    }
+        -:  176:
+    #####:  177:    WORD bg_attr = 0;
+    #####:  178:    switch(m_bg)
+    %%%%%:  178-block  0
+        -:  179:    {
+    #####:  180:    case term_color::BLACK:
+    #####:  181:      bg_attr = 0;
+    #####:  182:      break;
+    %%%%%:  182-block  0
+    #####:  183:    case term_color::WHITE:
+    #####:  184:      bg_attr = BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE;
+    #####:  185:      break;
+    %%%%%:  185-block  0
+    #####:  186:    case term_color::RED:
+    #####:  187:      bg_attr = BACKGROUND_RED;
+    #####:  188:      break;
+    %%%%%:  188-block  0
+    #####:  189:    case term_color::GREEN:
+    #####:  190:      bg_attr = BACKGROUND_GREEN;
+    #####:  191:      break;
+    %%%%%:  191-block  0
+    #####:  192:    case term_color::BLUE:
+    #####:  193:      bg_attr = BACKGROUND_BLUE;
+    #####:  194:      break;
+    %%%%%:  194-block  0
+    #####:  195:    case term_color::ORIGINAL:    
+        -:  196:    default:
+    #####:  197:      bg_attr = saved_attributes & (BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE);
+    #####:  198:      break;
+    %%%%%:  198-block  0
+        -:  199:    }
+        -:  200:
+    #####:  201:    WORD text_attr = 0;
+    #####:  202:    switch(m_attr)
+    %%%%%:  202-block  0
+        -:  203:    {
+    #####:  204:    case term_attr::BRIGHT:
+    #####:  205:      text_attr = FOREGROUND_INTENSITY;
+    #####:  206:      break;
+    %%%%%:  206-block  0
+    #####:  207:    case term_attr::UNDERLINE:
+    #####:  208:      text_attr = COMMON_LVB_UNDERSCORE;
+    #####:  209:      break;
+    %%%%%:  209-block  0
+    #####:  210:    default:
+    #####:  211:      break;
+    %%%%%:  211-block  0
+        -:  212:    }
+        -:  213:
+    #####:  214:    SetConsoleTextAttribute(hConsole, fg_attr | bg_attr | text_attr);
+    %%%%%:  214-block  0
+    #####:  215:    return;
+    %%%%%:  215-block  0
+        -:  216:  }
+        -:  217:
+        -:  218:public:
+        -:  219:  // Constructor
+       81:  220:  explicit    setcolor( 
+        -:  221:    bool is_color_output = false,
+        -:  222:    term_attr::_  attr = term_attr::NORMAL,
+        -:  223:    term_color::_ fg   = term_color::ORIGINAL,
+        -:  224:    term_color::_ bg   = term_color::ORIGINAL ) 
+       81:  225:  : m_is_color_output(is_color_output)
+        -:  226:  , m_attr(attr)
+        -:  227:  , m_fg(fg)
+       81:  228:  , m_bg(bg)
+       81:  229:  {}
+------------------
+_ZN5boost9unit_test5utils8setcolorC1EbNS1_9term_attr1_ENS1_10term_color1_ES6_:
+       56:  220:  explicit    setcolor( 
+        -:  221:    bool is_color_output = false,
+        -:  222:    term_attr::_  attr = term_attr::NORMAL,
+        -:  223:    term_color::_ fg   = term_color::ORIGINAL,
+        -:  224:    term_color::_ bg   = term_color::ORIGINAL ) 
+       56:  225:  : m_is_color_output(is_color_output)
+        -:  226:  , m_attr(attr)
+        -:  227:  , m_fg(fg)
+       56:  228:  , m_bg(bg)
+       56:  229:  {}
+------------------
+_ZN5boost9unit_test5utils8setcolorC2EbNS1_9term_attr1_ENS1_10term_color1_ES6_:
+       25:  220:  explicit    setcolor( 
+        -:  221:    bool is_color_output = false,
+        -:  222:    term_attr::_  attr = term_attr::NORMAL,
+        -:  223:    term_color::_ fg   = term_color::ORIGINAL,
+        -:  224:    term_color::_ bg   = term_color::ORIGINAL ) 
+       25:  225:  : m_is_color_output(is_color_output)
+        -:  226:  , m_attr(attr)
+        -:  227:  , m_fg(fg)
+       25:  228:  , m_bg(bg)
+       25:  229:  {}
+------------------
+        -:  230:
+        -:  231:  friend std::ostream&
+       81:  232:    operator<<( std::ostream& os, setcolor const& sc )
+        -:  233:  {
+       81:  234:    sc.set_console_color(os);
+       81:  234-block  0
+       81:  235:    return os;
+        -:  236:  }
+        -:  237:
+        -:  238:private:
+        -:  239:  bool m_is_color_output;
+        -:  240:  term_attr::_ m_attr;
+        -:  241:  term_color::_ m_fg;
+        -:  242:  term_color::_ m_bg;
+        -:  243:
+        -:  244:protected:
+        -:  245:  // Data members
+        -:  246:  mutable WORD saved_attributes;
+        -:  247:};
+        -:  248:
+        -:  249:#endif
+        -:  250:// ************************************************************************** //
+        -:  251:// **************                 scope_setcolor               ************** //
+        -:  252:// ************************************************************************** //
+        -:  253:
+        -:  254:#ifndef _WIN32
+        -:  255:
+        -:  256:struct scope_setcolor {
+        -:  257:    scope_setcolor() : m_os( 0 ) {}
+        -:  258:    explicit    scope_setcolor( bool is_color_output,
+        -:  259:                                std::ostream& os,
+        -:  260:                                term_attr::_  attr = term_attr::NORMAL,
+        -:  261:                                term_color::_ fg   = term_color::ORIGINAL,
+        -:  262:                                term_color::_ bg   = term_color::ORIGINAL )
+        -:  263:    : m_os( &os )
+        -:  264:    , m_is_color_output( is_color_output )
+        -:  265:    {
+        -:  266:        os << setcolor( is_color_output, attr, fg, bg );
+        -:  267:    }
+        -:  268:    ~scope_setcolor()
+        -:  269:    {
+        -:  270:        if( m_os )
+        -:  271:            *m_os << setcolor( m_is_color_output );
+        -:  272:    }
+        -:  273:private:
+        -:  274:    scope_setcolor(const scope_setcolor& r);
+        -:  275:    scope_setcolor& operator=(const scope_setcolor& r);
+        -:  276:    // Data members
+        -:  277:    std::ostream* m_os;
+        -:  278:    bool m_is_color_output;
+        -:  279:};
+        -:  280:
+        -:  281:#else
+        -:  282:
+        -:  283:struct scope_setcolor : setcolor {
+        -:  284:  scope_setcolor() : m_os( 0 ) {}
+       25:  285:  explicit    scope_setcolor( 
+        -:  286:    bool is_color_output,
+        -:  287:    std::ostream& os,
+        -:  288:    term_attr::_  attr = term_attr::NORMAL,
+        -:  289:    term_color::_ fg   = term_color::ORIGINAL,
+        -:  290:    term_color::_ bg   = term_color::ORIGINAL )
+       25:  291:  : setcolor(is_color_output, attr, fg, bg)
+       25:  292:  , m_os( &os )
+       25:  292-block  0
+        -:  293:  {
+       25:  294:    os << *this;
+       25:  295:  }
+        -:  296:
+       25:  297:  ~scope_setcolor()
+       25:  298:  {
+       25:  299:    if (m_os) {
+       25:  299-block  0
+       25:  300:      set_console_color(*m_os, &this->saved_attributes);
+       25:  300-block  0
+        -:  301:    }
+       25:  302:  }
+        -:  303:private:
+        -:  304:  scope_setcolor(const scope_setcolor& r);
+        -:  305:  scope_setcolor& operator=(const scope_setcolor& r);
+        -:  306:  // Data members
+        -:  307:  std::ostream* m_os;
+        -:  308:};
+        -:  309:
+        -:  310:
+        -:  311:#endif
+        -:  312:
+        -:  313:#define BOOST_TEST_SCOPE_SETCOLOR( is_color_output, os, attr, color )               \
+        -:  314:    utils::scope_setcolor const sc(is_color_output, os, utils::attr, utils::color); \
+        -:  315:    boost::ignore_unused( sc )                                                      \
+        -:  316:/**/
+        -:  317:
+        -:  318:} // namespace utils
+        -:  319:} // namespace unit_test
+        -:  320:} // namespace boost
+        -:  321:
+        -:  322:#include <boost/test/detail/enable_warnings.hpp>
+        -:  323:
+        -:  324:#endif // BOOST_TEST_UTILS_SETCOLOR_HPP

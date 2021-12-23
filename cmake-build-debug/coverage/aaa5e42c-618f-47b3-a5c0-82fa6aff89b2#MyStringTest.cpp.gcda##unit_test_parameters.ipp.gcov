@@ -1,0 +1,1985 @@
+        -:    0:Source:F:/Files/vcpkg/installed/x86-windows/include/boost/test/impl/unit_test_parameters.ipp
+        -:    0:Graph:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcno
+        -:    0:Data:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1://  (C) Copyright Gennadiy Rozental 2001.
+        -:    2://  Distributed under the Boost Software License, Version 1.0.
+        -:    3://  (See accompanying file LICENSE_1_0.txt or copy at
+        -:    4://  http://www.boost.org/LICENSE_1_0.txt)
+        -:    5:
+        -:    6://  See http://www.boost.org/libs/test for the library home page.
+        -:    7://
+        -:    8://  File        : $RCSfile$
+        -:    9://
+        -:   10://  Version     : $Revision$
+        -:   11://
+        -:   12://  Description : simple implementation for Unit Test Framework parameter
+        -:   13://  handling routines. May be rewritten in future to use some kind of
+        -:   14://  command-line arguments parsing facility and environment variable handling
+        -:   15://  facility
+        -:   16:// ***************************************************************************
+        -:   17:
+        -:   18:#ifndef BOOST_TEST_UNIT_TEST_PARAMETERS_IPP_012205GER
+        -:   19:#define BOOST_TEST_UNIT_TEST_PARAMETERS_IPP_012205GER
+        -:   20:
+        -:   21:// Boost.Test
+        -:   22:#include <boost/test/unit_test_parameters.hpp>
+        -:   23:
+        -:   24:#include <boost/test/utils/basic_cstring/basic_cstring.hpp>
+        -:   25:#include <boost/test/utils/basic_cstring/compare.hpp>
+        -:   26:#include <boost/test/utils/basic_cstring/io.hpp>
+        -:   27:#include <boost/test/utils/iterator/token_iterator.hpp>
+        -:   28:
+        -:   29:#include <boost/test/debug.hpp>
+        -:   30:#include <boost/test/framework.hpp>
+        -:   31:
+        -:   32:#include <boost/test/detail/log_level.hpp>
+        -:   33:#include <boost/test/detail/throw_exception.hpp>
+        -:   34:
+        -:   35:// Boost.Runtime.Param
+        -:   36:#include <boost/test/utils/runtime/parameter.hpp>
+        -:   37:#include <boost/test/utils/runtime/argument.hpp>
+        -:   38:#include <boost/test/utils/runtime/finalize.hpp>
+        -:   39:#include <boost/test/utils/runtime/cla/parser.hpp>
+        -:   40:#include <boost/test/utils/runtime/env/fetch.hpp>
+        -:   41:
+        -:   42:// Boost
+        -:   43:#include <boost/config.hpp>
+        -:   44:#include <boost/test/detail/suppress_warnings.hpp>
+        -:   45:#include <boost/test/detail/enable_warnings.hpp>
+        -:   46:#include <boost/cstdlib.hpp>
+        -:   47:
+        -:   48:// STL
+        -:   49:#include <cstdlib>
+        -:   50:#include <iostream>
+        -:   51:#include <fstream>
+        -:   52:
+        -:   53:#include <boost/test/detail/suppress_warnings.hpp>
+        -:   54:
+        -:   55://____________________________________________________________________________//
+        -:   56:
+        -:   57:# ifdef BOOST_NO_STDC_NAMESPACE
+        -:   58:namespace std { using ::getenv; using ::strncmp; using ::strcmp; }
+        -:   59:# endif
+        -:   60:
+        -:   61:namespace boost {
+        -:   62:namespace unit_test {
+        -:   63:
+        -:   64:namespace rt = boost::runtime;
+        -:   65:
+        -:   66:// ************************************************************************** //
+        -:   67:// **************                 runtime_config               ************** //
+        -:   68:// ************************************************************************** //
+        -:   69:
+        -:   70:namespace runtime_config {
+        -:   71:
+        -:   72:// UTF parameters
+        -:   73:std::string btrt_auto_start_dbg    = "auto_start_dbg";
+        -:   74:std::string btrt_break_exec_path   = "break_exec_path";
+        -:   75:std::string btrt_build_info        = "build_info";
+        -:   76:std::string btrt_catch_sys_errors  = "catch_system_errors";
+        -:   77:std::string btrt_color_output      = "color_output";
+        -:   78:std::string btrt_detect_fp_except  = "detect_fp_exceptions";
+        -:   79:std::string btrt_detect_mem_leaks  = "detect_memory_leaks";
+        -:   80:std::string btrt_list_content      = "list_content";
+        -:   81:std::string btrt_list_labels       = "list_labels";
+        -:   82:std::string btrt_log_format        = "log_format";
+        -:   83:std::string btrt_log_level         = "log_level";
+        -:   84:std::string btrt_log_sink          = "log_sink";
+        -:   85:std::string btrt_combined_logger   = "logger";
+        -:   86:std::string btrt_output_format     = "output_format";
+        -:   87:std::string btrt_random_seed       = "random";
+        -:   88:std::string btrt_report_format     = "report_format";
+        -:   89:std::string btrt_report_level      = "report_level";
+        -:   90:std::string btrt_report_mem_leaks  = "report_memory_leaks_to";
+        -:   91:std::string btrt_report_sink       = "report_sink";
+        -:   92:std::string btrt_result_code       = "result_code";
+        -:   93:std::string btrt_run_filters       = "run_test";
+        -:   94:std::string btrt_save_test_pattern = "save_pattern";
+        -:   95:std::string btrt_show_progress     = "show_progress";
+        -:   96:std::string btrt_use_alt_stack     = "use_alt_stack";
+        -:   97:std::string btrt_wait_for_debugger = "wait_for_debugger";
+        -:   98:
+        -:   99:std::string btrt_help              = "help";
+        -:  100:std::string btrt_usage             = "usage";
+        -:  101:std::string btrt_version           = "version";
+        -:  102:
+        -:  103://____________________________________________________________________________//
+        -:  104:
+        -:  105:namespace {
+        -:  106:
+        -:  107:void
+        1:  108:register_parameters( rt::parameters_store& store )
+        -:  109:{
+        -:  110:    rt::option auto_start_dbg( btrt_auto_start_dbg, (
+        1:  111:        rt::description = "Automatically attaches debugger in case of system level failure (signal).",
+        1:  111-block  0
+        1:  111-block  1
+        1:  111-block  2
+    $$$$$:  111-block  3
+    $$$$$:  111-block  4
+    $$$$$:  111-block  5
+        2:  112:        rt::env_var = "BOOST_TEST_AUTO_START_DBG",
+        1:  112-block  0
+        1:  112-block  1
+        1:  112-block  2
+    $$$$$:  112-block  3
+    $$$$$:  112-block  4
+    $$$$$:  112-block  5
+        -:  113:
+        1:  114:        rt::help = "Specifies whether Boost.Test should attempt "
+        1:  114-block  0
+        1:  114-block  1
+    $$$$$:  114-block  2
+    $$$$$:  114-block  3
+        -:  115:                   "to attach a debugger when fatal system error occurs. At the moment this feature "
+        -:  116:                   "is only available on a few selected platforms: Win32 and *nix. There is a "
+        -:  117:                   "default debugger configured for these platforms. You can manually configure "
+        -:  118:                   "different debugger. For more details on how to configure the debugger see the "
+        -:  119:                   "Boost.Test debug API, specifically the function boost::debug::set_debugger."
+        2:  120:    ));
+        1:  120-block  0
+    $$$$$:  120-block  1
+    $$$$$:  120-block  2
+        -:  121:
+        1:  122:    auto_start_dbg.add_cla_id( "--", btrt_auto_start_dbg, "=" );
+        1:  122-block  0
+        1:  122-block  1
+        1:  122-block  2
+    $$$$$:  122-block  3
+    $$$$$:  122-block  4
+    $$$$$:  122-block  5
+        1:  123:    auto_start_dbg.add_cla_id( "-", "d", " " );
+        1:  123-block  0
+        1:  123-block  1
+        1:  123-block  2
+        1:  123-block  3
+    $$$$$:  123-block  4
+    $$$$$:  123-block  5
+    $$$$$:  123-block  6
+        1:  124:    store.add( auto_start_dbg );
+        1:  124-block  0
+        -:  125:
+        -:  126:    ///////////////////////////////////////////////
+        -:  127:
+        -:  128:    rt::parameter<std::string> break_exec_path( btrt_break_exec_path, (
+        1:  129:        rt::description = "For the exception safety testing allows to break at specific execution path.",
+        1:  129-block  0
+        1:  129-block  1
+        1:  129-block  2
+    $$$$$:  129-block  3
+    $$$$$:  129-block  4
+    $$$$$:  129-block  5
+        1:  130:        rt::env_var = "BOOST_TEST_BREAK_EXEC_PATH"
+        1:  130-block  0
+        1:  130-block  1
+    $$$$$:  130-block  2
+    $$$$$:  130-block  3
+        -:  131:#ifndef BOOST_NO_CXX11_LAMBDAS
+        1:  132:        ,
+        1:  132-block  0
+    $$$$$:  132-block  1
+        1:  133:        rt::callback = [](rt::cstring) {
+        1:  133-block  0
+    $$$$$:  133-block  1
+    $$$$$:  133-block  2
+        -:  134:            BOOST_TEST_SETUP_ASSERT( false, "parameter break_exec_path is disabled in this release" );
+        -:  135:        }
+        -:  136:#endif
+        2:  137:    ));
+        1:  137-block  0
+    $$$$$:  137-block  1
+    $$$$$:  137-block  2
+        -:  138:
+        1:  139:    break_exec_path.add_cla_id( "--", btrt_break_exec_path, "=" );
+        1:  139-block  0
+        1:  139-block  1
+        1:  139-block  2
+    $$$$$:  139-block  3
+    $$$$$:  139-block  4
+    $$$$$:  139-block  5
+        1:  140:    store.add( break_exec_path );
+        1:  140-block  0
+        -:  141:
+        -:  142:    ///////////////////////////////////////////////
+        -:  143:
+        -:  144:    rt::option build_info( btrt_build_info, (
+        1:  145:        rt::description = "Displays library build information.",
+        1:  145-block  0
+        1:  145-block  1
+        1:  145-block  2
+    $$$$$:  145-block  3
+    $$$$$:  145-block  4
+    $$$$$:  145-block  5
+        2:  146:        rt::env_var = "BOOST_TEST_BUILD_INFO",
+        1:  146-block  0
+        1:  146-block  1
+        1:  146-block  2
+    $$$$$:  146-block  3
+    $$$$$:  146-block  4
+    $$$$$:  146-block  5
+        1:  147:        rt::help = "Displays library build information, including: platform, "
+        1:  147-block  0
+        1:  147-block  1
+    $$$$$:  147-block  2
+    $$$$$:  147-block  3
+        -:  148:                   "compiler, STL version and Boost version."
+        2:  149:    ));
+        1:  149-block  0
+    $$$$$:  149-block  1
+    $$$$$:  149-block  2
+        -:  150:
+        1:  151:    build_info.add_cla_id( "--", btrt_build_info, "=" );
+        1:  151-block  0
+        1:  151-block  1
+        1:  151-block  2
+    $$$$$:  151-block  3
+    $$$$$:  151-block  4
+    $$$$$:  151-block  5
+        1:  152:    build_info.add_cla_id( "-", "i", " " );
+        1:  152-block  0
+        1:  152-block  1
+        1:  152-block  2
+        1:  152-block  3
+    $$$$$:  152-block  4
+    $$$$$:  152-block  5
+    $$$$$:  152-block  6
+        1:  153:    store.add( build_info );
+        1:  153-block  0
+        -:  154:
+        -:  155:    ///////////////////////////////////////////////
+        -:  156:
+        -:  157:    rt::option catch_sys_errors( btrt_catch_sys_errors, (
+        1:  158:        rt::description = "Allows to switch between catching and ignoring system errors (signals).",
+        1:  158-block  0
+        1:  158-block  1
+        1:  158-block  2
+    $$$$$:  158-block  3
+    $$$$$:  158-block  4
+    $$$$$:  158-block  5
+        2:  159:        rt::env_var = "BOOST_TEST_CATCH_SYSTEM_ERRORS",
+        1:  159-block  0
+        1:  159-block  1
+        1:  159-block  2
+    $$$$$:  159-block  3
+    $$$$$:  159-block  4
+    $$$$$:  159-block  5
+        1:  160:        rt::default_value =
+        1:  160-block  0
+    $$$$$:  160-block  1
+    $$$$$:  160-block  2
+        -:  161:#ifdef BOOST_TEST_DEFAULTS_TO_CORE_DUMP
+        -:  162:            false,
+        -:  163:#else
+        1:  164:            true,
+        1:  164-block  0
+    $$$$$:  164-block  1
+        -:  165:#endif
+        2:  166:        rt::help = "If option " + btrt_catch_sys_errors + " has value 'no' the frameworks does not attempt to catch "
+        1:  166-block  0
+        1:  166-block  1
+        1:  166-block  2
+    $$$$$:  166-block  3
+    $$$$$:  166-block  4
+    $$$$$:  166-block  5
+    $$$$$:  166-block  6
+        -:  167:                   "asynchronous system failure events (signals on *NIX platforms or structured exceptions on Windows). "
+        -:  168:                   " Default value is "
+        -:  169:#ifdef BOOST_TEST_DEFAULTS_TO_CORE_DUMP
+        -:  170:                    "no."
+        -:  171:#else
+        -:  172:                    "true."
+        -:  173:#endif
+        2:  174:    ));
+        1:  174-block  0
+        1:  174-block  1
+    $$$$$:  174-block  2
+    $$$$$:  174-block  3
+        -:  175:
+        1:  176:    catch_sys_errors.add_cla_id( "--", btrt_catch_sys_errors, "=", true );
+        1:  176-block  0
+        1:  176-block  1
+    $$$$$:  176-block  2
+    $$$$$:  176-block  3
+    $$$$$:  176-block  4
+        1:  177:    catch_sys_errors.add_cla_id( "-", "s", " " );
+        1:  177-block  0
+        1:  177-block  1
+        1:  177-block  2
+        1:  177-block  3
+    $$$$$:  177-block  4
+    $$$$$:  177-block  5
+    $$$$$:  177-block  6
+        1:  178:    store.add( catch_sys_errors );
+        1:  178-block  0
+        -:  179:
+        -:  180:    ///////////////////////////////////////////////
+        -:  181:
+        -:  182:    rt::option color_output( btrt_color_output, (
+        1:  183:        rt::description = "Enables color output of the framework log and report messages.",
+        1:  183-block  0
+        1:  183-block  1
+        1:  183-block  2
+    $$$$$:  183-block  3
+    $$$$$:  183-block  4
+    $$$$$:  183-block  5
+        2:  184:        rt::env_var = "BOOST_TEST_COLOR_OUTPUT",
+        1:  184-block  0
+        1:  184-block  1
+        1:  184-block  2
+    $$$$$:  184-block  3
+    $$$$$:  184-block  4
+    $$$$$:  184-block  5
+        2:  185:        rt::default_value = true,
+        1:  185-block  0
+        1:  185-block  1
+    $$$$$:  185-block  2
+    $$$$$:  185-block  3
+    $$$$$:  185-block  4
+        1:  186:        rt::help = "Produces color output for logs, reports and help. "
+        1:  186-block  0
+        1:  186-block  1
+    $$$$$:  186-block  2
+    $$$$$:  186-block  3
+        -:  187:                   "Defaults to true. "
+        2:  188:    ));
+        1:  188-block  0
+    $$$$$:  188-block  1
+    $$$$$:  188-block  2
+        -:  189:
+        1:  190:    color_output.add_cla_id( "--", btrt_color_output, "=", true );
+        1:  190-block  0
+        1:  190-block  1
+        1:  190-block  2
+    $$$$$:  190-block  3
+    $$$$$:  190-block  4
+    $$$$$:  190-block  5
+        1:  191:    color_output.add_cla_id( "-", "x", " " );
+        1:  191-block  0
+        1:  191-block  1
+        1:  191-block  2
+        1:  191-block  3
+    $$$$$:  191-block  4
+    $$$$$:  191-block  5
+    $$$$$:  191-block  6
+        1:  192:    store.add( color_output );
+        1:  192-block  0
+        -:  193:
+        -:  194:    ///////////////////////////////////////////////
+        -:  195:
+        -:  196:    rt::option detect_fp_except( btrt_detect_fp_except, (
+        1:  197:        rt::description = "Enables/disables floating point exceptions traps.",
+        1:  197-block  0
+        1:  197-block  1
+        1:  197-block  2
+    $$$$$:  197-block  3
+    $$$$$:  197-block  4
+    $$$$$:  197-block  5
+        2:  198:        rt::env_var = "BOOST_TEST_DETECT_FP_EXCEPTIONS",
+        1:  198-block  0
+        1:  198-block  1
+        1:  198-block  2
+    $$$$$:  198-block  3
+    $$$$$:  198-block  4
+    $$$$$:  198-block  5
+        1:  199:        rt::help = "Enables/disables hardware traps for the floating "
+        1:  199-block  0
+        1:  199-block  1
+    $$$$$:  199-block  2
+    $$$$$:  199-block  3
+        -:  200:                   "point exceptions (if supported on your platfrom)."
+        2:  201:    ));
+        1:  201-block  0
+    $$$$$:  201-block  1
+    $$$$$:  201-block  2
+        -:  202:
+        1:  203:    detect_fp_except.add_cla_id( "--", btrt_detect_fp_except, "=", true );
+        1:  203-block  0
+        1:  203-block  1
+        1:  203-block  2
+    $$$$$:  203-block  3
+    $$$$$:  203-block  4
+    $$$$$:  203-block  5
+        1:  204:    store.add( detect_fp_except );
+        1:  204-block  0
+        -:  205:
+        -:  206:    ///////////////////////////////////////////////
+        -:  207:
+        -:  208:    rt::parameter<unsigned long> detect_mem_leaks( btrt_detect_mem_leaks, (
+        1:  209:        rt::description = "Turns on/off memory leaks detection (optionally breaking on specified alloc order number).",
+        1:  209-block  0
+        1:  209-block  1
+        1:  209-block  2
+    $$$$$:  209-block  3
+    $$$$$:  209-block  4
+    $$$$$:  209-block  5
+        2:  210:        rt::env_var = "BOOST_TEST_DETECT_MEMORY_LEAK",
+        1:  210-block  0
+        1:  210-block  1
+        1:  210-block  2
+    $$$$$:  210-block  3
+    $$$$$:  210-block  4
+    $$$$$:  210-block  5
+        2:  211:        rt::default_value = 1L,
+        1:  211-block  0
+        1:  211-block  1
+    $$$$$:  211-block  2
+    $$$$$:  211-block  3
+    $$$$$:  211-block  4
+        2:  212:        rt::optional_value = 1L,
+        1:  212-block  0
+        1:  212-block  1
+    $$$$$:  212-block  2
+    $$$$$:  212-block  3
+    $$$$$:  212-block  4
+        2:  213:        rt::value_hint = "<alloc order number>",
+        1:  213-block  0
+        1:  213-block  1
+        1:  213-block  2
+    $$$$$:  213-block  3
+    $$$$$:  213-block  4
+    $$$$$:  213-block  5
+        1:  214:        rt::help = "Enables/disables memory leaks detection. "
+        1:  214-block  0
+        1:  214-block  1
+    $$$$$:  214-block  2
+    $$$$$:  214-block  3
+        -:  215:                   "This parameter has optional long integer value. The default value is 1, which "
+        -:  216:                   "enables the memory leak detection. The value 0 disables memory leak detection. "
+        -:  217:                   "Any value N greater than 1 is treated as leak allocation number and tells the "
+        -:  218:                   "framework to setup runtime breakpoint at Nth heap allocation. If value is "
+        -:  219:                   "omitted the default value is assumed."
+        2:  220:    ));
+        1:  220-block  0
+    $$$$$:  220-block  1
+    $$$$$:  220-block  2
+        -:  221:
+        1:  222:    detect_mem_leaks.add_cla_id( "--", btrt_detect_mem_leaks, "=" );
+        1:  222-block  0
+        1:  222-block  1
+        1:  222-block  2
+    $$$$$:  222-block  3
+    $$$$$:  222-block  4
+    $$$$$:  222-block  5
+        1:  223:    store.add( detect_mem_leaks );
+        1:  223-block  0
+        -:  224:
+        -:  225:    ///////////////////////////////////////////////
+        -:  226:
+        -:  227:    rt::enum_parameter<unit_test::output_format> list_content( btrt_list_content, (
+        1:  228:        rt::description = "Lists the content of test tree - names of all test suites and test cases.",
+        1:  228-block  0
+        1:  228-block  1
+        1:  228-block  2
+    $$$$$:  228-block  3
+    $$$$$:  228-block  4
+    $$$$$:  228-block  5
+        2:  229:        rt::env_var = "BOOST_TEST_LIST_CONTENT",
+        1:  229-block  0
+        1:  229-block  1
+        1:  229-block  2
+    $$$$$:  229-block  3
+    $$$$$:  229-block  4
+    $$$$$:  229-block  5
+        2:  230:        rt::default_value = OF_INVALID,
+        1:  230-block  0
+        1:  230-block  1
+    $$$$$:  230-block  2
+    $$$$$:  230-block  3
+    $$$$$:  230-block  4
+        2:  231:        rt::optional_value = OF_CLF,
+        1:  231-block  0
+        1:  231-block  1
+    $$$$$:  231-block  2
+    $$$$$:  231-block  3
+    $$$$$:  231-block  4
+        1:  232:        rt::enum_values<unit_test::output_format>::value =
+        1:  232-block  0
+        1:  232-block  1
+        1:  232-block  2
+    $$$$$:  232-block  3
+    $$$$$:  232-block  4
+    $$$$$:  232-block  5
+    $$$$$:  232-block  6
+    $$$$$:  232-block  7
+        -:  233:#if defined(BOOST_TEST_CLA_NEW_API)
+        -:  234:        {
+        -:  235:            { "HRF", OF_CLF },
+        -:  236:            { "DOT", OF_DOT }
+        1:  237:        },
+        1:  237-block  0
+    $$$$$:  237-block  1
+        -:  238:#else
+        -:  239:        rt::enum_values_list<unit_test::output_format>()
+        -:  240:            ( "HRF", OF_CLF )
+        -:  241:            ( "DOT", OF_DOT )
+        -:  242:        ,
+        -:  243:#endif
+        1:  244:        rt::help = "Lists the test suites and cases "
+        1:  244-block  0
+        1:  244-block  1
+    $$$$$:  244-block  2
+    $$$$$:  244-block  3
+        -:  245:                   "of the test module instead of executing the test cases. The format of the "
+        -:  246:                   "desired output can be passed to the command. Currently the "
+        -:  247:                   "framework supports two formats: human readable format (HRF) and dot graph "
+        -:  248:                   "format (DOT). If value is omitted HRF value is assumed."
+        2:  249:    ));
+        1:  249-block  0
+    $$$$$:  249-block  1
+    $$$$$:  249-block  2
+        1:  250:    list_content.add_cla_id( "--", btrt_list_content, "=" );
+        1:  250-block  0
+        1:  250-block  1
+        1:  250-block  2
+    $$$$$:  250-block  3
+    $$$$$:  250-block  4
+    $$$$$:  250-block  5
+        1:  251:    store.add( list_content );
+        1:  251-block  0
+        -:  252:
+        -:  253:    ///////////////////////////////////////////////
+        -:  254:
+        -:  255:    rt::option list_labels( btrt_list_labels, (
+        1:  256:        rt::description = "Lists all available labels.",
+        1:  256-block  0
+        1:  256-block  1
+        1:  256-block  2
+    $$$$$:  256-block  3
+    $$$$$:  256-block  4
+    $$$$$:  256-block  5
+        2:  257:        rt::env_var = "BOOST_TEST_LIST_LABELS",
+        1:  257-block  0
+        1:  257-block  1
+        1:  257-block  2
+    $$$$$:  257-block  3
+    $$$$$:  257-block  4
+    $$$$$:  257-block  5
+        2:  258:        rt::help = "Option " + btrt_list_labels + " instructs the framework to list all the the labels "
+        1:  258-block  0
+        1:  258-block  1
+        1:  258-block  2
+    $$$$$:  258-block  3
+    $$$$$:  258-block  4
+    $$$$$:  258-block  5
+    $$$$$:  258-block  6
+        -:  259:                   "defined in the test module instead of executing the test cases."
+        2:  260:    ));
+        1:  260-block  0
+        1:  260-block  1
+    $$$$$:  260-block  2
+    $$$$$:  260-block  3
+        -:  261:
+        1:  262:    list_labels.add_cla_id( "--", btrt_list_labels, "=" );
+        1:  262-block  0
+        1:  262-block  1
+    $$$$$:  262-block  2
+    $$$$$:  262-block  3
+    $$$$$:  262-block  4
+        1:  263:    store.add( list_labels );
+        1:  263-block  0
+        -:  264:
+        -:  265:    ///////////////////////////////////////////////
+        -:  266:
+        -:  267:    rt::enum_parameter<unit_test::output_format> log_format( btrt_log_format, (
+        1:  268:        rt::description = "Specifies log format.",
+        1:  268-block  0
+        1:  268-block  1
+        1:  268-block  2
+    $$$$$:  268-block  3
+    $$$$$:  268-block  4
+    $$$$$:  268-block  5
+        2:  269:        rt::env_var = "BOOST_TEST_LOG_FORMAT",
+        1:  269-block  0
+        1:  269-block  1
+        1:  269-block  2
+    $$$$$:  269-block  3
+    $$$$$:  269-block  4
+    $$$$$:  269-block  5
+        2:  270:        rt::default_value = OF_CLF,
+        1:  270-block  0
+        1:  270-block  1
+    $$$$$:  270-block  2
+    $$$$$:  270-block  3
+    $$$$$:  270-block  4
+        1:  271:        rt::enum_values<unit_test::output_format>::value =
+        1:  271-block  0
+        1:  271-block  1
+        1:  271-block  2
+        1:  271-block  3
+        1:  271-block  4
+    $$$$$:  271-block  5
+    $$$$$:  271-block  6
+    $$$$$:  271-block  7
+    $$$$$:  271-block  8
+    $$$$$:  271-block  9
+    $$$$$:  271-block 10
+    $$$$$:  271-block 11
+        -:  272:#if defined(BOOST_TEST_CLA_NEW_API)
+        -:  273:        {
+        -:  274:            { "HRF", OF_CLF },
+        -:  275:            { "CLF", OF_CLF },
+        -:  276:            { "XML", OF_XML },
+        -:  277:            { "JUNIT", OF_JUNIT },
+        1:  278:        },
+        1:  278-block  0
+    $$$$$:  278-block  1
+        -:  279:#else
+        -:  280:        rt::enum_values_list<unit_test::output_format>()
+        -:  281:            ( "HRF", OF_CLF )
+        -:  282:            ( "CLF", OF_CLF )
+        -:  283:            ( "XML", OF_XML )
+        -:  284:            ( "JUNIT", OF_JUNIT )
+        -:  285:        ,
+        -:  286:#endif
+        1:  287:        rt::help = "Set the frameowrk's log format to one "
+        1:  287-block  0
+        1:  287-block  1
+    $$$$$:  287-block  2
+    $$$$$:  287-block  3
+        -:  288:                   "of the formats supplied by the framework. The only acceptable values for this "
+        -:  289:                   "parameter are the names of the output formats supplied by the framework. By "
+        -:  290:                   "default the framework uses human readable format (HRF) for testing log. This "
+        -:  291:                   "format is similar to compiler error format. Alternatively you can specify XML "
+        -:  292:                   "or JUNIT as log format, which are easier to process by testing automation tools."
+        2:  293:    ));
+        1:  293-block  0
+    $$$$$:  293-block  1
+    $$$$$:  293-block  2
+        -:  294:
+        1:  295:    log_format.add_cla_id( "--", btrt_log_format, "=" );
+        1:  295-block  0
+        1:  295-block  1
+        1:  295-block  2
+    $$$$$:  295-block  3
+    $$$$$:  295-block  4
+    $$$$$:  295-block  5
+        1:  296:    log_format.add_cla_id( "-", "f", " " );
+        1:  296-block  0
+        1:  296-block  1
+        1:  296-block  2
+        1:  296-block  3
+    $$$$$:  296-block  4
+    $$$$$:  296-block  5
+    $$$$$:  296-block  6
+        1:  297:    store.add( log_format );
+        1:  297-block  0
+        -:  298:
+        -:  299:    ///////////////////////////////////////////////
+        -:  300:
+        -:  301:    rt::enum_parameter<unit_test::log_level> log_level( btrt_log_level, (
+        1:  302:        rt::description = "Specifies the logging level of the test execution.",
+        1:  302-block  0
+        1:  302-block  1
+        1:  302-block  2
+    $$$$$:  302-block  3
+    $$$$$:  302-block  4
+    $$$$$:  302-block  5
+        2:  303:        rt::env_var = "BOOST_TEST_LOG_LEVEL",
+        1:  303-block  0
+        1:  303-block  1
+        1:  303-block  2
+    $$$$$:  303-block  3
+    $$$$$:  303-block  4
+    $$$$$:  303-block  5
+        2:  304:        rt::default_value = log_all_errors,
+        1:  304-block  0
+        1:  304-block  1
+    $$$$$:  304-block  2
+    $$$$$:  304-block  3
+    $$$$$:  304-block  4
+        1:  305:        rt::enum_values<unit_test::log_level>::value =
+        1:  305-block  0
+        1:  305-block  1
+        1:  305-block  2
+        1:  305-block  3
+        1:  305-block  4
+        1:  305-block  5
+        1:  305-block  6
+        1:  305-block  7
+        1:  305-block  8
+        1:  305-block  9
+        1:  305-block 10
+        1:  305-block 11
+    $$$$$:  305-block 12
+    $$$$$:  305-block 13
+    $$$$$:  305-block 14
+    $$$$$:  305-block 15
+    $$$$$:  305-block 16
+    $$$$$:  305-block 17
+    $$$$$:  305-block 18
+    $$$$$:  305-block 19
+    $$$$$:  305-block 20
+    $$$$$:  305-block 21
+    $$$$$:  305-block 22
+    $$$$$:  305-block 23
+    $$$$$:  305-block 24
+    $$$$$:  305-block 25
+        -:  306:#if defined(BOOST_TEST_CLA_NEW_API)
+        -:  307:        {
+        -:  308:            { "all"           , log_successful_tests },
+        -:  309:            { "success"       , log_successful_tests },
+        -:  310:            { "test_suite"    , log_test_units },
+        -:  311:            { "unit_scope"    , log_test_units },
+        -:  312:            { "message"       , log_messages },
+        -:  313:            { "warning"       , log_warnings },
+        -:  314:            { "error"         , log_all_errors },
+        -:  315:            { "cpp_exception" , log_cpp_exception_errors },
+        -:  316:            { "system_error"  , log_system_errors },
+        -:  317:            { "fatal_error"   , log_fatal_errors },
+        -:  318:            { "nothing"       , log_nothing }
+        1:  319:        },
+        1:  319-block  0
+    $$$$$:  319-block  1
+        -:  320:#else
+        -:  321:        rt::enum_values_list<unit_test::log_level>()
+        -:  322:            ( "all"           , log_successful_tests )
+        -:  323:            ( "success"       , log_successful_tests )
+        -:  324:            ( "test_suite"    , log_test_units )
+        -:  325:            ( "unit_scope"    , log_test_units )
+        -:  326:            ( "message"       , log_messages )
+        -:  327:            ( "warning"       , log_warnings )
+        -:  328:            ( "error"         , log_all_errors )
+        -:  329:            ( "cpp_exception" , log_cpp_exception_errors )
+        -:  330:            ( "system_error"  , log_system_errors )
+        -:  331:            ( "fatal_error"   , log_fatal_errors )
+        -:  332:            ( "nothing"       , log_nothing )
+        -:  333:        ,
+        -:  334:#endif
+        1:  335:        rt::help = "Set the framework's log level. "
+        1:  335-block  0
+        1:  335-block  1
+    $$$$$:  335-block  2
+    $$$$$:  335-block  3
+        -:  336:                   "The log level defines the verbosity of the testing logs produced by a test "
+        -:  337:                   "module. The verbosity ranges from a complete log, when all assertions "
+        -:  338:                   "(both successful and failing) are reported, all notifications about "
+        -:  339:                   "test units start and finish are included, to an empty log when nothing "
+        -:  340:                   "is reported to a testing log stream."
+        2:  341:    ));
+        1:  341-block  0
+    $$$$$:  341-block  1
+    $$$$$:  341-block  2
+        -:  342:
+        1:  343:    log_level.add_cla_id( "--", btrt_log_level, "=" );
+        1:  343-block  0
+        1:  343-block  1
+        1:  343-block  2
+    $$$$$:  343-block  3
+    $$$$$:  343-block  4
+    $$$$$:  343-block  5
+        1:  344:    log_level.add_cla_id( "-", "l", " " );
+        1:  344-block  0
+        1:  344-block  1
+        1:  344-block  2
+        1:  344-block  3
+    $$$$$:  344-block  4
+    $$$$$:  344-block  5
+    $$$$$:  344-block  6
+        1:  345:    store.add( log_level );
+        1:  345-block  0
+        -:  346:
+        -:  347:    ///////////////////////////////////////////////
+        -:  348:
+        -:  349:    rt::parameter<std::string> log_sink( btrt_log_sink, (
+        1:  350:        rt::description = "Specifies log sink: stdout (default), stderr or file name.",
+        1:  350-block  0
+        1:  350-block  1
+        1:  350-block  2
+    $$$$$:  350-block  3
+    $$$$$:  350-block  4
+    $$$$$:  350-block  5
+        2:  351:        rt::env_var = "BOOST_TEST_LOG_SINK",
+        1:  351-block  0
+        1:  351-block  1
+        1:  351-block  2
+    $$$$$:  351-block  3
+    $$$$$:  351-block  4
+    $$$$$:  351-block  5
+        2:  352:        rt::value_hint = "<stderr|stdout|file name>",
+        1:  352-block  0
+        1:  352-block  1
+        1:  352-block  2
+    $$$$$:  352-block  3
+    $$$$$:  352-block  4
+    $$$$$:  352-block  5
+        1:  353:        rt::help = "Sets the log sink - the location "
+        1:  353-block  0
+        1:  353-block  1
+    $$$$$:  353-block  2
+    $$$$$:  353-block  3
+        -:  354:                   "where Boost.Test writes the logs of the test execution. It allows to easily redirect the "
+        -:  355:                   "test logs to file or standard streams. By default testing log is "
+        -:  356:                   "directed to standard output."
+        2:  357:    ));
+        1:  357-block  0
+    $$$$$:  357-block  1
+    $$$$$:  357-block  2
+        -:  358:
+        1:  359:    log_sink.add_cla_id( "--", btrt_log_sink, "=" );
+        1:  359-block  0
+        1:  359-block  1
+        1:  359-block  2
+    $$$$$:  359-block  3
+    $$$$$:  359-block  4
+    $$$$$:  359-block  5
+        1:  360:    log_sink.add_cla_id( "-", "k", " " );
+        1:  360-block  0
+        1:  360-block  1
+        1:  360-block  2
+        1:  360-block  3
+    $$$$$:  360-block  4
+    $$$$$:  360-block  5
+    $$$$$:  360-block  6
+        1:  361:    store.add( log_sink );
+        1:  361-block  0
+        -:  362:
+        -:  363:    ///////////////////////////////////////////////
+        -:  364:
+        -:  365:    rt::enum_parameter<unit_test::output_format> output_format( btrt_output_format, (
+        1:  366:        rt::description = "Specifies output format (both log and report).",
+        1:  366-block  0
+        1:  366-block  1
+        1:  366-block  2
+    $$$$$:  366-block  3
+    $$$$$:  366-block  4
+    $$$$$:  366-block  5
+        2:  367:        rt::env_var = "BOOST_TEST_OUTPUT_FORMAT",
+        1:  367-block  0
+        1:  367-block  1
+        1:  367-block  2
+    $$$$$:  367-block  3
+    $$$$$:  367-block  4
+    $$$$$:  367-block  5
+        1:  368:        rt::enum_values<unit_test::output_format>::value =
+        1:  368-block  0
+        1:  368-block  1
+        1:  368-block  2
+        1:  368-block  3
+    $$$$$:  368-block  4
+    $$$$$:  368-block  5
+    $$$$$:  368-block  6
+    $$$$$:  368-block  7
+    $$$$$:  368-block  8
+    $$$$$:  368-block  9
+        -:  369:#if defined(BOOST_TEST_CLA_NEW_API)
+        -:  370:        {
+        -:  371:            { "HRF", OF_CLF },
+        -:  372:            { "CLF", OF_CLF },
+        -:  373:            { "XML", OF_XML }
+        1:  374:        },
+        1:  374-block  0
+    $$$$$:  374-block  1
+        -:  375:#else
+        -:  376:        rt::enum_values_list<unit_test::output_format>()
+        -:  377:            ( "HRF", OF_CLF )
+        -:  378:            ( "CLF", OF_CLF )
+        -:  379:            ( "XML", OF_XML )
+        -:  380:        ,
+        -:  381:#endif
+        3:  382:        rt::help = "Combines an effect of " + btrt_report_format +
+        1:  382-block  0
+        1:  382-block  1
+        1:  382-block  2
+    $$$$$:  382-block  3
+    $$$$$:  382-block  4
+    $$$$$:  382-block  5
+    $$$$$:  382-block  6
+        2:  383:                   " and " + btrt_log_format + " parameters. If this parameter is specified, "
+        1:  383-block  0
+        1:  383-block  1
+    $$$$$:  383-block  2
+    $$$$$:  383-block  3
+        -:  384:                   "it overrides the value of other two parameters. This parameter does not "
+        -:  385:                   "have a default value. The only acceptable values are string names of "
+        -:  386:                   "output formats: HRF - human readable format and XML - XML formats for "
+        -:  387:                   "automation tools processing."
+        2:  388:    ));
+        1:  388-block  0
+        1:  388-block  1
+    $$$$$:  388-block  2
+    $$$$$:  388-block  3
+        -:  389:
+        1:  390:    output_format.add_cla_id( "--", btrt_output_format, "=" );
+        1:  390-block  0
+        1:  390-block  1
+    $$$$$:  390-block  2
+    $$$$$:  390-block  3
+    $$$$$:  390-block  4
+        1:  391:    output_format.add_cla_id( "-", "o", " " );
+        1:  391-block  0
+        1:  391-block  1
+        1:  391-block  2
+        1:  391-block  3
+    $$$$$:  391-block  4
+    $$$$$:  391-block  5
+    $$$$$:  391-block  6
+        1:  392:    store.add( output_format );
+        1:  392-block  0
+        -:  393:
+        -:  394:    /////////////////////////////////////////////// combined logger option
+        -:  395:
+        -:  396:    rt::parameter<std::string,rt::REPEATABLE_PARAM> combined_logger( btrt_combined_logger, (
+        1:  397:        rt::description = "Specifies log level and sink for one or several log format",
+        1:  397-block  0
+        1:  397-block  1
+        1:  397-block  2
+    $$$$$:  397-block  3
+    $$$$$:  397-block  4
+    $$$$$:  397-block  5
+        2:  398:        rt::env_var = "BOOST_TEST_LOGGER",
+        1:  398-block  0
+        1:  398-block  1
+        1:  398-block  2
+    $$$$$:  398-block  3
+    $$$$$:  398-block  4
+    $$$$$:  398-block  5
+        2:  399:        rt::value_hint = "log_format,log_level,log_sink[:log_format,log_level,log_sink]",
+        1:  399-block  0
+        1:  399-block  1
+        1:  399-block  2
+    $$$$$:  399-block  3
+    $$$$$:  399-block  4
+    $$$$$:  399-block  5
+        1:  400:        rt::help = "Specify one or more logging definition, which include the logger type, level and sink. "
+        1:  400-block  0
+    $$$$$:  400-block  1
+    $$$$$:  400-block  2
+        2:  401:                   "The log format, level and sink follow the same format as for the argument '--" + btrt_log_format +
+        1:  401-block  0
+        1:  401-block  1
+    $$$$$:  401-block  2
+    $$$$$:  401-block  3
+        2:  402:                   "', '--" + btrt_log_level + "' and '--" + btrt_log_sink + "' respetively. "
+        1:  402-block  0
+        1:  402-block  1
+        1:  402-block  2
+        1:  402-block  3
+    $$$$$:  402-block  4
+    $$$$$:  402-block  5
+    $$$$$:  402-block  6
+    $$$$$:  402-block  7
+        -:  403:                   "This command can take several logging definition separated by a ':', or be repeated "
+        -:  404:                   "on the command line."
+        2:  405:    ));
+        1:  405-block  0
+        1:  405-block  1
+    $$$$$:  405-block  2
+    $$$$$:  405-block  3
+        -:  406:
+        1:  407:    combined_logger.add_cla_id( "--", btrt_combined_logger, "=" );
+        1:  407-block  0
+        1:  407-block  1
+    $$$$$:  407-block  2
+    $$$$$:  407-block  3
+    $$$$$:  407-block  4
+        1:  408:    store.add( combined_logger );
+        1:  408-block  0
+        -:  409:
+        -:  410:    ///////////////////////////////////////////////
+        -:  411:
+        -:  412:    rt::parameter<unsigned> random_seed( btrt_random_seed, (
+        1:  413:        rt::description = "Allows to switch between sequential and random order of test units execution."
+        1:  413-block  0
+        1:  413-block  1
+    $$$$$:  413-block  2
+    $$$$$:  413-block  3
+        1:  414:                          " Optionally allows to specify concrete seed for random number generator.",
+        1:  414-block  0
+    $$$$$:  414-block  1
+        2:  415:        rt::env_var = "BOOST_TEST_RANDOM",
+        1:  415-block  0
+        1:  415-block  1
+        1:  415-block  2
+    $$$$$:  415-block  3
+    $$$$$:  415-block  4
+    $$$$$:  415-block  5
+        2:  416:        rt::default_value = 0U,
+        1:  416-block  0
+        1:  416-block  1
+    $$$$$:  416-block  2
+    $$$$$:  416-block  3
+    $$$$$:  416-block  4
+        2:  417:        rt::optional_value = 1U,
+        1:  417-block  0
+        1:  417-block  1
+    $$$$$:  417-block  2
+    $$$$$:  417-block  3
+    $$$$$:  417-block  4
+        2:  418:        rt::value_hint = "<seed>",
+        1:  418-block  0
+        1:  418-block  1
+        1:  418-block  2
+    $$$$$:  418-block  3
+    $$$$$:  418-block  4
+    $$$$$:  418-block  5
+        1:  419:        rt::help = "Instructs the framework to execute the "
+        1:  419-block  0
+        1:  419-block  1
+    $$$$$:  419-block  2
+    $$$$$:  419-block  3
+        -:  420:                   "test cases in random order. This parameter accepts an optional unsigned "
+        -:  421:                   "integer argument. If parameter is specified without the argument value testing "
+        -:  422:                   "order is randomized based on current time. Alternatively you can specify "
+        -:  423:                   "any positive value greater than 1 and it will be used as random seed for "
+        -:  424:                   "the run. "
+        -:  425:                   "By default, the test cases are executed in an "
+        -:  426:                   "order defined by their declaration and the optional dependencies among the test units."
+        2:  427:    ));
+        1:  427-block  0
+    $$$$$:  427-block  1
+    $$$$$:  427-block  2
+        -:  428:
+        1:  429:    random_seed.add_cla_id( "--", btrt_random_seed, "=" );
+        1:  429-block  0
+        1:  429-block  1
+        1:  429-block  2
+    $$$$$:  429-block  3
+    $$$$$:  429-block  4
+    $$$$$:  429-block  5
+        1:  430:    store.add( random_seed );
+        1:  430-block  0
+        -:  431:
+        -:  432:    ///////////////////////////////////////////////
+        -:  433:
+        -:  434:    rt::enum_parameter<unit_test::output_format> report_format( btrt_report_format, (
+        1:  435:        rt::description = "Specifies the test report format.",
+        1:  435-block  0
+        1:  435-block  1
+        1:  435-block  2
+    $$$$$:  435-block  3
+    $$$$$:  435-block  4
+    $$$$$:  435-block  5
+        2:  436:        rt::env_var = "BOOST_TEST_REPORT_FORMAT",
+        1:  436-block  0
+        1:  436-block  1
+        1:  436-block  2
+    $$$$$:  436-block  3
+    $$$$$:  436-block  4
+    $$$$$:  436-block  5
+        2:  437:        rt::default_value = OF_CLF,
+        1:  437-block  0
+        1:  437-block  1
+    $$$$$:  437-block  2
+    $$$$$:  437-block  3
+    $$$$$:  437-block  4
+        1:  438:        rt::enum_values<unit_test::output_format>::value =
+        1:  438-block  0
+        1:  438-block  1
+        1:  438-block  2
+        1:  438-block  3
+    $$$$$:  438-block  4
+    $$$$$:  438-block  5
+    $$$$$:  438-block  6
+    $$$$$:  438-block  7
+    $$$$$:  438-block  8
+    $$$$$:  438-block  9
+        -:  439:#if defined(BOOST_TEST_CLA_NEW_API)
+        -:  440:        {
+        -:  441:            { "HRF", OF_CLF },
+        -:  442:            { "CLF", OF_CLF },
+        -:  443:            { "XML", OF_XML }
+        1:  444:        },
+        1:  444-block  0
+    $$$$$:  444-block  1
+        -:  445:#else
+        -:  446:        rt::enum_values_list<unit_test::output_format>()
+        -:  447:            ( "HRF", OF_CLF )
+        -:  448:            ( "CLF", OF_CLF )
+        -:  449:            ( "XML", OF_XML )
+        -:  450:        ,
+        -:  451:#endif
+        1:  452:        rt::help = "Set the framework's report format "
+        1:  452-block  0
+        1:  452-block  1
+    $$$$$:  452-block  2
+    $$$$$:  452-block  3
+        -:  453:                   "to one of the formats supplied by the framework. The only acceptable values "
+        -:  454:                   "for this parameter are the names of the output formats. By default the framework "
+        -:  455:                   "uses human readable format (HRF) for results reporting. Alternatively you can "
+        -:  456:                   "specify XML as report format. This format is easier to process by testing "
+        -:  457:                   "automation tools."
+        2:  458:    ));
+        1:  458-block  0
+    $$$$$:  458-block  1
+    $$$$$:  458-block  2
+        -:  459:
+        1:  460:    report_format.add_cla_id( "--", btrt_report_format, "=" );
+        1:  460-block  0
+        1:  460-block  1
+        1:  460-block  2
+    $$$$$:  460-block  3
+    $$$$$:  460-block  4
+    $$$$$:  460-block  5
+        1:  461:    report_format.add_cla_id( "-", "m", " " );
+        1:  461-block  0
+        1:  461-block  1
+        1:  461-block  2
+        1:  461-block  3
+    $$$$$:  461-block  4
+    $$$$$:  461-block  5
+    $$$$$:  461-block  6
+        1:  462:    store.add( report_format );
+        1:  462-block  0
+        -:  463:
+        -:  464:    ///////////////////////////////////////////////
+        -:  465:
+        -:  466:    rt::enum_parameter<unit_test::report_level> report_level( btrt_report_level, (
+        1:  467:        rt::description = "Specifies test report level.",
+        1:  467-block  0
+        1:  467-block  1
+        1:  467-block  2
+    $$$$$:  467-block  3
+    $$$$$:  467-block  4
+    $$$$$:  467-block  5
+        2:  468:        rt::env_var = "BOOST_TEST_REPORT_LEVEL",
+        1:  468-block  0
+        1:  468-block  1
+        1:  468-block  2
+    $$$$$:  468-block  3
+    $$$$$:  468-block  4
+    $$$$$:  468-block  5
+        2:  469:        rt::default_value = CONFIRMATION_REPORT,
+        1:  469-block  0
+        1:  469-block  1
+    $$$$$:  469-block  2
+    $$$$$:  469-block  3
+    $$$$$:  469-block  4
+        1:  470:        rt::enum_values<unit_test::report_level>::value =
+        1:  470-block  0
+        1:  470-block  1
+        1:  470-block  2
+        1:  470-block  3
+        1:  470-block  4
+    $$$$$:  470-block  5
+    $$$$$:  470-block  6
+    $$$$$:  470-block  7
+    $$$$$:  470-block  8
+    $$$$$:  470-block  9
+    $$$$$:  470-block 10
+    $$$$$:  470-block 11
+        -:  471:#if defined(BOOST_TEST_CLA_NEW_API)
+        -:  472:        {
+        -:  473:            { "confirm",  CONFIRMATION_REPORT },
+        -:  474:            { "short",    SHORT_REPORT },
+        -:  475:            { "detailed", DETAILED_REPORT },
+        -:  476:            { "no",       NO_REPORT }
+        1:  477:        },
+        1:  477-block  0
+    $$$$$:  477-block  1
+        -:  478:#else
+        -:  479:        rt::enum_values_list<unit_test::report_level>()
+        -:  480:            ( "confirm",  CONFIRMATION_REPORT )
+        -:  481:            ( "short",    SHORT_REPORT )
+        -:  482:            ( "detailed", DETAILED_REPORT )
+        -:  483:            ( "no",       NO_REPORT )
+        -:  484:        ,
+        -:  485:#endif
+        1:  486:        rt::help = "Set the verbosity level of the "
+        1:  486-block  0
+        1:  486-block  1
+    $$$$$:  486-block  2
+    $$$$$:  486-block  3
+        -:  487:                   "result report generated by the testing framework. Use value 'no' to "
+        -:  488:                   "disable the results report completely."
+        2:  489:    ));
+        1:  489-block  0
+    $$$$$:  489-block  1
+    $$$$$:  489-block  2
+        -:  490:
+        1:  491:    report_level.add_cla_id( "--", btrt_report_level, "=" );
+        1:  491-block  0
+        1:  491-block  1
+        1:  491-block  2
+    $$$$$:  491-block  3
+    $$$$$:  491-block  4
+    $$$$$:  491-block  5
+        1:  492:    report_level.add_cla_id( "-", "r", " " );
+        1:  492-block  0
+        1:  492-block  1
+        1:  492-block  2
+        1:  492-block  3
+    $$$$$:  492-block  4
+    $$$$$:  492-block  5
+    $$$$$:  492-block  6
+        1:  493:    store.add( report_level );
+        1:  493-block  0
+        -:  494:
+        -:  495:    ///////////////////////////////////////////////
+        -:  496:
+        -:  497:    rt::parameter<std::string> report_mem_leaks( btrt_report_mem_leaks, (
+        1:  498:        rt::description = "File where to report memory leaks to.",
+        1:  498-block  0
+        1:  498-block  1
+        1:  498-block  2
+    $$$$$:  498-block  3
+    $$$$$:  498-block  4
+    $$$$$:  498-block  5
+        2:  499:        rt::env_var = "BOOST_TEST_REPORT_MEMORY_LEAKS_TO",
+        1:  499-block  0
+        1:  499-block  1
+        1:  499-block  2
+    $$$$$:  499-block  3
+    $$$$$:  499-block  4
+    $$$$$:  499-block  5
+        2:  500:        rt::default_value = std::string(),
+        1:  500-block  0
+        1:  500-block  1
+    $$$$$:  500-block  2
+    $$$$$:  500-block  3
+    $$$$$:  500-block  4
+        2:  501:        rt::value_hint = "<file name>",
+        1:  501-block  0
+        1:  501-block  1
+        1:  501-block  2
+    $$$$$:  501-block  3
+    $$$$$:  501-block  4
+    $$$$$:  501-block  5
+        2:  502:        rt::help = "Parameter " + btrt_report_mem_leaks + " allows to specify a file where to report "
+        1:  502-block  0
+        1:  502-block  1
+        1:  502-block  2
+    $$$$$:  502-block  3
+    $$$$$:  502-block  4
+    $$$$$:  502-block  5
+    $$$$$:  502-block  6
+        -:  503:                   "memory leaks to. The parameter does not have default value. If it is not specified, "
+        -:  504:                   "memory leaks (if any) are reported to the standard error stream."
+        2:  505:    ));
+        1:  505-block  0
+        1:  505-block  1
+    $$$$$:  505-block  2
+    $$$$$:  505-block  3
+        -:  506:
+        1:  507:    report_mem_leaks.add_cla_id( "--", btrt_report_mem_leaks, "=" );
+        1:  507-block  0
+        1:  507-block  1
+    $$$$$:  507-block  2
+    $$$$$:  507-block  3
+    $$$$$:  507-block  4
+        1:  508:    store.add( report_mem_leaks );
+        1:  508-block  0
+        -:  509:
+        -:  510:    ///////////////////////////////////////////////
+        -:  511:
+        -:  512:    rt::parameter<std::string> report_sink( btrt_report_sink, (
+        1:  513:        rt::description = "Specifies report sink: stderr(default), stdout or file name.",
+        1:  513-block  0
+        1:  513-block  1
+        1:  513-block  2
+    $$$$$:  513-block  3
+    $$$$$:  513-block  4
+    $$$$$:  513-block  5
+        2:  514:        rt::env_var = "BOOST_TEST_REPORT_SINK",
+        1:  514-block  0
+        1:  514-block  1
+        1:  514-block  2
+    $$$$$:  514-block  3
+    $$$$$:  514-block  4
+    $$$$$:  514-block  5
+        2:  515:        rt::value_hint = "<stderr|stdout|file name>",
+        1:  515-block  0
+        1:  515-block  1
+        1:  515-block  2
+    $$$$$:  515-block  3
+    $$$$$:  515-block  4
+    $$$$$:  515-block  5
+        1:  516:        rt::help = "Sets the result report sink - "
+        1:  516-block  0
+        1:  516-block  1
+    $$$$$:  516-block  2
+    $$$$$:  516-block  3
+        -:  517:                   "the location where the framework writes the result report to. "
+        -:  518:                   "The sink may be a a file or a standard "
+        -:  519:                   "stream. The default is 'stderr': the "
+        -:  520:                   "standard error stream."
+        2:  521:    ));
+        1:  521-block  0
+    $$$$$:  521-block  1
+    $$$$$:  521-block  2
+        -:  522:
+        1:  523:    report_sink.add_cla_id( "--", btrt_report_sink, "=" );
+        1:  523-block  0
+        1:  523-block  1
+        1:  523-block  2
+    $$$$$:  523-block  3
+    $$$$$:  523-block  4
+    $$$$$:  523-block  5
+        1:  524:    report_sink.add_cla_id( "-", "e", " " );
+        1:  524-block  0
+        1:  524-block  1
+        1:  524-block  2
+        1:  524-block  3
+    $$$$$:  524-block  4
+    $$$$$:  524-block  5
+    $$$$$:  524-block  6
+        1:  525:    store.add( report_sink );
+        1:  525-block  0
+        -:  526:
+        -:  527:    ///////////////////////////////////////////////
+        -:  528:
+        -:  529:    rt::option result_code( btrt_result_code, (
+        1:  530:        rt::description = "Disables test modules's result code generation.",
+        1:  530-block  0
+        1:  530-block  1
+        1:  530-block  2
+    $$$$$:  530-block  3
+    $$$$$:  530-block  4
+    $$$$$:  530-block  5
+        2:  531:        rt::env_var = "BOOST_TEST_RESULT_CODE",
+        1:  531-block  0
+        1:  531-block  1
+        1:  531-block  2
+    $$$$$:  531-block  3
+    $$$$$:  531-block  4
+    $$$$$:  531-block  5
+        2:  532:        rt::default_value = true,
+        1:  532-block  0
+        1:  532-block  1
+    $$$$$:  532-block  2
+    $$$$$:  532-block  3
+    $$$$$:  532-block  4
+        2:  533:        rt::help = "The 'no' argument value for the parameter " + btrt_result_code + " instructs the "
+        1:  533-block  0
+        1:  533-block  1
+        1:  533-block  2
+    $$$$$:  533-block  3
+    $$$$$:  533-block  4
+    $$$$$:  533-block  5
+    $$$$$:  533-block  6
+        -:  534:                   "framework to always return zero result code. This can be used for test programs "
+        -:  535:                   "executed within IDE. By default this parameter has value 'yes'."
+        2:  536:    ));
+        1:  536-block  0
+        1:  536-block  1
+    $$$$$:  536-block  2
+    $$$$$:  536-block  3
+        -:  537:
+        1:  538:    result_code.add_cla_id( "--", btrt_result_code, "=", true );
+        1:  538-block  0
+        1:  538-block  1
+    $$$$$:  538-block  2
+    $$$$$:  538-block  3
+    $$$$$:  538-block  4
+        1:  539:    result_code.add_cla_id( "-", "c", " " );
+        1:  539-block  0
+        1:  539-block  1
+        1:  539-block  2
+        1:  539-block  3
+    $$$$$:  539-block  4
+    $$$$$:  539-block  5
+    $$$$$:  539-block  6
+        1:  540:    store.add( result_code );
+        1:  540-block  0
+        -:  541:
+        -:  542:    ///////////////////////////////////////////////
+        -:  543:
+        -:  544:    rt::parameter<std::string,rt::REPEATABLE_PARAM> tests_to_run( btrt_run_filters, (
+        1:  545:        rt::description = "Filters which tests to execute.",
+        1:  545-block  0
+        1:  545-block  1
+        1:  545-block  2
+    $$$$$:  545-block  3
+    $$$$$:  545-block  4
+    $$$$$:  545-block  5
+        2:  546:        rt::env_var = "BOOST_TEST_RUN_FILTERS",
+        1:  546-block  0
+        1:  546-block  1
+        1:  546-block  2
+    $$$$$:  546-block  3
+    $$$$$:  546-block  4
+    $$$$$:  546-block  5
+        2:  547:        rt::value_hint = "<test unit filter>",
+        1:  547-block  0
+        1:  547-block  1
+        1:  547-block  2
+    $$$$$:  547-block  3
+    $$$$$:  547-block  4
+    $$$$$:  547-block  5
+        1:  548:        rt::help = "Filters which test units to execute. "
+        1:  548-block  0
+    $$$$$:  548-block  1
+    $$$$$:  548-block  2
+        -:  549:                   "The framework supports both 'selection filters', which allow to select "
+        -:  550:                   "which test units to enable from the set of available test units, and 'disabler "
+        -:  551:                   "filters', which allow to disable some test units. Boost.test also supports "
+        -:  552:                   "enabling/disabling test units at compile time. These settings identify the default "
+        2:  553:                   "set of test units to run. Parameter " + btrt_run_filters + " is used to change this default. "
+        1:  553-block  0
+        1:  553-block  1
+    $$$$$:  553-block  2
+    $$$$$:  553-block  3
+        -:  554:                   "This parameter is repeatable, so you can specify more than one filter if necessary."
+        2:  555:    ));
+        1:  555-block  0
+        1:  555-block  1
+    $$$$$:  555-block  2
+    $$$$$:  555-block  3
+        -:  556:
+        1:  557:    tests_to_run.add_cla_id( "--", btrt_run_filters, "=" );
+        1:  557-block  0
+        1:  557-block  1
+    $$$$$:  557-block  2
+    $$$$$:  557-block  3
+    $$$$$:  557-block  4
+        1:  558:    tests_to_run.add_cla_id( "-", "t", " " );
+        1:  558-block  0
+        1:  558-block  1
+        1:  558-block  2
+        1:  558-block  3
+    $$$$$:  558-block  4
+    $$$$$:  558-block  5
+    $$$$$:  558-block  6
+        1:  559:    store.add( tests_to_run );
+        1:  559-block  0
+        -:  560:
+        -:  561:    ///////////////////////////////////////////////
+        -:  562:
+        -:  563:    rt::option save_test_pattern( btrt_save_test_pattern, (
+        1:  564:        rt::description = "Allows to switch between saving or matching test pattern file.",
+        1:  564-block  0
+        1:  564-block  1
+        1:  564-block  2
+    $$$$$:  564-block  3
+    $$$$$:  564-block  4
+    $$$$$:  564-block  5
+        2:  565:        rt::env_var = "BOOST_TEST_SAVE_PATTERN",
+        1:  565-block  0
+        1:  565-block  1
+        1:  565-block  2
+    $$$$$:  565-block  3
+    $$$$$:  565-block  4
+    $$$$$:  565-block  5
+        2:  566:        rt::help = "Parameter " + btrt_save_test_pattern + " facilitates switching mode of operation for "
+        1:  566-block  0
+        1:  566-block  1
+        1:  566-block  2
+    $$$$$:  566-block  3
+    $$$$$:  566-block  4
+    $$$$$:  566-block  5
+    $$$$$:  566-block  6
+        -:  567:                   "testing output streams.\n\nThis parameter serves no particular purpose within the "
+        -:  568:                   "framework itself. It can be used by test modules relying on output_test_stream to "
+        -:  569:                   "implement testing logic. Default mode is 'match' (false)."
+        2:  570:    ));
+        1:  570-block  0
+        1:  570-block  1
+    $$$$$:  570-block  2
+    $$$$$:  570-block  3
+        -:  571:
+        1:  572:    save_test_pattern.add_cla_id( "--", btrt_save_test_pattern, "=" );
+        1:  572-block  0
+        1:  572-block  1
+    $$$$$:  572-block  2
+    $$$$$:  572-block  3
+    $$$$$:  572-block  4
+        1:  573:    store.add( save_test_pattern );
+        1:  573-block  0
+        -:  574:
+        -:  575:    ///////////////////////////////////////////////
+        -:  576:
+        -:  577:    rt::option show_progress( btrt_show_progress, (
+        1:  578:        rt::description = "Turns on progress display.",
+        1:  578-block  0
+        1:  578-block  1
+        1:  578-block  2
+    $$$$$:  578-block  3
+    $$$$$:  578-block  4
+    $$$$$:  578-block  5
+        2:  579:        rt::env_var = "BOOST_TEST_SHOW_PROGRESS",
+        1:  579-block  0
+        1:  579-block  1
+        1:  579-block  2
+    $$$$$:  579-block  3
+    $$$$$:  579-block  4
+    $$$$$:  579-block  5
+        1:  580:        rt::help = "Instructs the framework to display the progress of the tests. "
+        1:  580-block  0
+        1:  580-block  1
+    $$$$$:  580-block  2
+    $$$$$:  580-block  3
+        -:  581:                   "This feature is turned off by default."
+        2:  582:    ));
+        1:  582-block  0
+    $$$$$:  582-block  1
+    $$$$$:  582-block  2
+        -:  583:
+        1:  584:    show_progress.add_cla_id( "--", btrt_show_progress, "=" );
+        1:  584-block  0
+        1:  584-block  1
+        1:  584-block  2
+    $$$$$:  584-block  3
+    $$$$$:  584-block  4
+    $$$$$:  584-block  5
+        1:  585:    show_progress.add_cla_id( "-", "p", " " );
+        1:  585-block  0
+        1:  585-block  1
+        1:  585-block  2
+        1:  585-block  3
+    $$$$$:  585-block  4
+    $$$$$:  585-block  5
+    $$$$$:  585-block  6
+        1:  586:    store.add( show_progress );
+        1:  586-block  0
+        -:  587:
+        -:  588:    ///////////////////////////////////////////////
+        -:  589:
+        -:  590:    rt::option use_alt_stack( btrt_use_alt_stack, (
+        1:  591:        rt::description = "Turns on/off usage of an alternative stack for signal handling.",
+        1:  591-block  0
+        1:  591-block  1
+        1:  591-block  2
+    $$$$$:  591-block  3
+    $$$$$:  591-block  4
+    $$$$$:  591-block  5
+        2:  592:        rt::env_var = "BOOST_TEST_USE_ALT_STACK",
+        1:  592-block  0
+        1:  592-block  1
+        1:  592-block  2
+    $$$$$:  592-block  3
+    $$$$$:  592-block  4
+    $$$$$:  592-block  5
+        2:  593:        rt::default_value = true,
+        1:  593-block  0
+        1:  593-block  1
+    $$$$$:  593-block  2
+    $$$$$:  593-block  3
+    $$$$$:  593-block  4
+        1:  594:        rt::help = "Instructs the framework to use an alternative "
+        1:  594-block  0
+        1:  594-block  1
+    $$$$$:  594-block  2
+    $$$$$:  594-block  3
+        -:  595:                   "stack for operating system's signals handling (on platforms where this is supported). "
+        -:  596:                   "The feature is enabled by default, but can be disabled using this command line switch."
+        2:  597:    ));
+        1:  597-block  0
+    $$$$$:  597-block  1
+    $$$$$:  597-block  2
+        -:  598:
+        1:  599:    use_alt_stack.add_cla_id( "--", btrt_use_alt_stack, "=", true );
+        1:  599-block  0
+        1:  599-block  1
+        1:  599-block  2
+    $$$$$:  599-block  3
+    $$$$$:  599-block  4
+    $$$$$:  599-block  5
+        1:  600:    store.add( use_alt_stack );
+        1:  600-block  0
+        -:  601:
+        -:  602:    ///////////////////////////////////////////////
+        -:  603:
+        -:  604:    rt::option wait_for_debugger( btrt_wait_for_debugger, (
+        1:  605:        rt::description = "Forces test module to wait for button to be pressed before starting test run.",
+        1:  605-block  0
+        1:  605-block  1
+        1:  605-block  2
+    $$$$$:  605-block  3
+    $$$$$:  605-block  4
+    $$$$$:  605-block  5
+        2:  606:        rt::env_var = "BOOST_TEST_WAIT_FOR_DEBUGGER",
+        1:  606-block  0
+        1:  606-block  1
+        1:  606-block  2
+    $$$$$:  606-block  3
+    $$$$$:  606-block  4
+    $$$$$:  606-block  5
+        1:  607:        rt::help = "Instructs the framework to pause before starting "
+        1:  607-block  0
+        1:  607-block  1
+    $$$$$:  607-block  2
+    $$$$$:  607-block  3
+        -:  608:                   "test units execution, so that you can attach a debugger to the test module process. "
+        -:  609:                   "This feature is turned off by default."
+        2:  610:    ));
+        1:  610-block  0
+    $$$$$:  610-block  1
+    $$$$$:  610-block  2
+        -:  611:
+        1:  612:    wait_for_debugger.add_cla_id( "--", btrt_wait_for_debugger, "=" );
+        1:  612-block  0
+        1:  612-block  1
+        1:  612-block  2
+    $$$$$:  612-block  3
+    $$$$$:  612-block  4
+    $$$$$:  612-block  5
+        1:  613:    wait_for_debugger.add_cla_id( "-", "w", " " );
+        1:  613-block  0
+        1:  613-block  1
+        1:  613-block  2
+        1:  613-block  3
+    $$$$$:  613-block  4
+    $$$$$:  613-block  5
+    $$$$$:  613-block  6
+        1:  614:    store.add( wait_for_debugger );
+        1:  614-block  0
+        -:  615:
+        -:  616:    ///////////////////////////////////////////////
+        -:  617:
+        -:  618:    rt::parameter<std::string> help( btrt_help, (
+        1:  619:        rt::description = "Help for framework parameters.",
+        1:  619-block  0
+        1:  619-block  1
+        1:  619-block  2
+    $$$$$:  619-block  3
+    $$$$$:  619-block  4
+    $$$$$:  619-block  5
+        2:  620:        rt::optional_value = std::string(),
+        1:  620-block  0
+        1:  620-block  1
+    $$$$$:  620-block  2
+    $$$$$:  620-block  3
+    $$$$$:  620-block  4
+        2:  621:        rt::value_hint = "<parameter name>",
+        1:  621-block  0
+        1:  621-block  1
+        1:  621-block  2
+    $$$$$:  621-block  3
+    $$$$$:  621-block  4
+    $$$$$:  621-block  5
+        1:  622:        rt::help = "Displays help on the framework's parameters. "
+        1:  622-block  0
+        1:  622-block  1
+    $$$$$:  622-block  2
+    $$$$$:  622-block  3
+        -:  623:                   "The parameter accepts an optional argument value. If present, an argument value is "
+        -:  624:                   "interpreted as a parameter name (name guessing works as well, so for example "
+        -:  625:                   "'--help=rand' displays help on the parameter 'random'). If the parameter name is unknown "
+        -:  626:                   "or ambiguous error is reported. If argument value is absent, a summary of all "
+        -:  627:                   "framework's parameter is displayed."
+        2:  628:    ));
+        1:  628-block  0
+        1:  628-block  1
+    $$$$$:  628-block  2
+    $$$$$:  628-block  3
+        1:  629:    help.add_cla_id( "--", btrt_help, "=" );
+        1:  629-block  0
+        1:  629-block  1
+    $$$$$:  629-block  2
+    $$$$$:  629-block  3
+    $$$$$:  629-block  4
+        1:  630:    store.add( help );
+        1:  630-block  0
+        -:  631:
+        -:  632:    ///////////////////////////////////////////////
+        -:  633:
+        -:  634:    rt::option usage( btrt_usage, (
+        1:  635:        rt::description = "Short message explaining usage of Boost.Test parameters."
+        1:  635-block  0
+        1:  635-block  1
+    $$$$$:  635-block  2
+    $$$$$:  635-block  3
+        2:  636:    ));
+        1:  636-block  0
+    $$$$$:  636-block  1
+    $$$$$:  636-block  2
+        1:  637:    usage.add_cla_id( "-", "?", " " );
+        1:  637-block  0
+        1:  637-block  1
+        1:  637-block  2
+        1:  637-block  3
+    $$$$$:  637-block  4
+    $$$$$:  637-block  5
+    $$$$$:  637-block  6
+        1:  638:    store.add( usage );
+        1:  638-block  0
+        -:  639:
+        -:  640:    ///////////////////////////////////////////////
+        -:  641:
+        -:  642:    rt::option version( btrt_version, (
+        1:  643:        rt::description = "Prints Boost.Test version and exits."
+        1:  643-block  0
+        1:  643-block  1
+    $$$$$:  643-block  2
+    $$$$$:  643-block  3
+        2:  644:    ));
+        1:  644-block  0
+        1:  644-block  1
+    $$$$$:  644-block  2
+    $$$$$:  644-block  3
+        1:  645:    version.add_cla_id( "--", btrt_version, " " );
+        1:  645-block  0
+        1:  645-block  1
+        1:  645-block  2
+    $$$$$:  645-block  3
+    $$$$$:  645-block  4
+    $$$$$:  645-block  5
+        1:  646:    store.add( version );
+        1:  646-block  0
+        1:  647:}
+        -:  648:
+        -:  649:static rt::arguments_store  s_arguments_store;
+        -:  650:static rt::parameters_store s_parameters_store;
+        -:  651:
+        -:  652://____________________________________________________________________________//
+        -:  653:
+        -:  654:} // local namespace
+        -:  655:
+        -:  656:void
+        1:  657:init( int& argc, char** argv )
+        -:  658:{
+        1:  659:    shared_ptr<rt::cla::parser> parser;
+        1:  659-block  0
+    $$$$$:  659-block  1
+        -:  660:
+        -:  661:    BOOST_TEST_I_TRY {
+        -:  662:        // Initialize parameters list
+        1:  663:        if( s_parameters_store.is_empty() )
+        1:  663-block  0
+        1:  664:            register_parameters( s_parameters_store );
+        1:  664-block  0
+        -:  665:
+        -:  666:        // Clear up arguments store just in case (of multiple init invocations)
+        1:  667:        s_arguments_store.clear();
+        1:  667-block  0
+        -:  668:
+        -:  669:        // Parse CLA they take precedence over  environment
+        1:  670:        parser.reset( new rt::cla::parser( s_parameters_store, (rt::end_of_params = "--", rt::negation_prefix = "no_") ) );
+        1:  670-block  0
+        1:  670-block  1
+        1:  670-block  2
+        1:  670-block  3
+        1:  670-block  4
+        1:  670-block  5
+        1:  670-block  6
+    $$$$$:  670-block  7
+    $$$$$:  670-block  8
+    $$$$$:  670-block  9
+    $$$$$:  670-block 10
+    $$$$$:  670-block 11
+    $$$$$:  670-block 12
+        1:  671:        argc = parser->parse( argc, argv, s_arguments_store );
+        1:  671-block  0
+        -:  672:
+        -:  673:        // Try to fetch missing arguments from environment
+        1:  674:        rt::env::fetch_absent( s_parameters_store, s_arguments_store );
+        1:  674-block  0
+        -:  675:
+        -:  676:        // Set arguments to default values if defined and perform all the validations
+        1:  677:        rt::finalize_arguments( s_parameters_store, s_arguments_store );
+        1:  677-block  0
+        -:  678:
+        -:  679:        // check if colorized output is enabled
+        1:  680:        bool use_color = true;
+        1:  681:        if( s_arguments_store.has(btrt_color_output ) ) {
+        1:  681-block  0
+        1:  681-block  1
+    $$$$$:  681-block  2
+        1:  682:            use_color = runtime_config::get<bool>(runtime_config::btrt_color_output);
+        1:  682-block  0
+        1:  682-block  1
+    $$$$$:  682-block  2
+        -:  683:        }
+        -:  684:
+        -:  685:        // Report help if requested
+        1:  686:        if( runtime_config::get<bool>( btrt_version ) ) {
+        1:  686-block  0
+        1:  686-block  1
+    $$$$$:  686-block  2
+    #####:  687:            parser->version( std::cerr );
+    %%%%%:  687-block  0
+    #####:  688:            BOOST_TEST_I_THROW( framework::nothing_to_test( boost::exit_success ) );
+    %%%%%:  688-block  0
+    $$$$$:  688-block  1
+        -:  689:        }
+        1:  690:        else if( runtime_config::get<bool>( btrt_usage ) ) {
+        1:  690-block  0
+        1:  690-block  1
+    $$$$$:  690-block  2
+    #####:  691:            parser->usage( std::cerr, runtime::cstring(), use_color );
+    %%%%%:  691-block  0
+    %%%%%:  691-block  1
+    $$$$$:  691-block  2
+    #####:  692:            BOOST_TEST_I_THROW( framework::nothing_to_test( boost::exit_success ) );
+    %%%%%:  692-block  0
+    $$$$$:  692-block  1
+        -:  693:        }
+        1:  694:        else if( s_arguments_store.has( btrt_help ) ) {
+        1:  694-block  0
+        1:  694-block  1
+    $$$$$:  694-block  2
+    #####:  695:            parser->help(std::cerr, 
+    %%%%%:  695-block  0
+    $$$$$:  695-block  1
+        -:  696:                         s_parameters_store, 
+    #####:  697:                         runtime_config::get<std::string>( btrt_help ),
+    %%%%%:  697-block  0
+    $$$$$:  697-block  1
+        -:  698:                         use_color );
+    #####:  699:            BOOST_TEST_I_THROW( framework::nothing_to_test( boost::exit_success ) );
+    %%%%%:  699-block  0
+    $$$$$:  699-block  1
+        -:  700:        }
+        -:  701:
+        -:  702:        // A bit of business logic: output_format takes precedence over log/report formats
+        1:  703:        if( s_arguments_store.has( btrt_output_format ) ) {
+        1:  703-block  0
+        1:  703-block  1
+    $$$$$:  703-block  2
+    #####:  704:            unit_test::output_format of = s_arguments_store.get<unit_test::output_format>( btrt_output_format );
+    %%%%%:  704-block  0
+    $$$$$:  704-block  1
+    #####:  705:            s_arguments_store.set( btrt_report_format, of );
+    %%%%%:  705-block  0
+    $$$$$:  705-block  1
+    #####:  706:            s_arguments_store.set( btrt_log_format, of );
+    %%%%%:  706-block  0
+    %%%%%:  706-block  1
+    $$$$$:  706-block  2
+        -:  707:        }
+        -:  708:
+        -:  709:    }
+    =====:  710:    BOOST_TEST_I_CATCH( rt::init_error, ex ) {
+    $$$$$:  710-block  0
+    $$$$$:  710-block  1
+    =====:  711:        BOOST_TEST_SETUP_ASSERT( false, ex.msg );
+    $$$$$:  711-block  0
+    $$$$$:  711-block  1
+    $$$$$:  711-block  2
+    $$$$$:  711-block  3
+        -:  712:    }
+    =====:  713:    BOOST_TEST_I_CATCH( rt::ambiguous_param, ex ) {
+    $$$$$:  713-block  0
+    $$$$$:  713-block  1
+    =====:  714:        std::cerr << ex.msg << "\n Did you mean one of these?\n";
+    $$$$$:  714-block  0
+        -:  715:
+    =====:  716:        BOOST_TEST_FOREACH( rt::cstring, name, ex.m_amb_candidates )
+    $$$$$:  716-block  0
+    $$$$$:  716-block  1
+    $$$$$:  716-block  2
+    $$$$$:  716-block  3
+    $$$$$:  716-block  4
+    $$$$$:  716-block  5
+    $$$$$:  716-block  6
+    $$$$$:  716-block  7
+    $$$$$:  716-block  8
+    $$$$$:  716-block  9
+    $$$$$:  716-block 10
+    $$$$$:  716-block 11
+    $$$$$:  716-block 12
+    $$$$$:  716-block 13
+    $$$$$:  716-block 14
+    $$$$$:  716-block 15
+    $$$$$:  716-block 16
+    $$$$$:  716-block 17
+    $$$$$:  716-block 18
+    $$$$$:  716-block 19
+    $$$$$:  716-block 20
+    $$$$$:  716-block 21
+    $$$$$:  716-block 22
+    $$$$$:  716-block 23
+    =====:  717:            std::cerr << "   " << name << "\n";
+    $$$$$:  717-block  0
+    $$$$$:  717-block  1
+    $$$$$:  717-block  2
+        -:  718:
+    =====:  719:        BOOST_TEST_I_THROW( framework::nothing_to_test( boost::exit_exception_failure ) );
+    $$$$$:  719-block  0
+    $$$$$:  719-block  1
+        -:  720:    }
+    =====:  721:    BOOST_TEST_I_CATCH( rt::unrecognized_param, ex ) {
+    $$$$$:  721-block  0
+    $$$$$:  721-block  1
+    =====:  722:        std::cerr << ex.msg << "\n";
+    $$$$$:  722-block  0
+        -:  723:
+    =====:  724:        if( !ex.m_typo_candidates.empty() ) {
+    $$$$$:  724-block  0
+    =====:  725:            std::cerr << " Did you mean one of these?\n";
+    $$$$$:  725-block  0
+        -:  726:
+    =====:  727:            BOOST_TEST_FOREACH( rt::cstring, name, ex.m_typo_candidates )
+    $$$$$:  727-block  0
+    $$$$$:  727-block  1
+    $$$$$:  727-block  2
+    $$$$$:  727-block  3
+    $$$$$:  727-block  4
+    $$$$$:  727-block  5
+    $$$$$:  727-block  6
+    $$$$$:  727-block  7
+    $$$$$:  727-block  8
+    $$$$$:  727-block  9
+    $$$$$:  727-block 10
+    $$$$$:  727-block 11
+    $$$$$:  727-block 12
+    $$$$$:  727-block 13
+    $$$$$:  727-block 14
+    $$$$$:  727-block 15
+    $$$$$:  727-block 16
+    $$$$$:  727-block 17
+    $$$$$:  727-block 18
+    $$$$$:  727-block 19
+    $$$$$:  727-block 20
+    $$$$$:  727-block 21
+    $$$$$:  727-block 22
+    $$$$$:  727-block 23
+    =====:  728:                std::cerr << "   " << name << "\n";
+    $$$$$:  728-block  0
+    $$$$$:  728-block  1
+    $$$$$:  728-block  2
+        -:  729:        }
+    =====:  730:        else if( parser ) {
+    $$$$$:  730-block  0
+    =====:  731:            std::cerr << "\n";
+    $$$$$:  731-block  0
+    =====:  732:            parser->usage( std::cerr );
+    $$$$$:  732-block  0
+    $$$$$:  732-block  1
+    $$$$$:  732-block  2
+    $$$$$:  732-block  3
+        -:  733:        }
+        -:  734:
+    =====:  735:        BOOST_TEST_I_THROW( framework::nothing_to_test( boost::exit_exception_failure ) );
+    $$$$$:  735-block  0
+    $$$$$:  735-block  1
+        -:  736:    }
+    =====:  737:    BOOST_TEST_I_CATCH( rt::input_error, ex ) {
+    $$$$$:  737-block  0
+    $$$$$:  737-block  1
+    =====:  738:        std::cerr << ex.msg << "\n\n";
+    $$$$$:  738-block  0
+        -:  739:
+    =====:  740:        if( parser )
+    $$$$$:  740-block  0
+    =====:  741:            parser->usage( std::cerr, ex.param_name );
+    $$$$$:  741-block  0
+    $$$$$:  741-block  1
+    $$$$$:  741-block  2
+        -:  742:
+    =====:  743:        BOOST_TEST_I_THROW( framework::nothing_to_test( boost::exit_exception_failure ) );
+    $$$$$:  743-block  0
+    $$$$$:  743-block  1
+        -:  744:    }
+        1:  745:}
+        -:  746:
+        -:  747://____________________________________________________________________________//
+        -:  748:
+        -:  749:rt::arguments_store const&
+       76:  750:argument_store()
+        -:  751:{
+       76:  752:    return s_arguments_store;
+       76:  752-block  0
+        -:  753:}
+        -:  754:
+        -:  755://____________________________________________________________________________//
+        -:  756:
+        -:  757:bool
+    #####:  758:save_pattern()
+        -:  759:{
+    #####:  760:    return runtime_config::get<bool>( btrt_save_test_pattern );
+    %%%%%:  760-block  0
+    %%%%%:  760-block  1
+    %%%%%:  760-block  2
+        -:  761:}
+        -:  762:
+        -:  763://____________________________________________________________________________//
+        -:  764:
+        -:  765:} // namespace runtime_config
+        -:  766:} // namespace unit_test
+        -:  767:} // namespace boost
+        -:  768:
+        -:  769:#include <boost/test/detail/enable_warnings.hpp>
+        -:  770:
+        -:  771:#endif // BOOST_TEST_UNIT_TEST_PARAMETERS_IPP_012205GER

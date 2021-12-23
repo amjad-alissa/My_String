@@ -1,0 +1,423 @@
+        -:    0:Source:F:/Files/vcpkg/installed/x86-windows/include/boost/test/utils/xml_printer.hpp
+        -:    0:Graph:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcno
+        -:    0:Data:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1://  (C) Copyright Gennadiy Rozental 2001.
+        -:    2://  Distributed under the Boost Software License, Version 1.0.
+        -:    3://  (See accompanying file LICENSE_1_0.txt or copy at
+        -:    4://  http://www.boost.org/LICENSE_1_0.txt)
+        -:    5:
+        -:    6://  See http://www.boost.org/libs/test for the library home page.
+        -:    7://
+        -:    8://  File        : $RCSfile$
+        -:    9://
+        -:   10://  Version     : $Revision$
+        -:   11://
+        -:   12://  Description : common code used by any agent serving as OF_XML printer
+        -:   13:// ***************************************************************************
+        -:   14:
+        -:   15:#ifndef BOOST_TEST_UTILS_XML_PRINTER_HPP
+        -:   16:#define BOOST_TEST_UTILS_XML_PRINTER_HPP
+        -:   17:
+        -:   18:// Boost.Test
+        -:   19:#include <boost/test/detail/global_typedef.hpp>
+        -:   20:#include <boost/test/utils/basic_cstring/basic_cstring.hpp>
+        -:   21:#include <boost/test/utils/custom_manip.hpp>
+        -:   22:#include <boost/test/utils/foreach.hpp>
+        -:   23:#include <boost/test/utils/basic_cstring/io.hpp>
+        -:   24:
+        -:   25:// Boost
+        -:   26:#include <boost/config.hpp>
+        -:   27:
+        -:   28:// STL
+        -:   29:#include <iostream>
+        -:   30:#include <map>
+        -:   31:
+        -:   32:#include <boost/test/detail/suppress_warnings.hpp>
+        -:   33:
+        -:   34://____________________________________________________________________________//
+        -:   35:
+        -:   36:namespace boost {
+        -:   37:namespace unit_test {
+        -:   38:namespace utils {
+        -:   39:
+        -:   40:// ************************************************************************** //
+        -:   41:// **************               xml print helpers              ************** //
+        -:   42:// ************************************************************************** //
+        -:   43:
+        -:   44:inline void
+    #####:   45:print_escaped( std::ostream& where_to, const_string value )
+        -:   46:{
+        -:   47:#if !defined(BOOST_NO_CXX11_HDR_INITIALIZER_LIST) && !defined(BOOST_NO_CXX11_UNIFIED_INITIALIZATION_SYNTAX)
+        -:   48:    static std::map<char,char const*> const char_type{{
+        -:   49:        {'<' , "lt"},
+        -:   50:        {'>' , "gt"},
+        -:   51:        {'&' , "amp"},
+        -:   52:        {'\'', "apos"},
+        -:   53:        {'"' , "quot"}
+    #####:   54:    }};
+    %%%%%:   54-block  0
+    %%%%%:   54-block  1
+    %%%%%:   54-block  2
+    %%%%%:   54-block  3
+    $$$$$:   54-block  4
+    $$$$$:   54-block  5
+    $$$$$:   54-block  6
+    $$$$$:   54-block  7
+    $$$$$:   54-block  8
+    $$$$$:   54-block  9
+        -:   55:#else
+        -:   56:    static std::map<char,char const*> char_type;
+        -:   57:
+        -:   58:    if( char_type.empty() ) {
+        -:   59:        char_type['<'] = "lt";
+        -:   60:        char_type['>'] = "gt";
+        -:   61:        char_type['&'] = "amp";
+        -:   62:        char_type['\'']= "apos";
+        -:   63:        char_type['"'] = "quot";
+        -:   64:    }
+        -:   65:#endif
+        -:   66:
+    #####:   67:    BOOST_TEST_FOREACH( char, c, value ) {
+    %%%%%:   67-block  0
+    %%%%%:   67-block  1
+    %%%%%:   67-block  2
+    %%%%%:   67-block  3
+    %%%%%:   67-block  4
+    %%%%%:   67-block  5
+    %%%%%:   67-block  6
+    %%%%%:   67-block  7
+    %%%%%:   67-block  8
+    %%%%%:   67-block  9
+    %%%%%:   67-block 10
+    %%%%%:   67-block 11
+    %%%%%:   67-block 12
+    %%%%%:   67-block 13
+    %%%%%:   67-block 14
+    %%%%%:   67-block 15
+    %%%%%:   67-block 16
+    %%%%%:   67-block 17
+    %%%%%:   67-block 18
+    $$$$$:   67-block 19
+    $$$$$:   67-block 20
+    $$$$$:   67-block 21
+    $$$$$:   67-block 22
+    #####:   68:        std::map<char,char const*>::const_iterator found_ref = char_type.find( c );
+    %%%%%:   68-block  0
+        -:   69:
+    #####:   70:        if( found_ref != char_type.end() )
+    %%%%%:   70-block  0
+    #####:   71:            where_to << '&' << found_ref->second << ';';
+    %%%%%:   71-block  0
+    %%%%%:   71-block  1
+    %%%%%:   71-block  2
+        -:   72:        else
+    #####:   73:            where_to << c;
+    %%%%%:   73-block  0
+        -:   74:    }
+    #####:   75:}
+    %%%%%:   75-block  0
+        -:   76:
+        -:   77://____________________________________________________________________________//
+        -:   78:
+        -:   79:inline void
+    #####:   80:print_escaped( std::ostream& where_to, std::string const& value )
+        -:   81:{
+    #####:   82:    print_escaped( where_to, const_string( value ) );
+    %%%%%:   82-block  0
+    #####:   83:}
+    %%%%%:   83-block  0
+        -:   84:
+        -:   85://____________________________________________________________________________//
+        -:   86:
+        -:   87:template<typename T>
+        -:   88:inline void
+    #####:   89:print_escaped( std::ostream& where_to, T const& value )
+        -:   90:{
+    #####:   91:    where_to << value;
+    #####:   92:}
+------------------
+_ZN5boost9unit_test5utils13print_escapedIA4_cEEvRSoRKT_:
+    #####:   89:print_escaped( std::ostream& where_to, T const& value )
+        -:   90:{
+    #####:   91:    where_to << value;
+    %%%%%:   91-block  0
+    #####:   92:}
+------------------
+_ZN5boost9unit_test5utils13print_escapedINS0_18readwrite_propertyINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEEEEvRSoRKT_:
+    #####:   89:print_escaped( std::ostream& where_to, T const& value )
+        -:   90:{
+    #####:   91:    where_to << value;
+    %%%%%:   91-block  0
+    #####:   92:}
+------------------
+_ZN5boost9unit_test5utils13print_escapedIA31_cEEvRSoRKT_:
+    #####:   89:print_escaped( std::ostream& where_to, T const& value )
+        -:   90:{
+    #####:   91:    where_to << value;
+    %%%%%:   91-block  0
+    #####:   92:}
+------------------
+_ZN5boost9unit_test5utils13print_escapedIA22_cEEvRSoRKT_:
+    #####:   89:print_escaped( std::ostream& where_to, T const& value )
+        -:   90:{
+    #####:   91:    where_to << value;
+    %%%%%:   91-block  0
+    #####:   92:}
+------------------
+_ZN5boost9unit_test5utils13print_escapedIA6_cEEvRSoRKT_:
+    #####:   89:print_escaped( std::ostream& where_to, T const& value )
+        -:   90:{
+    #####:   91:    where_to << value;
+    %%%%%:   91-block  0
+    #####:   92:}
+------------------
+_ZN5boost9unit_test5utils13print_escapedIyEEvRSoRKT_:
+    #####:   89:print_escaped( std::ostream& where_to, T const& value )
+        -:   90:{
+    #####:   91:    where_to << value;
+    %%%%%:   91-block  0
+    #####:   92:}
+------------------
+_ZN5boost9unit_test5utils13print_escapedINS0_12test_results19readonly_property59EEEvRSoRKT_:
+    #####:   89:print_escaped( std::ostream& where_to, T const& value )
+        -:   90:{
+    #####:   91:    where_to << value;
+    %%%%%:   91-block  0
+    #####:   92:}
+------------------
+_ZN5boost9unit_test5utils13print_escapedImEEvRSoRKT_:
+    #####:   89:print_escaped( std::ostream& where_to, T const& value )
+        -:   90:{
+    #####:   91:    where_to << value;
+    %%%%%:   91-block  0
+    #####:   92:}
+------------------
+_ZN5boost9unit_test5utils13print_escapedIdEEvRSoRKT_:
+    #####:   89:print_escaped( std::ostream& where_to, T const& value )
+        -:   90:{
+    #####:   91:    where_to << value;
+    %%%%%:   91-block  0
+    #####:   92:}
+------------------
+_ZN5boost9unit_test5utils13print_escapedIiEEvRSoRKT_:
+    #####:   89:print_escaped( std::ostream& where_to, T const& value )
+        -:   90:{
+    #####:   91:    where_to << value;
+    %%%%%:   91-block  0
+    #####:   92:}
+------------------
+        -:   93:
+        -:   94://____________________________________________________________________________//
+        -:   95:
+        -:   96:inline void
+    #####:   97:print_escaped_cdata( std::ostream& where_to, const_string value )
+        -:   98:{
+    #####:   99:    static const_string cdata_end( "]]>" );
+    %%%%%:   99-block  0
+    %%%%%:   99-block  1
+    %%%%%:   99-block  2
+    %%%%%:   99-block  3
+    $$$$$:   99-block  4
+    $$$$$:   99-block  5
+        -:  100:
+    #####:  101:    const_string::size_type pos = value.find( cdata_end );
+    %%%%%:  101-block  0
+    $$$$$:  101-block  1
+    #####:  102:    if( pos == const_string::npos )
+    %%%%%:  102-block  0
+    #####:  103:        where_to << value;
+    %%%%%:  103-block  0
+        -:  104:    else {
+    #####:  105:        where_to << value.substr( 0, pos+2 ) << cdata_end
+    %%%%%:  105-block  0
+    #####:  106:                 << BOOST_TEST_L( "<![CDATA[" ) << value.substr( pos+2 );
+    %%%%%:  106-block  0
+    %%%%%:  106-block  1
+    %%%%%:  106-block  2
+    %%%%%:  106-block  3
+    %%%%%:  106-block  4
+    $$$$$:  106-block  5
+    $$$$$:  106-block  6
+        -:  107:    }
+    #####:  108:}
+    %%%%%:  108-block  0
+        -:  109:
+        -:  110://____________________________________________________________________________//
+        -:  111:
+        -:  112:typedef custom_manip<struct attr_value_t> attr_value;
+        -:  113:
+        -:  114:template<typename T>
+        -:  115:inline std::ostream&
+    #####:  116:operator<<( custom_printer<attr_value> const& p, T const& value )
+        -:  117:{
+    #####:  118:    *p << "=\"";
+    #####:  119:    print_escaped( *p, value );
+    #####:  120:    *p << '"';
+        -:  121:
+    #####:  122:    return *p;
+        -:  123:}
+------------------
+_ZN5boost9unit_test5utilslsIA4_cEERSoRKNS1_14custom_printerINS1_12custom_manipINS1_12attr_value_tEEEEERKT_:
+    #####:  116:operator<<( custom_printer<attr_value> const& p, T const& value )
+        -:  117:{
+    #####:  118:    *p << "=\"";
+    %%%%%:  118-block  0
+    #####:  119:    print_escaped( *p, value );
+    #####:  120:    *p << '"';
+        -:  121:
+    #####:  122:    return *p;
+        -:  123:}
+------------------
+_ZN5boost9unit_test5utilslsINS0_18readwrite_propertyINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEEEERSoRKNS1_14custom_printerINS1_12custom_manipINS1_12attr_value_tEEEEERKT_:
+    #####:  116:operator<<( custom_printer<attr_value> const& p, T const& value )
+        -:  117:{
+    #####:  118:    *p << "=\"";
+    %%%%%:  118-block  0
+    #####:  119:    print_escaped( *p, value );
+    #####:  120:    *p << '"';
+        -:  121:
+    #####:  122:    return *p;
+        -:  123:}
+------------------
+_ZN5boost9unit_test5utilslsINS0_13basic_cstringIKcEEEERSoRKNS1_14custom_printerINS1_12custom_manipINS1_12attr_value_tEEEEERKT_:
+    #####:  116:operator<<( custom_printer<attr_value> const& p, T const& value )
+        -:  117:{
+    #####:  118:    *p << "=\"";
+    %%%%%:  118-block  0
+    #####:  119:    print_escaped( *p, value );
+    #####:  120:    *p << '"';
+    %%%%%:  120-block  0
+        -:  121:
+    #####:  122:    return *p;
+        -:  123:}
+------------------
+_ZN5boost9unit_test5utilslsIA31_cEERSoRKNS1_14custom_printerINS1_12custom_manipINS1_12attr_value_tEEEEERKT_:
+    #####:  116:operator<<( custom_printer<attr_value> const& p, T const& value )
+        -:  117:{
+    #####:  118:    *p << "=\"";
+    %%%%%:  118-block  0
+    #####:  119:    print_escaped( *p, value );
+    #####:  120:    *p << '"';
+        -:  121:
+    #####:  122:    return *p;
+        -:  123:}
+------------------
+_ZN5boost9unit_test5utilslsIA22_cEERSoRKNS1_14custom_printerINS1_12custom_manipINS1_12attr_value_tEEEEERKT_:
+    #####:  116:operator<<( custom_printer<attr_value> const& p, T const& value )
+        -:  117:{
+    #####:  118:    *p << "=\"";
+    %%%%%:  118-block  0
+    #####:  119:    print_escaped( *p, value );
+    #####:  120:    *p << '"';
+        -:  121:
+    #####:  122:    return *p;
+        -:  123:}
+------------------
+_ZN5boost9unit_test5utilslsIA6_cEERSoRKNS1_14custom_printerINS1_12custom_manipINS1_12attr_value_tEEEEERKT_:
+    #####:  116:operator<<( custom_printer<attr_value> const& p, T const& value )
+        -:  117:{
+    #####:  118:    *p << "=\"";
+    %%%%%:  118-block  0
+    #####:  119:    print_escaped( *p, value );
+    #####:  120:    *p << '"';
+        -:  121:
+    #####:  122:    return *p;
+        -:  123:}
+------------------
+_ZN5boost9unit_test5utilslsIyEERSoRKNS1_14custom_printerINS1_12custom_manipINS1_12attr_value_tEEEEERKT_:
+    #####:  116:operator<<( custom_printer<attr_value> const& p, T const& value )
+        -:  117:{
+    #####:  118:    *p << "=\"";
+    %%%%%:  118-block  0
+    #####:  119:    print_escaped( *p, value );
+    #####:  120:    *p << '"';
+        -:  121:
+    #####:  122:    return *p;
+        -:  123:}
+------------------
+_ZN5boost9unit_test5utilslsINS0_12test_results19readonly_property59EEERSoRKNS1_14custom_printerINS1_12custom_manipINS1_12attr_value_tEEEEERKT_:
+    #####:  116:operator<<( custom_printer<attr_value> const& p, T const& value )
+        -:  117:{
+    #####:  118:    *p << "=\"";
+    %%%%%:  118-block  0
+    #####:  119:    print_escaped( *p, value );
+    #####:  120:    *p << '"';
+        -:  121:
+    #####:  122:    return *p;
+        -:  123:}
+------------------
+_ZN5boost9unit_test5utilslsImEERSoRKNS1_14custom_printerINS1_12custom_manipINS1_12attr_value_tEEEEERKT_:
+    #####:  116:operator<<( custom_printer<attr_value> const& p, T const& value )
+        -:  117:{
+    #####:  118:    *p << "=\"";
+    %%%%%:  118-block  0
+    #####:  119:    print_escaped( *p, value );
+    #####:  120:    *p << '"';
+        -:  121:
+    #####:  122:    return *p;
+        -:  123:}
+------------------
+_ZN5boost9unit_test5utilslsIdEERSoRKNS1_14custom_printerINS1_12custom_manipINS1_12attr_value_tEEEEERKT_:
+    #####:  116:operator<<( custom_printer<attr_value> const& p, T const& value )
+        -:  117:{
+    #####:  118:    *p << "=\"";
+    %%%%%:  118-block  0
+    #####:  119:    print_escaped( *p, value );
+    #####:  120:    *p << '"';
+        -:  121:
+    #####:  122:    return *p;
+        -:  123:}
+------------------
+_ZN5boost9unit_test5utilslsIiEERSoRKNS1_14custom_printerINS1_12custom_manipINS1_12attr_value_tEEEEERKT_:
+    #####:  116:operator<<( custom_printer<attr_value> const& p, T const& value )
+        -:  117:{
+    #####:  118:    *p << "=\"";
+    %%%%%:  118-block  0
+    #####:  119:    print_escaped( *p, value );
+    #####:  120:    *p << '"';
+        -:  121:
+    #####:  122:    return *p;
+        -:  123:}
+------------------
+_ZN5boost9unit_test5utilslsINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEERSoRKNS1_14custom_printerINS1_12custom_manipINS1_12attr_value_tEEEEERKT_:
+    #####:  116:operator<<( custom_printer<attr_value> const& p, T const& value )
+        -:  117:{
+    #####:  118:    *p << "=\"";
+    %%%%%:  118-block  0
+    #####:  119:    print_escaped( *p, value );
+    #####:  120:    *p << '"';
+        -:  121:
+    #####:  122:    return *p;
+        -:  123:}
+------------------
+        -:  124:
+        -:  125://____________________________________________________________________________//
+        -:  126:
+        -:  127:typedef custom_manip<struct cdata_t> cdata;
+        -:  128:
+        -:  129:inline std::ostream&
+    #####:  130:operator<<( custom_printer<cdata> const& p, const_string value )
+        -:  131:{
+    #####:  132:    *p << BOOST_TEST_L( "<![CDATA[" );
+    %%%%%:  132-block  0
+    $$$$$:  132-block  1
+    #####:  133:    print_escaped_cdata( *p, value );
+    %%%%%:  133-block  0
+    $$$$$:  133-block  1
+    #####:  134:    return  *p << BOOST_TEST_L( "]]>" );
+    %%%%%:  134-block  0
+    %%%%%:  134-block  1
+    %%%%%:  134-block  2
+        -:  135:}
+        -:  136:
+        -:  137://____________________________________________________________________________//
+        -:  138:
+        -:  139:} // namespace utils
+        -:  140:} // namespace unit_test
+        -:  141:} // namespace boost
+        -:  142:
+        -:  143:#include <boost/test/detail/enable_warnings.hpp>
+        -:  144:
+        -:  145:#endif // BOOST_TEST_UTILS_XML_PRINTER_HPP

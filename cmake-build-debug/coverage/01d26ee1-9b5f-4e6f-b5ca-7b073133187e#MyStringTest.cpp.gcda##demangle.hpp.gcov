@@ -1,0 +1,143 @@
+        -:    0:Source:F:/Files/vcpkg/installed/x86-windows/include/boost/core/demangle.hpp
+        -:    0:Graph:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcno
+        -:    0:Data:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:#ifndef BOOST_CORE_DEMANGLE_HPP_INCLUDED
+        -:    2:#define BOOST_CORE_DEMANGLE_HPP_INCLUDED
+        -:    3:
+        -:    4:// core::demangle
+        -:    5://
+        -:    6:// Copyright 2014 Peter Dimov
+        -:    7:// Copyright 2014 Andrey Semashev
+        -:    8://
+        -:    9:// Distributed under the Boost Software License, Version 1.0.
+        -:   10:// See accompanying file LICENSE_1_0.txt or copy at
+        -:   11:// http://www.boost.org/LICENSE_1_0.txt
+        -:   12:
+        -:   13:#include <boost/config.hpp>
+        -:   14:#include <string>
+        -:   15:
+        -:   16:#if defined(BOOST_HAS_PRAGMA_ONCE)
+        -:   17:# pragma once
+        -:   18:#endif
+        -:   19:
+        -:   20:// __has_include is currently supported by GCC and Clang. However GCC 4.9 may have issues and
+        -:   21:// returns 1 for 'defined( __has_include )', while '__has_include' is actually not supported:
+        -:   22:// https://gcc.gnu.org/bugzilla/show_bug.cgi?id=63662
+        -:   23:#if defined( __has_include ) && (!defined( BOOST_GCC ) || (__GNUC__ + 0) >= 5)
+        -:   24:# if __has_include(<cxxabi.h>)
+        -:   25:#  define BOOST_CORE_HAS_CXXABI_H
+        -:   26:# endif
+        -:   27:#elif defined( __GLIBCXX__ ) || defined( __GLIBCPP__ )
+        -:   28:# define BOOST_CORE_HAS_CXXABI_H
+        -:   29:#endif
+        -:   30:
+        -:   31:#if defined( BOOST_CORE_HAS_CXXABI_H )
+        -:   32:# include <cxxabi.h>
+        -:   33:// For some archtectures (mips, mips64, x86, x86_64) cxxabi.h in Android NDK is implemented by gabi++ library
+        -:   34:// (https://android.googlesource.com/platform/ndk/+/master/sources/cxx-stl/gabi++/), which does not implement
+        -:   35:// abi::__cxa_demangle(). We detect this implementation by checking the include guard here.
+        -:   36:# if defined( __GABIXX_CXXABI_H__ )
+        -:   37:#  undef BOOST_CORE_HAS_CXXABI_H
+        -:   38:# else
+        -:   39:#  include <cstdlib>
+        -:   40:#  include <cstddef>
+        -:   41:# endif
+        -:   42:#endif
+        -:   43:
+        -:   44:namespace boost
+        -:   45:{
+        -:   46:
+        -:   47:namespace core
+        -:   48:{
+        -:   49:
+        -:   50:inline char const * demangle_alloc( char const * name ) BOOST_NOEXCEPT;
+        -:   51:inline void demangle_free( char const * name ) BOOST_NOEXCEPT;
+        -:   52:
+        -:   53:class scoped_demangled_name
+        -:   54:{
+        -:   55:private:
+        -:   56:    char const * m_p;
+        -:   57:
+        -:   58:public:
+    #####:   59:    explicit scoped_demangled_name( char const * name ) BOOST_NOEXCEPT :
+    #####:   60:        m_p( demangle_alloc( name ) )
+    %%%%%:   60-block  0
+        -:   61:    {
+    #####:   62:    }
+        -:   63:
+    #####:   64:    ~scoped_demangled_name() BOOST_NOEXCEPT
+    #####:   65:    {
+    #####:   66:        demangle_free( m_p );
+    %%%%%:   66-block  0
+    #####:   67:    }
+        -:   68:
+    #####:   69:    char const * get() const BOOST_NOEXCEPT
+        -:   70:    {
+    #####:   71:        return m_p;
+    %%%%%:   71-block  0
+        -:   72:    }
+        -:   73:
+        -:   74:    BOOST_DELETED_FUNCTION(scoped_demangled_name( scoped_demangled_name const& ))
+        -:   75:    BOOST_DELETED_FUNCTION(scoped_demangled_name& operator= ( scoped_demangled_name const& ))
+        -:   76:};
+        -:   77:
+        -:   78:
+        -:   79:#if defined( BOOST_CORE_HAS_CXXABI_H )
+        -:   80:
+    #####:   81:inline char const * demangle_alloc( char const * name ) BOOST_NOEXCEPT
+        -:   82:{
+    #####:   83:    int status = 0;
+    #####:   84:    std::size_t size = 0;
+    #####:   85:    return abi::__cxa_demangle( name, NULL, &size, &status );
+    %%%%%:   85-block  0
+        -:   86:}
+        -:   87:
+    #####:   88:inline void demangle_free( char const * name ) BOOST_NOEXCEPT
+        -:   89:{
+    #####:   90:    std::free( const_cast< char* >( name ) );
+    #####:   91:}
+        -:   92:
+    #####:   93:inline std::string demangle( char const * name )
+        -:   94:{
+    #####:   95:    scoped_demangled_name demangled_name( name );
+    %%%%%:   95-block  0
+    $$$$$:   95-block  1
+    #####:   96:    char const * p = demangled_name.get();
+    #####:   97:    if( !p )
+    #####:   98:        p = name;
+    %%%%%:   98-block  0
+    #####:   99:    return p;
+    %%%%%:   99-block  0
+    %%%%%:   99-block  1
+    %%%%%:   99-block  2
+    $$$$$:   99-block  3
+    $$$$$:   99-block  4
+        -:  100:}
+        -:  101:
+        -:  102:#else
+        -:  103:
+        -:  104:inline char const * demangle_alloc( char const * name ) BOOST_NOEXCEPT
+        -:  105:{
+        -:  106:    return name;
+        -:  107:}
+        -:  108:
+        -:  109:inline void demangle_free( char const * ) BOOST_NOEXCEPT
+        -:  110:{
+        -:  111:}
+        -:  112:
+        -:  113:inline std::string demangle( char const * name )
+        -:  114:{
+        -:  115:    return name;
+        -:  116:}
+        -:  117:
+        -:  118:#endif
+        -:  119:
+        -:  120:} // namespace core
+        -:  121:
+        -:  122:} // namespace boost
+        -:  123:
+        -:  124:#undef BOOST_CORE_HAS_CXXABI_H
+        -:  125:
+        -:  126:#endif // #ifndef BOOST_CORE_DEMANGLE_HPP_INCLUDED

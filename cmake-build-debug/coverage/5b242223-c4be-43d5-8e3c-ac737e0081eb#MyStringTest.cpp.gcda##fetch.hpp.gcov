@@ -1,0 +1,180 @@
+        -:    0:Source:F:/Files/vcpkg/installed/x86-windows/include/boost/test/utils/runtime/env/fetch.hpp
+        -:    0:Graph:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcno
+        -:    0:Data:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1://  (C) Copyright Gennadiy Rozental 2001.
+        -:    2://  Distributed under the Boost Software License, Version 1.0.
+        -:    3://  (See accompanying file LICENSE_1_0.txt or copy at
+        -:    4://  http://www.boost.org/LICENSE_1_0.txt)
+        -:    5:
+        -:    6://  See http://www.boost.org/libs/test for the library home page.
+        -:    7://
+        -:    8://  File        : $RCSfile$
+        -:    9://
+        -:   10://  Version     : $Revision$
+        -:   11://
+        -:   12://  Description : implements fetching absent parameter athuments from environment
+        -:   13:// ***************************************************************************
+        -:   14:
+        -:   15:#ifndef BOOST_TEST_UTILS_RUNTIME_ENV_FETCH_HPP
+        -:   16:#define BOOST_TEST_UTILS_RUNTIME_ENV_FETCH_HPP
+        -:   17:
+        -:   18:// Boost.Test Runtime parameters
+        -:   19:#include <boost/test/utils/runtime/parameter.hpp>
+        -:   20:#include <boost/test/utils/runtime/argument.hpp>
+        -:   21:
+        -:   22:#include <boost/test/detail/suppress_warnings.hpp>
+        -:   23:
+        -:   24:// C Runtime
+        -:   25:#include <stdlib.h>
+        -:   26:
+        -:   27:namespace boost {
+        -:   28:namespace runtime {
+        -:   29:namespace env {
+        -:   30:
+        -:   31:namespace env_detail {
+        -:   32:
+        -:   33:#ifndef UNDER_CE
+        -:   34:
+        -:   35:#ifdef BOOST_MSVC
+        -:   36:#pragma warning(push)
+        -:   37:#pragma warning(disable:4996) // getenv
+        -:   38:#endif
+        -:   39:
+        -:   40:inline std::pair<cstring,bool>
+       20:   41:sys_read_var( cstring var_name )
+        -:   42:{
+        -:   43:    using namespace std;
+       20:   44:    char const* res = getenv( var_name.begin() );
+       20:   44-block  0
+        -:   45:
+       20:   46:    return std::make_pair( cstring(res), res != NULL );
+       20:   46-block  0
+       20:   46-block  1
+       20:   46-block  2
+       20:   46-block  3
+    $$$$$:   46-block  4
+        -:   47:}
+        -:   48:
+        -:   49:#ifdef BOOST_MSVC
+        -:   50:#pragma warning(pop)
+        -:   51:#endif
+        -:   52:
+        -:   53:#else
+        -:   54:
+        -:   55:inline std::pair<cstring,bool>
+        -:   56:sys_read_var( cstring var_name )
+        -:   57:{
+        -:   58:    return std::make_pair( cstring(), false );
+        -:   59:}
+        -:   60:
+        -:   61:#endif
+        -:   62:
+        -:   63://____________________________________________________________________________//
+        -:   64:
+        -:   65:template<typename ReadFunc>
+        -:   66:inline void
+        1:   67:fetch_absent( parameters_store const& params, runtime::arguments_store& args, ReadFunc read_func )
+        -:   68:{
+      57*:   69:    BOOST_TEST_FOREACH( parameters_store::storage_type::value_type const&, v, params.all() ) {
+        1:   69-block  0
+        1:   69-block  1
+        1:   69-block  2
+        1:   69-block  3
+        1:   69-block  4
+       29:   69-block  5
+       29:   69-block  6
+       29:   69-block  7
+       28:   69-block  8
+        1:   69-block  9
+       29:   69-block 10
+       28:   69-block 11
+       28:   69-block 12
+       28:   69-block 13
+       56:   69-block 14
+       28:   69-block 15
+       28:   69-block 16
+       28:   69-block 17
+    %%%%%:   69-block 18
+       28:   69-block 19
+    $$$$$:   69-block 20
+    $$$$$:   69-block 21
+    $$$$$:   69-block 22
+    $$$$$:   69-block 23
+       28:   70:        basic_param_ptr param = v.second;
+       28:   70-block  0
+    $$$$$:   70-block  1
+        -:   71:
+       28:   72:        if( args.has( param->p_name ) || param->p_env_var.empty() )
+       28:   72-block  0
+       23:   72-block  1
+        8:   72-block  2
+       20:   72-block  3
+       28:   72-block  4
+    $$$$$:   72-block  5
+        8:   73:            continue;
+        8:   73-block  0
+        -:   74:
+       20:   75:        std::pair<cstring,bool> value = read_func( param->p_env_var );
+       20:   75-block  0
+    $$$$$:   75-block  1
+        -:   76:
+       20:   77:        if( !value.second )
+       20:   77-block  0
+       20:   78:            continue;
+       20:   78-block  0
+        -:   79:
+        -:   80:        // Validate against unexpected empty value
+    #####:   81:        BOOST_TEST_I_ASSRT( !value.first.is_empty() || param->p_has_optional_value,
+    %%%%%:   81-block  0
+    %%%%%:   81-block  1
+    %%%%%:   81-block  2
+    %%%%%:   81-block  3
+    %%%%%:   81-block  4
+    %%%%%:   81-block  5
+    %%%%%:   81-block  6
+    %%%%%:   81-block  7
+    %%%%%:   81-block  8
+    %%%%%:   81-block  9
+    $$$$$:   81-block 10
+    $$$$$:   81-block 11
+    $$$$$:   81-block 12
+    $$$$$:   81-block 13
+    $$$$$:   81-block 14
+    $$$$$:   81-block 15
+    $$$$$:   81-block 16
+    $$$$$:   81-block 17
+    $$$$$:   81-block 18
+        -:   82:            format_error( param->p_name ) 
+        -:   83:                << "Missing an argument value for the parameter " << param->p_name
+        -:   84:                << " in the environment." );
+        -:   85:
+        -:   86:        // Produce argument value
+    #####:   87:        param->produce_argument( value.first, false, args );
+    %%%%%:   87-block  0
+    %%%%%:   87-block  1
+    $$$$$:   87-block  2
+        -:   88:
+        -:   89:    }
+        1:   90:}
+        1:   90-block  0
+        -:   91:
+        -:   92://____________________________________________________________________________//
+        -:   93:
+        -:   94:} // namespace env_detail
+        -:   95:
+        -:   96:inline void
+        1:   97:fetch_absent( parameters_store const& params, runtime::arguments_store& args )
+        -:   98:{
+        1:   99:    env_detail::fetch_absent( params, args, &env_detail::sys_read_var );
+        1:   99-block  0
+        1:  100:}
+        -:  101:
+        -:  102:} // namespace env
+        -:  103:} // namespace runtime
+        -:  104:} // namespace boost
+        -:  105:
+        -:  106:#include <boost/test/detail/enable_warnings.hpp>
+        -:  107:
+        -:  108:#endif // BOOST_TEST_UTILS_RUNTIME_ENV_FETCH_HPP

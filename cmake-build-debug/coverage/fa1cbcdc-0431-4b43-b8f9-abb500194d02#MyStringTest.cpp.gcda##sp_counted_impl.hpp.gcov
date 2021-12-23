@@ -1,0 +1,1675 @@
+        -:    0:Source:F:/Files/vcpkg/installed/x86-windows/include/boost/smart_ptr/detail/sp_counted_impl.hpp
+        -:    0:Graph:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcno
+        -:    0:Data:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:#ifndef BOOST_SMART_PTR_DETAIL_SP_COUNTED_IMPL_HPP_INCLUDED
+        -:    2:#define BOOST_SMART_PTR_DETAIL_SP_COUNTED_IMPL_HPP_INCLUDED
+        -:    3:
+        -:    4:// MS compatible compilers support #pragma once
+        -:    5:
+        -:    6:#if defined(_MSC_VER) && (_MSC_VER >= 1020)
+        -:    7:# pragma once
+        -:    8:#endif
+        -:    9:
+        -:   10://
+        -:   11://  detail/sp_counted_impl.hpp
+        -:   12://
+        -:   13://  Copyright (c) 2001, 2002, 2003 Peter Dimov and Multi Media Ltd.
+        -:   14://  Copyright 2004-2005 Peter Dimov
+        -:   15://
+        -:   16:// Distributed under the Boost Software License, Version 1.0. (See
+        -:   17:// accompanying file LICENSE_1_0.txt or copy at
+        -:   18:// http://www.boost.org/LICENSE_1_0.txt)
+        -:   19://
+        -:   20:
+        -:   21:#include <boost/config.hpp>
+        -:   22:
+        -:   23:#if defined(BOOST_SP_USE_STD_ALLOCATOR) && defined(BOOST_SP_USE_QUICK_ALLOCATOR)
+        -:   24:# error BOOST_SP_USE_STD_ALLOCATOR and BOOST_SP_USE_QUICK_ALLOCATOR are incompatible.
+        -:   25:#endif
+        -:   26:
+        -:   27:#include <boost/checked_delete.hpp>
+        -:   28:#include <boost/smart_ptr/detail/sp_counted_base.hpp>
+        -:   29:#include <boost/smart_ptr/detail/sp_noexcept.hpp>
+        -:   30:#include <boost/core/addressof.hpp>
+        -:   31:
+        -:   32:#if defined(BOOST_SP_USE_QUICK_ALLOCATOR)
+        -:   33:#include <boost/smart_ptr/detail/quick_allocator.hpp>
+        -:   34:#endif
+        -:   35:
+        -:   36:#if defined(BOOST_SP_USE_STD_ALLOCATOR)
+        -:   37:#include <memory>           // std::allocator
+        -:   38:#endif
+        -:   39:
+        -:   40:#include <cstddef>          // std::size_t
+        -:   41:
+        -:   42:namespace boost
+        -:   43:{
+        -:   44:
+        -:   45:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   46:
+        -:   47:void sp_scalar_constructor_hook( void * px, std::size_t size, void * pn );
+        -:   48:void sp_scalar_destructor_hook( void * px, std::size_t size, void * pn );
+        -:   49:
+        -:   50:#endif
+        -:   51:
+        -:   52:namespace detail
+        -:   53:{
+        -:   54:
+        -:   55:// get_local_deleter
+        -:   56:
+        -:   57:template<class D> class local_sp_deleter;
+        -:   58:
+    #####:   59:template<class D> D * get_local_deleter( D * /*p*/ ) BOOST_SP_NOEXCEPT
+        -:   60:{
+    #####:   61:    return 0;
+    %%%%%:   61-block  0
+        -:   62:}
+        -:   63:
+        -:   64:template<class D> D * get_local_deleter( local_sp_deleter<D> * p ) BOOST_SP_NOEXCEPT;
+        -:   65:
+        -:   66://
+        -:   67:
+        -:   68:template<class X> class BOOST_SYMBOL_VISIBLE sp_counted_impl_p: public sp_counted_base
+        -:   69:{
+        -:   70:private:
+        -:   71:
+        -:   72:    X * px_;
+        -:   73:
+        -:   74:    sp_counted_impl_p( sp_counted_impl_p const & );
+        -:   75:    sp_counted_impl_p & operator= ( sp_counted_impl_p const & );
+        -:   76:
+        -:   77:    typedef sp_counted_impl_p<X> this_type;
+        -:   78:
+        -:   79:public:
+        -:   80:
+     632*:   81:    explicit sp_counted_impl_p( X * px ): px_( px )
+        -:   82:    {
+        -:   83:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   84:        boost::sp_scalar_constructor_hook( px, sizeof(X), this );
+        -:   85:#endif
+     632*:   86:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_9unit_test9decorator12preconditionEEC1EPS4_:
+    #####:   81:    explicit sp_counted_impl_p( X * px ): px_( px )
+    %%%%%:   81-block  0
+        -:   82:    {
+        -:   83:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   84:        boost::sp_scalar_constructor_hook( px, sizeof(X), this );
+        -:   85:#endif
+    #####:   86:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime14typed_argumentIbEEEC1EPS4_:
+       13:   81:    explicit sp_counted_impl_p( X * px ): px_( px )
+       13:   81-block  0
+        -:   82:    {
+        -:   83:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   84:        boost::sp_scalar_constructor_hook( px, sizeof(X), this );
+        -:   85:#endif
+       13:   86:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_9unit_test23unit_test_log_formatterEEC1EPS3_:
+        3:   81:    explicit sp_counted_impl_p( X * px ): px_( px )
+        3:   81-block  0
+        -:   82:    {
+        -:   83:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   84:        boost::sp_scalar_constructor_hook( px, sizeof(X), this );
+        -:   85:#endif
+        3:   86:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_23basic_wrap_stringstreamIcEEEC1EPS3_:
+    #####:   81:    explicit sp_counted_impl_p( X * px ): px_( px )
+    %%%%%:   81-block  0
+        -:   82:    {
+        -:   83:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   84:        boost::sp_scalar_constructor_hook( px, sizeof(X), this );
+        -:   85:#endif
+    #####:   86:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime3cla13rt_cla_detail14parameter_trieEEC1EPS5_:
+      572:   81:    explicit sp_counted_impl_p( X * px ): px_( px )
+      572:   81-block  0
+        -:   82:    {
+        -:   83:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   84:        boost::sp_scalar_constructor_hook( px, sizeof(X), this );
+        -:   85:#endif
+      572:   86:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime6optionEEC1EPS3_:
+       13:   81:    explicit sp_counted_impl_p( X * px ): px_( px )
+       13:   81-block  0
+        -:   82:    {
+        -:   83:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   84:        boost::sp_scalar_constructor_hook( px, sizeof(X), this );
+        -:   85:#endif
+       13:   86:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_2io18ios_base_all_saverEEC1EPS3_:
+        5:   81:    explicit sp_counted_impl_p( X * px ): px_( px )
+        5:   81-block  0
+        -:   82:    {
+        -:   83:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   84:        boost::sp_scalar_constructor_hook( px, sizeof(X), this );
+        -:   85:#endif
+        5:   86:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_16exception_detail15error_info_baseEEC1EPS3_:
+    #####:   81:    explicit sp_counted_impl_p( X * px ): px_( px )
+    %%%%%:   81-block  0
+        -:   82:    {
+        -:   83:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   84:        boost::sp_scalar_constructor_hook( px, sizeof(X), this );
+        -:   85:#endif
+    #####:   86:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_9unit_test9framework4impl21global_fixture_handleEEC1EPS5_:
+    #####:   81:    explicit sp_counted_impl_p( X * px ): px_( px )
+    %%%%%:   81-block  0
+        -:   82:    {
+        -:   83:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   84:        boost::sp_scalar_constructor_hook( px, sizeof(X), this );
+        -:   85:#endif
+    #####:   86:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime3cla6parserEEC1EPS4_:
+        1:   81:    explicit sp_counted_impl_p( X * px ): px_( px )
+        1:   81-block  0
+        -:   82:    {
+        -:   83:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   84:        boost::sp_scalar_constructor_hook( px, sizeof(X), this );
+        -:   85:#endif
+        1:   86:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_9unit_test9decorator9fixture_tEEC1EPS4_:
+    #####:   81:    explicit sp_counted_impl_p( X * px ): px_( px )
+    %%%%%:   81-block  0
+        -:   82:    {
+        -:   83:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   84:        boost::sp_scalar_constructor_hook( px, sizeof(X), this );
+        -:   85:#endif
+    #####:   86:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_9unit_test9decorator10depends_onEEC1EPS4_:
+    #####:   81:    explicit sp_counted_impl_p( X * px ): px_( px )
+    %%%%%:   81-block  0
+        -:   82:    {
+        -:   83:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   84:        boost::sp_scalar_constructor_hook( px, sizeof(X), this );
+        -:   85:#endif
+    #####:   86:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_9unit_test9decorator11descriptionEEC1EPS4_:
+    #####:   81:    explicit sp_counted_impl_p( X * px ): px_( px )
+    %%%%%:   81-block  0
+        -:   82:    {
+        -:   83:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   84:        boost::sp_scalar_constructor_hook( px, sizeof(X), this );
+        -:   85:#endif
+    #####:   86:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_9unit_test9decorator7timeoutEEC1EPS4_:
+    #####:   81:    explicit sp_counted_impl_p( X * px ): px_( px )
+    %%%%%:   81-block  0
+        -:   82:    {
+        -:   83:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   84:        boost::sp_scalar_constructor_hook( px, sizeof(X), this );
+        -:   85:#endif
+    #####:   86:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_9unit_test9decorator17expected_failuresEEC1EPS4_:
+    #####:   81:    explicit sp_counted_impl_p( X * px ): px_( px )
+    %%%%%:   81-block  0
+        -:   82:    {
+        -:   83:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   84:        boost::sp_scalar_constructor_hook( px, sizeof(X), this );
+        -:   85:#endif
+    #####:   86:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_9unit_test9decorator5labelEEC1EPS4_:
+    #####:   81:    explicit sp_counted_impl_p( X * px ): px_( px )
+    %%%%%:   81-block  0
+        -:   82:    {
+        -:   83:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   84:        boost::sp_scalar_constructor_hook( px, sizeof(X), this );
+        -:   85:#endif
+    #####:   86:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_9unit_test9decorator15stack_decoratorEEC1EPS4_:
+    #####:   81:    explicit sp_counted_impl_p( X * px ): px_( px )
+    %%%%%:   81-block  0
+        -:   82:    {
+        -:   83:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   84:        boost::sp_scalar_constructor_hook( px, sizeof(X), this );
+        -:   85:#endif
+    #####:   86:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime14enum_parameterINS_9unit_test13output_formatELNS2_11args_amountE0EEEEC1EPS7_:
+        4:   81:    explicit sp_counted_impl_p( X * px ): px_( px )
+        4:   81-block  0
+        -:   82:    {
+        -:   83:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   84:        boost::sp_scalar_constructor_hook( px, sizeof(X), this );
+        -:   85:#endif
+        4:   86:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime14typed_argumentImEEEC1EPS4_:
+        1:   81:    explicit sp_counted_impl_p( X * px ): px_( px )
+        1:   81-block  0
+        -:   82:    {
+        -:   83:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   84:        boost::sp_scalar_constructor_hook( px, sizeof(X), this );
+        -:   85:#endif
+        1:   86:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime14typed_argumentINS_9unit_test9log_levelEEEEC1EPS6_:
+        1:   81:    explicit sp_counted_impl_p( X * px ): px_( px )
+        1:   81-block  0
+        -:   82:    {
+        -:   83:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   84:        boost::sp_scalar_constructor_hook( px, sizeof(X), this );
+        -:   85:#endif
+        1:   86:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime14typed_argumentISt6vectorINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESaISA_EEEEEC1EPSD_:
+        2:   81:    explicit sp_counted_impl_p( X * px ): px_( px )
+        2:   81-block  0
+        -:   82:    {
+        -:   83:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   84:        boost::sp_scalar_constructor_hook( px, sizeof(X), this );
+        -:   85:#endif
+        2:   86:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime14typed_argumentIjEEEC1EPS4_:
+        1:   81:    explicit sp_counted_impl_p( X * px ): px_( px )
+        1:   81-block  0
+        -:   82:    {
+        -:   83:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   84:        boost::sp_scalar_constructor_hook( px, sizeof(X), this );
+        -:   85:#endif
+        1:   86:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime14typed_argumentINS_9unit_test12report_levelEEEEC1EPS6_:
+        1:   81:    explicit sp_counted_impl_p( X * px ): px_( px )
+        1:   81-block  0
+        -:   82:    {
+        -:   83:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   84:        boost::sp_scalar_constructor_hook( px, sizeof(X), this );
+        -:   85:#endif
+        1:   86:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime9parameterINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEELNS2_11args_amountE0ELb0EEEEC1EPSB_:
+        5:   81:    explicit sp_counted_impl_p( X * px ): px_( px )
+        5:   81-block  0
+        -:   82:    {
+        -:   83:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   84:        boost::sp_scalar_constructor_hook( px, sizeof(X), this );
+        -:   85:#endif
+        5:   86:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime9parameterImLNS2_11args_amountE0ELb0EEEEC1EPS5_:
+        1:   81:    explicit sp_counted_impl_p( X * px ): px_( px )
+        1:   81-block  0
+        -:   82:    {
+        -:   83:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   84:        boost::sp_scalar_constructor_hook( px, sizeof(X), this );
+        -:   85:#endif
+        1:   86:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime9parameterINS_9unit_test13output_formatELNS2_11args_amountE0ELb1EEEEC1EPS7_:
+    #####:   81:    explicit sp_counted_impl_p( X * px ): px_( px )
+    %%%%%:   81-block  0
+        -:   82:    {
+        -:   83:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   84:        boost::sp_scalar_constructor_hook( px, sizeof(X), this );
+        -:   85:#endif
+    #####:   86:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime14typed_argumentINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEEEC1EPSA_:
+        1:   81:    explicit sp_counted_impl_p( X * px ): px_( px )
+        1:   81-block  0
+        -:   82:    {
+        -:   83:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   84:        boost::sp_scalar_constructor_hook( px, sizeof(X), this );
+        -:   85:#endif
+        1:   86:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime9parameterINS_9unit_test9log_levelELNS2_11args_amountE0ELb1EEEEC1EPS7_:
+    #####:   81:    explicit sp_counted_impl_p( X * px ): px_( px )
+    %%%%%:   81-block  0
+        -:   82:    {
+        -:   83:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   84:        boost::sp_scalar_constructor_hook( px, sizeof(X), this );
+        -:   85:#endif
+    #####:   86:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime14enum_parameterINS_9unit_test9log_levelELNS2_11args_amountE0EEEEC1EPS7_:
+        1:   81:    explicit sp_counted_impl_p( X * px ): px_( px )
+        1:   81-block  0
+        -:   82:    {
+        -:   83:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   84:        boost::sp_scalar_constructor_hook( px, sizeof(X), this );
+        -:   85:#endif
+        1:   86:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime9parameterINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEELNS2_11args_amountE2ELb0EEEEC1EPSB_:
+        2:   81:    explicit sp_counted_impl_p( X * px ): px_( px )
+        2:   81-block  0
+        -:   82:    {
+        -:   83:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   84:        boost::sp_scalar_constructor_hook( px, sizeof(X), this );
+        -:   85:#endif
+        2:   86:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime9parameterIjLNS2_11args_amountE0ELb0EEEEC1EPS5_:
+        1:   81:    explicit sp_counted_impl_p( X * px ): px_( px )
+        1:   81-block  0
+        -:   82:    {
+        -:   83:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   84:        boost::sp_scalar_constructor_hook( px, sizeof(X), this );
+        -:   85:#endif
+        1:   86:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime9parameterINS_9unit_test12report_levelELNS2_11args_amountE0ELb1EEEEC1EPS7_:
+    #####:   81:    explicit sp_counted_impl_p( X * px ): px_( px )
+    %%%%%:   81-block  0
+        -:   82:    {
+        -:   83:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   84:        boost::sp_scalar_constructor_hook( px, sizeof(X), this );
+        -:   85:#endif
+    #####:   86:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime14enum_parameterINS_9unit_test12report_levelELNS2_11args_amountE0EEEEC1EPS7_:
+        1:   81:    explicit sp_counted_impl_p( X * px ): px_( px )
+        1:   81-block  0
+        -:   82:    {
+        -:   83:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   84:        boost::sp_scalar_constructor_hook( px, sizeof(X), this );
+        -:   85:#endif
+        1:   86:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime14typed_argumentINS_9unit_test13output_formatEEEEC1EPS6_:
+        3:   81:    explicit sp_counted_impl_p( X * px ): px_( px )
+        3:   81-block  0
+        -:   82:    {
+        -:   83:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   84:        boost::sp_scalar_constructor_hook( px, sizeof(X), this );
+        -:   85:#endif
+        3:   86:    }
+------------------
+        -:   87:
+     581*:   88:    virtual void dispose() BOOST_SP_NOEXCEPT
+        -:   89:    {
+        -:   90:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   91:        boost::sp_scalar_destructor_hook( px_, sizeof(X), this );
+        -:   92:#endif
+     581*:   93:        boost::checked_delete( px_ );
+     581*:   94:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_2io18ios_base_all_saverEE7disposeEv:
+        5:   88:    virtual void dispose() BOOST_SP_NOEXCEPT
+        -:   89:    {
+        -:   90:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   91:        boost::sp_scalar_destructor_hook( px_, sizeof(X), this );
+        -:   92:#endif
+        5:   93:        boost::checked_delete( px_ );
+        5:   93-block  0
+        5:   94:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_9unit_test9decorator17expected_failuresEE7disposeEv:
+    #####:   88:    virtual void dispose() BOOST_SP_NOEXCEPT
+        -:   89:    {
+        -:   90:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   91:        boost::sp_scalar_destructor_hook( px_, sizeof(X), this );
+        -:   92:#endif
+    #####:   93:        boost::checked_delete( px_ );
+    %%%%%:   93-block  0
+    #####:   94:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_9unit_test9decorator7timeoutEE7disposeEv:
+    #####:   88:    virtual void dispose() BOOST_SP_NOEXCEPT
+        -:   89:    {
+        -:   90:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   91:        boost::sp_scalar_destructor_hook( px_, sizeof(X), this );
+        -:   92:#endif
+    #####:   93:        boost::checked_delete( px_ );
+    %%%%%:   93-block  0
+    #####:   94:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_9unit_test9decorator11descriptionEE7disposeEv:
+    #####:   88:    virtual void dispose() BOOST_SP_NOEXCEPT
+        -:   89:    {
+        -:   90:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   91:        boost::sp_scalar_destructor_hook( px_, sizeof(X), this );
+        -:   92:#endif
+    #####:   93:        boost::checked_delete( px_ );
+    %%%%%:   93-block  0
+    #####:   94:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_9unit_test9decorator10depends_onEE7disposeEv:
+    #####:   88:    virtual void dispose() BOOST_SP_NOEXCEPT
+        -:   89:    {
+        -:   90:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   91:        boost::sp_scalar_destructor_hook( px_, sizeof(X), this );
+        -:   92:#endif
+    #####:   93:        boost::checked_delete( px_ );
+    %%%%%:   93-block  0
+    #####:   94:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_9unit_test9decorator9fixture_tEE7disposeEv:
+    #####:   88:    virtual void dispose() BOOST_SP_NOEXCEPT
+        -:   89:    {
+        -:   90:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   91:        boost::sp_scalar_destructor_hook( px_, sizeof(X), this );
+        -:   92:#endif
+    #####:   93:        boost::checked_delete( px_ );
+    %%%%%:   93-block  0
+    #####:   94:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_9unit_test9decorator12preconditionEE7disposeEv:
+    #####:   88:    virtual void dispose() BOOST_SP_NOEXCEPT
+        -:   89:    {
+        -:   90:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   91:        boost::sp_scalar_destructor_hook( px_, sizeof(X), this );
+        -:   92:#endif
+    #####:   93:        boost::checked_delete( px_ );
+    %%%%%:   93-block  0
+    #####:   94:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_9unit_test9framework4impl21global_fixture_handleEE7disposeEv:
+    #####:   88:    virtual void dispose() BOOST_SP_NOEXCEPT
+        -:   89:    {
+        -:   90:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   91:        boost::sp_scalar_destructor_hook( px_, sizeof(X), this );
+        -:   92:#endif
+    #####:   93:        boost::checked_delete( px_ );
+    %%%%%:   93-block  0
+    #####:   94:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_16exception_detail15error_info_baseEE7disposeEv:
+    #####:   88:    virtual void dispose() BOOST_SP_NOEXCEPT
+        -:   89:    {
+        -:   90:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   91:        boost::sp_scalar_destructor_hook( px_, sizeof(X), this );
+        -:   92:#endif
+    #####:   93:        boost::checked_delete( px_ );
+    %%%%%:   93-block  0
+    #####:   94:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_9unit_test9decorator5labelEE7disposeEv:
+    #####:   88:    virtual void dispose() BOOST_SP_NOEXCEPT
+        -:   89:    {
+        -:   90:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   91:        boost::sp_scalar_destructor_hook( px_, sizeof(X), this );
+        -:   92:#endif
+    #####:   93:        boost::checked_delete( px_ );
+    %%%%%:   93-block  0
+    #####:   94:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime6optionEE7disposeEv:
+    #####:   88:    virtual void dispose() BOOST_SP_NOEXCEPT
+        -:   89:    {
+        -:   90:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   91:        boost::sp_scalar_destructor_hook( px_, sizeof(X), this );
+        -:   92:#endif
+    #####:   93:        boost::checked_delete( px_ );
+    %%%%%:   93-block  0
+    #####:   94:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime3cla13rt_cla_detail14parameter_trieEE7disposeEv:
+      572:   88:    virtual void dispose() BOOST_SP_NOEXCEPT
+        -:   89:    {
+        -:   90:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   91:        boost::sp_scalar_destructor_hook( px_, sizeof(X), this );
+        -:   92:#endif
+      572:   93:        boost::checked_delete( px_ );
+      572:   93-block  0
+      572:   94:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_23basic_wrap_stringstreamIcEEE7disposeEv:
+    #####:   88:    virtual void dispose() BOOST_SP_NOEXCEPT
+        -:   89:    {
+        -:   90:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   91:        boost::sp_scalar_destructor_hook( px_, sizeof(X), this );
+        -:   92:#endif
+    #####:   93:        boost::checked_delete( px_ );
+    %%%%%:   93-block  0
+    #####:   94:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_9unit_test23unit_test_log_formatterEE7disposeEv:
+        3:   88:    virtual void dispose() BOOST_SP_NOEXCEPT
+        -:   89:    {
+        -:   90:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   91:        boost::sp_scalar_destructor_hook( px_, sizeof(X), this );
+        -:   92:#endif
+        3:   93:        boost::checked_delete( px_ );
+        3:   93-block  0
+        3:   94:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime14typed_argumentIbEEE7disposeEv:
+    #####:   88:    virtual void dispose() BOOST_SP_NOEXCEPT
+        -:   89:    {
+        -:   90:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   91:        boost::sp_scalar_destructor_hook( px_, sizeof(X), this );
+        -:   92:#endif
+    #####:   93:        boost::checked_delete( px_ );
+    %%%%%:   93-block  0
+    #####:   94:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime3cla6parserEE7disposeEv:
+        1:   88:    virtual void dispose() BOOST_SP_NOEXCEPT
+        -:   89:    {
+        -:   90:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   91:        boost::sp_scalar_destructor_hook( px_, sizeof(X), this );
+        -:   92:#endif
+        1:   93:        boost::checked_delete( px_ );
+        1:   93-block  0
+        1:   94:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime14typed_argumentINS_9unit_test13output_formatEEEE7disposeEv:
+    #####:   88:    virtual void dispose() BOOST_SP_NOEXCEPT
+        -:   89:    {
+        -:   90:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   91:        boost::sp_scalar_destructor_hook( px_, sizeof(X), this );
+        -:   92:#endif
+    #####:   93:        boost::checked_delete( px_ );
+    %%%%%:   93-block  0
+    #####:   94:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime9parameterINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEELNS2_11args_amountE0ELb0EEEE7disposeEv:
+    #####:   88:    virtual void dispose() BOOST_SP_NOEXCEPT
+        -:   89:    {
+        -:   90:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   91:        boost::sp_scalar_destructor_hook( px_, sizeof(X), this );
+        -:   92:#endif
+    #####:   93:        boost::checked_delete( px_ );
+    %%%%%:   93-block  0
+    #####:   94:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime9parameterINS_9unit_test12report_levelELNS2_11args_amountE0ELb1EEEE7disposeEv:
+    #####:   88:    virtual void dispose() BOOST_SP_NOEXCEPT
+        -:   89:    {
+        -:   90:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   91:        boost::sp_scalar_destructor_hook( px_, sizeof(X), this );
+        -:   92:#endif
+    #####:   93:        boost::checked_delete( px_ );
+    %%%%%:   93-block  0
+    #####:   94:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime9parameterIjLNS2_11args_amountE0ELb0EEEE7disposeEv:
+    #####:   88:    virtual void dispose() BOOST_SP_NOEXCEPT
+        -:   89:    {
+        -:   90:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   91:        boost::sp_scalar_destructor_hook( px_, sizeof(X), this );
+        -:   92:#endif
+    #####:   93:        boost::checked_delete( px_ );
+    %%%%%:   93-block  0
+    #####:   94:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime9parameterINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEELNS2_11args_amountE2ELb0EEEE7disposeEv:
+    #####:   88:    virtual void dispose() BOOST_SP_NOEXCEPT
+        -:   89:    {
+        -:   90:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   91:        boost::sp_scalar_destructor_hook( px_, sizeof(X), this );
+        -:   92:#endif
+    #####:   93:        boost::checked_delete( px_ );
+    %%%%%:   93-block  0
+    #####:   94:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime14enum_parameterINS_9unit_test9log_levelELNS2_11args_amountE0EEEE7disposeEv:
+    #####:   88:    virtual void dispose() BOOST_SP_NOEXCEPT
+        -:   89:    {
+        -:   90:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   91:        boost::sp_scalar_destructor_hook( px_, sizeof(X), this );
+        -:   92:#endif
+    #####:   93:        boost::checked_delete( px_ );
+    %%%%%:   93-block  0
+    #####:   94:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime9parameterINS_9unit_test9log_levelELNS2_11args_amountE0ELb1EEEE7disposeEv:
+    #####:   88:    virtual void dispose() BOOST_SP_NOEXCEPT
+        -:   89:    {
+        -:   90:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   91:        boost::sp_scalar_destructor_hook( px_, sizeof(X), this );
+        -:   92:#endif
+    #####:   93:        boost::checked_delete( px_ );
+    %%%%%:   93-block  0
+    #####:   94:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime14enum_parameterINS_9unit_test13output_formatELNS2_11args_amountE0EEEE7disposeEv:
+    #####:   88:    virtual void dispose() BOOST_SP_NOEXCEPT
+        -:   89:    {
+        -:   90:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   91:        boost::sp_scalar_destructor_hook( px_, sizeof(X), this );
+        -:   92:#endif
+    #####:   93:        boost::checked_delete( px_ );
+    %%%%%:   93-block  0
+    #####:   94:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime9parameterINS_9unit_test13output_formatELNS2_11args_amountE0ELb1EEEE7disposeEv:
+    #####:   88:    virtual void dispose() BOOST_SP_NOEXCEPT
+        -:   89:    {
+        -:   90:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   91:        boost::sp_scalar_destructor_hook( px_, sizeof(X), this );
+        -:   92:#endif
+    #####:   93:        boost::checked_delete( px_ );
+    %%%%%:   93-block  0
+    #####:   94:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime9parameterImLNS2_11args_amountE0ELb0EEEE7disposeEv:
+    #####:   88:    virtual void dispose() BOOST_SP_NOEXCEPT
+        -:   89:    {
+        -:   90:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   91:        boost::sp_scalar_destructor_hook( px_, sizeof(X), this );
+        -:   92:#endif
+    #####:   93:        boost::checked_delete( px_ );
+    %%%%%:   93-block  0
+    #####:   94:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime14enum_parameterINS_9unit_test12report_levelELNS2_11args_amountE0EEEE7disposeEv:
+    #####:   88:    virtual void dispose() BOOST_SP_NOEXCEPT
+        -:   89:    {
+        -:   90:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   91:        boost::sp_scalar_destructor_hook( px_, sizeof(X), this );
+        -:   92:#endif
+    #####:   93:        boost::checked_delete( px_ );
+    %%%%%:   93-block  0
+    #####:   94:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime14typed_argumentINS_9unit_test12report_levelEEEE7disposeEv:
+    #####:   88:    virtual void dispose() BOOST_SP_NOEXCEPT
+        -:   89:    {
+        -:   90:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   91:        boost::sp_scalar_destructor_hook( px_, sizeof(X), this );
+        -:   92:#endif
+    #####:   93:        boost::checked_delete( px_ );
+    %%%%%:   93-block  0
+    #####:   94:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime14typed_argumentIjEEE7disposeEv:
+    #####:   88:    virtual void dispose() BOOST_SP_NOEXCEPT
+        -:   89:    {
+        -:   90:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   91:        boost::sp_scalar_destructor_hook( px_, sizeof(X), this );
+        -:   92:#endif
+    #####:   93:        boost::checked_delete( px_ );
+    %%%%%:   93-block  0
+    #####:   94:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime14typed_argumentISt6vectorINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESaISA_EEEEE7disposeEv:
+    #####:   88:    virtual void dispose() BOOST_SP_NOEXCEPT
+        -:   89:    {
+        -:   90:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   91:        boost::sp_scalar_destructor_hook( px_, sizeof(X), this );
+        -:   92:#endif
+    #####:   93:        boost::checked_delete( px_ );
+    %%%%%:   93-block  0
+    #####:   94:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime14typed_argumentINS_9unit_test9log_levelEEEE7disposeEv:
+    #####:   88:    virtual void dispose() BOOST_SP_NOEXCEPT
+        -:   89:    {
+        -:   90:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   91:        boost::sp_scalar_destructor_hook( px_, sizeof(X), this );
+        -:   92:#endif
+    #####:   93:        boost::checked_delete( px_ );
+    %%%%%:   93-block  0
+    #####:   94:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime14typed_argumentImEEE7disposeEv:
+    #####:   88:    virtual void dispose() BOOST_SP_NOEXCEPT
+        -:   89:    {
+        -:   90:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   91:        boost::sp_scalar_destructor_hook( px_, sizeof(X), this );
+        -:   92:#endif
+    #####:   93:        boost::checked_delete( px_ );
+    %%%%%:   93-block  0
+    #####:   94:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime14typed_argumentINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEEE7disposeEv:
+    #####:   88:    virtual void dispose() BOOST_SP_NOEXCEPT
+        -:   89:    {
+        -:   90:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   91:        boost::sp_scalar_destructor_hook( px_, sizeof(X), this );
+        -:   92:#endif
+    #####:   93:        boost::checked_delete( px_ );
+    %%%%%:   93-block  0
+    #####:   94:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_9unit_test9decorator15stack_decoratorEE7disposeEv:
+    #####:   88:    virtual void dispose() BOOST_SP_NOEXCEPT
+        -:   89:    {
+        -:   90:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   91:        boost::sp_scalar_destructor_hook( px_, sizeof(X), this );
+        -:   92:#endif
+    #####:   93:        boost::checked_delete( px_ );
+    %%%%%:   93-block  0
+    #####:   94:    }
+------------------
+        -:   95:
+    #####:   96:    virtual void * get_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:   97:    {
+    #####:   98:        return 0;
+        -:   99:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_2io18ios_base_all_saverEE11get_deleterERKSt9type_info:
+    #####:   96:    virtual void * get_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:   97:    {
+    #####:   98:        return 0;
+    %%%%%:   98-block  0
+        -:   99:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_9unit_test9decorator17expected_failuresEE11get_deleterERKSt9type_info:
+    #####:   96:    virtual void * get_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:   97:    {
+    #####:   98:        return 0;
+    %%%%%:   98-block  0
+        -:   99:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_9unit_test9decorator7timeoutEE11get_deleterERKSt9type_info:
+    #####:   96:    virtual void * get_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:   97:    {
+    #####:   98:        return 0;
+    %%%%%:   98-block  0
+        -:   99:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_9unit_test9decorator11descriptionEE11get_deleterERKSt9type_info:
+    #####:   96:    virtual void * get_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:   97:    {
+    #####:   98:        return 0;
+    %%%%%:   98-block  0
+        -:   99:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_9unit_test9decorator10depends_onEE11get_deleterERKSt9type_info:
+    #####:   96:    virtual void * get_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:   97:    {
+    #####:   98:        return 0;
+    %%%%%:   98-block  0
+        -:   99:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_9unit_test9decorator9fixture_tEE11get_deleterERKSt9type_info:
+    #####:   96:    virtual void * get_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:   97:    {
+    #####:   98:        return 0;
+    %%%%%:   98-block  0
+        -:   99:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_9unit_test9decorator12preconditionEE11get_deleterERKSt9type_info:
+    #####:   96:    virtual void * get_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:   97:    {
+    #####:   98:        return 0;
+    %%%%%:   98-block  0
+        -:   99:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_9unit_test9framework4impl21global_fixture_handleEE11get_deleterERKSt9type_info:
+    #####:   96:    virtual void * get_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:   97:    {
+    #####:   98:        return 0;
+    %%%%%:   98-block  0
+        -:   99:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_16exception_detail15error_info_baseEE11get_deleterERKSt9type_info:
+    #####:   96:    virtual void * get_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:   97:    {
+    #####:   98:        return 0;
+    %%%%%:   98-block  0
+        -:   99:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_9unit_test9decorator5labelEE11get_deleterERKSt9type_info:
+    #####:   96:    virtual void * get_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:   97:    {
+    #####:   98:        return 0;
+    %%%%%:   98-block  0
+        -:   99:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime6optionEE11get_deleterERKSt9type_info:
+    #####:   96:    virtual void * get_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:   97:    {
+    #####:   98:        return 0;
+    %%%%%:   98-block  0
+        -:   99:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime3cla13rt_cla_detail14parameter_trieEE11get_deleterERKSt9type_info:
+    #####:   96:    virtual void * get_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:   97:    {
+    #####:   98:        return 0;
+    %%%%%:   98-block  0
+        -:   99:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_23basic_wrap_stringstreamIcEEE11get_deleterERKSt9type_info:
+    #####:   96:    virtual void * get_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:   97:    {
+    #####:   98:        return 0;
+    %%%%%:   98-block  0
+        -:   99:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_9unit_test23unit_test_log_formatterEE11get_deleterERKSt9type_info:
+    #####:   96:    virtual void * get_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:   97:    {
+    #####:   98:        return 0;
+    %%%%%:   98-block  0
+        -:   99:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime14typed_argumentIbEEE11get_deleterERKSt9type_info:
+    #####:   96:    virtual void * get_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:   97:    {
+    #####:   98:        return 0;
+    %%%%%:   98-block  0
+        -:   99:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime3cla6parserEE11get_deleterERKSt9type_info:
+    #####:   96:    virtual void * get_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:   97:    {
+    #####:   98:        return 0;
+    %%%%%:   98-block  0
+        -:   99:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime14typed_argumentINS_9unit_test13output_formatEEEE11get_deleterERKSt9type_info:
+    #####:   96:    virtual void * get_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:   97:    {
+    #####:   98:        return 0;
+    %%%%%:   98-block  0
+        -:   99:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime9parameterINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEELNS2_11args_amountE0ELb0EEEE11get_deleterERKSt9type_info:
+    #####:   96:    virtual void * get_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:   97:    {
+    #####:   98:        return 0;
+    %%%%%:   98-block  0
+        -:   99:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime9parameterINS_9unit_test12report_levelELNS2_11args_amountE0ELb1EEEE11get_deleterERKSt9type_info:
+    #####:   96:    virtual void * get_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:   97:    {
+    #####:   98:        return 0;
+    %%%%%:   98-block  0
+        -:   99:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime9parameterIjLNS2_11args_amountE0ELb0EEEE11get_deleterERKSt9type_info:
+    #####:   96:    virtual void * get_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:   97:    {
+    #####:   98:        return 0;
+    %%%%%:   98-block  0
+        -:   99:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime9parameterINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEELNS2_11args_amountE2ELb0EEEE11get_deleterERKSt9type_info:
+    #####:   96:    virtual void * get_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:   97:    {
+    #####:   98:        return 0;
+    %%%%%:   98-block  0
+        -:   99:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime14enum_parameterINS_9unit_test9log_levelELNS2_11args_amountE0EEEE11get_deleterERKSt9type_info:
+    #####:   96:    virtual void * get_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:   97:    {
+    #####:   98:        return 0;
+    %%%%%:   98-block  0
+        -:   99:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime9parameterINS_9unit_test9log_levelELNS2_11args_amountE0ELb1EEEE11get_deleterERKSt9type_info:
+    #####:   96:    virtual void * get_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:   97:    {
+    #####:   98:        return 0;
+    %%%%%:   98-block  0
+        -:   99:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime14enum_parameterINS_9unit_test13output_formatELNS2_11args_amountE0EEEE11get_deleterERKSt9type_info:
+    #####:   96:    virtual void * get_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:   97:    {
+    #####:   98:        return 0;
+    %%%%%:   98-block  0
+        -:   99:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime9parameterINS_9unit_test13output_formatELNS2_11args_amountE0ELb1EEEE11get_deleterERKSt9type_info:
+    #####:   96:    virtual void * get_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:   97:    {
+    #####:   98:        return 0;
+    %%%%%:   98-block  0
+        -:   99:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime9parameterImLNS2_11args_amountE0ELb0EEEE11get_deleterERKSt9type_info:
+    #####:   96:    virtual void * get_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:   97:    {
+    #####:   98:        return 0;
+    %%%%%:   98-block  0
+        -:   99:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime14enum_parameterINS_9unit_test12report_levelELNS2_11args_amountE0EEEE11get_deleterERKSt9type_info:
+    #####:   96:    virtual void * get_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:   97:    {
+    #####:   98:        return 0;
+    %%%%%:   98-block  0
+        -:   99:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime14typed_argumentINS_9unit_test12report_levelEEEE11get_deleterERKSt9type_info:
+    #####:   96:    virtual void * get_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:   97:    {
+    #####:   98:        return 0;
+    %%%%%:   98-block  0
+        -:   99:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime14typed_argumentIjEEE11get_deleterERKSt9type_info:
+    #####:   96:    virtual void * get_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:   97:    {
+    #####:   98:        return 0;
+    %%%%%:   98-block  0
+        -:   99:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime14typed_argumentISt6vectorINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESaISA_EEEEE11get_deleterERKSt9type_info:
+    #####:   96:    virtual void * get_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:   97:    {
+    #####:   98:        return 0;
+    %%%%%:   98-block  0
+        -:   99:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime14typed_argumentINS_9unit_test9log_levelEEEE11get_deleterERKSt9type_info:
+    #####:   96:    virtual void * get_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:   97:    {
+    #####:   98:        return 0;
+    %%%%%:   98-block  0
+        -:   99:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime14typed_argumentImEEE11get_deleterERKSt9type_info:
+    #####:   96:    virtual void * get_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:   97:    {
+    #####:   98:        return 0;
+    %%%%%:   98-block  0
+        -:   99:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime14typed_argumentINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEEE11get_deleterERKSt9type_info:
+    #####:   96:    virtual void * get_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:   97:    {
+    #####:   98:        return 0;
+    %%%%%:   98-block  0
+        -:   99:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_9unit_test9decorator15stack_decoratorEE11get_deleterERKSt9type_info:
+    #####:   96:    virtual void * get_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:   97:    {
+    #####:   98:        return 0;
+    %%%%%:   98-block  0
+        -:   99:    }
+------------------
+        -:  100:
+    #####:  101:    virtual void * get_local_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:  102:    {
+    #####:  103:        return 0;
+        -:  104:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_2io18ios_base_all_saverEE17get_local_deleterERKSt9type_info:
+    #####:  101:    virtual void * get_local_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:  102:    {
+    #####:  103:        return 0;
+    %%%%%:  103-block  0
+        -:  104:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_9unit_test9decorator17expected_failuresEE17get_local_deleterERKSt9type_info:
+    #####:  101:    virtual void * get_local_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:  102:    {
+    #####:  103:        return 0;
+    %%%%%:  103-block  0
+        -:  104:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_9unit_test9decorator7timeoutEE17get_local_deleterERKSt9type_info:
+    #####:  101:    virtual void * get_local_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:  102:    {
+    #####:  103:        return 0;
+    %%%%%:  103-block  0
+        -:  104:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_9unit_test9decorator11descriptionEE17get_local_deleterERKSt9type_info:
+    #####:  101:    virtual void * get_local_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:  102:    {
+    #####:  103:        return 0;
+    %%%%%:  103-block  0
+        -:  104:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_9unit_test9decorator10depends_onEE17get_local_deleterERKSt9type_info:
+    #####:  101:    virtual void * get_local_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:  102:    {
+    #####:  103:        return 0;
+    %%%%%:  103-block  0
+        -:  104:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_9unit_test9decorator9fixture_tEE17get_local_deleterERKSt9type_info:
+    #####:  101:    virtual void * get_local_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:  102:    {
+    #####:  103:        return 0;
+    %%%%%:  103-block  0
+        -:  104:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_9unit_test9decorator12preconditionEE17get_local_deleterERKSt9type_info:
+    #####:  101:    virtual void * get_local_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:  102:    {
+    #####:  103:        return 0;
+    %%%%%:  103-block  0
+        -:  104:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_9unit_test9framework4impl21global_fixture_handleEE17get_local_deleterERKSt9type_info:
+    #####:  101:    virtual void * get_local_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:  102:    {
+    #####:  103:        return 0;
+    %%%%%:  103-block  0
+        -:  104:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_16exception_detail15error_info_baseEE17get_local_deleterERKSt9type_info:
+    #####:  101:    virtual void * get_local_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:  102:    {
+    #####:  103:        return 0;
+    %%%%%:  103-block  0
+        -:  104:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_9unit_test9decorator5labelEE17get_local_deleterERKSt9type_info:
+    #####:  101:    virtual void * get_local_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:  102:    {
+    #####:  103:        return 0;
+    %%%%%:  103-block  0
+        -:  104:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime6optionEE17get_local_deleterERKSt9type_info:
+    #####:  101:    virtual void * get_local_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:  102:    {
+    #####:  103:        return 0;
+    %%%%%:  103-block  0
+        -:  104:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime3cla13rt_cla_detail14parameter_trieEE17get_local_deleterERKSt9type_info:
+    #####:  101:    virtual void * get_local_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:  102:    {
+    #####:  103:        return 0;
+    %%%%%:  103-block  0
+        -:  104:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_23basic_wrap_stringstreamIcEEE17get_local_deleterERKSt9type_info:
+    #####:  101:    virtual void * get_local_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:  102:    {
+    #####:  103:        return 0;
+    %%%%%:  103-block  0
+        -:  104:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_9unit_test23unit_test_log_formatterEE17get_local_deleterERKSt9type_info:
+    #####:  101:    virtual void * get_local_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:  102:    {
+    #####:  103:        return 0;
+    %%%%%:  103-block  0
+        -:  104:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime14typed_argumentIbEEE17get_local_deleterERKSt9type_info:
+    #####:  101:    virtual void * get_local_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:  102:    {
+    #####:  103:        return 0;
+    %%%%%:  103-block  0
+        -:  104:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime3cla6parserEE17get_local_deleterERKSt9type_info:
+    #####:  101:    virtual void * get_local_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:  102:    {
+    #####:  103:        return 0;
+    %%%%%:  103-block  0
+        -:  104:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime14typed_argumentINS_9unit_test13output_formatEEEE17get_local_deleterERKSt9type_info:
+    #####:  101:    virtual void * get_local_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:  102:    {
+    #####:  103:        return 0;
+    %%%%%:  103-block  0
+        -:  104:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime9parameterINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEELNS2_11args_amountE0ELb0EEEE17get_local_deleterERKSt9type_info:
+    #####:  101:    virtual void * get_local_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:  102:    {
+    #####:  103:        return 0;
+    %%%%%:  103-block  0
+        -:  104:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime9parameterINS_9unit_test12report_levelELNS2_11args_amountE0ELb1EEEE17get_local_deleterERKSt9type_info:
+    #####:  101:    virtual void * get_local_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:  102:    {
+    #####:  103:        return 0;
+    %%%%%:  103-block  0
+        -:  104:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime9parameterIjLNS2_11args_amountE0ELb0EEEE17get_local_deleterERKSt9type_info:
+    #####:  101:    virtual void * get_local_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:  102:    {
+    #####:  103:        return 0;
+    %%%%%:  103-block  0
+        -:  104:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime9parameterINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEELNS2_11args_amountE2ELb0EEEE17get_local_deleterERKSt9type_info:
+    #####:  101:    virtual void * get_local_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:  102:    {
+    #####:  103:        return 0;
+    %%%%%:  103-block  0
+        -:  104:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime14enum_parameterINS_9unit_test9log_levelELNS2_11args_amountE0EEEE17get_local_deleterERKSt9type_info:
+    #####:  101:    virtual void * get_local_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:  102:    {
+    #####:  103:        return 0;
+    %%%%%:  103-block  0
+        -:  104:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime9parameterINS_9unit_test9log_levelELNS2_11args_amountE0ELb1EEEE17get_local_deleterERKSt9type_info:
+    #####:  101:    virtual void * get_local_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:  102:    {
+    #####:  103:        return 0;
+    %%%%%:  103-block  0
+        -:  104:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime14enum_parameterINS_9unit_test13output_formatELNS2_11args_amountE0EEEE17get_local_deleterERKSt9type_info:
+    #####:  101:    virtual void * get_local_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:  102:    {
+    #####:  103:        return 0;
+    %%%%%:  103-block  0
+        -:  104:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime9parameterINS_9unit_test13output_formatELNS2_11args_amountE0ELb1EEEE17get_local_deleterERKSt9type_info:
+    #####:  101:    virtual void * get_local_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:  102:    {
+    #####:  103:        return 0;
+    %%%%%:  103-block  0
+        -:  104:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime9parameterImLNS2_11args_amountE0ELb0EEEE17get_local_deleterERKSt9type_info:
+    #####:  101:    virtual void * get_local_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:  102:    {
+    #####:  103:        return 0;
+    %%%%%:  103-block  0
+        -:  104:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime14enum_parameterINS_9unit_test12report_levelELNS2_11args_amountE0EEEE17get_local_deleterERKSt9type_info:
+    #####:  101:    virtual void * get_local_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:  102:    {
+    #####:  103:        return 0;
+    %%%%%:  103-block  0
+        -:  104:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime14typed_argumentINS_9unit_test12report_levelEEEE17get_local_deleterERKSt9type_info:
+    #####:  101:    virtual void * get_local_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:  102:    {
+    #####:  103:        return 0;
+    %%%%%:  103-block  0
+        -:  104:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime14typed_argumentIjEEE17get_local_deleterERKSt9type_info:
+    #####:  101:    virtual void * get_local_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:  102:    {
+    #####:  103:        return 0;
+    %%%%%:  103-block  0
+        -:  104:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime14typed_argumentISt6vectorINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESaISA_EEEEE17get_local_deleterERKSt9type_info:
+    #####:  101:    virtual void * get_local_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:  102:    {
+    #####:  103:        return 0;
+    %%%%%:  103-block  0
+        -:  104:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime14typed_argumentINS_9unit_test9log_levelEEEE17get_local_deleterERKSt9type_info:
+    #####:  101:    virtual void * get_local_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:  102:    {
+    #####:  103:        return 0;
+    %%%%%:  103-block  0
+        -:  104:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime14typed_argumentImEEE17get_local_deleterERKSt9type_info:
+    #####:  101:    virtual void * get_local_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:  102:    {
+    #####:  103:        return 0;
+    %%%%%:  103-block  0
+        -:  104:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime14typed_argumentINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEEE17get_local_deleterERKSt9type_info:
+    #####:  101:    virtual void * get_local_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:  102:    {
+    #####:  103:        return 0;
+    %%%%%:  103-block  0
+        -:  104:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_9unit_test9decorator15stack_decoratorEE17get_local_deleterERKSt9type_info:
+    #####:  101:    virtual void * get_local_deleter( sp_typeinfo_ const & ) BOOST_SP_NOEXCEPT
+        -:  102:    {
+    #####:  103:        return 0;
+    %%%%%:  103-block  0
+        -:  104:    }
+------------------
+        -:  105:
+    #####:  106:    virtual void * get_untyped_deleter() BOOST_SP_NOEXCEPT
+        -:  107:    {
+    #####:  108:        return 0;
+        -:  109:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_2io18ios_base_all_saverEE19get_untyped_deleterEv:
+    #####:  106:    virtual void * get_untyped_deleter() BOOST_SP_NOEXCEPT
+        -:  107:    {
+    #####:  108:        return 0;
+    %%%%%:  108-block  0
+        -:  109:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_9unit_test9decorator17expected_failuresEE19get_untyped_deleterEv:
+    #####:  106:    virtual void * get_untyped_deleter() BOOST_SP_NOEXCEPT
+        -:  107:    {
+    #####:  108:        return 0;
+    %%%%%:  108-block  0
+        -:  109:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_9unit_test9decorator7timeoutEE19get_untyped_deleterEv:
+    #####:  106:    virtual void * get_untyped_deleter() BOOST_SP_NOEXCEPT
+        -:  107:    {
+    #####:  108:        return 0;
+    %%%%%:  108-block  0
+        -:  109:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_9unit_test9decorator11descriptionEE19get_untyped_deleterEv:
+    #####:  106:    virtual void * get_untyped_deleter() BOOST_SP_NOEXCEPT
+        -:  107:    {
+    #####:  108:        return 0;
+    %%%%%:  108-block  0
+        -:  109:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_9unit_test9decorator10depends_onEE19get_untyped_deleterEv:
+    #####:  106:    virtual void * get_untyped_deleter() BOOST_SP_NOEXCEPT
+        -:  107:    {
+    #####:  108:        return 0;
+    %%%%%:  108-block  0
+        -:  109:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_9unit_test9decorator9fixture_tEE19get_untyped_deleterEv:
+    #####:  106:    virtual void * get_untyped_deleter() BOOST_SP_NOEXCEPT
+        -:  107:    {
+    #####:  108:        return 0;
+    %%%%%:  108-block  0
+        -:  109:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_9unit_test9decorator12preconditionEE19get_untyped_deleterEv:
+    #####:  106:    virtual void * get_untyped_deleter() BOOST_SP_NOEXCEPT
+        -:  107:    {
+    #####:  108:        return 0;
+    %%%%%:  108-block  0
+        -:  109:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_9unit_test9framework4impl21global_fixture_handleEE19get_untyped_deleterEv:
+    #####:  106:    virtual void * get_untyped_deleter() BOOST_SP_NOEXCEPT
+        -:  107:    {
+    #####:  108:        return 0;
+    %%%%%:  108-block  0
+        -:  109:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_16exception_detail15error_info_baseEE19get_untyped_deleterEv:
+    #####:  106:    virtual void * get_untyped_deleter() BOOST_SP_NOEXCEPT
+        -:  107:    {
+    #####:  108:        return 0;
+    %%%%%:  108-block  0
+        -:  109:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_9unit_test9decorator5labelEE19get_untyped_deleterEv:
+    #####:  106:    virtual void * get_untyped_deleter() BOOST_SP_NOEXCEPT
+        -:  107:    {
+    #####:  108:        return 0;
+    %%%%%:  108-block  0
+        -:  109:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime6optionEE19get_untyped_deleterEv:
+    #####:  106:    virtual void * get_untyped_deleter() BOOST_SP_NOEXCEPT
+        -:  107:    {
+    #####:  108:        return 0;
+    %%%%%:  108-block  0
+        -:  109:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime3cla13rt_cla_detail14parameter_trieEE19get_untyped_deleterEv:
+    #####:  106:    virtual void * get_untyped_deleter() BOOST_SP_NOEXCEPT
+        -:  107:    {
+    #####:  108:        return 0;
+    %%%%%:  108-block  0
+        -:  109:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_23basic_wrap_stringstreamIcEEE19get_untyped_deleterEv:
+    #####:  106:    virtual void * get_untyped_deleter() BOOST_SP_NOEXCEPT
+        -:  107:    {
+    #####:  108:        return 0;
+    %%%%%:  108-block  0
+        -:  109:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_9unit_test23unit_test_log_formatterEE19get_untyped_deleterEv:
+    #####:  106:    virtual void * get_untyped_deleter() BOOST_SP_NOEXCEPT
+        -:  107:    {
+    #####:  108:        return 0;
+    %%%%%:  108-block  0
+        -:  109:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime14typed_argumentIbEEE19get_untyped_deleterEv:
+    #####:  106:    virtual void * get_untyped_deleter() BOOST_SP_NOEXCEPT
+        -:  107:    {
+    #####:  108:        return 0;
+    %%%%%:  108-block  0
+        -:  109:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime3cla6parserEE19get_untyped_deleterEv:
+    #####:  106:    virtual void * get_untyped_deleter() BOOST_SP_NOEXCEPT
+        -:  107:    {
+    #####:  108:        return 0;
+    %%%%%:  108-block  0
+        -:  109:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime14typed_argumentINS_9unit_test13output_formatEEEE19get_untyped_deleterEv:
+    #####:  106:    virtual void * get_untyped_deleter() BOOST_SP_NOEXCEPT
+        -:  107:    {
+    #####:  108:        return 0;
+    %%%%%:  108-block  0
+        -:  109:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime9parameterINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEELNS2_11args_amountE0ELb0EEEE19get_untyped_deleterEv:
+    #####:  106:    virtual void * get_untyped_deleter() BOOST_SP_NOEXCEPT
+        -:  107:    {
+    #####:  108:        return 0;
+    %%%%%:  108-block  0
+        -:  109:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime9parameterINS_9unit_test12report_levelELNS2_11args_amountE0ELb1EEEE19get_untyped_deleterEv:
+    #####:  106:    virtual void * get_untyped_deleter() BOOST_SP_NOEXCEPT
+        -:  107:    {
+    #####:  108:        return 0;
+    %%%%%:  108-block  0
+        -:  109:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime9parameterIjLNS2_11args_amountE0ELb0EEEE19get_untyped_deleterEv:
+    #####:  106:    virtual void * get_untyped_deleter() BOOST_SP_NOEXCEPT
+        -:  107:    {
+    #####:  108:        return 0;
+    %%%%%:  108-block  0
+        -:  109:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime9parameterINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEELNS2_11args_amountE2ELb0EEEE19get_untyped_deleterEv:
+    #####:  106:    virtual void * get_untyped_deleter() BOOST_SP_NOEXCEPT
+        -:  107:    {
+    #####:  108:        return 0;
+    %%%%%:  108-block  0
+        -:  109:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime14enum_parameterINS_9unit_test9log_levelELNS2_11args_amountE0EEEE19get_untyped_deleterEv:
+    #####:  106:    virtual void * get_untyped_deleter() BOOST_SP_NOEXCEPT
+        -:  107:    {
+    #####:  108:        return 0;
+    %%%%%:  108-block  0
+        -:  109:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime9parameterINS_9unit_test9log_levelELNS2_11args_amountE0ELb1EEEE19get_untyped_deleterEv:
+    #####:  106:    virtual void * get_untyped_deleter() BOOST_SP_NOEXCEPT
+        -:  107:    {
+    #####:  108:        return 0;
+    %%%%%:  108-block  0
+        -:  109:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime14enum_parameterINS_9unit_test13output_formatELNS2_11args_amountE0EEEE19get_untyped_deleterEv:
+    #####:  106:    virtual void * get_untyped_deleter() BOOST_SP_NOEXCEPT
+        -:  107:    {
+    #####:  108:        return 0;
+    %%%%%:  108-block  0
+        -:  109:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime9parameterINS_9unit_test13output_formatELNS2_11args_amountE0ELb1EEEE19get_untyped_deleterEv:
+    #####:  106:    virtual void * get_untyped_deleter() BOOST_SP_NOEXCEPT
+        -:  107:    {
+    #####:  108:        return 0;
+    %%%%%:  108-block  0
+        -:  109:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime9parameterImLNS2_11args_amountE0ELb0EEEE19get_untyped_deleterEv:
+    #####:  106:    virtual void * get_untyped_deleter() BOOST_SP_NOEXCEPT
+        -:  107:    {
+    #####:  108:        return 0;
+    %%%%%:  108-block  0
+        -:  109:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime14enum_parameterINS_9unit_test12report_levelELNS2_11args_amountE0EEEE19get_untyped_deleterEv:
+    #####:  106:    virtual void * get_untyped_deleter() BOOST_SP_NOEXCEPT
+        -:  107:    {
+    #####:  108:        return 0;
+    %%%%%:  108-block  0
+        -:  109:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime14typed_argumentINS_9unit_test12report_levelEEEE19get_untyped_deleterEv:
+    #####:  106:    virtual void * get_untyped_deleter() BOOST_SP_NOEXCEPT
+        -:  107:    {
+    #####:  108:        return 0;
+    %%%%%:  108-block  0
+        -:  109:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime14typed_argumentIjEEE19get_untyped_deleterEv:
+    #####:  106:    virtual void * get_untyped_deleter() BOOST_SP_NOEXCEPT
+        -:  107:    {
+    #####:  108:        return 0;
+    %%%%%:  108-block  0
+        -:  109:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime14typed_argumentISt6vectorINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESaISA_EEEEE19get_untyped_deleterEv:
+    #####:  106:    virtual void * get_untyped_deleter() BOOST_SP_NOEXCEPT
+        -:  107:    {
+    #####:  108:        return 0;
+    %%%%%:  108-block  0
+        -:  109:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime14typed_argumentINS_9unit_test9log_levelEEEE19get_untyped_deleterEv:
+    #####:  106:    virtual void * get_untyped_deleter() BOOST_SP_NOEXCEPT
+        -:  107:    {
+    #####:  108:        return 0;
+    %%%%%:  108-block  0
+        -:  109:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime14typed_argumentImEEE19get_untyped_deleterEv:
+    #####:  106:    virtual void * get_untyped_deleter() BOOST_SP_NOEXCEPT
+        -:  107:    {
+    #####:  108:        return 0;
+    %%%%%:  108-block  0
+        -:  109:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_7runtime14typed_argumentINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEEE19get_untyped_deleterEv:
+    #####:  106:    virtual void * get_untyped_deleter() BOOST_SP_NOEXCEPT
+        -:  107:    {
+    #####:  108:        return 0;
+    %%%%%:  108-block  0
+        -:  109:    }
+------------------
+_ZN5boost6detail17sp_counted_impl_pINS_9unit_test9decorator15stack_decoratorEE19get_untyped_deleterEv:
+    #####:  106:    virtual void * get_untyped_deleter() BOOST_SP_NOEXCEPT
+        -:  107:    {
+    #####:  108:        return 0;
+    %%%%%:  108-block  0
+        -:  109:    }
+------------------
+        -:  110:
+        -:  111:#if defined(BOOST_SP_USE_STD_ALLOCATOR)
+        -:  112:
+        -:  113:    void * operator new( std::size_t )
+        -:  114:    {
+        -:  115:        return std::allocator<this_type>().allocate( 1, static_cast<this_type *>(0) );
+        -:  116:    }
+        -:  117:
+        -:  118:    void operator delete( void * p )
+        -:  119:    {
+        -:  120:        std::allocator<this_type>().deallocate( static_cast<this_type *>(p), 1 );
+        -:  121:    }
+        -:  122:
+        -:  123:#endif
+        -:  124:
+        -:  125:#if defined(BOOST_SP_USE_QUICK_ALLOCATOR)
+        -:  126:
+        -:  127:    void * operator new( std::size_t )
+        -:  128:    {
+        -:  129:        return quick_allocator<this_type>::alloc();
+        -:  130:    }
+        -:  131:
+        -:  132:    void operator delete( void * p )
+        -:  133:    {
+        -:  134:        quick_allocator<this_type>::dealloc( p );
+        -:  135:    }
+        -:  136:
+        -:  137:#endif
+        -:  138:};
+        -:  139:
+        -:  140://
+        -:  141:// Borland's Codeguard trips up over the -Vx- option here:
+        -:  142://
+        -:  143:#ifdef __CODEGUARD__
+        -:  144:# pragma option push -Vx-
+        -:  145:#endif
+        -:  146:
+        -:  147:template<class P, class D> class BOOST_SYMBOL_VISIBLE sp_counted_impl_pd: public sp_counted_base
+        -:  148:{
+        -:  149:private:
+        -:  150:
+        -:  151:    P ptr; // copy constructor must not throw
+        -:  152:    D del; // copy constructor must not throw
+        -:  153:
+        -:  154:    sp_counted_impl_pd( sp_counted_impl_pd const & );
+        -:  155:    sp_counted_impl_pd & operator= ( sp_counted_impl_pd const & );
+        -:  156:
+        -:  157:    typedef sp_counted_impl_pd<P, D> this_type;
+        -:  158:
+        -:  159:public:
+        -:  160:
+        -:  161:    // pre: d(p) must not throw
+        -:  162:
+        -:  163:    sp_counted_impl_pd( P p, D & d ): ptr( p ), del( d )
+        -:  164:    {
+        -:  165:    }
+        -:  166:
+        1:  167:    sp_counted_impl_pd( P p ): ptr( p ), del()
+        1:  167-block  0
+        -:  168:    {
+        1:  169:    }
+        -:  170:
+        1:  171:    virtual void dispose() BOOST_SP_NOEXCEPT
+        -:  172:    {
+        1:  173:        del( ptr );
+        1:  173-block  0
+        1:  174:    }
+        -:  175:
+    #####:  176:    virtual void * get_deleter( sp_typeinfo_ const & ti ) BOOST_SP_NOEXCEPT
+        -:  177:    {
+    #####:  178:        return ti == BOOST_SP_TYPEID_(D)? &reinterpret_cast<char&>( del ): 0;
+    %%%%%:  178-block  0
+    %%%%%:  178-block  1
+    %%%%%:  178-block  2
+    %%%%%:  178-block  3
+        -:  179:    }
+        -:  180:
+    #####:  181:    virtual void * get_local_deleter( sp_typeinfo_ const & ti ) BOOST_SP_NOEXCEPT
+        -:  182:    {
+    #####:  183:        return ti == BOOST_SP_TYPEID_(D)? boost::detail::get_local_deleter( boost::addressof( del ) ): 0;
+    %%%%%:  183-block  0
+    %%%%%:  183-block  1
+    %%%%%:  183-block  2
+    %%%%%:  183-block  3
+        -:  184:    }
+        -:  185:
+        1:  186:    virtual void * get_untyped_deleter() BOOST_SP_NOEXCEPT
+        -:  187:    {
+        1:  188:        return &reinterpret_cast<char&>( del );
+        1:  188-block  0
+        -:  189:    }
+        -:  190:
+        -:  191:#if defined(BOOST_SP_USE_STD_ALLOCATOR)
+        -:  192:
+        -:  193:    void * operator new( std::size_t )
+        -:  194:    {
+        -:  195:        return std::allocator<this_type>().allocate( 1, static_cast<this_type *>(0) );
+        -:  196:    }
+        -:  197:
+        -:  198:    void operator delete( void * p )
+        -:  199:    {
+        -:  200:        std::allocator<this_type>().deallocate( static_cast<this_type *>(p), 1 );
+        -:  201:    }
+        -:  202:
+        -:  203:#endif
+        -:  204:
+        -:  205:#if defined(BOOST_SP_USE_QUICK_ALLOCATOR)
+        -:  206:
+        -:  207:    void * operator new( std::size_t )
+        -:  208:    {
+        -:  209:        return quick_allocator<this_type>::alloc();
+        -:  210:    }
+        -:  211:
+        -:  212:    void operator delete( void * p )
+        -:  213:    {
+        -:  214:        quick_allocator<this_type>::dealloc( p );
+        -:  215:    }
+        -:  216:
+        -:  217:#endif
+        -:  218:};
+        -:  219:
+        -:  220:template<class P, class D, class A> class BOOST_SYMBOL_VISIBLE sp_counted_impl_pda: public sp_counted_base
+        -:  221:{
+        -:  222:private:
+        -:  223:
+        -:  224:    P p_; // copy constructor must not throw
+        -:  225:    D d_; // copy constructor must not throw
+        -:  226:    A a_; // copy constructor must not throw
+        -:  227:
+        -:  228:    sp_counted_impl_pda( sp_counted_impl_pda const & );
+        -:  229:    sp_counted_impl_pda & operator= ( sp_counted_impl_pda const & );
+        -:  230:
+        -:  231:    typedef sp_counted_impl_pda<P, D, A> this_type;
+        -:  232:
+        -:  233:public:
+        -:  234:
+        -:  235:    // pre: d( p ) must not throw
+        -:  236:
+        -:  237:    sp_counted_impl_pda( P p, D & d, A a ): p_( p ), d_( d ), a_( a )
+        -:  238:    {
+        -:  239:    }
+        -:  240:
+        -:  241:    sp_counted_impl_pda( P p, A a ): p_( p ), d_( a ), a_( a )
+        -:  242:    {
+        -:  243:    }
+        -:  244:
+        -:  245:    virtual void dispose() BOOST_SP_NOEXCEPT
+        -:  246:    {
+        -:  247:        d_( p_ );
+        -:  248:    }
+        -:  249:
+        -:  250:    virtual void destroy() BOOST_SP_NOEXCEPT
+        -:  251:    {
+        -:  252:#if !defined( BOOST_NO_CXX11_ALLOCATOR )
+        -:  253:
+        -:  254:        typedef typename std::allocator_traits<A>::template rebind_alloc< this_type > A2;
+        -:  255:
+        -:  256:#else
+        -:  257:
+        -:  258:        typedef typename A::template rebind< this_type >::other A2;
+        -:  259:
+        -:  260:#endif
+        -:  261:
+        -:  262:        A2 a2( a_ );
+        -:  263:
+        -:  264:        this->~this_type();
+        -:  265:
+        -:  266:        a2.deallocate( this, 1 );
+        -:  267:    }
+        -:  268:
+        -:  269:    virtual void * get_deleter( sp_typeinfo_ const & ti ) BOOST_SP_NOEXCEPT
+        -:  270:    {
+        -:  271:        return ti == BOOST_SP_TYPEID_( D )? &reinterpret_cast<char&>( d_ ): 0;
+        -:  272:    }
+        -:  273:
+        -:  274:    virtual void * get_local_deleter( sp_typeinfo_ const & ti ) BOOST_SP_NOEXCEPT
+        -:  275:    {
+        -:  276:        return ti == BOOST_SP_TYPEID_( D )? boost::detail::get_local_deleter( boost::addressof( d_ ) ): 0;
+        -:  277:    }
+        -:  278:
+        -:  279:    virtual void * get_untyped_deleter() BOOST_SP_NOEXCEPT
+        -:  280:    {
+        -:  281:        return &reinterpret_cast<char&>( d_ );
+        -:  282:    }
+        -:  283:};
+        -:  284:
+        -:  285:#ifdef __CODEGUARD__
+        -:  286:# pragma option pop
+        -:  287:#endif
+        -:  288:
+        -:  289:} // namespace detail
+        -:  290:
+        -:  291:} // namespace boost
+        -:  292:
+        -:  293:#endif  // #ifndef BOOST_SMART_PTR_DETAIL_SP_COUNTED_IMPL_HPP_INCLUDED

@@ -1,0 +1,353 @@
+        -:    0:Source:F:/Files/vcpkg/installed/x86-windows/include/boost/test/utils/algorithm.hpp
+        -:    0:Graph:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcno
+        -:    0:Data:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1://  (C) Copyright Gennadiy Rozental 2001.
+        -:    2://  Distributed under the Boost Software License, Version 1.0.
+        -:    3://  (See accompanying file LICENSE_1_0.txt or copy at
+        -:    4://  http://www.boost.org/LICENSE_1_0.txt)
+        -:    5:
+        -:    6://  See http://www.boost.org/libs/test for the library home page.
+        -:    7://
+        -:    8:/// @file
+        -:    9:/// Addition to STL algorithms
+        -:   10:// ***************************************************************************
+        -:   11:
+        -:   12:#ifndef BOOST_TEST_UTILS_ALGORITHM_HPP
+        -:   13:#define BOOST_TEST_UTILS_ALGORITHM_HPP
+        -:   14:
+        -:   15:// STL
+        -:   16:#include <utility>
+        -:   17:#include <algorithm> // std::find
+        -:   18:#include <functional> // std::bind1st or std::bind
+        -:   19:
+        -:   20:#include <boost/test/detail/suppress_warnings.hpp>
+        -:   21:
+        -:   22:#ifdef BOOST_NO_CXX98_BINDERS
+        -:   23:#define BOOST_TEST_BIND1ST(F,A) std::bind( (F), (A), std::placeholders::_1 )
+        -:   24:#else
+        -:   25:#define BOOST_TEST_BIND1ST(F,A) std::bind1st( (F), (A) )
+        -:   26:#endif
+        -:   27:
+        -:   28://____________________________________________________________________________//
+        -:   29:
+        -:   30:namespace boost {
+        -:   31:namespace unit_test {
+        -:   32:namespace utils {
+        -:   33:
+        -:   34:/// @brief this algorithm search through two collections for first mismatch position that get returned as a pair
+        -:   35:/// of iterators, first pointing to the mismatch position in first collection, second iterator in second one
+        -:   36:///
+        -:   37:/// @param first1 - first collection begin iterator
+        -:   38:/// @param last1 - first collection end iterator
+        -:   39:/// @param first2 - second collection begin iterator
+        -:   40:/// @param last2 - second collection end iterator
+        -:   41:template <class InputIter1, class InputIter2>
+        -:   42:inline std::pair<InputIter1, InputIter2>
+        -:   43:mismatch( InputIter1 first1, InputIter1 last1,
+        -:   44:          InputIter2 first2, InputIter2 last2 )
+        -:   45:{
+        -:   46:    while( first1 != last1 && first2 != last2 && *first1 == *first2 ) {
+        -:   47:        ++first1;
+        -:   48:        ++first2;
+        -:   49:    }
+        -:   50:
+        -:   51:    return std::pair<InputIter1, InputIter2>(first1, first2);
+        -:   52:}
+        -:   53:
+        -:   54://____________________________________________________________________________//
+        -:   55:
+        -:   56:/// @brief this algorithm search through two collections for first mismatch position that get returned as a pair
+        -:   57:/// of iterators, first pointing to the mismatch position in first collection, second iterator in second one. This algorithms
+        -:   58:/// uses supplied predicate for collection elements comparison
+        -:   59:///
+        -:   60:/// @param first1 - first collection begin iterator
+        -:   61:/// @param last1 - first collection end iterator
+        -:   62:/// @param first2 - second collection begin iterator
+        -:   63:/// @param last2 - second collection end iterator
+        -:   64:/// @param pred - predicate to be used for search
+        -:   65:template <class InputIter1, class InputIter2, class Predicate>
+        -:   66:inline std::pair<InputIter1, InputIter2>
+        -:   67:mismatch( InputIter1 first1, InputIter1 last1,
+        -:   68:          InputIter2 first2, InputIter2 last2,
+        -:   69:          Predicate pred )
+        -:   70:{
+        -:   71:    while( first1 != last1 && first2 != last2 && pred( *first1, *first2 ) ) {
+        -:   72:        ++first1;
+        -:   73:        ++first2;
+        -:   74:    }
+        -:   75:
+        -:   76:    return std::pair<InputIter1, InputIter2>(first1, first2);
+        -:   77:}
+        -:   78:
+        -:   79://____________________________________________________________________________//
+        -:   80:
+        -:   81:/// @brief this algorithm search through first collection for first element that does not belong a second one
+        -:   82:///
+        -:   83:/// @param first1 - first collection begin iterator
+        -:   84:/// @param last1 - first collection end iterator
+        -:   85:/// @param first2 - second collection begin iterator
+        -:   86:/// @param last2 - second collection end iterator
+        -:   87:template<class ForwardIterator1, class ForwardIterator2>
+        -:   88:inline ForwardIterator1
+        -:   89:find_first_not_of( ForwardIterator1 first1, ForwardIterator1 last1,
+        -:   90:                   ForwardIterator2 first2, ForwardIterator2 last2 )
+        -:   91:{
+        -:   92:    while( first1 != last1 ) {
+        -:   93:        if( std::find( first2, last2, *first1 ) == last2 )
+        -:   94:            break;
+        -:   95:        ++first1;
+        -:   96:    }
+        -:   97:
+        -:   98:    return first1;
+        -:   99:}
+        -:  100:
+        -:  101://____________________________________________________________________________//
+        -:  102:
+        -:  103:/// @brief this algorithm search through first collection for first element that does not satisfy binary
+        -:  104:/// predicate in conjunction will any element in second collection
+        -:  105:///
+        -:  106:/// @param first1 - first collection begin iterator
+        -:  107:/// @param last1 - first collection end iterator
+        -:  108:/// @param first2 - second collection begin iterator
+        -:  109:/// @param last2 - second collection end iterator
+        -:  110:/// @param pred - predicate to be used for search
+        -:  111:template<class ForwardIterator1, class ForwardIterator2, class Predicate>
+        -:  112:inline ForwardIterator1
+        -:  113:find_first_not_of( ForwardIterator1 first1, ForwardIterator1 last1,
+        -:  114:                   ForwardIterator2 first2, ForwardIterator2 last2,
+        -:  115:                   Predicate pred )
+        -:  116:{
+        -:  117:    while( first1 != last1 ) {
+        -:  118:        if( std::find_if( first2, last2, BOOST_TEST_BIND1ST( pred, *first1 ) ) == last2 )
+        -:  119:            break;
+        -:  120:        ++first1;
+        -:  121:    }
+        -:  122:
+        -:  123:    return first1;
+        -:  124:}
+        -:  125:
+        -:  126://____________________________________________________________________________//
+        -:  127:
+        -:  128:/// @brief this algorithm search through first collection for last element that belongs to a second one
+        -:  129:///
+        -:  130:/// @param first1 - first collection begin iterator
+        -:  131:/// @param last1 - first collection end iterator
+        -:  132:/// @param first2 - second collection begin iterator
+        -:  133:/// @param last2 - second collection end iterator
+        -:  134:template<class BidirectionalIterator1, class ForwardIterator2>
+        -:  135:inline BidirectionalIterator1
+        1:  136:find_last_of( BidirectionalIterator1 first1, BidirectionalIterator1 last1,
+        -:  137:              ForwardIterator2 first2, ForwardIterator2 last2 )
+        -:  138:{
+        1:  139:    if( first1 == last1 || first2 == last2 )
+        1:  139-block  0
+        1:  139-block  1
+    #####:  140:        return last1;
+    %%%%%:  140-block  0
+        -:  141:
+        1:  142:    BidirectionalIterator1 it1 = last1;
+        1:  142-block  0
+       20:  143:    while( --it1 != first1 && std::find( first2, last2, *it1 ) == last2 ) {}
+       20:  143-block  0
+       20:  143-block  1
+       19:  143-block  2
+        1:  143-block  3
+       20:  143-block  4
+       19:  143-block  5
+        -:  144:
+       1*:  145:    return it1 == first1 && std::find( first2, last2, *it1 ) == last2 ? last1 : it1;
+        1:  145-block  0
+    %%%%%:  145-block  1
+    %%%%%:  145-block  2
+        1:  145-block  3
+        1:  145-block  4
+        -:  146:}
+        -:  147:
+        -:  148://____________________________________________________________________________//
+        -:  149:
+        -:  150:/// @brief this algorithm search through first collection for last element that satisfy binary
+        -:  151:/// predicate in conjunction will at least one element in second collection
+        -:  152:///
+        -:  153:/// @param first1 - first collection begin iterator
+        -:  154:/// @param last1 - first collection end iterator
+        -:  155:/// @param first2 - second collection begin iterator
+        -:  156:/// @param last2 - second collection end iterator
+        -:  157:/// @param pred - predicate to be used for search
+        -:  158:template<class BidirectionalIterator1, class ForwardIterator2, class Predicate>
+        -:  159:inline BidirectionalIterator1
+        -:  160:find_last_of( BidirectionalIterator1 first1, BidirectionalIterator1 last1,
+        -:  161:              ForwardIterator2 first2, ForwardIterator2 last2,
+        -:  162:              Predicate pred )
+        -:  163:{
+        -:  164:    if( first1 == last1 || first2 == last2 )
+        -:  165:        return last1;
+        -:  166:
+        -:  167:    BidirectionalIterator1 it1 = last1;
+        -:  168:    while( --it1 != first1 && std::find_if( first2, last2, BOOST_TEST_BIND1ST( pred, *it1 ) ) == last2 ) {}
+        -:  169:
+        -:  170:    return it1 == first1 && std::find_if( first2, last2, BOOST_TEST_BIND1ST( pred, *it1 ) ) == last2 ? last1 : it1;
+        -:  171:}
+        -:  172:
+        -:  173://____________________________________________________________________________//
+        -:  174:
+        -:  175:/// @brief this algorithm search through first collection for last element that does not belong to a second one
+        -:  176:///
+        -:  177:/// @param first1 - first collection begin iterator
+        -:  178:/// @param last1 - first collection end iterator
+        -:  179:/// @param first2 - second collection begin iterator
+        -:  180:/// @param last2 - second collection end iterator
+        -:  181:template<class BidirectionalIterator1, class ForwardIterator2>
+        -:  182:inline BidirectionalIterator1
+        -:  183:find_last_not_of( BidirectionalIterator1 first1, BidirectionalIterator1 last1,
+        -:  184:                  ForwardIterator2 first2, ForwardIterator2 last2 )
+        -:  185:{
+        -:  186:    if( first1 == last1 || first2 == last2 )
+        -:  187:        return last1;
+        -:  188:
+        -:  189:    BidirectionalIterator1 it1 = last1;
+        -:  190:    while( --it1 != first1 && std::find( first2, last2, *it1 ) != last2 ) {}
+        -:  191:
+        -:  192:    return it1 == first1 && std::find( first2, last2, *it1 ) != last2 ? last1 : it1;
+        -:  193:}
+        -:  194:
+        -:  195://____________________________________________________________________________//
+        -:  196:
+        -:  197:/// @brief this algorithm search through first collection for last element that does not satisfy binary
+        -:  198:/// predicate in conjunction will any element in second collection
+        -:  199:///
+        -:  200:/// @param first1 - first collection begin iterator
+        -:  201:/// @param last1 - first collection end iterator
+        -:  202:/// @param first2 - second collection begin iterator
+        -:  203:/// @param last2 - second collection end iterator
+        -:  204:/// @param pred - predicate to be used for search
+        -:  205:template<class BidirectionalIterator1, class ForwardIterator2, class Predicate>
+        -:  206:inline BidirectionalIterator1
+        -:  207:find_last_not_of( BidirectionalIterator1 first1, BidirectionalIterator1 last1,
+        -:  208:                  ForwardIterator2 first2, ForwardIterator2 last2,
+        -:  209:                  Predicate pred )
+        -:  210:{
+        -:  211:    if( first1 == last1 || first2 == last2 )
+        -:  212:        return last1;
+        -:  213:
+        -:  214:    BidirectionalIterator1 it1 = last1;
+        -:  215:    while( --it1 != first1 && std::find_if( first2, last2, BOOST_TEST_BIND1ST( pred, *it1 ) ) != last2 ) {}
+        -:  216:
+        -:  217:    return it1 == first1 && std::find_if( first2, last2, BOOST_TEST_BIND1ST( pred, *it1 ) ) == last2 ? last1 : it1;
+        -:  218:}
+        -:  219:
+        -:  220://____________________________________________________________________________//
+        -:  221:
+        -:  222:
+        -:  223:/// @brief This algorithm replaces all occurrences of a set of substrings by another substrings
+        -:  224:///
+        -:  225:/// @param str - string of operation
+        -:  226:/// @param first1 - iterator to the beginning of the substrings to replace
+        -:  227:/// @param last1 - iterator to the end of the substrings to replace
+        -:  228:/// @param first2 - iterator to the beginning of the substrings to replace with
+        -:  229:/// @param last2 - iterator to the end of the substrings to replace with
+        -:  230:template<class StringClass, class ForwardIterator>
+        -:  231:inline StringClass
+    #####:  232:replace_all_occurrences_of( StringClass str,
+        -:  233:                            ForwardIterator first1, ForwardIterator last1,
+        -:  234:                            ForwardIterator first2, ForwardIterator last2)
+        -:  235:{
+    #####:  236:    for(; first1 != last1 && first2 != last2; ++first1, ++first2) {
+    %%%%%:  236-block  0
+    %%%%%:  236-block  1
+    %%%%%:  236-block  2
+    #####:  237:        std::size_t found = str.find( *first1 );
+    %%%%%:  237-block  0
+    #####:  238:        while( found != StringClass::npos ) {
+    %%%%%:  238-block  0
+    #####:  239:            str.replace(found, first1->size(), *first2 );
+    %%%%%:  239-block  0
+    #####:  240:            found = str.find( *first1, found + first2->size() );
+        -:  241:        }
+        -:  242:    }
+        -:  243:
+    #####:  244:    return str;
+    %%%%%:  244-block  0
+        -:  245:}
+        -:  246:
+        -:  247:/// @brief This algorithm replaces all occurrences of a string with basic wildcards
+        -:  248:/// with another (optionally containing wildcards as well).
+        -:  249:///
+        -:  250:/// @param str - string to transform
+        -:  251:/// @param it_string_to_find - iterator to the beginning of the substrings to replace
+        -:  252:/// @param it_string_to_find_end - iterator to the end of the substrings to replace
+        -:  253:/// @param it_string_to_replace - iterator to the beginning of the substrings to replace with
+        -:  254:/// @param it_string_to_replace_end - iterator to the end of the substrings to replace with
+        -:  255:///
+        -:  256:/// The wildcard is the symbol '*'. Only a unique wildcard per string is supported. The replacement
+        -:  257:/// string may also contain a wildcard, in which case it is considered as a placeholder to the content
+        -:  258:/// of the wildcard in the source string.
+        -:  259:/// Example:
+        -:  260:/// - In order to replace the occurrences of @c 'time=\"some-variable-value\"' to a constant string,
+        -:  261:///   one may use @c 'time=\"*\"' as the string to search for, and 'time=\"0.0\"' as the replacement string.
+        -:  262:/// - In order to replace the occurrences of 'file.cpp(XX)' per 'file.cpp:XX', where XX is a variable to keep,
+        -:  263:///   on may use @c 'file.cpp(*)' as the string to search for, and 'file.cpp:*' as the replacement string.
+        -:  264:template<class StringClass, class ForwardIterator>
+        -:  265:inline StringClass
+        -:  266:replace_all_occurrences_with_wildcards(
+        -:  267:    StringClass str,
+        -:  268:    ForwardIterator it_string_to_find, ForwardIterator it_string_to_find_end,
+        -:  269:    ForwardIterator it_string_to_replace, ForwardIterator it_string_to_replace_end)
+        -:  270:{
+        -:  271:    for(; it_string_to_find != it_string_to_find_end && it_string_to_replace != it_string_to_replace_end;
+        -:  272:        ++it_string_to_find, ++ it_string_to_replace) {
+        -:  273:
+        -:  274:        std::size_t wildcard_pos = it_string_to_find->find("*");
+        -:  275:        if(wildcard_pos == StringClass::npos) {
+        -:  276:            ForwardIterator it_to_find_current_end(it_string_to_find);
+        -:  277:            ForwardIterator it_to_replace_current_end(it_string_to_replace);
+        -:  278:            str = replace_all_occurrences_of(
+        -:  279:                str,
+        -:  280:                it_string_to_find, ++it_to_find_current_end,
+        -:  281:                it_string_to_replace, ++it_to_replace_current_end);
+        -:  282:            continue;
+        -:  283:        }
+        -:  284:
+        -:  285:        std::size_t wildcard_pos_replace = it_string_to_replace->find("*");
+        -:  286:
+        -:  287:        std::size_t found_begin = str.find( it_string_to_find->substr(0, wildcard_pos) );
+        -:  288:        while( found_begin != StringClass::npos ) {
+        -:  289:            std::size_t found_end = str.find(it_string_to_find->substr(wildcard_pos+1), found_begin + wildcard_pos + 1); // to simplify
+        -:  290:            if( found_end != StringClass::npos ) {
+        -:  291:
+        -:  292:                if( wildcard_pos_replace == StringClass::npos ) {
+        -:  293:                    StringClass replace_content = *it_string_to_replace;
+        -:  294:                    str.replace(
+        -:  295:                        found_begin,
+        -:  296:                        found_end + (it_string_to_find->size() - wildcard_pos - 1 ) - found_begin,
+        -:  297:                        replace_content);
+        -:  298:                } else {
+        -:  299:                    StringClass replace_content =
+        -:  300:                        it_string_to_replace->substr(0, wildcard_pos_replace)
+        -:  301:                        + str.substr(found_begin + wildcard_pos,
+        -:  302:                                     found_end - found_begin - wildcard_pos)
+        -:  303:                        + it_string_to_replace->substr(wildcard_pos_replace+1) ;
+        -:  304:                    str.replace(
+        -:  305:                        found_begin,
+        -:  306:                        found_end + (it_string_to_find->size() - wildcard_pos - 1 ) - found_begin,
+        -:  307:                        replace_content);
+        -:  308:
+        -:  309:                }
+        -:  310:            }
+        -:  311:
+        -:  312:            // may adapt the restart to the replacement and be more efficient
+        -:  313:            found_begin = str.find( it_string_to_find->substr(0, wildcard_pos), found_begin + 1 );
+        -:  314:       }
+        -:  315:    }
+        -:  316:
+        -:  317:    return str;
+        -:  318:}
+        -:  319:
+        -:  320:} // namespace utils
+        -:  321:} // namespace unit_test
+        -:  322:} // namespace boost
+        -:  323:
+        -:  324:#include <boost/test/detail/enable_warnings.hpp>
+        -:  325:
+        -:  326:#endif // BOOST_TEST_UTILS_ALGORITHM_HPP

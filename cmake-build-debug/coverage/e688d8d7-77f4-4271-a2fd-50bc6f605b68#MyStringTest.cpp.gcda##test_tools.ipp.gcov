@@ -1,0 +1,2014 @@
+        -:    0:Source:F:/Files/vcpkg/installed/x86-windows/include/boost/test/impl/test_tools.ipp
+        -:    0:Graph:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcno
+        -:    0:Data:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1://  (C) Copyright Gennadiy Rozental 2001.
+        -:    2://  Distributed under the Boost Software License, Version 1.0.
+        -:    3://  (See accompanying file LICENSE_1_0.txt or copy at
+        -:    4://  http://www.boost.org/LICENSE_1_0.txt)
+        -:    5:
+        -:    6://  See http://www.boost.org/libs/test for the library home page.
+        -:    7://
+        -:    8://  File        : $RCSfile$
+        -:    9://
+        -:   10://  Version     : $Revision$
+        -:   11://
+        -:   12://  Description : supplies offline implementation for the Test Tools
+        -:   13:// ***************************************************************************
+        -:   14:
+        -:   15:#ifndef BOOST_TEST_TEST_TOOLS_IPP_012205GER
+        -:   16:#define BOOST_TEST_TEST_TOOLS_IPP_012205GER
+        -:   17:
+        -:   18:// Boost.Test
+        -:   19:#include <boost/test/test_tools.hpp>
+        -:   20:#include <boost/test/unit_test_log.hpp>
+        -:   21:#include <boost/test/tools/context.hpp>
+        -:   22:#include <boost/test/tools/output_test_stream.hpp>
+        -:   23:
+        -:   24:#include <boost/test/tools/detail/fwd.hpp>
+        -:   25:#include <boost/test/tools/detail/print_helper.hpp>
+        -:   26:
+        -:   27:#include <boost/test/framework.hpp>
+        -:   28:#include <boost/test/tree/test_unit.hpp>
+        -:   29:#include <boost/test/execution_monitor.hpp> // execution_aborted
+        -:   30:
+        -:   31:#include <boost/test/detail/throw_exception.hpp>
+        -:   32:
+        -:   33:#include <boost/test/utils/algorithm.hpp>
+        -:   34:
+        -:   35:// Boost
+        -:   36:#include <boost/config.hpp>
+        -:   37:
+        -:   38:// STL
+        -:   39:#include <fstream>
+        -:   40:#include <string>
+        -:   41:#include <cstring>
+        -:   42:#include <cctype>
+        -:   43:#include <cwchar>
+        -:   44:#include <stdexcept>
+        -:   45:#include <vector>
+        -:   46:#include <utility>
+        -:   47:#include <ios>
+        -:   48:
+        -:   49:// !! should we use #include <cstdarg>
+        -:   50:#include <stdarg.h>
+        -:   51:
+        -:   52:#include <boost/test/detail/suppress_warnings.hpp>
+        -:   53:
+        -:   54://____________________________________________________________________________//
+        -:   55:
+        -:   56:# ifdef BOOST_NO_STDC_NAMESPACE
+        -:   57:namespace std { using ::strcmp; using ::strlen; using ::isprint; }
+        -:   58:#if !defined( BOOST_NO_CWCHAR )
+        -:   59:namespace std { using ::wcscmp; }
+        -:   60:#endif
+        -:   61:# endif
+        -:   62:
+        -:   63:
+        -:   64:namespace boost {
+        -:   65:namespace unit_test {
+        -:   66:  // local static variable, needed here for visibility reasons
+        -:   67:  lazy_ostream lazy_ostream::inst = lazy_ostream();
+        -:   68:}}
+        -:   69:
+        -:   70:namespace boost {
+        -:   71:namespace test_tools {
+        -:   72:namespace tt_detail {
+        -:   73:
+        -:   74:// ************************************************************************** //
+        -:   75:// **************                print_log_value               ************** //
+        -:   76:// ************************************************************************** //
+        -:   77:
+        -:   78:void
+    #####:   79:print_log_value<bool>::operator()( std::ostream& ostr, bool t )
+        -:   80:{
+    #####:   81:     ostr << std::boolalpha << t;
+    %%%%%:   81-block  0
+    #####:   82:}
+        -:   83:
+        -:   84:void
+    #####:   85:print_log_value<char>::operator()( std::ostream& ostr, char t )
+        -:   86:{
+    #####:   87:    if( (std::isprint)( static_cast<unsigned char>(t) ) )
+    %%%%%:   87-block  0
+    #####:   88:        ostr << '\'' << t << '\'';
+    %%%%%:   88-block  0
+        -:   89:    else
+    #####:   90:        ostr << std::hex
+    %%%%%:   90-block  0
+        -:   91:#if BOOST_TEST_USE_STD_LOCALE
+    #####:   92:        << std::showbase
+        -:   93:#else
+        -:   94:        << "0x"
+        -:   95:#endif
+    #####:   96:        << static_cast<int>(t);
+    #####:   97:}
+        -:   98:
+        -:   99://____________________________________________________________________________//
+        -:  100:
+        -:  101:void
+    #####:  102:print_log_value<unsigned char>::operator()( std::ostream& ostr, unsigned char t )
+        -:  103:{
+    #####:  104:    ostr << std::hex
+    %%%%%:  104-block  0
+        -:  105:        // showbase is only available for new style streams:
+        -:  106:#if BOOST_TEST_USE_STD_LOCALE
+    #####:  107:        << std::showbase
+        -:  108:#else
+        -:  109:        << "0x"
+        -:  110:#endif
+    #####:  111:        << static_cast<int>(t);
+    #####:  112:}
+        -:  113:
+        -:  114://____________________________________________________________________________//
+        -:  115:
+        -:  116:void
+    #####:  117:print_log_value<char const*>::operator()( std::ostream& ostr, char const* t )
+        -:  118:{
+    #####:  119:    ostr << ( t ? t : "null string" );
+    %%%%%:  119-block  0
+    %%%%%:  119-block  1
+    %%%%%:  119-block  2
+    %%%%%:  119-block  3
+    #####:  120:}
+        -:  121:
+        -:  122://____________________________________________________________________________//
+        -:  123:
+        -:  124:void
+    #####:  125:print_log_value<wchar_t const*>::operator()( std::ostream& ostr, wchar_t const* t )
+        -:  126:{
+    #####:  127:    ostr << ( t ? t : L"null string" );
+    %%%%%:  127-block  0
+    %%%%%:  127-block  1
+    %%%%%:  127-block  2
+    %%%%%:  127-block  3
+    #####:  128:}
+        -:  129:
+        -:  130://____________________________________________________________________________//
+        -:  131:
+        -:  132:// ************************************************************************** //
+        -:  133:// **************            TOOL BOX Implementation           ************** //
+        -:  134:// ************************************************************************** //
+        -:  135:
+        -:  136:using ::boost::unit_test::lazy_ostream;
+        -:  137:
+        -:  138:static char const* check_str [] = { " == ", " != ", " < " , " <= ", " > " , " >= " };
+        -:  139:static char const* rever_str [] = { " != ", " == ", " >= ", " > " , " <= ", " < "  };
+        -:  140:
+        -:  141:template<typename OutStream>
+        -:  142:void
+      56*:  143:format_report( OutStream& os, assertion_result const& pr, unit_test::lazy_ostream const& assertion_descr,
+        -:  144:               tool_level tl, check_type ct,
+        -:  145:               std::size_t num_args, va_list args,
+        -:  146:               char const*  prefix, char const*  suffix )
+        -:  147:{
+        -:  148:    using namespace unit_test;
+        -:  149:
+      56*:  150:    switch( ct ) {
+    #####:  151:    case CHECK_PRED:
+    #####:  152:        os << prefix << assertion_descr << suffix;
+        -:  153:
+    #####:  154:        if( !pr.has_empty_message() )
+    #####:  155:            os << ". " << pr.message();
+    #####:  156:        break;
+        -:  157:
+    #####:  158:    case CHECK_BUILT_ASSERTION: {
+    #####:  159:        os << prefix << assertion_descr << suffix;
+        -:  160:
+    #####:  161:        if( tl != PASS ) {
+    #####:  162:            const_string details_message = pr.message();
+        -:  163:
+    #####:  164:            if( !details_message.is_empty() ) {
+    #####:  165:                os << details_message;
+        -:  166:            }
+        -:  167:        }
+    #####:  168:        break;
+        -:  169:    }
+        -:  170:
+       4*:  171:    case CHECK_MSG:
+       4*:  172:        if( tl == PASS )
+       4*:  173:            os << prefix << "'" << assertion_descr << "'" << suffix;
+        -:  174:        else
+    #####:  175:            os << assertion_descr;
+        -:  176:
+       4*:  177:        if( !pr.has_empty_message() )
+    #####:  178:            os << ". " << pr.message();
+       4*:  179:        break;
+        -:  180:
+      52*:  181:    case CHECK_EQUAL:
+        -:  182:    case CHECK_NE:
+        -:  183:    case CHECK_LT:
+        -:  184:    case CHECK_LE:
+        -:  185:    case CHECK_GT:
+        -:  186:    case CHECK_GE: {
+      52*:  187:        char const*         arg1_descr  = va_arg( args, char const* );
+      52*:  188:        lazy_ostream const* arg1_val    = va_arg( args, lazy_ostream const* );
+      52*:  189:        char const*         arg2_descr  = va_arg( args, char const* );
+      52*:  190:        lazy_ostream const* arg2_val    = va_arg( args, lazy_ostream const* );
+        -:  191:
+      52*:  192:        os << prefix << arg1_descr << check_str[ct-CHECK_EQUAL] << arg2_descr << suffix;
+        -:  193:
+      52*:  194:        if( tl != PASS )
+    #####:  195:            os << " [" << *arg1_val << rever_str[ct-CHECK_EQUAL] << *arg2_val << "]" ;
+        -:  196:
+      52*:  197:        if( !pr.has_empty_message() )
+    #####:  198:            os << ". " << pr.message();
+      52*:  199:        break;
+        -:  200:    }
+        -:  201:
+    #####:  202:    case CHECK_CLOSE:
+        -:  203:    case CHECK_CLOSE_FRACTION: {
+    #####:  204:        char const*         arg1_descr  = va_arg( args, char const* );
+    #####:  205:        lazy_ostream const* arg1_val    = va_arg( args, lazy_ostream const* );
+    #####:  206:        char const*         arg2_descr  = va_arg( args, char const* );
+    #####:  207:        lazy_ostream const* arg2_val    = va_arg( args, lazy_ostream const* );
+    #####:  208:        /* toler_descr = */               va_arg( args, char const* );
+    #####:  209:        lazy_ostream const* toler_val   = va_arg( args, lazy_ostream const* );
+        -:  210:
+    #####:  211:        os << "difference{" << pr.message()
+    #####:  212:                            << "} between " << arg1_descr << "{" << *arg1_val
+    #####:  213:                            << "} and "               << arg2_descr << "{" << *arg2_val
+    #####:  214:                            << ( tl == PASS ? "} doesn't exceed " : "} exceeds " )
+    #####:  215:                            << *toler_val;
+    #####:  216:        if( ct == CHECK_CLOSE )
+    #####:  217:            os << "%";
+    #####:  218:        break;
+        -:  219:    }
+    #####:  220:    case CHECK_SMALL: {
+    #####:  221:        char const*         arg1_descr  = va_arg( args, char const* );
+    #####:  222:        lazy_ostream const* arg1_val    = va_arg( args, lazy_ostream const* );
+    #####:  223:        /* toler_descr = */               va_arg( args, char const* );
+    #####:  224:        lazy_ostream const* toler_val   = va_arg( args, lazy_ostream const* );
+        -:  225:
+    #####:  226:        os << "absolute value of " << arg1_descr << "{" << *arg1_val << "}"
+    #####:  227:                                   << ( tl == PASS ? " doesn't exceed " : " exceeds " )
+    #####:  228:                                   << *toler_val;
+        -:  229:
+    #####:  230:        if( !pr.has_empty_message() )
+    #####:  231:            os << ". " << pr.message();
+    #####:  232:        break;
+        -:  233:    }
+        -:  234:
+    #####:  235:    case CHECK_PRED_WITH_ARGS: {
+    #####:  236:        std::vector< std::pair<char const*, lazy_ostream const*> > args_copy;
+    #####:  237:        args_copy.reserve( num_args );
+    #####:  238:        for( std::size_t i = 0; i < num_args; ++i ) {
+    #####:  239:            char const* desc = va_arg( args, char const* );
+    #####:  240:            lazy_ostream const* value = va_arg( args, lazy_ostream const* );
+    #####:  241:            args_copy.push_back( std::make_pair( desc, value ) );
+        -:  242:        }
+        -:  243:
+    #####:  244:        os << prefix << assertion_descr;
+        -:  245:
+        -:  246:        // print predicate call description
+    #####:  247:        os << "( ";
+    #####:  248:        for( std::size_t i = 0; i < num_args; ++i ) {
+    #####:  249:            os << args_copy[i].first;
+        -:  250:
+    #####:  251:            if( i != num_args-1 )
+    #####:  252:                os << ", ";
+        -:  253:        }
+    #####:  254:        os << " )" << suffix;
+        -:  255:
+    #####:  256:        if( tl != PASS ) {
+    #####:  257:            os << " for ( ";
+    #####:  258:            for( std::size_t i = 0; i < num_args; ++i ) {
+    #####:  259:                os << *args_copy[i].second;
+        -:  260:
+    #####:  261:                if( i != num_args-1 )
+    #####:  262:                    os << ", ";
+        -:  263:            }
+    #####:  264:            os << " )";
+        -:  265:        }
+        -:  266:
+    #####:  267:        if( !pr.has_empty_message() )
+    #####:  268:            os << ". " << pr.message();
+    #####:  269:        break;
+        -:  270:    }
+        -:  271:
+    #####:  272:    case CHECK_EQUAL_COLL: {
+    #####:  273:        char const* left_begin_descr    = va_arg( args, char const* );
+    #####:  274:        char const* left_end_descr      = va_arg( args, char const* );
+    #####:  275:        char const* right_begin_descr   = va_arg( args, char const* );
+    #####:  276:        char const* right_end_descr     = va_arg( args, char const* );
+        -:  277:
+    #####:  278:        os << prefix << "{ " << left_begin_descr  << ", " << left_end_descr  << " } == { "
+    #####:  279:                             << right_begin_descr << ", " << right_end_descr << " }"
+    #####:  280:           << suffix;
+        -:  281:
+    #####:  282:        if( !pr.has_empty_message() )
+    #####:  283:            os << ". " << pr.message();
+    #####:  284:        break;
+        -:  285:    }
+        -:  286:
+    #####:  287:    case CHECK_BITWISE_EQUAL: {
+    #####:  288:        char const* left_descr    = va_arg( args, char const* );
+    #####:  289:        char const* right_descr   = va_arg( args, char const* );
+        -:  290:
+    #####:  291:        os << prefix << left_descr  << " =.= " << right_descr << suffix;
+        -:  292:
+    #####:  293:        if( !pr.has_empty_message() )
+    #####:  294:            os << ". " << pr.message();
+    #####:  295:        break;
+        -:  296:    }
+        -:  297:    }
+      56*:  298:}
+------------------
+_ZN5boost10test_tools9tt_detail13format_reportINSt7__cxx1119basic_ostringstreamIcSt11char_traitsIcESaIcEEEEEvRT_RKNS0_16assertion_resultERKNS_9unit_test12lazy_ostreamENS1_10tool_levelENS1_10check_typeEyPcPKcSM_:
+    #####:  143:format_report( OutStream& os, assertion_result const& pr, unit_test::lazy_ostream const& assertion_descr,
+        -:  144:               tool_level tl, check_type ct,
+        -:  145:               std::size_t num_args, va_list args,
+        -:  146:               char const*  prefix, char const*  suffix )
+        -:  147:{
+        -:  148:    using namespace unit_test;
+        -:  149:
+    #####:  150:    switch( ct ) {
+    %%%%%:  150-block  0
+    #####:  151:    case CHECK_PRED:
+    #####:  152:        os << prefix << assertion_descr << suffix;
+    %%%%%:  152-block  0
+        -:  153:
+    #####:  154:        if( !pr.has_empty_message() )
+    #####:  155:            os << ". " << pr.message();
+    %%%%%:  155-block  0
+    %%%%%:  155-block  1
+    $$$$$:  155-block  2
+    #####:  156:        break;
+    %%%%%:  156-block  0
+        -:  157:
+    #####:  158:    case CHECK_BUILT_ASSERTION: {
+    #####:  159:        os << prefix << assertion_descr << suffix;
+    %%%%%:  159-block  0
+        -:  160:
+    #####:  161:        if( tl != PASS ) {
+    #####:  162:            const_string details_message = pr.message();
+    %%%%%:  162-block  0
+        -:  163:
+    #####:  164:            if( !details_message.is_empty() ) {
+    %%%%%:  164-block  0
+    #####:  165:                os << details_message;
+    %%%%%:  165-block  0
+        -:  166:            }
+        -:  167:        }
+    #####:  168:        break;
+    %%%%%:  168-block  0
+        -:  169:    }
+        -:  170:
+    #####:  171:    case CHECK_MSG:
+    #####:  172:        if( tl == PASS )
+    %%%%%:  172-block  0
+    #####:  173:            os << prefix << "'" << assertion_descr << "'" << suffix;
+    %%%%%:  173-block  0
+        -:  174:        else
+    #####:  175:            os << assertion_descr;
+    %%%%%:  175-block  0
+        -:  176:
+    #####:  177:        if( !pr.has_empty_message() )
+    %%%%%:  177-block  0
+    #####:  178:            os << ". " << pr.message();
+    %%%%%:  178-block  0
+    %%%%%:  178-block  1
+    $$$$$:  178-block  2
+    #####:  179:        break;
+    %%%%%:  179-block  0
+        -:  180:
+    #####:  181:    case CHECK_EQUAL:
+        -:  182:    case CHECK_NE:
+        -:  183:    case CHECK_LT:
+        -:  184:    case CHECK_LE:
+        -:  185:    case CHECK_GT:
+        -:  186:    case CHECK_GE: {
+    #####:  187:        char const*         arg1_descr  = va_arg( args, char const* );
+    %%%%%:  187-block  0
+    #####:  188:        lazy_ostream const* arg1_val    = va_arg( args, lazy_ostream const* );
+    #####:  189:        char const*         arg2_descr  = va_arg( args, char const* );
+    #####:  190:        lazy_ostream const* arg2_val    = va_arg( args, lazy_ostream const* );
+        -:  191:
+    #####:  192:        os << prefix << arg1_descr << check_str[ct-CHECK_EQUAL] << arg2_descr << suffix;
+        -:  193:
+    #####:  194:        if( tl != PASS )
+    #####:  195:            os << " [" << *arg1_val << rever_str[ct-CHECK_EQUAL] << *arg2_val << "]" ;
+    %%%%%:  195-block  0
+        -:  196:
+    #####:  197:        if( !pr.has_empty_message() )
+    %%%%%:  197-block  0
+    #####:  198:            os << ". " << pr.message();
+    %%%%%:  198-block  0
+    %%%%%:  198-block  1
+    $$$$$:  198-block  2
+    #####:  199:        break;
+    %%%%%:  199-block  0
+        -:  200:    }
+        -:  201:
+    #####:  202:    case CHECK_CLOSE:
+        -:  203:    case CHECK_CLOSE_FRACTION: {
+    #####:  204:        char const*         arg1_descr  = va_arg( args, char const* );
+    %%%%%:  204-block  0
+    #####:  205:        lazy_ostream const* arg1_val    = va_arg( args, lazy_ostream const* );
+    #####:  206:        char const*         arg2_descr  = va_arg( args, char const* );
+    #####:  207:        lazy_ostream const* arg2_val    = va_arg( args, lazy_ostream const* );
+    #####:  208:        /* toler_descr = */               va_arg( args, char const* );
+    #####:  209:        lazy_ostream const* toler_val   = va_arg( args, lazy_ostream const* );
+        -:  210:
+        -:  211:        os << "difference{" << pr.message()
+    #####:  212:                            << "} between " << arg1_descr << "{" << *arg1_val
+    %%%%%:  212-block  0
+    %%%%%:  212-block  1
+    %%%%%:  212-block  2
+    %%%%%:  212-block  3
+    $$$$$:  212-block  4
+    #####:  213:                            << "} and "               << arg2_descr << "{" << *arg2_val
+    %%%%%:  213-block  0
+    %%%%%:  213-block  1
+    %%%%%:  213-block  2
+    %%%%%:  213-block  3
+    #####:  214:                            << ( tl == PASS ? "} doesn't exceed " : "} exceeds " )
+    %%%%%:  214-block  0
+    %%%%%:  214-block  1
+    %%%%%:  214-block  2
+    %%%%%:  214-block  3
+    #####:  215:                            << *toler_val;
+    %%%%%:  215-block  0
+    #####:  216:        if( ct == CHECK_CLOSE )
+    %%%%%:  216-block  0
+    #####:  217:            os << "%";
+    %%%%%:  217-block  0
+    #####:  218:        break;
+    %%%%%:  218-block  0
+        -:  219:    }
+    #####:  220:    case CHECK_SMALL: {
+    #####:  221:        char const*         arg1_descr  = va_arg( args, char const* );
+    %%%%%:  221-block  0
+    #####:  222:        lazy_ostream const* arg1_val    = va_arg( args, lazy_ostream const* );
+    #####:  223:        /* toler_descr = */               va_arg( args, char const* );
+    #####:  224:        lazy_ostream const* toler_val   = va_arg( args, lazy_ostream const* );
+        -:  225:
+    #####:  226:        os << "absolute value of " << arg1_descr << "{" << *arg1_val << "}"
+    #####:  227:                                   << ( tl == PASS ? " doesn't exceed " : " exceeds " )
+    %%%%%:  227-block  0
+    %%%%%:  227-block  1
+    %%%%%:  227-block  2
+    #####:  228:                                   << *toler_val;
+        -:  229:
+    #####:  230:        if( !pr.has_empty_message() )
+    #####:  231:            os << ". " << pr.message();
+    %%%%%:  231-block  0
+    %%%%%:  231-block  1
+    $$$$$:  231-block  2
+    #####:  232:        break;
+    %%%%%:  232-block  0
+        -:  233:    }
+        -:  234:
+    #####:  235:    case CHECK_PRED_WITH_ARGS: {
+    #####:  236:        std::vector< std::pair<char const*, lazy_ostream const*> > args_copy;
+    %%%%%:  236-block  0
+    %%%%%:  236-block  1
+    $$$$$:  236-block  2
+    #####:  237:        args_copy.reserve( num_args );
+    #####:  238:        for( std::size_t i = 0; i < num_args; ++i ) {
+    %%%%%:  238-block  0
+    %%%%%:  238-block  1
+    #####:  239:            char const* desc = va_arg( args, char const* );
+    %%%%%:  239-block  0
+    #####:  240:            lazy_ostream const* value = va_arg( args, lazy_ostream const* );
+    #####:  241:            args_copy.push_back( std::make_pair( desc, value ) );
+    %%%%%:  241-block  0
+    %%%%%:  241-block  1
+    $$$$$:  241-block  2
+        -:  242:        }
+        -:  243:
+    #####:  244:        os << prefix << assertion_descr;
+    %%%%%:  244-block  0
+    %%%%%:  244-block  1
+        -:  245:
+        -:  246:        // print predicate call description
+    #####:  247:        os << "( ";
+    %%%%%:  247-block  0
+    #####:  248:        for( std::size_t i = 0; i < num_args; ++i ) {
+    %%%%%:  248-block  0
+    %%%%%:  248-block  1
+    %%%%%:  248-block  2
+    #####:  249:            os << args_copy[i].first;
+    %%%%%:  249-block  0
+        -:  250:
+    #####:  251:            if( i != num_args-1 )
+    %%%%%:  251-block  0
+    #####:  252:                os << ", ";
+    %%%%%:  252-block  0
+        -:  253:        }
+    #####:  254:        os << " )" << suffix;
+    %%%%%:  254-block  0
+    %%%%%:  254-block  1
+        -:  255:
+    #####:  256:        if( tl != PASS ) {
+    %%%%%:  256-block  0
+    #####:  257:            os << " for ( ";
+    %%%%%:  257-block  0
+    #####:  258:            for( std::size_t i = 0; i < num_args; ++i ) {
+    %%%%%:  258-block  0
+    %%%%%:  258-block  1
+    %%%%%:  258-block  2
+    #####:  259:                os << *args_copy[i].second;
+    %%%%%:  259-block  0
+        -:  260:
+    #####:  261:                if( i != num_args-1 )
+    %%%%%:  261-block  0
+    #####:  262:                    os << ", ";
+    %%%%%:  262-block  0
+        -:  263:            }
+    #####:  264:            os << " )";
+    %%%%%:  264-block  0
+        -:  265:        }
+        -:  266:
+    #####:  267:        if( !pr.has_empty_message() )
+    %%%%%:  267-block  0
+    #####:  268:            os << ". " << pr.message();
+    %%%%%:  268-block  0
+    %%%%%:  268-block  1
+    %%%%%:  268-block  2
+    %%%%%:  268-block  3
+    $$$$$:  268-block  4
+    #####:  269:        break;
+    %%%%%:  269-block  0
+        -:  270:    }
+        -:  271:
+    #####:  272:    case CHECK_EQUAL_COLL: {
+    #####:  273:        char const* left_begin_descr    = va_arg( args, char const* );
+    %%%%%:  273-block  0
+    #####:  274:        char const* left_end_descr      = va_arg( args, char const* );
+    #####:  275:        char const* right_begin_descr   = va_arg( args, char const* );
+    #####:  276:        char const* right_end_descr     = va_arg( args, char const* );
+        -:  277:
+        -:  278:        os << prefix << "{ " << left_begin_descr  << ", " << left_end_descr  << " } == { "
+        -:  279:                             << right_begin_descr << ", " << right_end_descr << " }"
+    #####:  280:           << suffix;
+        -:  281:
+    #####:  282:        if( !pr.has_empty_message() )
+    #####:  283:            os << ". " << pr.message();
+    %%%%%:  283-block  0
+    %%%%%:  283-block  1
+    $$$$$:  283-block  2
+    #####:  284:        break;
+    %%%%%:  284-block  0
+        -:  285:    }
+        -:  286:
+    #####:  287:    case CHECK_BITWISE_EQUAL: {
+    #####:  288:        char const* left_descr    = va_arg( args, char const* );
+    %%%%%:  288-block  0
+    #####:  289:        char const* right_descr   = va_arg( args, char const* );
+        -:  290:
+    #####:  291:        os << prefix << left_descr  << " =.= " << right_descr << suffix;
+        -:  292:
+    #####:  293:        if( !pr.has_empty_message() )
+    #####:  294:            os << ". " << pr.message();
+    %%%%%:  294-block  0
+    %%%%%:  294-block  1
+    #####:  295:        break;
+    %%%%%:  295-block  0
+        -:  296:    }
+        -:  297:    }
+    #####:  298:}
+    %%%%%:  298-block  0
+------------------
+_ZN5boost10test_tools9tt_detail13format_reportINS_9unit_test15unit_test_log_tEEEvRT_RKNS0_16assertion_resultERKNS3_12lazy_ostreamENS1_10tool_levelENS1_10check_typeEyPcPKcSH_:
+       56:  143:format_report( OutStream& os, assertion_result const& pr, unit_test::lazy_ostream const& assertion_descr,
+        -:  144:               tool_level tl, check_type ct,
+        -:  145:               std::size_t num_args, va_list args,
+        -:  146:               char const*  prefix, char const*  suffix )
+        -:  147:{
+        -:  148:    using namespace unit_test;
+        -:  149:
+       56:  150:    switch( ct ) {
+       56:  150-block  0
+    #####:  151:    case CHECK_PRED:
+    #####:  152:        os << prefix << assertion_descr << suffix;
+    %%%%%:  152-block  0
+    %%%%%:  152-block  1
+    %%%%%:  152-block  2
+    %%%%%:  152-block  3
+    $$$$$:  152-block  4
+    $$$$$:  152-block  5
+        -:  153:
+    #####:  154:        if( !pr.has_empty_message() )
+    %%%%%:  154-block  0
+    #####:  155:            os << ". " << pr.message();
+    %%%%%:  155-block  0
+    %%%%%:  155-block  1
+    %%%%%:  155-block  2
+    %%%%%:  155-block  3
+    $$$$$:  155-block  4
+    $$$$$:  155-block  5
+    #####:  156:        break;
+    %%%%%:  156-block  0
+        -:  157:
+    #####:  158:    case CHECK_BUILT_ASSERTION: {
+    #####:  159:        os << prefix << assertion_descr << suffix;
+    %%%%%:  159-block  0
+    %%%%%:  159-block  1
+    %%%%%:  159-block  2
+    %%%%%:  159-block  3
+    $$$$$:  159-block  4
+    $$$$$:  159-block  5
+        -:  160:
+    #####:  161:        if( tl != PASS ) {
+    %%%%%:  161-block  0
+    #####:  162:            const_string details_message = pr.message();
+    %%%%%:  162-block  0
+        -:  163:
+    #####:  164:            if( !details_message.is_empty() ) {
+    %%%%%:  164-block  0
+    #####:  165:                os << details_message;
+    %%%%%:  165-block  0
+    %%%%%:  165-block  1
+    $$$$$:  165-block  2
+        -:  166:            }
+        -:  167:        }
+    #####:  168:        break;
+    %%%%%:  168-block  0
+        -:  169:    }
+        -:  170:
+        4:  171:    case CHECK_MSG:
+        4:  172:        if( tl == PASS )
+        4:  172-block  0
+        4:  173:            os << prefix << "'" << assertion_descr << "'" << suffix;
+        4:  173-block  0
+        4:  173-block  1
+        4:  173-block  2
+        4:  173-block  3
+        4:  173-block  4
+        4:  173-block  5
+        4:  173-block  6
+        4:  173-block  7
+        4:  173-block  8
+    $$$$$:  173-block  9
+    $$$$$:  173-block 10
+    $$$$$:  173-block 11
+    $$$$$:  173-block 12
+        -:  174:        else
+    #####:  175:            os << assertion_descr;
+    %%%%%:  175-block  0
+        -:  176:
+        4:  177:        if( !pr.has_empty_message() )
+        4:  177-block  0
+    #####:  178:            os << ". " << pr.message();
+    %%%%%:  178-block  0
+    %%%%%:  178-block  1
+    %%%%%:  178-block  2
+    %%%%%:  178-block  3
+    $$$$$:  178-block  4
+    $$$$$:  178-block  5
+        4:  179:        break;
+        4:  179-block  0
+        -:  180:
+       52:  181:    case CHECK_EQUAL:
+        -:  182:    case CHECK_NE:
+        -:  183:    case CHECK_LT:
+        -:  184:    case CHECK_LE:
+        -:  185:    case CHECK_GT:
+        -:  186:    case CHECK_GE: {
+       52:  187:        char const*         arg1_descr  = va_arg( args, char const* );
+       52:  187-block  0
+       52:  188:        lazy_ostream const* arg1_val    = va_arg( args, lazy_ostream const* );
+       52:  189:        char const*         arg2_descr  = va_arg( args, char const* );
+       52:  190:        lazy_ostream const* arg2_val    = va_arg( args, lazy_ostream const* );
+        -:  191:
+       52:  192:        os << prefix << arg1_descr << check_str[ct-CHECK_EQUAL] << arg2_descr << suffix;
+       52:  192-block  0
+       52:  192-block  1
+       52:  192-block  2
+       52:  192-block  3
+       52:  192-block  4
+       52:  192-block  5
+       52:  192-block  6
+       52:  192-block  7
+    $$$$$:  192-block  8
+    $$$$$:  192-block  9
+    $$$$$:  192-block 10
+    $$$$$:  192-block 11
+    $$$$$:  192-block 12
+        -:  193:
+       52:  194:        if( tl != PASS )
+       52:  194-block  0
+    #####:  195:            os << " [" << *arg1_val << rever_str[ct-CHECK_EQUAL] << *arg2_val << "]" ;
+    %%%%%:  195-block  0
+    %%%%%:  195-block  1
+    %%%%%:  195-block  2
+    %%%%%:  195-block  3
+    %%%%%:  195-block  4
+    %%%%%:  195-block  5
+    %%%%%:  195-block  6
+    %%%%%:  195-block  7
+    $$$$$:  195-block  8
+    $$$$$:  195-block  9
+    $$$$$:  195-block 10
+        -:  196:
+       52:  197:        if( !pr.has_empty_message() )
+       52:  197-block  0
+    #####:  198:            os << ". " << pr.message();
+    %%%%%:  198-block  0
+    %%%%%:  198-block  1
+    %%%%%:  198-block  2
+    %%%%%:  198-block  3
+    $$$$$:  198-block  4
+    $$$$$:  198-block  5
+       52:  199:        break;
+       52:  199-block  0
+        -:  200:    }
+        -:  201:
+    #####:  202:    case CHECK_CLOSE:
+        -:  203:    case CHECK_CLOSE_FRACTION: {
+    #####:  204:        char const*         arg1_descr  = va_arg( args, char const* );
+    %%%%%:  204-block  0
+    #####:  205:        lazy_ostream const* arg1_val    = va_arg( args, lazy_ostream const* );
+    #####:  206:        char const*         arg2_descr  = va_arg( args, char const* );
+    #####:  207:        lazy_ostream const* arg2_val    = va_arg( args, lazy_ostream const* );
+    #####:  208:        /* toler_descr = */               va_arg( args, char const* );
+    #####:  209:        lazy_ostream const* toler_val   = va_arg( args, lazy_ostream const* );
+        -:  210:
+    #####:  211:        os << "difference{" << pr.message()
+    %%%%%:  211-block  0
+    %%%%%:  211-block  1
+    $$$$$:  211-block  2
+    $$$$$:  211-block  3
+    #####:  212:                            << "} between " << arg1_descr << "{" << *arg1_val
+    %%%%%:  212-block  0
+    %%%%%:  212-block  1
+    %%%%%:  212-block  2
+    %%%%%:  212-block  3
+    %%%%%:  212-block  4
+    %%%%%:  212-block  5
+    %%%%%:  212-block  6
+    $$$$$:  212-block  7
+    $$$$$:  212-block  8
+    $$$$$:  212-block  9
+    #####:  213:                            << "} and "               << arg2_descr << "{" << *arg2_val
+    %%%%%:  213-block  0
+    %%%%%:  213-block  1
+    %%%%%:  213-block  2
+    %%%%%:  213-block  3
+    %%%%%:  213-block  4
+    %%%%%:  213-block  5
+    %%%%%:  213-block  6
+    $$$$$:  213-block  7
+    $$$$$:  213-block  8
+    $$$$$:  213-block  9
+    #####:  214:                            << ( tl == PASS ? "} doesn't exceed " : "} exceeds " )
+    %%%%%:  214-block  0
+    %%%%%:  214-block  1
+    %%%%%:  214-block  2
+    %%%%%:  214-block  3
+    %%%%%:  214-block  4
+    $$$$$:  214-block  5
+    #####:  215:                            << *toler_val;
+    %%%%%:  215-block  0
+    #####:  216:        if( ct == CHECK_CLOSE )
+    %%%%%:  216-block  0
+    #####:  217:            os << "%";
+    %%%%%:  217-block  0
+    %%%%%:  217-block  1
+    $$$$$:  217-block  2
+    #####:  218:        break;
+    %%%%%:  218-block  0
+        -:  219:    }
+    #####:  220:    case CHECK_SMALL: {
+    #####:  221:        char const*         arg1_descr  = va_arg( args, char const* );
+    %%%%%:  221-block  0
+    #####:  222:        lazy_ostream const* arg1_val    = va_arg( args, lazy_ostream const* );
+    #####:  223:        /* toler_descr = */               va_arg( args, char const* );
+    #####:  224:        lazy_ostream const* toler_val   = va_arg( args, lazy_ostream const* );
+        -:  225:
+    #####:  226:        os << "absolute value of " << arg1_descr << "{" << *arg1_val << "}"
+    %%%%%:  226-block  0
+    %%%%%:  226-block  1
+    %%%%%:  226-block  2
+    %%%%%:  226-block  3
+    %%%%%:  226-block  4
+    %%%%%:  226-block  5
+    %%%%%:  226-block  6
+    $$$$$:  226-block  7
+    $$$$$:  226-block  8
+    $$$$$:  226-block  9
+    $$$$$:  226-block 10
+    #####:  227:                                   << ( tl == PASS ? " doesn't exceed " : " exceeds " )
+    %%%%%:  227-block  0
+    %%%%%:  227-block  1
+    %%%%%:  227-block  2
+    %%%%%:  227-block  3
+    %%%%%:  227-block  4
+    $$$$$:  227-block  5
+    #####:  228:                                   << *toler_val;
+    %%%%%:  228-block  0
+        -:  229:
+    #####:  230:        if( !pr.has_empty_message() )
+    %%%%%:  230-block  0
+    #####:  231:            os << ". " << pr.message();
+    %%%%%:  231-block  0
+    %%%%%:  231-block  1
+    %%%%%:  231-block  2
+    %%%%%:  231-block  3
+    $$$$$:  231-block  4
+    $$$$$:  231-block  5
+    #####:  232:        break;
+    %%%%%:  232-block  0
+        -:  233:    }
+        -:  234:
+    #####:  235:    case CHECK_PRED_WITH_ARGS: {
+    #####:  236:        std::vector< std::pair<char const*, lazy_ostream const*> > args_copy;
+    %%%%%:  236-block  0
+    %%%%%:  236-block  1
+    $$$$$:  236-block  2
+    #####:  237:        args_copy.reserve( num_args );
+    #####:  238:        for( std::size_t i = 0; i < num_args; ++i ) {
+    %%%%%:  238-block  0
+    %%%%%:  238-block  1
+    #####:  239:            char const* desc = va_arg( args, char const* );
+    %%%%%:  239-block  0
+    #####:  240:            lazy_ostream const* value = va_arg( args, lazy_ostream const* );
+    #####:  241:            args_copy.push_back( std::make_pair( desc, value ) );
+    %%%%%:  241-block  0
+    %%%%%:  241-block  1
+    $$$$$:  241-block  2
+        -:  242:        }
+        -:  243:
+    #####:  244:        os << prefix << assertion_descr;
+    %%%%%:  244-block  0
+    %%%%%:  244-block  1
+    %%%%%:  244-block  2
+    $$$$$:  244-block  3
+        -:  245:
+        -:  246:        // print predicate call description
+    #####:  247:        os << "( ";
+    %%%%%:  247-block  0
+    %%%%%:  247-block  1
+    $$$$$:  247-block  2
+    #####:  248:        for( std::size_t i = 0; i < num_args; ++i ) {
+    %%%%%:  248-block  0
+    %%%%%:  248-block  1
+    %%%%%:  248-block  2
+    #####:  249:            os << args_copy[i].first;
+    %%%%%:  249-block  0
+    %%%%%:  249-block  1
+    $$$$$:  249-block  2
+        -:  250:
+    #####:  251:            if( i != num_args-1 )
+    %%%%%:  251-block  0
+    #####:  252:                os << ", ";
+    %%%%%:  252-block  0
+    %%%%%:  252-block  1
+    %%%%%:  252-block  2
+    $$$$$:  252-block  3
+        -:  253:        }
+    #####:  254:        os << " )" << suffix;
+    %%%%%:  254-block  0
+    %%%%%:  254-block  1
+    %%%%%:  254-block  2
+    %%%%%:  254-block  3
+    $$$$$:  254-block  4
+    $$$$$:  254-block  5
+        -:  255:
+    #####:  256:        if( tl != PASS ) {
+    %%%%%:  256-block  0
+    #####:  257:            os << " for ( ";
+    %%%%%:  257-block  0
+    %%%%%:  257-block  1
+    $$$$$:  257-block  2
+    #####:  258:            for( std::size_t i = 0; i < num_args; ++i ) {
+    %%%%%:  258-block  0
+    %%%%%:  258-block  1
+    %%%%%:  258-block  2
+    #####:  259:                os << *args_copy[i].second;
+    %%%%%:  259-block  0
+        -:  260:
+    #####:  261:                if( i != num_args-1 )
+    %%%%%:  261-block  0
+    #####:  262:                    os << ", ";
+    %%%%%:  262-block  0
+    %%%%%:  262-block  1
+    %%%%%:  262-block  2
+    $$$$$:  262-block  3
+        -:  263:            }
+    #####:  264:            os << " )";
+    %%%%%:  264-block  0
+    %%%%%:  264-block  1
+    %%%%%:  264-block  2
+    $$$$$:  264-block  3
+        -:  265:        }
+        -:  266:
+    #####:  267:        if( !pr.has_empty_message() )
+    %%%%%:  267-block  0
+    #####:  268:            os << ". " << pr.message();
+    %%%%%:  268-block  0
+    %%%%%:  268-block  1
+    %%%%%:  268-block  2
+    %%%%%:  268-block  3
+    %%%%%:  268-block  4
+    $$$$$:  268-block  5
+    $$$$$:  268-block  6
+    #####:  269:        break;
+    %%%%%:  269-block  0
+        -:  270:    }
+        -:  271:
+    #####:  272:    case CHECK_EQUAL_COLL: {
+    #####:  273:        char const* left_begin_descr    = va_arg( args, char const* );
+    %%%%%:  273-block  0
+    #####:  274:        char const* left_end_descr      = va_arg( args, char const* );
+    #####:  275:        char const* right_begin_descr   = va_arg( args, char const* );
+    #####:  276:        char const* right_end_descr     = va_arg( args, char const* );
+        -:  277:
+    #####:  278:        os << prefix << "{ " << left_begin_descr  << ", " << left_end_descr  << " } == { "
+    %%%%%:  278-block  0
+    %%%%%:  278-block  1
+    %%%%%:  278-block  2
+    %%%%%:  278-block  3
+    %%%%%:  278-block  4
+    %%%%%:  278-block  5
+    %%%%%:  278-block  6
+    %%%%%:  278-block  7
+    %%%%%:  278-block  8
+    %%%%%:  278-block  9
+    $$$$$:  278-block 10
+    $$$$$:  278-block 11
+    $$$$$:  278-block 12
+    $$$$$:  278-block 13
+    $$$$$:  278-block 14
+    $$$$$:  278-block 15
+    #####:  279:                             << right_begin_descr << ", " << right_end_descr << " }"
+    %%%%%:  279-block  0
+    %%%%%:  279-block  1
+    %%%%%:  279-block  2
+    %%%%%:  279-block  3
+    %%%%%:  279-block  4
+    %%%%%:  279-block  5
+    %%%%%:  279-block  6
+    %%%%%:  279-block  7
+    $$$$$:  279-block  8
+    $$$$$:  279-block  9
+    $$$$$:  279-block 10
+    $$$$$:  279-block 11
+    #####:  280:           << suffix;
+    %%%%%:  280-block  0
+    %%%%%:  280-block  1
+    $$$$$:  280-block  2
+        -:  281:
+    #####:  282:        if( !pr.has_empty_message() )
+    %%%%%:  282-block  0
+    #####:  283:            os << ". " << pr.message();
+    %%%%%:  283-block  0
+    %%%%%:  283-block  1
+    %%%%%:  283-block  2
+    %%%%%:  283-block  3
+    $$$$$:  283-block  4
+    $$$$$:  283-block  5
+    #####:  284:        break;
+    %%%%%:  284-block  0
+        -:  285:    }
+        -:  286:
+    #####:  287:    case CHECK_BITWISE_EQUAL: {
+    #####:  288:        char const* left_descr    = va_arg( args, char const* );
+    %%%%%:  288-block  0
+    #####:  289:        char const* right_descr   = va_arg( args, char const* );
+        -:  290:
+    #####:  291:        os << prefix << left_descr  << " =.= " << right_descr << suffix;
+    %%%%%:  291-block  0
+    %%%%%:  291-block  1
+    %%%%%:  291-block  2
+    %%%%%:  291-block  3
+    %%%%%:  291-block  4
+    %%%%%:  291-block  5
+    %%%%%:  291-block  6
+    %%%%%:  291-block  7
+    $$$$$:  291-block  8
+    $$$$$:  291-block  9
+    $$$$$:  291-block 10
+    $$$$$:  291-block 11
+    $$$$$:  291-block 12
+        -:  292:
+    #####:  293:        if( !pr.has_empty_message() )
+    %%%%%:  293-block  0
+    #####:  294:            os << ". " << pr.message();
+    %%%%%:  294-block  0
+    %%%%%:  294-block  1
+    %%%%%:  294-block  2
+    %%%%%:  294-block  3
+    $$$$$:  294-block  4
+    #####:  295:        break;
+    %%%%%:  295-block  0
+        -:  296:    }
+        -:  297:    }
+       56:  298:}
+       56:  298-block  0
+------------------
+        -:  299:
+        -:  300://____________________________________________________________________________//
+        -:  301:
+        -:  302:bool
+       56:  303:report_assertion( assertion_result const&   ar,
+        -:  304:                  lazy_ostream const&       assertion_descr,
+        -:  305:                  const_string              file_name,
+        -:  306:                  std::size_t               line_num,
+        -:  307:                  tool_level                tl,
+        -:  308:                  check_type                ct,
+        -:  309:                  std::size_t               num_args, ... )
+        -:  310:{
+        -:  311:    using namespace unit_test;
+        -:  312:
+       56:  313:    if( !framework::test_in_progress() ) {
+       56:  313-block  0
+       56:  313-block  1
+        -:  314:        // in case no test is in progress, we do not throw anything:
+        -:  315:        // raising an exception here may result in raising an exception in a destructor of a global fixture
+        -:  316:        // which will abort the process
+        -:  317:        // We flag this as aborted instead
+        -:  318:
+        -:  319:        //BOOST_TEST_I_ASSRT( framework::current_test_case_id() != INV_TEST_UNIT_ID,
+        -:  320:        //                    std::runtime_error( "Can't use testing tools outside of test case implementation." ) );
+        -:  321:
+    #####:  322:        framework::test_aborted();
+    %%%%%:  322-block  0
+    #####:  323:        return false;
+    %%%%%:  323-block  0
+        -:  324:    }
+        -:  325:
+        -:  326:
+       56:  327:    if( !!ar )
+       56:  327-block  0
+       56:  327-block  1
+       56:  328:        tl = PASS;
+       56:  328-block  0
+        -:  329:
+        -:  330:    log_level    ll;
+        -:  331:    char const*  prefix;
+        -:  332:    char const*  suffix;
+        -:  333:
+       56:  334:    switch( tl ) {
+       56:  334-block  0
+       56:  335:    case PASS:
+       56:  336:        ll      = log_successful_tests;
+       56:  337:        prefix  = "check ";
+       56:  338:        suffix  = " has passed";
+       56:  339:        break;
+       56:  339-block  0
+    #####:  340:    case WARN:
+    #####:  341:        ll      = log_warnings;
+    #####:  342:        prefix  = "condition ";
+    #####:  343:        suffix  = " is not satisfied";
+    #####:  344:        break;
+    %%%%%:  344-block  0
+    #####:  345:    case CHECK:
+    #####:  346:        ll      = log_all_errors;
+    #####:  347:        prefix  = "check ";
+    #####:  348:        suffix  = " has failed";
+    #####:  349:        break;
+    %%%%%:  349-block  0
+    #####:  350:    case REQUIRE:
+    #####:  351:        ll      = log_fatal_errors;
+    #####:  352:        prefix  = "critical check ";
+    #####:  353:        suffix  = " has failed";
+    #####:  354:        break;
+    %%%%%:  354-block  0
+    #####:  355:    default:
+    #####:  356:        return true;
+    %%%%%:  356-block  0
+        -:  357:    }
+        -:  358:
+       56:  359:    unit_test_log << unit_test::log::begin( file_name, line_num ) << ll;
+       56:  359-block  0
+       56:  359-block  1
+       56:  359-block  2
+    $$$$$:  359-block  3
+    $$$$$:  359-block  4
+        -:  360:    va_list args;
+       56:  361:    va_start( args, num_args );
+        -:  362:
+       56:  363:    format_report( unit_test_log, ar, assertion_descr, tl, ct, num_args, args, prefix, suffix );
+       56:  363-block  0
+        -:  364:
+       56:  365:    va_end( args );
+       56:  366:    unit_test_log << unit_test::log::end();
+       56:  366-block  0
+    $$$$$:  366-block  1
+        -:  367:
+       56:  368:    switch( tl ) {
+       56:  368-block  0
+       56:  369:    case PASS:
+       56:  370:        framework::assertion_result( AR_PASSED );
+       56:  370-block  0
+       56:  371:        return true;
+       56:  371-block  0
+        -:  372:
+    #####:  373:    case WARN:
+    #####:  374:        framework::assertion_result( AR_TRIGGERED );
+    %%%%%:  374-block  0
+    #####:  375:        return false;
+    %%%%%:  375-block  0
+        -:  376:
+    #####:  377:    case CHECK:
+    #####:  378:        framework::assertion_result( AR_FAILED );
+    %%%%%:  378-block  0
+    #####:  379:        return false;
+    %%%%%:  379-block  0
+        -:  380:
+    #####:  381:    case REQUIRE:
+    #####:  382:        framework::assertion_result( AR_FAILED );
+    %%%%%:  382-block  0
+    #####:  383:        framework::test_unit_aborted( framework::current_test_unit() );
+    %%%%%:  383-block  0
+    %%%%%:  383-block  1
+    #####:  384:        BOOST_TEST_I_THROW( execution_aborted() );
+    %%%%%:  384-block  0
+    $$$$$:  384-block  1
+        -:  385:        // the previous line either throws or aborts and the return below is not reached
+        -:  386:        // return false;
+        -:  387:        BOOST_UNREACHABLE_RETURN(false);
+        -:  388:    }
+        -:  389:
+    #####:  390:    return true;
+    %%%%%:  390-block  0
+        -:  391:}
+        -:  392:
+        -:  393://____________________________________________________________________________//
+        -:  394:
+        -:  395:assertion_result
+    #####:  396:format_assertion_result( const_string expr_val, const_string details )
+        -:  397:{
+    #####:  398:    assertion_result res(false);
+    %%%%%:  398-block  0
+        -:  399:
+    #####:  400:    bool starts_new_line = first_char( expr_val ) == '\n';
+        -:  401:
+    #####:  402:    if( !starts_new_line && !expr_val.is_empty() )
+    %%%%%:  402-block  0
+    %%%%%:  402-block  1
+    %%%%%:  402-block  2
+    %%%%%:  402-block  3
+    #####:  403:        res.message().stream() << " [" << expr_val << "]";
+    %%%%%:  403-block  0
+    %%%%%:  403-block  1
+    %%%%%:  403-block  2
+    %%%%%:  403-block  3
+        -:  404:
+    #####:  405:    if( !details.is_empty() ) {
+    %%%%%:  405-block  0
+    #####:  406:        if( first_char(details) != '[' )
+    %%%%%:  406-block  0
+    #####:  407:            res.message().stream() << ". ";
+    %%%%%:  407-block  0
+    %%%%%:  407-block  1
+        -:  408:        else
+    #####:  409:            res.message().stream() << " ";
+    %%%%%:  409-block  0
+    %%%%%:  409-block  1
+        -:  410:
+    #####:  411:        res.message().stream() << details;
+    %%%%%:  411-block  0
+    %%%%%:  411-block  1
+        -:  412:    }
+        -:  413:
+    #####:  414:    if( starts_new_line )
+    %%%%%:  414-block  0
+    #####:  415:        res.message().stream() << "." << expr_val;
+    %%%%%:  415-block  0
+    %%%%%:  415-block  1
+    %%%%%:  415-block  2
+        -:  416:
+    #####:  417:    return res;
+    %%%%%:  417-block  0
+    %%%%%:  417-block  1
+        -:  418:}
+        -:  419:
+        -:  420://____________________________________________________________________________//
+        -:  421:
+        -:  422:BOOST_TEST_DECL std::string
+    #####:  423:prod_report_format( assertion_result const& ar, unit_test::lazy_ostream const& assertion_descr, check_type ct, std::size_t num_args, ... )
+        -:  424:{
+    #####:  425:    std::ostringstream msg_buff;
+    %%%%%:  425-block  0
+    %%%%%:  425-block  1
+    $$$$$:  425-block  2
+        -:  426:
+        -:  427:    va_list args;
+    #####:  428:    va_start( args, num_args );
+        -:  429:
+    #####:  430:    format_report( msg_buff, ar, assertion_descr, CHECK, ct, num_args, args, "assertion ", " failed" );
+    %%%%%:  430-block  0
+        -:  431:
+    #####:  432:    va_end( args );
+        -:  433:
+    #####:  434:    return msg_buff.str();
+    %%%%%:  434-block  0
+    %%%%%:  434-block  1
+    %%%%%:  434-block  2
+        -:  435:}
+        -:  436:
+        -:  437://____________________________________________________________________________//
+        -:  438:
+        -:  439:assertion_result
+        3:  440:equal_impl( char const* left, char const* right )
+        -:  441:{
+       3*:  442:    return (left && right) ? std::strcmp( left, right ) == 0 : (left == right);
+        3:  442-block  0
+        3:  442-block  1
+        3:  442-block  2
+    %%%%%:  442-block  3
+        3:  442-block  4
+        -:  443:}
+        -:  444:
+        -:  445://____________________________________________________________________________//
+        -:  446:
+        -:  447:#if !defined( BOOST_NO_CWCHAR )
+        -:  448:
+        -:  449:assertion_result
+    #####:  450:equal_impl( wchar_t const* left, wchar_t const* right )
+        -:  451:{
+    #####:  452:    return (left && right) ? std::wcscmp( left, right ) == 0 : (left == right);
+    %%%%%:  452-block  0
+    %%%%%:  452-block  1
+    %%%%%:  452-block  2
+    %%%%%:  452-block  3
+    %%%%%:  452-block  4
+        -:  453:}
+        -:  454:
+        -:  455:#endif // !defined( BOOST_NO_CWCHAR )
+        -:  456:
+        -:  457://____________________________________________________________________________//
+        -:  458:
+        -:  459:bool
+    #####:  460:is_defined_impl( const_string symbol_name, const_string symbol_value )
+        -:  461:{
+    #####:  462:    symbol_value.trim_left( 2 );
+    %%%%%:  462-block  0
+    #####:  463:    return symbol_name != symbol_value;
+        -:  464:}
+        -:  465:
+        -:  466://____________________________________________________________________________//
+        -:  467:
+        -:  468:// ************************************************************************** //
+        -:  469:// **************                 context_frame                ************** //
+        -:  470:// ************************************************************************** //
+        -:  471:
+    #####:  472:context_frame::context_frame( ::boost::unit_test::lazy_ostream const& context_descr )
+    #####:  473:: m_frame_id( unit_test::framework::add_context( context_descr, true ) )
+    %%%%%:  473-block  0
+        -:  474:{
+    #####:  475:}
+        -:  476:
+        -:  477://____________________________________________________________________________//
+        -:  478:
+    #####:  479:context_frame::~context_frame()
+        -:  480:{
+    #####:  481:    unit_test::framework::clear_context( m_frame_id );
+    %%%%%:  481-block  0
+    #####:  482:}
+        -:  483:
+        -:  484://____________________________________________________________________________//
+        -:  485:
+    #####:  486:context_frame::operator bool()
+        -:  487:{
+    #####:  488:    return true;
+    %%%%%:  488-block  0
+        -:  489:}
+        -:  490:
+        -:  491://____________________________________________________________________________//
+        -:  492:
+        -:  493:} // namespace tt_detail
+        -:  494:
+        -:  495:// ************************************************************************** //
+        -:  496:// **************               output_test_stream             ************** //
+        -:  497:// ************************************************************************** //
+        -:  498:
+        -:  499:struct output_test_stream::Impl
+        -:  500:{
+        -:  501:    std::fstream    m_pattern;
+        -:  502:    bool            m_match_or_save;
+        -:  503:    bool            m_text_or_binary;
+        -:  504:    std::string     m_synced_string;
+        -:  505:
+    #####:  506:    char            get_char()
+        -:  507:    {
+    #####:  508:        char res = 0;
+    %%%%%:  508-block  0
+    #####:  509:        do {
+    %%%%%:  509-block  0
+    #####:  510:            m_pattern.get( res );
+    %%%%%:  510-block  0
+    #####:  511:        } while( m_text_or_binary && res == '\r' && !m_pattern.fail() && !m_pattern.eof() );
+    %%%%%:  511-block  0
+    %%%%%:  511-block  1
+    %%%%%:  511-block  2
+    %%%%%:  511-block  3
+    %%%%%:  511-block  4
+    %%%%%:  511-block  5
+    %%%%%:  511-block  6
+    %%%%%:  511-block  7
+    %%%%%:  511-block  8
+        -:  512:
+    #####:  513:        return res;
+    %%%%%:  513-block  0
+    %%%%%:  513-block  1
+        -:  514:    }
+        -:  515:
+    #####:  516:    void            check_and_fill( assertion_result& res )
+        -:  517:    {
+    #####:  518:        if( !res.p_predicate_value )
+    %%%%%:  518-block  0
+    #####:  519:            res.message() << "Output content: \"" << m_synced_string << '\"';
+    %%%%%:  519-block  0
+    %%%%%:  519-block  1
+    #####:  520:    }
+    %%%%%:  520-block  0
+        -:  521:};
+        -:  522:
+        -:  523://____________________________________________________________________________//
+        -:  524:
+    #####:  525:output_test_stream::output_test_stream( const_string pattern_file_name, bool match_or_save, bool text_or_binary )
+    #####:  526:: m_pimpl( new Impl )
+        -:  527:{
+    #####:  528:    if( !pattern_file_name.is_empty() ) {
+    #####:  529:        std::ios::openmode m = match_or_save ? std::ios::in : std::ios::out;
+    #####:  530:        if( !text_or_binary )
+    #####:  531:            m |= std::ios::binary;
+        -:  532:
+    #####:  533:        m_pimpl->m_pattern.open( pattern_file_name.begin(), m );
+        -:  534:
+    #####:  535:        if( !m_pimpl->m_pattern.is_open() )
+    #####:  536:            BOOST_TEST_FRAMEWORK_MESSAGE( "Can't open pattern file " << pattern_file_name << " for " << (match_or_save ? "reading" : "writing") );
+        -:  537:    }
+        -:  538:
+    #####:  539:    m_pimpl->m_match_or_save    = match_or_save;
+    #####:  540:    m_pimpl->m_text_or_binary   = text_or_binary;
+    #####:  541:}
+------------------
+_ZN5boost10test_tools18output_test_streamC1ENS_9unit_test13basic_cstringIKcEEbb:
+    #####:  525:output_test_stream::output_test_stream( const_string pattern_file_name, bool match_or_save, bool text_or_binary )
+    #####:  526:: m_pimpl( new Impl )
+    %%%%%:  526-block  0
+    %%%%%:  526-block  1
+    %%%%%:  526-block  2
+    $$$$$:  526-block  3
+    $$$$$:  526-block  4
+    $$$$$:  526-block  5
+        -:  527:{
+    #####:  528:    if( !pattern_file_name.is_empty() ) {
+    %%%%%:  528-block  0
+    #####:  529:        std::ios::openmode m = match_or_save ? std::ios::in : std::ios::out;
+    %%%%%:  529-block  0
+    %%%%%:  529-block  1
+    %%%%%:  529-block  2
+    #####:  530:        if( !text_or_binary )
+    %%%%%:  530-block  0
+    #####:  531:            m |= std::ios::binary;
+    %%%%%:  531-block  0
+        -:  532:
+    #####:  533:        m_pimpl->m_pattern.open( pattern_file_name.begin(), m );
+    %%%%%:  533-block  0
+        -:  534:
+    #####:  535:        if( !m_pimpl->m_pattern.is_open() )
+    %%%%%:  535-block  0
+    %%%%%:  535-block  1
+    #####:  536:            BOOST_TEST_FRAMEWORK_MESSAGE( "Can't open pattern file " << pattern_file_name << " for " << (match_or_save ? "reading" : "writing") );
+    %%%%%:  536-block  0
+    %%%%%:  536-block  1
+    %%%%%:  536-block  2
+    %%%%%:  536-block  3
+    %%%%%:  536-block  4
+    %%%%%:  536-block  5
+    %%%%%:  536-block  6
+    %%%%%:  536-block  7
+    %%%%%:  536-block  8
+    %%%%%:  536-block  9
+    %%%%%:  536-block 10
+    %%%%%:  536-block 11
+    %%%%%:  536-block 12
+    $$$$$:  536-block 13
+    $$$$$:  536-block 14
+    $$$$$:  536-block 15
+    $$$$$:  536-block 16
+    $$$$$:  536-block 17
+    $$$$$:  536-block 18
+    $$$$$:  536-block 19
+    $$$$$:  536-block 20
+    $$$$$:  536-block 21
+    $$$$$:  536-block 22
+    $$$$$:  536-block 23
+    $$$$$:  536-block 24
+        -:  537:    }
+        -:  538:
+    #####:  539:    m_pimpl->m_match_or_save    = match_or_save;
+    #####:  540:    m_pimpl->m_text_or_binary   = text_or_binary;
+    #####:  541:}
+    %%%%%:  541-block  0
+------------------
+_ZN5boost10test_tools18output_test_streamC2ENS_9unit_test13basic_cstringIKcEEbb:
+    #####:  525:output_test_stream::output_test_stream( const_string pattern_file_name, bool match_or_save, bool text_or_binary )
+    #####:  526:: m_pimpl( new Impl )
+    %%%%%:  526-block  0
+    %%%%%:  526-block  1
+    $$$$$:  526-block  2
+    $$$$$:  526-block  3
+        -:  527:{
+    #####:  528:    if( !pattern_file_name.is_empty() ) {
+    %%%%%:  528-block  0
+    #####:  529:        std::ios::openmode m = match_or_save ? std::ios::in : std::ios::out;
+    %%%%%:  529-block  0
+    %%%%%:  529-block  1
+    %%%%%:  529-block  2
+    #####:  530:        if( !text_or_binary )
+    %%%%%:  530-block  0
+    #####:  531:            m |= std::ios::binary;
+    %%%%%:  531-block  0
+        -:  532:
+    #####:  533:        m_pimpl->m_pattern.open( pattern_file_name.begin(), m );
+    %%%%%:  533-block  0
+        -:  534:
+    #####:  535:        if( !m_pimpl->m_pattern.is_open() )
+    %%%%%:  535-block  0
+    %%%%%:  535-block  1
+    #####:  536:            BOOST_TEST_FRAMEWORK_MESSAGE( "Can't open pattern file " << pattern_file_name << " for " << (match_or_save ? "reading" : "writing") );
+    %%%%%:  536-block  0
+    %%%%%:  536-block  1
+    %%%%%:  536-block  2
+    %%%%%:  536-block  3
+    %%%%%:  536-block  4
+    %%%%%:  536-block  5
+    %%%%%:  536-block  6
+    %%%%%:  536-block  7
+    %%%%%:  536-block  8
+    %%%%%:  536-block  9
+    %%%%%:  536-block 10
+    %%%%%:  536-block 11
+    %%%%%:  536-block 12
+    $$$$$:  536-block 13
+    $$$$$:  536-block 14
+    $$$$$:  536-block 15
+    $$$$$:  536-block 16
+    $$$$$:  536-block 17
+    $$$$$:  536-block 18
+    $$$$$:  536-block 19
+    $$$$$:  536-block 20
+    $$$$$:  536-block 21
+    $$$$$:  536-block 22
+    $$$$$:  536-block 23
+    $$$$$:  536-block 24
+        -:  537:    }
+        -:  538:
+    #####:  539:    m_pimpl->m_match_or_save    = match_or_save;
+    #####:  540:    m_pimpl->m_text_or_binary   = text_or_binary;
+    #####:  541:}
+    %%%%%:  541-block  0
+------------------
+        -:  542:
+        -:  543://____________________________________________________________________________//
+        -:  544:
+    #####:  545:output_test_stream::~output_test_stream()
+        -:  546:{
+    #####:  547:    delete m_pimpl;
+    #####:  548:}
+------------------
+_ZN5boost10test_tools18output_test_streamD0Ev:
+    #####:  545:output_test_stream::~output_test_stream()
+        -:  546:{
+        -:  547:    delete m_pimpl;
+    #####:  548:}
+    %%%%%:  548-block  0
+------------------
+_ZN5boost10test_tools18output_test_streamD1Ev:
+    #####:  545:output_test_stream::~output_test_stream()
+    %%%%%:  545-block  0
+        -:  546:{
+    #####:  547:    delete m_pimpl;
+    %%%%%:  547-block  0
+    %%%%%:  547-block  1
+    #####:  548:}
+------------------
+_ZN5boost10test_tools18output_test_streamD2Ev:
+    #####:  545:output_test_stream::~output_test_stream()
+    %%%%%:  545-block  0
+        -:  546:{
+    #####:  547:    delete m_pimpl;
+    %%%%%:  547-block  0
+    %%%%%:  547-block  1
+    #####:  548:}
+------------------
+        -:  549:
+        -:  550://____________________________________________________________________________//
+        -:  551:
+        -:  552:assertion_result
+    #####:  553:output_test_stream::is_empty( bool flush_stream )
+        -:  554:{
+    #####:  555:    sync();
+    %%%%%:  555-block  0
+        -:  556:
+    #####:  557:    assertion_result res( m_pimpl->m_synced_string.empty() );
+        -:  558:
+    #####:  559:    m_pimpl->check_and_fill( res );
+        -:  560:
+    #####:  561:    if( flush_stream )
+    %%%%%:  561-block  0
+    #####:  562:        flush();
+    %%%%%:  562-block  0
+        -:  563:
+    #####:  564:    return res;
+    %%%%%:  564-block  0
+    %%%%%:  564-block  1
+        -:  565:}
+        -:  566:
+        -:  567://____________________________________________________________________________//
+        -:  568:
+        -:  569:assertion_result
+    #####:  570:output_test_stream::check_length( std::size_t length_, bool flush_stream )
+        -:  571:{
+    #####:  572:    sync();
+    %%%%%:  572-block  0
+        -:  573:
+    #####:  574:    assertion_result res( m_pimpl->m_synced_string.length() == length_ );
+        -:  575:
+    #####:  576:    m_pimpl->check_and_fill( res );
+        -:  577:
+    #####:  578:    if( flush_stream )
+    %%%%%:  578-block  0
+    #####:  579:        flush();
+    %%%%%:  579-block  0
+        -:  580:
+    #####:  581:    return res;
+    %%%%%:  581-block  0
+    %%%%%:  581-block  1
+        -:  582:}
+        -:  583:
+        -:  584://____________________________________________________________________________//
+        -:  585:
+        -:  586:assertion_result
+    #####:  587:output_test_stream::is_equal( const_string arg, bool flush_stream )
+        -:  588:{
+    #####:  589:    sync();
+    %%%%%:  589-block  0
+        -:  590:
+    #####:  591:    assertion_result res( const_string( m_pimpl->m_synced_string ) == arg );
+    %%%%%:  591-block  0
+    $$$$$:  591-block  1
+        -:  592:
+    #####:  593:    m_pimpl->check_and_fill( res );
+    %%%%%:  593-block  0
+        -:  594:
+    #####:  595:    if( flush_stream )
+    %%%%%:  595-block  0
+    #####:  596:        flush();
+    %%%%%:  596-block  0
+        -:  597:
+    #####:  598:    return res;
+    %%%%%:  598-block  0
+    %%%%%:  598-block  1
+        -:  599:}
+        -:  600:
+        -:  601://____________________________________________________________________________//
+        -:  602:
+    #####:  603:std::string pretty_print_log(std::string str) {
+        -:  604:
+    #####:  605:    static const std::string to_replace[] = { "\r", "\n" };
+    %%%%%:  605-block  0
+    %%%%%:  605-block  1
+    %%%%%:  605-block  2
+    %%%%%:  605-block  3
+    %%%%%:  605-block  4
+    $$$$$:  605-block  5
+    $$$$$:  605-block  6
+    $$$$$:  605-block  7
+    $$$$$:  605-block  8
+    $$$$$:  605-block  9
+    $$$$$:  605-block 10
+    $$$$$:  605-block 11
+    $$$$$:  605-block 12
+    #####:  606:    static const std::string replacement[] = { "\\r", "\\n" };
+    %%%%%:  606-block  0
+    %%%%%:  606-block  1
+    %%%%%:  606-block  2
+    %%%%%:  606-block  3
+    %%%%%:  606-block  4
+    $$$$$:  606-block  5
+    $$$$$:  606-block  6
+    $$$$$:  606-block  7
+    $$$$$:  606-block  8
+    $$$$$:  606-block  9
+    $$$$$:  606-block 10
+    $$$$$:  606-block 11
+    $$$$$:  606-block 12
+        -:  607:
+        -:  608:    return unit_test::utils::replace_all_occurrences_of(
+        -:  609:        str,
+        -:  610:        to_replace, to_replace + sizeof(to_replace)/sizeof(to_replace[0]),
+    #####:  611:        replacement, replacement + sizeof(replacement)/sizeof(replacement[0]));
+    %%%%%:  611-block  0
+    %%%%%:  611-block  1
+    %%%%%:  611-block  2
+    $$$$$:  611-block  3
+        -:  612:}
+        -:  613:
+        -:  614:assertion_result
+    #####:  615:output_test_stream::match_pattern( bool flush_stream )
+        -:  616:{
+    #####:  617:    const std::string::size_type n_chars_presuffix = 10;
+    #####:  618:    sync();
+    %%%%%:  618-block  0
+        -:  619:
+    #####:  620:    assertion_result result( true );
+    %%%%%:  620-block  0
+        -:  621:
+    #####:  622:    const std::string stream_string_repr = get_stream_string_representation();
+    %%%%%:  622-block  0
+    %%%%%:  622-block  1
+    $$$$$:  622-block  2
+        -:  623:
+    #####:  624:    if( !m_pimpl->m_pattern.is_open() ) {
+    %%%%%:  624-block  0
+    %%%%%:  624-block  1
+    #####:  625:        result = false;
+    %%%%%:  625-block  0
+    #####:  626:        result.message() << "Pattern file can't be opened!";
+    %%%%%:  626-block  0
+        -:  627:    }
+        -:  628:    else {
+    #####:  629:        if( m_pimpl->m_match_or_save ) {
+    %%%%%:  629-block  0
+        -:  630:
+    #####:  631:            int offset = 0;
+    #####:  632:            std::vector<char> last_elements;
+    %%%%%:  632-block  0
+    %%%%%:  632-block  1
+    $$$$$:  632-block  2
+    #####:  633:            for ( std::string::size_type i = 0; static_cast<int>(i + offset) < static_cast<int>(stream_string_repr.length()); ++i ) {
+    %%%%%:  633-block  0
+    %%%%%:  633-block  1
+        -:  634:
+    #####:  635:                char c = m_pimpl->get_char();
+    %%%%%:  635-block  0
+        -:  636:
+    #####:  637:                if( last_elements.size() <= n_chars_presuffix ) {
+    %%%%%:  637-block  0
+    #####:  638:                    last_elements.push_back( c );
+    %%%%%:  638-block  0
+        -:  639:                }
+        -:  640:                else {
+    #####:  641:                    last_elements[ i % last_elements.size() ] = c;
+    %%%%%:  641-block  0
+        -:  642:                }
+        -:  643:
+    #####:  644:                bool is_same = !m_pimpl->m_pattern.fail() &&
+    %%%%%:  644-block  0
+    #####:  645:                         !m_pimpl->m_pattern.eof()  &&
+    %%%%%:  645-block  0
+    %%%%%:  645-block  1
+    %%%%%:  645-block  2
+    %%%%%:  645-block  3
+    %%%%%:  645-block  4
+    #####:  646:                         (stream_string_repr[i+offset] == c);
+    %%%%%:  646-block  0
+        -:  647:
+    #####:  648:                if( !is_same ) {
+    %%%%%:  648-block  0
+        -:  649:
+    #####:  650:                    result = false;
+    %%%%%:  650-block  0
+        -:  651:
+    #####:  652:                    std::string::size_type prefix_size  = (std::min)( i + offset, n_chars_presuffix );
+        -:  653:
+    #####:  654:                    std::string::size_type suffix_size  = (std::min)( stream_string_repr.length() - i - offset,
+    #####:  655:                                                                      n_chars_presuffix );
+        -:  656:
+        -:  657:                    // try to log area around the mismatch
+    #####:  658:                    std::string substr = stream_string_repr.substr(0, i+offset);
+    $$$$$:  658-block  0
+    #####:  659:                    std::size_t line = std::count(substr.begin(), substr.end(), '\n');
+    %%%%%:  659-block  0
+    $$$$$:  659-block  1
+    #####:  660:                    std::size_t column = i + offset - substr.rfind('\n');
+    %%%%%:  660-block  0
+        -:  661:
+    #####:  662:                    result.message()
+        -:  663:                        << "Mismatch at position " << i
+        -:  664:                        << " (line " << line
+        -:  665:                        << ", column " << column
+    #####:  666:                        << "): '" << pretty_print_log(std::string(1, stream_string_repr[i+offset])) << "' != '" << pretty_print_log(std::string(1, c)) << "' :\n";
+    %%%%%:  666-block  0
+    %%%%%:  666-block  1
+    %%%%%:  666-block  2
+    %%%%%:  666-block  3
+    %%%%%:  666-block  4
+    %%%%%:  666-block  5
+    %%%%%:  666-block  6
+    %%%%%:  666-block  7
+    %%%%%:  666-block  8
+    %%%%%:  666-block  9
+    %%%%%:  666-block 10
+    %%%%%:  666-block 11
+    %%%%%:  666-block 12
+    %%%%%:  666-block 13
+    %%%%%:  666-block 14
+    %%%%%:  666-block 15
+    $$$$$:  666-block 16
+    $$$$$:  666-block 17
+    $$$$$:  666-block 18
+    $$$$$:  666-block 19
+    $$$$$:  666-block 20
+    $$$$$:  666-block 21
+    $$$$$:  666-block 22
+    $$$$$:  666-block 23
+    $$$$$:  666-block 24
+    $$$$$:  666-block 25
+    $$$$$:  666-block 26
+    $$$$$:  666-block 27
+        -:  667:
+        -:  668:                    // we already escape this substring because we need its actual size for the pretty print
+        -:  669:                    // of the difference location.
+    #####:  670:                    std::string sub_str_prefix(pretty_print_log(stream_string_repr.substr( i + offset - prefix_size, prefix_size )));
+    %%%%%:  670-block  0
+    $$$$$:  670-block  1
+    $$$$$:  670-block  2
+        -:  671:
+        -:  672:                    // we need this substring as is because we compute the best matching substrings on it.
+    #####:  673:                    std::string sub_str_suffix(stream_string_repr.substr( i + offset, suffix_size));
+    $$$$$:  673-block  0
+    #####:  674:                    result.message() << "... " << sub_str_prefix + pretty_print_log(sub_str_suffix) << " ..." << '\n';
+    %%%%%:  674-block  0
+    %%%%%:  674-block  1
+    %%%%%:  674-block  2
+    %%%%%:  674-block  3
+    %%%%%:  674-block  4
+    %%%%%:  674-block  5
+    %%%%%:  674-block  6
+    %%%%%:  674-block  7
+    %%%%%:  674-block  8
+    $$$$$:  674-block  9
+    $$$$$:  674-block 10
+    $$$$$:  674-block 11
+    $$$$$:  674-block 12
+    $$$$$:  674-block 13
+    $$$$$:  674-block 14
+    $$$$$:  674-block 15
+        -:  675:
+    #####:  676:                    result.message() << "... ";
+    %%%%%:  676-block  0
+    #####:  677:                    for( std::size_t j = 0; j < last_elements.size() ; j++ )
+    %%%%%:  677-block  0
+    %%%%%:  677-block  1
+    #####:  678:                        result.message() << pretty_print_log(std::string(1, last_elements[(i + j + 1) % last_elements.size()]));
+    %%%%%:  678-block  0
+    %%%%%:  678-block  1
+    %%%%%:  678-block  2
+    %%%%%:  678-block  3
+    %%%%%:  678-block  4
+    $$$$$:  678-block  5
+    $$$$$:  678-block  6
+    $$$$$:  678-block  7
+    $$$$$:  678-block  8
+    $$$$$:  678-block  9
+    $$$$$:  678-block 10
+        -:  679:
+    #####:  680:                    std::vector<char> last_elements_ordered;
+    %%%%%:  680-block  0
+    $$$$$:  680-block  1
+    #####:  681:                    last_elements_ordered.push_back(c);
+    #####:  682:                    for( std::string::size_type counter = 0; counter < suffix_size - 1 ; counter++ ) {
+    %%%%%:  682-block  0
+    %%%%%:  682-block  1
+    %%%%%:  682-block  2
+    #####:  683:                        char c2 = m_pimpl->get_char();
+    %%%%%:  683-block  0
+        -:  684:
+    #####:  685:                        if( m_pimpl->m_pattern.fail() || m_pimpl->m_pattern.eof() )
+    %%%%%:  685-block  0
+    %%%%%:  685-block  1
+    %%%%%:  685-block  2
+    %%%%%:  685-block  3
+    %%%%%:  685-block  4
+    %%%%%:  685-block  5
+    %%%%%:  685-block  6
+    #####:  686:                            break;
+    %%%%%:  686-block  0
+        -:  687:
+    #####:  688:                        result.message() << pretty_print_log(std::string(1, c2));
+    %%%%%:  688-block  0
+    %%%%%:  688-block  1
+    %%%%%:  688-block  2
+    %%%%%:  688-block  3
+    %%%%%:  688-block  4
+    $$$$$:  688-block  5
+    $$$$$:  688-block  6
+    $$$$$:  688-block  7
+    $$$$$:  688-block  8
+    $$$$$:  688-block  9
+    $$$$$:  688-block 10
+        -:  689:
+    #####:  690:                        last_elements_ordered.push_back(c2);
+        -:  691:                    }
+        -:  692:
+        -:  693:                    // tries to find the best substring matching in the remainder of the
+        -:  694:                    // two strings
+    #####:  695:                    std::size_t max_nb_char_in_common = 0;
+    #####:  696:                    std::size_t best_pattern_start_index = 0;
+    #####:  697:                    std::size_t best_stream_start_index = 0;
+    #####:  698:                    for( std::size_t pattern_start_index = best_pattern_start_index;
+    %%%%%:  698-block  0
+    %%%%%:  698-block  1
+    #####:  699:                         pattern_start_index < last_elements_ordered.size();
+    %%%%%:  699-block  0
+        -:  700:                         pattern_start_index++ ) {
+    #####:  701:                        for( std::size_t stream_start_index = best_stream_start_index;
+    %%%%%:  701-block  0
+    %%%%%:  701-block  1
+    #####:  702:                             stream_start_index < sub_str_suffix.size();
+    %%%%%:  702-block  0
+        -:  703:                             stream_start_index++ ) {
+        -:  704:
+    #####:  705:                            std::size_t max_size = (std::min)( last_elements_ordered.size() - pattern_start_index, sub_str_suffix.size() - stream_start_index );
+    %%%%%:  705-block  0
+    #####:  706:                            if( max_nb_char_in_common > max_size )
+    #####:  707:                                break; // safely break to go to the outer loop
+    %%%%%:  707-block  0
+        -:  708:
+    #####:  709:                            std::size_t nb_char_in_common = 0;
+    #####:  710:                            for( std::size_t k = 0; k < max_size; k++) {
+    %%%%%:  710-block  0
+    %%%%%:  710-block  1
+    %%%%%:  710-block  2
+    #####:  711:                                if( last_elements_ordered[pattern_start_index + k] == sub_str_suffix[stream_start_index + k] )
+    %%%%%:  711-block  0
+    %%%%%:  711-block  1
+    #####:  712:                                    nb_char_in_common ++;
+    %%%%%:  712-block  0
+        -:  713:                                else
+    #####:  714:                                    break; // we take fully matching substring only
+    %%%%%:  714-block  0
+        -:  715:                            }
+        -:  716:
+    #####:  717:                            if( nb_char_in_common > max_nb_char_in_common ) {
+    %%%%%:  717-block  0
+    #####:  718:                                max_nb_char_in_common = nb_char_in_common;
+    #####:  719:                                best_pattern_start_index = pattern_start_index;
+    #####:  720:                                best_stream_start_index = stream_start_index;
+    %%%%%:  720-block  0
+        -:  721:                            }
+        -:  722:                        }
+        -:  723:                    }
+        -:  724:
+        -:  725:                    // indicates with more precision the location of the mismatchs in "ascii arts" ...
+    #####:  726:                    result.message() << " ...\n... ";
+    %%%%%:  726-block  0
+    %%%%%:  726-block  1
+    #####:  727:                    for( std::string::size_type j = 0; j < sub_str_prefix.size(); j++) {
+    %%%%%:  727-block  0
+    %%%%%:  727-block  1
+    #####:  728:                        result.message() << ' ';
+    %%%%%:  728-block  0
+    %%%%%:  728-block  1
+    %%%%%:  728-block  2
+    $$$$$:  728-block  3
+        -:  729:                    }
+        -:  730:
+    #####:  731:                    result.message() << '~'; // places the first tilde at the current char that mismatches
+    %%%%%:  731-block  0
+    %%%%%:  731-block  1
+    $$$$$:  731-block  2
+        -:  732:
+    #####:  733:                    for( std::size_t k = 1; k < (std::max)(best_pattern_start_index, best_stream_start_index); k++ ) { // 1 is for the current char c
+    %%%%%:  733-block  0
+    %%%%%:  733-block  1
+    #####:  734:                        std::string s1(pretty_print_log(std::string(1, last_elements_ordered[(std::min)(k, best_pattern_start_index)])));
+    %%%%%:  734-block  0
+    %%%%%:  734-block  1
+    $$$$$:  734-block  2
+    $$$$$:  734-block  3
+    $$$$$:  734-block  4
+    #####:  735:                        std::string s2(pretty_print_log(std::string(1, sub_str_suffix[(std::min)(k, best_stream_start_index)])));
+    %%%%%:  735-block  0
+    %%%%%:  735-block  1
+    %%%%%:  735-block  2
+    $$$$$:  735-block  3
+    $$$$$:  735-block  4
+    $$$$$:  735-block  5
+    #####:  736:                        for( int h = (std::max)(s1.size(), s2.size()); h > 0; h--)
+    %%%%%:  736-block  0
+    %%%%%:  736-block  1
+    #####:  737:                            result.message() << "~";
+    %%%%%:  737-block  0
+    %%%%%:  737-block  1
+        -:  738:                    }
+        -:  739:
+    #####:  740:                    if( m_pimpl->m_pattern.eof() ) {
+    %%%%%:  740-block  0
+    %%%%%:  740-block  1
+    #####:  741:                        result.message() << "    (reference string shorter than current stream)";
+    %%%%%:  741-block  0
+    %%%%%:  741-block  1
+        -:  742:                    }
+        -:  743:
+    #####:  744:                    result.message() << "\n";
+    %%%%%:  744-block  0
+    %%%%%:  744-block  1
+        -:  745:
+        -:  746:                    // no need to continue if the EOF is reached
+    #####:  747:                    if( m_pimpl->m_pattern.eof() ) {
+    %%%%%:  747-block  0
+    %%%%%:  747-block  1
+    #####:  748:                        break;
+    %%%%%:  748-block  0
+        -:  749:                    }
+        -:  750:
+        -:  751:                    // first char is a replicat of c, so we do not copy it.
+    #####:  752:                    for(std::string::size_type counter = 0; counter < last_elements_ordered.size() - 1 ; counter++)
+    %%%%%:  752-block  0
+    %%%%%:  752-block  1
+    #####:  753:                        last_elements[ (i + 1 + counter) % last_elements.size() ] = last_elements_ordered[counter + 1];
+    %%%%%:  753-block  0
+        -:  754:
+    #####:  755:                    i += last_elements_ordered.size()-1;
+    %%%%%:  755-block  0
+    #####:  756:                    offset += best_stream_start_index - best_pattern_start_index;
+        -:  757:
+        -:  758:                }
+        -:  759:
+        -:  760:            }
+        -:  761:
+        -:  762:            // not needed anymore
+        -:  763:            /*
+        -:  764:            if(offset > 0 && false) {
+        -:  765:                m_pimpl->m_pattern.ignore(
+        -:  766:                    static_cast<std::streamsize>( offset ));
+        -:  767:            }
+        -:  768:            */
+        -:  769:        }
+        -:  770:        else {
+    #####:  771:            m_pimpl->m_pattern.write( stream_string_repr.c_str(),
+    #####:  772:                                      static_cast<std::streamsize>( stream_string_repr.length() ) );
+    %%%%%:  772-block  0
+    #####:  773:            m_pimpl->m_pattern.flush();
+    %%%%%:  773-block  0
+        -:  774:        }
+        -:  775:    }
+        -:  776:
+    #####:  777:    if( flush_stream )
+    %%%%%:  777-block  0
+    #####:  778:        flush();
+    %%%%%:  778-block  0
+        -:  779:
+    #####:  780:    return result;
+    %%%%%:  780-block  0
+    %%%%%:  780-block  1
+        -:  781:}
+        -:  782:
+        -:  783://____________________________________________________________________________//
+        -:  784:
+        -:  785:void
+    #####:  786:output_test_stream::flush()
+        -:  787:{
+    #####:  788:    m_pimpl->m_synced_string.erase();
+    %%%%%:  788-block  0
+        -:  789:
+        -:  790:#ifndef BOOST_NO_STRINGSTREAM
+    #####:  791:    str( std::string() );
+    %%%%%:  791-block  0
+    $$$$$:  791-block  1
+        -:  792:#else
+        -:  793:    seekp( 0, std::ios::beg );
+        -:  794:#endif
+    #####:  795:}
+        -:  796:
+        -:  797:
+        -:  798:std::string
+    #####:  799:output_test_stream::get_stream_string_representation() const {
+    #####:  800:    return m_pimpl->m_synced_string;
+    %%%%%:  800-block  0
+        -:  801:}
+        -:  802:
+        -:  803://____________________________________________________________________________//
+        -:  804:
+        -:  805:std::size_t
+    #####:  806:output_test_stream::length()
+        -:  807:{
+    #####:  808:    sync();
+    %%%%%:  808-block  0
+        -:  809:
+    #####:  810:    return m_pimpl->m_synced_string.length();
+        -:  811:}
+        -:  812:
+        -:  813://____________________________________________________________________________//
+        -:  814:
+        -:  815:void
+    #####:  816:output_test_stream::sync()
+        -:  817:{
+        -:  818:#ifdef BOOST_NO_STRINGSTREAM
+        -:  819:    m_pimpl->m_synced_string.assign( str(), pcount() );
+        -:  820:    freeze( false );
+        -:  821:#else
+    #####:  822:    m_pimpl->m_synced_string = str();
+    %%%%%:  822-block  0
+        -:  823:#endif
+    #####:  824:}
+        -:  825:
+        -:  826://____________________________________________________________________________//
+        -:  827:
+        -:  828:} // namespace test_tools
+        -:  829:} // namespace boost
+        -:  830:
+        -:  831:#include <boost/test/detail/enable_warnings.hpp>
+        -:  832:
+        -:  833:#endif // BOOST_TEST_TEST_TOOLS_IPP_012205GER

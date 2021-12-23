@@ -1,0 +1,1603 @@
+        -:    0:Source:F:/Files/vcpkg/installed/x86-windows/include/boost/test/impl/junit_log_formatter.ipp
+        -:    0:Graph:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcno
+        -:    0:Data:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1://  (C) Copyright 2016 Raffi Enficiaud.
+        -:    2://  Distributed under the Boost Software License, Version 1.0.
+        -:    3://  (See accompanying file LICENSE_1_0.txt or copy at
+        -:    4://  http://www.boost.org/LICENSE_1_0.txt)
+        -:    5:
+        -:    6://  See http://www.boost.org/libs/test for the library home page.
+        -:    7://
+        -:    8:///@file
+        -:    9:///@brief Contains the implementatoin of the Junit log formatter (OF_JUNIT)
+        -:   10:// ***************************************************************************
+        -:   11:
+        -:   12:#ifndef BOOST_TEST_JUNIT_LOG_FORMATTER_IPP__
+        -:   13:#define BOOST_TEST_JUNIT_LOG_FORMATTER_IPP__
+        -:   14:
+        -:   15:// Boost.Test
+        -:   16:#include <boost/test/output/junit_log_formatter.hpp>
+        -:   17:#include <boost/test/execution_monitor.hpp>
+        -:   18:#include <boost/test/framework.hpp>
+        -:   19:#include <boost/test/tree/test_unit.hpp>
+        -:   20:#include <boost/test/utils/basic_cstring/io.hpp>
+        -:   21:#include <boost/test/utils/xml_printer.hpp>
+        -:   22:#include <boost/test/utils/string_cast.hpp>
+        -:   23:#include <boost/test/framework.hpp>
+        -:   24:
+        -:   25:#include <boost/test/tree/visitor.hpp>
+        -:   26:#include <boost/test/tree/test_case_counter.hpp>
+        -:   27:#include <boost/test/tree/traverse.hpp>
+        -:   28:#include <boost/test/results_collector.hpp>
+        -:   29:
+        -:   30:#include <boost/test/utils/algorithm.hpp>
+        -:   31:#include <boost/test/utils/string_cast.hpp>
+        -:   32:
+        -:   33://#include <boost/test/results_reporter.hpp>
+        -:   34:
+        -:   35:
+        -:   36:// Boost
+        -:   37:#include <boost/version.hpp>
+        -:   38:#include <boost/core/ignore_unused.hpp>
+        -:   39:
+        -:   40:// STL
+        -:   41:#include <iostream>
+        -:   42:#include <fstream>
+        -:   43:#include <set>
+        -:   44:
+        -:   45:#include <boost/test/detail/suppress_warnings.hpp>
+        -:   46:
+        -:   47:
+        -:   48://____________________________________________________________________________//
+        -:   49:
+        -:   50:namespace boost {
+        -:   51:namespace unit_test {
+        -:   52:namespace output {
+        -:   53:
+        -:   54:
+        -:   55:struct s_replace_chars {
+        -:   56:  template <class T>
+    #####:   57:  void operator()(T& to_replace)
+        -:   58:  {
+    #####:   59:    if(to_replace == '/')
+    %%%%%:   59-block  0
+    #####:   60:      to_replace = '.';
+    %%%%%:   60-block  0
+    #####:   61:    else if(to_replace == ' ')
+    %%%%%:   61-block  0
+    #####:   62:      to_replace = '_';
+    %%%%%:   62-block  0
+    #####:   63:  }
+        -:   64:};
+        -:   65:
+    #####:   66:inline std::string tu_name_normalize(std::string full_name)
+        -:   67:{
+        -:   68:  // maybe directly using normalize_test_case_name instead?
+    #####:   69:  std::for_each(full_name.begin(), full_name.end(), s_replace_chars());
+    %%%%%:   69-block  0
+    #####:   70:  return full_name;
+        -:   71:}
+        -:   72:
+    #####:   73:inline std::string tu_name_remove_newlines(std::string full_name)
+        -:   74:{
+    #####:   75:  full_name.erase(std::remove(full_name.begin(), full_name.end(), '\n'), full_name.end());
+    %%%%%:   75-block  0
+    %%%%%:   75-block  1
+    $$$$$:   75-block  2
+    $$$$$:   75-block  3
+    $$$$$:   75-block  4
+    $$$$$:   75-block  5
+    #####:   76:  return full_name;
+    %%%%%:   76-block  0
+        -:   77:}
+        -:   78:
+    #####:   79:const_string file_basename(const_string filename) {
+        -:   80:
+    #####:   81:    const_string path_sep( "\\/" );
+    %%%%%:   81-block  0
+    #####:   82:    const_string::iterator it = unit_test::utils::find_last_of( filename.begin(), filename.end(),
+    %%%%%:   82-block  0
+        -:   83:                                                                path_sep.begin(), path_sep.end() );
+    #####:   84:    if( it != filename.end() )
+    %%%%%:   84-block  0
+    #####:   85:        filename.trim_left( it + 1 );
+    %%%%%:   85-block  0
+        -:   86:
+    #####:   87:    return filename;
+    %%%%%:   87-block  0
+    %%%%%:   87-block  1
+        -:   88:
+        -:   89:}
+        -:   90:
+        -:   91:// ************************************************************************** //
+        -:   92:// **************               junit_log_formatter              ************** //
+        -:   93:// ************************************************************************** //
+        -:   94:
+        -:   95:void
+    #####:   96:junit_log_formatter::log_start( std::ostream& /*ostr*/, counter_t /*test_cases_amount*/)
+        -:   97:{
+    #####:   98:    map_tests.clear();
+    %%%%%:   98-block  0
+    #####:   99:    list_path_to_root.clear();
+    #####:  100:    runner_log_entry.clear();
+    #####:  101:}
+        -:  102:
+        -:  103://____________________________________________________________________________//
+        -:  104:
+        -:  105:class junit_result_helper : public test_tree_visitor {
+        -:  106:private:
+        -:  107:    typedef junit_impl::junit_log_helper::assertion_entry assertion_entry;
+        -:  108:    typedef std::vector< assertion_entry >::const_iterator vect_assertion_entry_citerator;
+        -:  109:    typedef std::list<std::string>::const_iterator list_str_citerator;
+        -:  110:
+        -:  111:public:
+    #####:  112:    explicit junit_result_helper(
+        -:  113:        std::ostream& stream,
+        -:  114:        test_unit const& ts,
+        -:  115:        junit_log_formatter::map_trace_t const& mt,
+        -:  116:        junit_impl::junit_log_helper const& runner_log_,
+        -:  117:        bool display_build_info )
+    #####:  118:    : m_stream(stream)
+        -:  119:    , m_ts( ts )
+        -:  120:    , m_map_test( mt )
+        -:  121:    , runner_log( runner_log_ )
+        -:  122:    , m_id( 0 )
+    #####:  123:    , m_display_build_info(display_build_info)
+    %%%%%:  123-block  0
+    #####:  124:    { }
+        -:  125:
+    #####:  126:    void add_log_entry(assertion_entry const& log) const
+        -:  127:    {
+    #####:  128:        std::string entry_type;
+    %%%%%:  128-block  0
+    $$$$$:  128-block  1
+    #####:  129:        if( log.log_entry == assertion_entry::log_entry_failure ) {
+    #####:  130:            entry_type = "failure";
+    %%%%%:  130-block  0
+        -:  131:        }
+    #####:  132:        else if( log.log_entry == assertion_entry::log_entry_error ) {
+    %%%%%:  132-block  0
+    #####:  133:            entry_type = "error";
+    %%%%%:  133-block  0
+        -:  134:        }
+        -:  135:        else {
+    #####:  136:            return;
+    %%%%%:  136-block  0
+        -:  137:        }
+        -:  138:
+    #####:  139:        m_stream
+        -:  140:            << "<" << entry_type
+    #####:  141:            << " message" << utils::attr_value() << log.logentry_message
+    %%%%%:  141-block  0
+    %%%%%:  141-block  1
+    %%%%%:  141-block  2
+    %%%%%:  141-block  3
+    %%%%%:  141-block  4
+    $$$$$:  141-block  5
+    $$$$$:  141-block  6
+    #####:  142:            << " type" << utils::attr_value() << log.logentry_type
+    %%%%%:  142-block  0
+    %%%%%:  142-block  1
+    %%%%%:  142-block  2
+    $$$$$:  142-block  3
+    $$$$$:  142-block  4
+    #####:  143:            << ">";
+    %%%%%:  143-block  0
+        -:  144:
+    #####:  145:        if(!log.output.empty()) {
+    %%%%%:  145-block  0
+    #####:  146:            m_stream << utils::cdata() << "\n" + log.output;
+    %%%%%:  146-block  0
+    %%%%%:  146-block  1
+    %%%%%:  146-block  2
+    %%%%%:  146-block  3
+    $$$$$:  146-block  4
+    $$$$$:  146-block  5
+    $$$$$:  146-block  6
+    $$$$$:  146-block  7
+    $$$$$:  146-block  8
+        -:  147:        }
+        -:  148:
+    #####:  149:        m_stream << "</" << entry_type << ">";
+    %%%%%:  149-block  0
+    %%%%%:  149-block  1
+    %%%%%:  149-block  2
+        -:  150:    }
+        -:  151:
+        -:  152:    struct conditional_cdata_helper {
+        -:  153:        std::ostream &ostr;
+        -:  154:        std::string const field;
+        -:  155:        bool empty;
+        -:  156:
+    #####:  157:        conditional_cdata_helper(std::ostream &ostr_, std::string field_)
+    #####:  158:        : ostr(ostr_)
+        -:  159:        , field(field_)
+    #####:  160:        , empty(true)
+    %%%%%:  160-block  0
+    #####:  161:        {}
+        -:  162:
+    #####:  163:        ~conditional_cdata_helper() {
+    %%%%%:  163-block  0
+    #####:  164:            if(!empty) {
+    %%%%%:  164-block  0
+    #####:  165:                ostr << BOOST_TEST_L( "]]>" ) << "</" << field << '>' << std::endl;
+    %%%%%:  165-block  0
+        -:  166:            }
+    #####:  167:        }
+        -:  168:
+    #####:  169:        void operator()(const std::string& s) {
+    #####:  170:            bool current_empty = s.empty();
+    %%%%%:  170-block  0
+    #####:  171:            if(empty) {
+    #####:  172:                if(!current_empty) {
+    %%%%%:  172-block  0
+    #####:  173:                    empty = false;
+    #####:  174:                    ostr << '<' << field << '>' << BOOST_TEST_L( "<![CDATA[" );
+    %%%%%:  174-block  0
+    %%%%%:  174-block  1
+        -:  175:                }
+        -:  176:            }
+    #####:  177:            if(!current_empty) {
+    %%%%%:  177-block  0
+    #####:  178:                ostr << s;
+    %%%%%:  178-block  0
+        -:  179:            }
+    #####:  180:        }
+    %%%%%:  180-block  0
+        -:  181:    };
+        -:  182:
+    #####:  183:    std::list<std::string> build_skipping_chain(test_unit const & tu) const
+        -:  184:    {
+        -:  185:        // we enter here because we know that the tu has been skipped.
+        -:  186:        // either junit has not seen this tu, or it is indicated as disabled
+    #####:  187:        assert(m_map_test.count(tu.p_id) == 0 || results_collector.results( tu.p_id ).p_skipped);
+    %%%%%:  187-block  0
+    %%%%%:  187-block  1
+    %%%%%:  187-block  2
+    %%%%%:  187-block  3
+    %%%%%:  187-block  4
+    %%%%%:  187-block  5
+    %%%%%:  187-block  6
+        -:  188:
+    #####:  189:        std::list<std::string> out;
+    %%%%%:  189-block  0
+        -:  190:
+    #####:  191:        test_unit_id id(tu.p_id);
+    #####:  192:        while( id != m_ts.p_id && id != INV_TEST_UNIT_ID) {
+    %%%%%:  192-block  0
+    %%%%%:  192-block  1
+    %%%%%:  192-block  2
+    %%%%%:  192-block  3
+    %%%%%:  192-block  4
+    %%%%%:  192-block  5
+    #####:  193:            test_unit const& tu_hierarchy = boost::unit_test::framework::get( id, TUT_ANY );
+    %%%%%:  193-block  0
+    #####:  194:            out.push_back("- disabled test unit: '" + tu_name_remove_newlines(tu_hierarchy.full_name()) + "'\n");
+    %%%%%:  194-block  0
+    %%%%%:  194-block  1
+    %%%%%:  194-block  2
+    %%%%%:  194-block  3
+    %%%%%:  194-block  4
+    %%%%%:  194-block  5
+    $$$$$:  194-block  6
+    $$$$$:  194-block  7
+    $$$$$:  194-block  8
+    $$$$$:  194-block  9
+    $$$$$:  194-block 10
+    $$$$$:  194-block 11
+    $$$$$:  194-block 12
+    $$$$$:  194-block 13
+    #####:  195:            if(m_map_test.count(id) > 0)
+    %%%%%:  195-block  0
+        -:  196:            {
+        -:  197:                // junit has seen the reason: this is enough for constructing the chain
+    #####:  198:                break;
+    %%%%%:  198-block  0
+        -:  199:            }
+    #####:  200:            id = tu_hierarchy.p_parent_id;
+    %%%%%:  200-block  0
+        -:  201:        }
+    #####:  202:        junit_log_formatter::map_trace_t::const_iterator it_element_stack(m_map_test.find(id));
+    %%%%%:  202-block  0
+    #####:  203:        if( it_element_stack != m_map_test.end() )
+    %%%%%:  203-block  0
+        -:  204:        {
+    #####:  205:            out.push_back("- reason: '" + it_element_stack->second.skipping_reason + "'");
+    %%%%%:  205-block  0
+    %%%%%:  205-block  1
+    %%%%%:  205-block  2
+    %%%%%:  205-block  3
+    $$$$$:  205-block  4
+    $$$$$:  205-block  5
+    $$$$$:  205-block  6
+    $$$$$:  205-block  7
+    #####:  206:            out.push_front("Test case disabled because of the following chain of decision:\n");
+    %%%%%:  206-block  0
+    %%%%%:  206-block  1
+    $$$$$:  206-block  2
+    $$$$$:  206-block  3
+    $$$$$:  206-block  4
+    $$$$$:  206-block  5
+        -:  207:        }
+        -:  208:
+    #####:  209:        return out;
+    %%%%%:  209-block  0
+    %%%%%:  209-block  1
+        -:  210:    }
+        -:  211:
+    #####:  212:    std::string get_class_name(test_unit const & tu_class) const {
+    #####:  213:        std::string classname;
+    %%%%%:  213-block  0
+    #####:  214:        test_unit_id id(tu_class.p_parent_id);
+    #####:  215:        while( id != m_ts.p_id && id != INV_TEST_UNIT_ID ) {
+    %%%%%:  215-block  0
+    %%%%%:  215-block  1
+    %%%%%:  215-block  2
+    %%%%%:  215-block  3
+    %%%%%:  215-block  4
+    %%%%%:  215-block  5
+    #####:  216:            test_unit const& tu = boost::unit_test::framework::get( id, TUT_ANY );
+    %%%%%:  216-block  0
+    #####:  217:            classname = tu_name_normalize(tu.p_name) + "." + classname;
+    %%%%%:  217-block  0
+    %%%%%:  217-block  1
+    %%%%%:  217-block  2
+    %%%%%:  217-block  3
+    %%%%%:  217-block  4
+    $$$$$:  217-block  5
+    $$$$$:  217-block  6
+    $$$$$:  217-block  7
+    $$$$$:  217-block  8
+    $$$$$:  217-block  9
+    $$$$$:  217-block 10
+    #####:  218:            id = tu.p_parent_id;
+        -:  219:        }
+        -:  220:
+        -:  221:        // removes the trailing dot
+    #####:  222:        if(!classname.empty() && *classname.rbegin() == '.') {
+    %%%%%:  222-block  0
+    %%%%%:  222-block  1
+    %%%%%:  222-block  2
+    %%%%%:  222-block  3
+    %%%%%:  222-block  4
+    #####:  223:            classname.erase(classname.size()-1);
+    %%%%%:  223-block  0
+        -:  224:        }
+        -:  225:
+    #####:  226:        return classname;
+    %%%%%:  226-block  0
+    %%%%%:  226-block  1
+        -:  227:    }
+        -:  228:
+    #####:  229:    void    write_testcase_header(test_unit const & tu,
+        -:  230:                                  test_results const *tr,
+        -:  231:                                  int nb_assertions) const
+        -:  232:    {
+    #####:  233:        std::string name;
+    %%%%%:  233-block  0
+    $$$$$:  233-block  1
+    #####:  234:        std::string classname;
+    $$$$$:  234-block  0
+        -:  235:
+    #####:  236:        if(tu.p_id == m_ts.p_id ) {
+    %%%%%:  236-block  0
+    #####:  237:            name = "boost_test";
+    %%%%%:  237-block  0
+        -:  238:        }
+        -:  239:        else {
+    #####:  240:            classname = get_class_name(tu);
+    %%%%%:  240-block  0
+    %%%%%:  240-block  1
+    #####:  241:            name = tu_name_normalize(tu.p_name);
+    %%%%%:  241-block  0
+    %%%%%:  241-block  1
+    $$$$$:  241-block  2
+    $$$$$:  241-block  3
+        -:  242:        }
+        -:  243:
+    #####:  244:        if( tu.p_type == TUT_SUITE ) {
+    %%%%%:  244-block  0
+    #####:  245:            if(tr->p_timed_out)
+    %%%%%:  245-block  0
+    #####:  246:              name += "-timed-execution";
+    %%%%%:  246-block  0
+        -:  247:            else
+    #####:  248:              name += "-setup-teardown";
+    %%%%%:  248-block  0
+        -:  249:        }
+        -:  250:
+    #####:  251:        m_stream << "<testcase assertions" << utils::attr_value() << nb_assertions;
+    %%%%%:  251-block  0
+    %%%%%:  251-block  1
+    %%%%%:  251-block  2
+    $$$$$:  251-block  3
+    $$$$$:  251-block  4
+    #####:  252:        if(!classname.empty())
+    %%%%%:  252-block  0
+    #####:  253:            m_stream << " classname" << utils::attr_value() << classname;
+    %%%%%:  253-block  0
+    %%%%%:  253-block  1
+    %%%%%:  253-block  2
+    %%%%%:  253-block  3
+    $$$$$:  253-block  4
+    $$$$$:  253-block  5
+        -:  254:
+        -:  255:        // test case name and time taken
+    #####:  256:        m_stream
+    #####:  257:            << " name"      << utils::attr_value() << name
+    %%%%%:  257-block  0
+    %%%%%:  257-block  1
+    %%%%%:  257-block  2
+    $$$$$:  257-block  3
+    $$$$$:  257-block  4
+    #####:  258:            << " time"      << utils::attr_value() << double(tr->p_duration_microseconds) * 1E-6
+    %%%%%:  258-block  0
+    %%%%%:  258-block  1
+    %%%%%:  258-block  2
+    %%%%%:  258-block  3
+    $$$$$:  258-block  4
+    $$$$$:  258-block  5
+    $$$$$:  258-block  6
+    #####:  259:            << ">" << std::endl;
+    %%%%%:  259-block  0
+    %%%%%:  259-block  1
+    #####:  260:    }
+        -:  261:
+    #####:  262:    void    write_testcase_system_out(junit_impl::junit_log_helper const &detailed_log,
+        -:  263:                                      test_unit const * tu,
+        -:  264:                                      bool skipped) const
+        -:  265:    {
+        -:  266:        // system-out + all info/messages, the object skips the empty entries
+    #####:  267:        conditional_cdata_helper system_out_helper(m_stream, "system-out");
+    %%%%%:  267-block  0
+    %%%%%:  267-block  1
+    %%%%%:  267-block  2
+    $$$$$:  267-block  3
+    $$$$$:  267-block  4
+    $$$$$:  267-block  5
+        -:  268:
+        -:  269:        // indicate why the test has been skipped first
+    #####:  270:        if( skipped ) {
+    #####:  271:            std::list<std::string> skipping_decision_chain = build_skipping_chain(*tu);
+    %%%%%:  271-block  0
+    %%%%%:  271-block  1
+    $$$$$:  271-block  2
+    #####:  272:            for(list_str_citerator it(skipping_decision_chain.begin()), ite(skipping_decision_chain.end());
+    %%%%%:  272-block  0
+    #####:  273:                it != ite;
+    %%%%%:  273-block  0
+    #####:  274:                ++it)
+    %%%%%:  274-block  0
+        -:  275:            {
+    #####:  276:              system_out_helper(*it);
+    %%%%%:  276-block  0
+        -:  277:            }
+        -:  278:        }
+        -:  279:
+        -:  280:        // stdout
+    #####:  281:        for(list_str_citerator it(detailed_log.system_out.begin()), ite(detailed_log.system_out.end());
+    %%%%%:  281-block  0
+    #####:  282:            it != ite;
+    %%%%%:  282-block  0
+    #####:  283:            ++it)
+    %%%%%:  283-block  0
+        -:  284:        {
+    #####:  285:          system_out_helper(*it);
+    %%%%%:  285-block  0
+        -:  286:        }
+        -:  287:
+        -:  288:        // warning/info message last
+    #####:  289:        for(vect_assertion_entry_citerator it(detailed_log.assertion_entries.begin());
+    %%%%%:  289-block  0
+    #####:  290:            it != detailed_log.assertion_entries.end();
+    %%%%%:  290-block  0
+    #####:  291:            ++it)
+    %%%%%:  291-block  0
+        -:  292:        {
+    #####:  293:            if(it->log_entry != assertion_entry::log_entry_info)
+    %%%%%:  293-block  0
+    #####:  294:                continue;
+    %%%%%:  294-block  0
+    #####:  295:            system_out_helper(it->output);
+    %%%%%:  295-block  0
+        -:  296:        }
+    #####:  297:    }
+        -:  298:
+    #####:  299:    void    write_testcase_system_err(junit_impl::junit_log_helper const &detailed_log,
+        -:  300:                                      test_unit const * tu,
+        -:  301:                                      test_results const *tr) const
+        -:  302:    {
+        -:  303:        // system-err output + test case informations
+    #####:  304:        bool has_failed = (tr != 0) ? !tr->p_skipped && !tr->passed() : false;
+    %%%%%:  304-block  0
+    %%%%%:  304-block  1
+    %%%%%:  304-block  2
+    %%%%%:  304-block  3
+    %%%%%:  304-block  4
+    #####:  305:        if(!detailed_log.system_err.empty() || has_failed)
+    %%%%%:  305-block  0
+    %%%%%:  305-block  1
+    %%%%%:  305-block  2
+    %%%%%:  305-block  3
+    %%%%%:  305-block  4
+        -:  306:        {
+    #####:  307:            std::ostringstream o;
+    %%%%%:  307-block  0
+    $$$$$:  307-block  1
+    #####:  308:            if(has_failed) {
+    %%%%%:  308-block  0
+    #####:  309:                o << "Failures detected in:" << std::endl;
+    %%%%%:  309-block  0
+    %%%%%:  309-block  1
+        -:  310:            }
+        -:  311:            else {
+    #####:  312:                o << "ERROR STREAM:" << std::endl;
+    %%%%%:  312-block  0
+    %%%%%:  312-block  1
+        -:  313:            }
+        -:  314:
+    #####:  315:            if(tu->p_type == TUT_SUITE) {
+    %%%%%:  315-block  0
+    #####:  316:                if( tu->p_id == m_ts.p_id ) {
+    %%%%%:  316-block  0
+    %%%%%:  316-block  1
+    #####:  317:                    o << " boost.test global setup/teardown" << std::endl;
+    %%%%%:  317-block  0
+    %%%%%:  317-block  1
+        -:  318:                } else {
+    #####:  319:                    o << "- test suite: " << tu_name_remove_newlines(tu->full_name()) << std::endl;
+    %%%%%:  319-block  0
+    %%%%%:  319-block  1
+    %%%%%:  319-block  2
+    %%%%%:  319-block  3
+    %%%%%:  319-block  4
+    %%%%%:  319-block  5
+    $$$$$:  319-block  6
+    $$$$$:  319-block  7
+    $$$$$:  319-block  8
+    $$$$$:  319-block  9
+        -:  320:                }
+        -:  321:            }
+        -:  322:            else {
+    #####:  323:              o << "- test case: " << tu_name_remove_newlines(tu->full_name());
+    %%%%%:  323-block  0
+    %%%%%:  323-block  1
+    %%%%%:  323-block  2
+    %%%%%:  323-block  3
+    %%%%%:  323-block  4
+    $$$$$:  323-block  5
+    $$$$$:  323-block  6
+    $$$$$:  323-block  7
+    $$$$$:  323-block  8
+    #####:  324:              if(!tu->p_description.value.empty())
+    #####:  325:                  o << " '" << tu->p_description << "'";
+    %%%%%:  325-block  0
+    %%%%%:  325-block  1
+    %%%%%:  325-block  2
+        -:  326:
+    #####:  327:              o << std::endl
+    %%%%%:  327-block  0
+    #####:  328:                  << "- file: " << file_basename(tu->p_file_name) << std::endl
+    %%%%%:  328-block  0
+    %%%%%:  328-block  1
+    %%%%%:  328-block  2
+    %%%%%:  328-block  3
+    %%%%%:  328-block  4
+    $$$$$:  328-block  5
+    $$$$$:  328-block  6
+    #####:  329:                  << "- line: " << tu->p_line_num << std::endl
+    %%%%%:  329-block  0
+    %%%%%:  329-block  1
+    %%%%%:  329-block  2
+        -:  330:                  ;
+        -:  331:            }
+        -:  332:
+    #####:  333:            if(!detailed_log.system_err.empty())
+    %%%%%:  333-block  0
+    #####:  334:                o << std::endl << "STDERR BEGIN: ------------" << std::endl;
+    %%%%%:  334-block  0
+    %%%%%:  334-block  1
+    %%%%%:  334-block  2
+        -:  335:
+    #####:  336:            for(list_str_citerator it(detailed_log.system_err.begin()), ite(detailed_log.system_err.end());
+    %%%%%:  336-block  0
+    #####:  337:                it != ite;
+    %%%%%:  337-block  0
+    #####:  338:                ++it)
+    %%%%%:  338-block  0
+        -:  339:            {
+    #####:  340:              o << *it;
+    %%%%%:  340-block  0
+        -:  341:            }
+        -:  342:
+    #####:  343:            if(!detailed_log.system_err.empty())
+    %%%%%:  343-block  0
+    #####:  344:                o << std::endl << "STDERR END    ------------" << std::endl;
+    %%%%%:  344-block  0
+    %%%%%:  344-block  1
+    %%%%%:  344-block  2
+        -:  345:
+    #####:  346:            conditional_cdata_helper system_err_helper(m_stream, "system-err");
+    %%%%%:  346-block  0
+    %%%%%:  346-block  1
+    $$$$$:  346-block  2
+    $$$$$:  346-block  3
+    $$$$$:  346-block  4
+    #####:  347:            system_err_helper(o.str());
+    %%%%%:  347-block  0
+    %%%%%:  347-block  1
+    $$$$$:  347-block  2
+    $$$$$:  347-block  3
+        -:  348:        }
+    #####:  349:    }
+    %%%%%:  349-block  0
+        -:  350:
+    #####:  351:    int     get_nb_assertions(junit_impl::junit_log_helper const &detailed_log,
+        -:  352:                              test_unit const & tu,
+        -:  353:                              test_results const *tr) const {
+    #####:  354:        int nb_assertions(-1);
+    #####:  355:        if( tu.p_type == TUT_SUITE ) {
+    %%%%%:  355-block  0
+    #####:  356:            nb_assertions = 0;
+    #####:  357:            for(vect_assertion_entry_citerator it(detailed_log.assertion_entries.begin());
+    %%%%%:  357-block  0
+    #####:  358:                it != detailed_log.assertion_entries.end();
+    %%%%%:  358-block  0
+    #####:  359:                ++it)
+    %%%%%:  359-block  0
+        -:  360:            {
+    #####:  361:                if(it->log_entry != assertion_entry::log_entry_info)
+    %%%%%:  361-block  0
+    #####:  362:                    nb_assertions++;
+    %%%%%:  362-block  0
+        -:  363:            }
+        -:  364:        }
+        -:  365:        else {
+    #####:  366:            nb_assertions = static_cast<int>(tr->p_assertions_passed + tr->p_assertions_failed);
+    %%%%%:  366-block  0
+        -:  367:        }
+        -:  368:
+    #####:  369:        return nb_assertions;
+    %%%%%:  369-block  0
+        -:  370:    }
+        -:  371:
+    #####:  372:    void    output_detailed_logs(junit_impl::junit_log_helper const &detailed_log,
+        -:  373:                                 test_unit const & tu,
+        -:  374:                                 bool skipped,
+        -:  375:                                 test_results const *tr) const
+        -:  376:    {
+    #####:  377:        int nb_assertions = get_nb_assertions(detailed_log, tu, tr);
+    %%%%%:  377-block  0
+    #####:  378:        if(!nb_assertions && tu.p_type == TUT_SUITE)
+    %%%%%:  378-block  0
+    #####:  379:            return;
+    %%%%%:  379-block  0
+        -:  380:
+    #####:  381:        write_testcase_header(tu, tr, nb_assertions);
+    %%%%%:  381-block  0
+        -:  382:
+    #####:  383:        if( skipped ) {
+    #####:  384:            m_stream << "<skipped/>" << std::endl;
+    %%%%%:  384-block  0
+        -:  385:        }
+        -:  386:        else {
+        -:  387:
+    #####:  388:          for(vect_assertion_entry_citerator it(detailed_log.assertion_entries.begin());
+    %%%%%:  388-block  0
+    #####:  389:              it != detailed_log.assertion_entries.end();
+    %%%%%:  389-block  0
+    #####:  390:              ++it)
+    %%%%%:  390-block  0
+        -:  391:          {
+    #####:  392:              add_log_entry(*it);
+    %%%%%:  392-block  0
+        -:  393:          }
+        -:  394:        }
+        -:  395:
+    #####:  396:        write_testcase_system_out(detailed_log, &tu, skipped);
+    %%%%%:  396-block  0
+    #####:  397:        write_testcase_system_err(detailed_log, &tu, tr);
+    #####:  398:        m_stream << "</testcase>" << std::endl;
+        -:  399:    }
+        -:  400:
+    #####:  401:    void    visit( test_case const& tc )
+        -:  402:    {
+        -:  403:
+    #####:  404:        test_results const& tr = results_collector.results( tc.p_id );
+    %%%%%:  404-block  0
+    #####:  405:        junit_log_formatter::map_trace_t::const_iterator it_find = m_map_test.find(tc.p_id);
+    %%%%%:  405-block  0
+    #####:  406:        if(it_find == m_map_test.end())
+    %%%%%:  406-block  0
+        -:  407:        {
+        -:  408:            // test has been skipped and not seen by the logger
+    #####:  409:            output_detailed_logs(junit_impl::junit_log_helper(), tc, true, &tr);
+    %%%%%:  409-block  0
+    %%%%%:  409-block  1
+    $$$$$:  409-block  2
+    $$$$$:  409-block  3
+        -:  410:        }
+        -:  411:        else {
+    #####:  412:            output_detailed_logs(it_find->second, tc, tr.p_skipped, &tr);
+    %%%%%:  412-block  0
+        -:  413:        }
+    #####:  414:    }
+    %%%%%:  414-block  0
+        -:  415:
+    #####:  416:    bool    test_suite_start( test_suite const& ts )
+        -:  417:    {
+    #####:  418:        test_results const& tr = results_collector.results( ts.p_id );
+    %%%%%:  418-block  0
+        -:  419:
+        -:  420:        // unique test suite, without s, nesting not supported in CI
+    #####:  421:        if( m_ts.p_id == ts.p_id ) {
+    #####:  422:            m_stream << "<testsuite";
+    %%%%%:  422-block  0
+        -:  423:
+        -:  424:            // think about: maybe we should add the number of fixtures of a test_suite as
+        -:  425:            // independant tests (field p_fixtures).
+        -:  426:            // same goes for the timed-execution: we can think of that as a separate test-unit
+        -:  427:            // in the suite.
+        -:  428:            // see https://llg.cubic.org/docs/junit/ and
+        -:  429:            // http://svn.apache.org/viewvc/ant/core/trunk/src/main/org/apache/tools/ant/taskdefs/optional/junit/XMLJUnitResultFormatter.java?view=markup
+    #####:  430:            m_stream
+        -:  431:              // << "disabled=\"" << tr.p_test_cases_skipped << "\" "
+    #####:  432:              << " tests"     << utils::attr_value()
+    $$$$$:  432-block  0
+    $$$$$:  432-block  1
+        -:  433:                  << tr.p_test_cases_passed
+    #####:  434:                     + tr.p_test_cases_failed
+    %%%%%:  434-block  0
+    $$$$$:  434-block  1
+        -:  435:                     // + tr.p_test_cases_aborted // aborted is also failed, we avoid counting it twice
+    #####:  436:              << " skipped"   << utils::attr_value() << tr.p_test_cases_skipped
+    %%%%%:  436-block  0
+    %%%%%:  436-block  1
+    %%%%%:  436-block  2
+    $$$$$:  436-block  3
+    $$$$$:  436-block  4
+    #####:  437:              << " errors"    << utils::attr_value() << tr.p_test_cases_aborted
+    %%%%%:  437-block  0
+    %%%%%:  437-block  1
+    %%%%%:  437-block  2
+    $$$$$:  437-block  3
+    $$$$$:  437-block  4
+    #####:  438:              << " failures"  << utils::attr_value()
+    %%%%%:  438-block  0
+    %%%%%:  438-block  1
+    $$$$$:  438-block  2
+    $$$$$:  438-block  3
+        -:  439:                  << tr.p_test_cases_failed
+    #####:  440:                     + tr.p_test_suites_timed_out
+    %%%%%:  440-block  0
+    #####:  441:                     + tr.p_test_cases_timed_out
+    #####:  442:                     - tr.p_test_cases_aborted // failed is not aborted in the Junit sense
+    $$$$$:  442-block  0
+    #####:  443:              << " id"        << utils::attr_value() << m_id++
+    %%%%%:  443-block  0
+    %%%%%:  443-block  1
+    %%%%%:  443-block  2
+    $$$$$:  443-block  3
+    $$$$$:  443-block  4
+    $$$$$:  443-block  5
+    #####:  444:              << " name"      << utils::attr_value() << tu_name_normalize(ts.p_name)
+    %%%%%:  444-block  0
+    %%%%%:  444-block  1
+    %%%%%:  444-block  2
+    %%%%%:  444-block  3
+    %%%%%:  444-block  4
+    $$$$$:  444-block  5
+    $$$$$:  444-block  6
+    $$$$$:  444-block  7
+    $$$$$:  444-block  8
+    $$$$$:  444-block  9
+    $$$$$:  444-block 10
+    #####:  445:              << " time"      << utils::attr_value() << (tr.p_duration_microseconds * 1E-6)
+    %%%%%:  445-block  0
+    %%%%%:  445-block  1
+    %%%%%:  445-block  2
+    %%%%%:  445-block  3
+    $$$$$:  445-block  4
+    $$$$$:  445-block  5
+    $$$$$:  445-block  6
+    #####:  446:              << ">" << std::endl;
+    %%%%%:  446-block  0
+    %%%%%:  446-block  1
+        -:  447:
+    #####:  448:            if(m_display_build_info)
+        -:  449:            {
+    #####:  450:                m_stream  << "<properties>" << std::endl;
+    %%%%%:  450-block  0
+    %%%%%:  450-block  1
+    #####:  451:                m_stream  << "<property name=\"platform\" value" << utils::attr_value() << BOOST_PLATFORM << " />" << std::endl;
+    %%%%%:  451-block  0
+    %%%%%:  451-block  1
+    %%%%%:  451-block  2
+    %%%%%:  451-block  3
+    %%%%%:  451-block  4
+    $$$$$:  451-block  5
+    $$$$$:  451-block  6
+    #####:  452:                m_stream  << "<property name=\"compiler\" value" << utils::attr_value() << BOOST_COMPILER << " />" << std::endl;
+    %%%%%:  452-block  0
+    %%%%%:  452-block  1
+    %%%%%:  452-block  2
+    %%%%%:  452-block  3
+    %%%%%:  452-block  4
+    $$$$$:  452-block  5
+    $$$$$:  452-block  6
+    #####:  453:                m_stream  << "<property name=\"stl\" value" << utils::attr_value() << BOOST_STDLIB << " />" << std::endl;
+    %%%%%:  453-block  0
+    %%%%%:  453-block  1
+    %%%%%:  453-block  2
+    %%%%%:  453-block  3
+    %%%%%:  453-block  4
+    $$$$$:  453-block  5
+    $$$$$:  453-block  6
+        -:  454:
+    #####:  455:                std::ostringstream o;
+    %%%%%:  455-block  0
+    %%%%%:  455-block  1
+    $$$$$:  455-block  2
+    #####:  456:                o << BOOST_VERSION/100000 << "." << BOOST_VERSION/100 % 1000 << "." << BOOST_VERSION % 100;
+    %%%%%:  456-block  0
+    %%%%%:  456-block  1
+    %%%%%:  456-block  2
+    %%%%%:  456-block  3
+    %%%%%:  456-block  4
+    #####:  457:                m_stream  << "<property name=\"boost\" value" << utils::attr_value() << o.str() << " />" << std::endl;
+    %%%%%:  457-block  0
+    %%%%%:  457-block  1
+    %%%%%:  457-block  2
+    %%%%%:  457-block  3
+    %%%%%:  457-block  4
+    %%%%%:  457-block  5
+    %%%%%:  457-block  6
+    $$$$$:  457-block  7
+    $$$$$:  457-block  8
+    $$$$$:  457-block  9
+    $$$$$:  457-block 10
+    #####:  458:                m_stream  << "</properties>" << std::endl;
+    %%%%%:  458-block  0
+        -:  459:            }
+        -:  460:        }
+        -:  461:
+    #####:  462:        if( !tr.p_skipped ) {
+    %%%%%:  462-block  0
+        -:  463:            // if we land here, then this is a chance that we are logging the fixture setup/teardown of a test-suite.
+        -:  464:            // the setup/teardown logging of a test-case is part of the test case.
+        -:  465:            // we do not care about the test-suite that were skipped (really??)
+    #####:  466:            junit_log_formatter::map_trace_t::const_iterator it_find = m_map_test.find(ts.p_id);
+    %%%%%:  466-block  0
+    #####:  467:            if(it_find != m_map_test.end()) {
+    %%%%%:  467-block  0
+    #####:  468:                output_detailed_logs(it_find->second, ts, false, &tr);
+    %%%%%:  468-block  0
+        -:  469:            }
+        -:  470:        }
+        -:  471:
+    #####:  472:        return true; // indicates that the children should also be parsed
+    %%%%%:  472-block  0
+    %%%%%:  472-block  1
+        -:  473:    }
+        -:  474:
+    #####:  475:    virtual void    test_suite_finish( test_suite const& ts )
+        -:  476:    {
+    #####:  477:        if( m_ts.p_id == ts.p_id ) {
+    %%%%%:  477-block  0
+    #####:  478:            write_testcase_system_out(runner_log, 0, false);
+    %%%%%:  478-block  0
+    #####:  479:            write_testcase_system_err(runner_log, 0, 0);
+        -:  480:
+    #####:  481:            m_stream << "</testsuite>";
+    #####:  482:            return;
+        -:  483:        }
+        -:  484:    }
+        -:  485:
+        -:  486:private:
+        -:  487:    // Data members
+        -:  488:    std::ostream& m_stream;
+        -:  489:    test_unit const& m_ts;
+        -:  490:    junit_log_formatter::map_trace_t const& m_map_test;
+        -:  491:    junit_impl::junit_log_helper const& runner_log;
+        -:  492:    size_t m_id;
+        -:  493:    bool m_display_build_info;
+        -:  494:};
+        -:  495:
+        -:  496:
+        -:  497:
+        -:  498:void
+    #####:  499:junit_log_formatter::log_finish( std::ostream& ostr )
+        -:  500:{
+    #####:  501:    ostr << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" << std::endl;
+    %%%%%:  501-block  0
+        -:  502:
+        -:  503:    // getting the root test suite
+    #####:  504:    if(!map_tests.empty()) {
+    #####:  505:        test_unit* root = &boost::unit_test::framework::get( map_tests.begin()->first, TUT_ANY );
+    %%%%%:  505-block  0
+    %%%%%:  505-block  1
+    $$$$$:  505-block  2
+        -:  506:
+        -:  507:        // looking for the root of the SUBtree (we stay in the subtree)
+    #####:  508:        while(root->p_parent_id != INV_TEST_UNIT_ID && map_tests.count(root->p_parent_id) > 0) {
+    %%%%%:  508-block  0
+    %%%%%:  508-block  1
+    %%%%%:  508-block  2
+    %%%%%:  508-block  3
+    %%%%%:  508-block  4
+    %%%%%:  508-block  5
+    %%%%%:  508-block  6
+    #####:  509:            root = &boost::unit_test::framework::get( root->p_parent_id, TUT_ANY );
+    %%%%%:  509-block  0
+    %%%%%:  509-block  1
+        -:  510:        }
+    #####:  511:        junit_result_helper ch( ostr, *root, map_tests, this->runner_log_entry, m_display_build_info );
+    %%%%%:  511-block  0
+    %%%%%:  511-block  1
+    $$$$$:  511-block  2
+    #####:  512:        traverse_test_tree( root->p_id, ch, true ); // last is to ignore disabled suite special handling
+        -:  513:    }
+        -:  514:    else {
+    #####:  515:        ostr << "<testsuites errors=\"1\">";
+    %%%%%:  515-block  0
+    #####:  516:        ostr << "<testsuite errors=\"1\" name=\"boost-test-framework\">";
+    #####:  517:        ostr << "<testcase assertions=\"1\" name=\"test-setup\">";
+    #####:  518:        ostr << "<system-out>Incorrect setup: no test case executed</system-out>";
+    #####:  519:        ostr << "</testcase></testsuite></testsuites>";
+        -:  520:    }
+    #####:  521:    return;
+    %%%%%:  521-block  0
+    %%%%%:  521-block  1
+        -:  522:}
+        -:  523:
+        -:  524://____________________________________________________________________________//
+        -:  525:
+        -:  526:void
+    #####:  527:junit_log_formatter::log_build_info( std::ostream& /*ostr*/, bool log_build_info )
+        -:  528:{
+    #####:  529:    m_display_build_info = log_build_info;
+    #####:  530:}
+        -:  531:
+        -:  532://____________________________________________________________________________//
+        -:  533:
+        -:  534:void
+    #####:  535:junit_log_formatter::test_unit_start( std::ostream& /*ostr*/, test_unit const& tu )
+        -:  536:{
+    #####:  537:    list_path_to_root.push_back( tu.p_id );
+    %%%%%:  537-block  0
+    #####:  538:    map_tests.insert(std::make_pair(tu.p_id, junit_impl::junit_log_helper())); // current_test_case_id not working here
+    %%%%%:  538-block  0
+    %%%%%:  538-block  1
+    $$$$$:  538-block  2
+    $$$$$:  538-block  3
+    $$$$$:  538-block  4
+    #####:  539:}
+        -:  540:
+        -:  541:
+        -:  542:
+        -:  543://____________________________________________________________________________//
+        -:  544:
+        -:  545:
+        -:  546:void
+    #####:  547:junit_log_formatter::test_unit_finish( std::ostream& /*ostr*/, test_unit const& tu, unsigned long /*elapsed*/ )
+        -:  548:{
+        -:  549:    // the time is already stored in the result_reporter
+        -:  550:    boost::ignore_unused( tu );
+    #####:  551:    assert( tu.p_id == list_path_to_root.back() );
+    %%%%%:  551-block  0
+    %%%%%:  551-block  1
+    %%%%%:  551-block  2
+    #####:  552:    list_path_to_root.pop_back();
+    %%%%%:  552-block  0
+    #####:  553:}
+        -:  554:
+        -:  555:void
+    #####:  556:junit_log_formatter::test_unit_aborted( std::ostream& /*ostr*/, test_unit const& tu )
+        -:  557:{
+        -:  558:    boost::ignore_unused( tu );
+    #####:  559:    assert( tu.p_id == list_path_to_root.back() );
+    %%%%%:  559-block  0
+    %%%%%:  559-block  1
+    %%%%%:  559-block  2
+        -:  560:    //list_path_to_root.pop_back();
+    #####:  561:}
+        -:  562:
+        -:  563://____________________________________________________________________________//
+        -:  564:
+        -:  565:void
+    #####:  566:junit_log_formatter::test_unit_timed_out( std::ostream& /*os*/, test_unit const& tu)
+        -:  567:{
+    #####:  568:    if(tu.p_type == TUT_SUITE)
+    %%%%%:  568-block  0
+        -:  569:    {
+        -:  570:        // if we reach this call, it means that the test has already started and
+        -:  571:        // test_unit_start has already been called on the tu.
+    #####:  572:        junit_impl::junit_log_helper& last_entry = get_current_log_entry();
+    %%%%%:  572-block  0
+    #####:  573:        junit_impl::junit_log_helper::assertion_entry entry;
+    %%%%%:  573-block  0
+    %%%%%:  573-block  1
+    $$$$$:  573-block  2
+    #####:  574:        entry.logentry_message = "test-suite time out";
+    #####:  575:        entry.logentry_type = "execution timeout";
+    %%%%%:  575-block  0
+    #####:  576:        entry.log_entry = junit_impl::junit_log_helper::assertion_entry::log_entry_error;
+    #####:  577:        entry.output = "the current suite exceeded the allocated execution time";
+    %%%%%:  577-block  0
+    #####:  578:        last_entry.assertion_entries.push_back(entry);
+    %%%%%:  578-block  0
+        -:  579:    }
+    #####:  580:}
+    %%%%%:  580-block  0
+        -:  581:
+        -:  582://____________________________________________________________________________//
+        -:  583:
+        -:  584:void
+    #####:  585:junit_log_formatter::test_unit_skipped( std::ostream& /*ostr*/, test_unit const& tu, const_string reason )
+        -:  586:{
+        -:  587:    // if a test unit is skipped, then the start of this TU has not been called yet.
+        -:  588:    // we cannot use get_current_log_entry here, but the TU id should appear in the map.
+        -:  589:    // The "skip" boolean is given by the boost.test framework
+    #####:  590:    junit_impl::junit_log_helper& v = map_tests[tu.p_id]; // not sure if we can use get_current_log_entry()
+    %%%%%:  590-block  0
+    #####:  591:    v.skipping_reason.assign(reason.begin(), reason.end());
+    #####:  592:}
+        -:  593:
+        -:  594://____________________________________________________________________________//
+        -:  595:
+        -:  596:void
+    #####:  597:junit_log_formatter::log_exception_start( std::ostream& /*ostr*/, log_checkpoint_data const& checkpoint_data, execution_exception const& ex )
+        -:  598:{
+    #####:  599:    std::ostringstream o;
+    %%%%%:  599-block  0
+    $$$$$:  599-block  1
+    #####:  600:    execution_exception::location const& loc = ex.where();
+    %%%%%:  600-block  0
+        -:  601:
+    #####:  602:    m_is_last_assertion_or_error = false;
+        -:  603:
+    #####:  604:    junit_impl::junit_log_helper& last_entry = get_current_log_entry();
+        -:  605:
+    #####:  606:    junit_impl::junit_log_helper::assertion_entry entry;
+    %%%%%:  606-block  0
+    %%%%%:  606-block  1
+    $$$$$:  606-block  2
+        -:  607:
+    #####:  608:    entry.logentry_message = "unexpected exception";
+    #####:  609:    entry.log_entry = junit_impl::junit_log_helper::assertion_entry::log_entry_error;
+        -:  610:
+    #####:  611:    switch(ex.code())
+    %%%%%:  611-block  0
+        -:  612:    {
+    #####:  613:    case execution_exception::cpp_exception_error:
+    #####:  614:        entry.logentry_type = "uncaught exception";
+    %%%%%:  614-block  0
+    #####:  615:        break;
+    %%%%%:  615-block  0
+    #####:  616:    case execution_exception::timeout_error:
+    #####:  617:        entry.logentry_type = "execution timeout";
+    %%%%%:  617-block  0
+    #####:  618:        break;
+    %%%%%:  618-block  0
+    #####:  619:    case execution_exception::user_error:
+    #####:  620:        entry.logentry_type = "user, assert() or CRT error";
+    %%%%%:  620-block  0
+    #####:  621:        break;
+    %%%%%:  621-block  0
+    #####:  622:    case execution_exception::user_fatal_error:
+        -:  623:        // Looks like never used
+    #####:  624:        entry.logentry_type = "user fatal error";
+    %%%%%:  624-block  0
+    #####:  625:        break;
+    %%%%%:  625-block  0
+    #####:  626:    case execution_exception::system_error:
+    #####:  627:        entry.logentry_type = "system error";
+    %%%%%:  627-block  0
+    #####:  628:        break;
+    %%%%%:  628-block  0
+    #####:  629:    case execution_exception::system_fatal_error:
+    #####:  630:        entry.logentry_type = "system fatal error";
+    %%%%%:  630-block  0
+    #####:  631:        break;
+    %%%%%:  631-block  0
+    #####:  632:    default:
+    #####:  633:        entry.logentry_type = "no error"; // not sure how to handle this one
+    %%%%%:  633-block  0
+    #####:  634:        break;
+    %%%%%:  634-block  0
+        -:  635:    }
+        -:  636:
+    #####:  637:    o << "UNCAUGHT EXCEPTION:" << std::endl;
+    %%%%%:  637-block  0
+    %%%%%:  637-block  1
+    #####:  638:    if( !loc.m_function.is_empty() )
+    %%%%%:  638-block  0
+    #####:  639:        o << "- function: \""   << loc.m_function << "\"" << std::endl;
+    %%%%%:  639-block  0
+    %%%%%:  639-block  1
+    %%%%%:  639-block  2
+    %%%%%:  639-block  3
+        -:  640:
+    #####:  641:    o << "- file: " << file_basename(loc.m_file_name) << std::endl
+    %%%%%:  641-block  0
+    %%%%%:  641-block  1
+    %%%%%:  641-block  2
+    %%%%%:  641-block  3
+    $$$$$:  641-block  4
+    $$$$$:  641-block  5
+    #####:  642:      << "- line: " << loc.m_line_num << std::endl
+    %%%%%:  642-block  0
+    %%%%%:  642-block  1
+    %%%%%:  642-block  2
+    #####:  643:      << std::endl;
+    %%%%%:  643-block  0
+        -:  644:
+    #####:  645:    o << "\nEXCEPTION STACK TRACE: --------------\n" << ex.what()
+    $$$$$:  645-block  0
+    #####:  646:      << "\n-------------------------------------";
+    %%%%%:  646-block  0
+    %%%%%:  646-block  1
+    %%%%%:  646-block  2
+    %%%%%:  646-block  3
+        -:  647:
+    #####:  648:    if( !checkpoint_data.m_file_name.is_empty() ) {
+    %%%%%:  648-block  0
+    #####:  649:        o << std::endl << std::endl
+    %%%%%:  649-block  0
+    %%%%%:  649-block  1
+    #####:  650:          << "Last checkpoint:" << std::endl
+    %%%%%:  650-block  0
+    %%%%%:  650-block  1
+    #####:  651:          << "- message: \"" << checkpoint_data.m_message << "\"" << std::endl
+    %%%%%:  651-block  0
+    %%%%%:  651-block  1
+    %%%%%:  651-block  2
+    %%%%%:  651-block  3
+    #####:  652:          << "- file: " << file_basename(checkpoint_data.m_file_name) << std::endl
+    %%%%%:  652-block  0
+    %%%%%:  652-block  1
+    %%%%%:  652-block  2
+    %%%%%:  652-block  3
+    %%%%%:  652-block  4
+    $$$$$:  652-block  5
+    $$$$$:  652-block  6
+    #####:  653:          << "- line: " << checkpoint_data.m_line_num << std::endl
+    %%%%%:  653-block  0
+    %%%%%:  653-block  1
+    %%%%%:  653-block  2
+        -:  654:        ;
+        -:  655:    }
+        -:  656:
+    #####:  657:    entry.output = o.str();
+    %%%%%:  657-block  0
+    %%%%%:  657-block  1
+        -:  658:
+    #####:  659:    last_entry.assertion_entries.push_back(entry);
+    #####:  660:}
+        -:  661:
+        -:  662://____________________________________________________________________________//
+        -:  663:
+        -:  664:void
+    #####:  665:junit_log_formatter::log_exception_finish( std::ostream& /*ostr*/ )
+        -:  666:{
+        -:  667:    // sealing the last entry
+    #####:  668:    assert(!get_current_log_entry().assertion_entries.back().sealed);
+    %%%%%:  668-block  0
+    %%%%%:  668-block  1
+    %%%%%:  668-block  2
+    #####:  669:    get_current_log_entry().assertion_entries.back().sealed = true;
+    %%%%%:  669-block  0
+    #####:  670:}
+        -:  671:
+        -:  672://____________________________________________________________________________//
+        -:  673:
+        -:  674:void
+    #####:  675:junit_log_formatter::log_entry_start( std::ostream& /*ostr*/, log_entry_data const& entry_data, log_entry_types let )
+        -:  676:{
+    #####:  677:    junit_impl::junit_log_helper& last_entry = get_current_log_entry();
+    %%%%%:  677-block  0
+    #####:  678:    last_entry.skipping = false;
+    #####:  679:    m_is_last_assertion_or_error = true;
+    #####:  680:    switch(let)
+        -:  681:    {
+    #####:  682:      case unit_test_log_formatter::BOOST_UTL_ET_INFO:
+        -:  683:      {
+    #####:  684:        if(m_log_level_internal > log_successful_tests) {
+    %%%%%:  684-block  0
+    #####:  685:          last_entry.skipping = true;
+    #####:  686:          break;
+    %%%%%:  686-block  0
+        -:  687:        }
+        -:  688:        BOOST_FALLTHROUGH;
+        -:  689:      }
+        -:  690:      case unit_test_log_formatter::BOOST_UTL_ET_MESSAGE:
+        -:  691:      {
+    #####:  692:        if(m_log_level_internal > log_messages) {
+    %%%%%:  692-block  0
+    #####:  693:          last_entry.skipping = true;
+    #####:  694:          break;
+    %%%%%:  694-block  0
+        -:  695:        }
+        -:  696:        BOOST_FALLTHROUGH;
+        -:  697:      }
+        -:  698:      case unit_test_log_formatter::BOOST_UTL_ET_WARNING:
+        -:  699:      {
+    #####:  700:        if(m_log_level_internal > log_warnings) {
+    %%%%%:  700-block  0
+    #####:  701:          last_entry.skipping = true;
+    #####:  702:          break;
+    %%%%%:  702-block  0
+        -:  703:        }
+    #####:  704:        std::ostringstream o;
+    %%%%%:  704-block  0
+    $$$$$:  704-block  1
+    #####:  705:        junit_impl::junit_log_helper::assertion_entry entry;
+    %%%%%:  705-block  0
+    %%%%%:  705-block  1
+    $$$$$:  705-block  2
+        -:  706:
+    #####:  707:        entry.log_entry = junit_impl::junit_log_helper::assertion_entry::log_entry_info;
+    #####:  708:        entry.logentry_message = "info";
+    #####:  709:        entry.logentry_type = "message";
+    %%%%%:  709-block  0
+        -:  710:
+        -:  711:        o << (let == unit_test_log_formatter::BOOST_UTL_ET_WARNING ?
+    #####:  712:              "WARNING:" : (let == unit_test_log_formatter::BOOST_UTL_ET_MESSAGE ?
+    %%%%%:  712-block  0
+    %%%%%:  712-block  1
+    %%%%%:  712-block  2
+    #####:  713:                            "MESSAGE:" : "INFO:"))
+    %%%%%:  713-block  0
+    %%%%%:  713-block  1
+    %%%%%:  713-block  2
+    %%%%%:  713-block  3
+    #####:  714:             << std::endl
+    %%%%%:  714-block  0
+    #####:  715:          << "- file   : " << file_basename(entry_data.m_file_name) << std::endl
+    %%%%%:  715-block  0
+    %%%%%:  715-block  1
+    %%%%%:  715-block  2
+    %%%%%:  715-block  3
+    $$$$$:  715-block  4
+    $$$$$:  715-block  5
+    #####:  716:          << "- line   : " << entry_data.m_line_num << std::endl
+    %%%%%:  716-block  0
+    %%%%%:  716-block  1
+    %%%%%:  716-block  2
+    #####:  717:          << "- message: "; // no CR
+    %%%%%:  717-block  0
+        -:  718:
+    #####:  719:        entry.output += o.str();
+    %%%%%:  719-block  0
+    %%%%%:  719-block  1
+    %%%%%:  719-block  2
+    $$$$$:  719-block  3
+    $$$$$:  719-block  4
+    #####:  720:        last_entry.assertion_entries.push_back(entry);
+    #####:  721:        break;
+    %%%%%:  721-block  0
+        -:  722:      }
+    #####:  723:      default:
+        -:  724:      case unit_test_log_formatter::BOOST_UTL_ET_ERROR:
+        -:  725:      case unit_test_log_formatter::BOOST_UTL_ET_FATAL_ERROR:
+        -:  726:      {
+    #####:  727:        std::ostringstream o;
+    %%%%%:  727-block  0
+    $$$$$:  727-block  1
+    #####:  728:        junit_impl::junit_log_helper::assertion_entry entry;
+    %%%%%:  728-block  0
+    %%%%%:  728-block  1
+    $$$$$:  728-block  2
+    #####:  729:        entry.log_entry = junit_impl::junit_log_helper::assertion_entry::log_entry_failure;
+    #####:  730:        entry.logentry_message = "failure";
+    #####:  731:        entry.logentry_type = (let == unit_test_log_formatter::BOOST_UTL_ET_ERROR ? "assertion error" : "fatal error");
+    %%%%%:  731-block  0
+    %%%%%:  731-block  1
+    %%%%%:  731-block  2
+    %%%%%:  731-block  3
+        -:  732:
+    #####:  733:        o << "ASSERTION FAILURE:" << std::endl
+    %%%%%:  733-block  0
+    %%%%%:  733-block  1
+    #####:  734:          << "- file   : " << file_basename(entry_data.m_file_name) << std::endl
+    %%%%%:  734-block  0
+    %%%%%:  734-block  1
+    %%%%%:  734-block  2
+    %%%%%:  734-block  3
+    $$$$$:  734-block  4
+    $$$$$:  734-block  5
+    #####:  735:          << "- line   : " << entry_data.m_line_num << std::endl
+    %%%%%:  735-block  0
+    %%%%%:  735-block  1
+    %%%%%:  735-block  2
+    #####:  736:          << "- message: " ; // no CR
+    %%%%%:  736-block  0
+        -:  737:
+    #####:  738:        entry.output += o.str();
+    %%%%%:  738-block  0
+    %%%%%:  738-block  1
+    %%%%%:  738-block  2
+    $$$$$:  738-block  3
+    $$$$$:  738-block  4
+    #####:  739:        last_entry.assertion_entries.push_back(entry);
+    #####:  740:        break;
+    %%%%%:  740-block  0
+        -:  741:      }
+        -:  742:    }
+    #####:  743:}
+    %%%%%:  743-block  0
+        -:  744:
+        -:  745://____________________________________________________________________________//
+        -:  746:
+        -:  747:void
+    #####:  748:junit_log_formatter::log_entry_value( std::ostream& /*ostr*/, const_string value )
+        -:  749:{
+    #####:  750:    junit_impl::junit_log_helper& last_entry = get_current_log_entry();
+    %%%%%:  750-block  0
+    #####:  751:    if(last_entry.skipping)
+    #####:  752:        return;
+    %%%%%:  752-block  0
+        -:  753:
+    #####:  754:    assert(last_entry.assertion_entries.empty() || !last_entry.assertion_entries.back().sealed);
+    %%%%%:  754-block  0
+    %%%%%:  754-block  1
+    %%%%%:  754-block  2
+    %%%%%:  754-block  3
+        -:  755:
+    #####:  756:    if(!last_entry.assertion_entries.empty())
+    %%%%%:  756-block  0
+        -:  757:    {
+    #####:  758:        junit_impl::junit_log_helper::assertion_entry& log_entry = last_entry.assertion_entries.back();
+    %%%%%:  758-block  0
+    #####:  759:        log_entry.output += value;
+        -:  760:    }
+        -:  761:    else
+        -:  762:    {
+        -:  763:        // this may be a message coming from another observer
+        -:  764:        // the prefix is set in the log_entry_start
+    #####:  765:        last_entry.system_out.push_back(std::string(value.begin(), value.end()));
+    %%%%%:  765-block  0
+    %%%%%:  765-block  1
+    %%%%%:  765-block  2
+    $$$$$:  765-block  3
+    $$$$$:  765-block  4
+    $$$$$:  765-block  5
+        -:  766:    }
+        -:  767:}
+        -:  768:
+        -:  769://____________________________________________________________________________//
+        -:  770:
+        -:  771:void
+    #####:  772:junit_log_formatter::log_entry_finish( std::ostream& /*ostr*/ )
+        -:  773:{
+    #####:  774:    junit_impl::junit_log_helper& last_entry = get_current_log_entry();
+    %%%%%:  774-block  0
+    #####:  775:    if(!last_entry.skipping)
+        -:  776:    {
+    #####:  777:        assert(last_entry.assertion_entries.empty() || !last_entry.assertion_entries.back().sealed);
+    %%%%%:  777-block  0
+    %%%%%:  777-block  1
+    %%%%%:  777-block  2
+    %%%%%:  777-block  3
+        -:  778:
+    #####:  779:        if(!last_entry.assertion_entries.empty()) {
+    %%%%%:  779-block  0
+    #####:  780:            junit_impl::junit_log_helper::assertion_entry& log_entry = last_entry.assertion_entries.back();
+    %%%%%:  780-block  0
+    #####:  781:            log_entry.output += "\n\n"; // quote end, CR
+    #####:  782:            log_entry.sealed = true;
+        -:  783:        }
+        -:  784:        else {
+    #####:  785:            last_entry.system_out.push_back("\n\n"); // quote end, CR
+    %%%%%:  785-block  0
+    %%%%%:  785-block  1
+    %%%%%:  785-block  2
+    $$$$$:  785-block  3
+    $$$$$:  785-block  4
+    $$$$$:  785-block  5
+        -:  786:        }
+        -:  787:    }
+        -:  788:
+    #####:  789:    last_entry.skipping = false;
+    #####:  790:}
+    %%%%%:  790-block  0
+        -:  791:
+        -:  792://____________________________________________________________________________//
+        -:  793:
+        -:  794:void
+    #####:  795:junit_log_formatter::entry_context_start( std::ostream& /*ostr*/, log_level )
+        -:  796:{
+    #####:  797:    junit_impl::junit_log_helper& last_entry = get_current_log_entry();
+    %%%%%:  797-block  0
+    #####:  798:    if(last_entry.skipping)
+    #####:  799:        return;
+    %%%%%:  799-block  0
+        -:  800:
+    #####:  801:    std::vector< junit_impl::junit_log_helper::assertion_entry > &v_failure_or_error = last_entry.assertion_entries;
+    #####:  802:    assert(!v_failure_or_error.back().sealed);
+    %%%%%:  802-block  0
+    %%%%%:  802-block  1
+    %%%%%:  802-block  2
+        -:  803:
+    #####:  804:    junit_impl::junit_log_helper::assertion_entry& last_log_entry = v_failure_or_error.back();
+    %%%%%:  804-block  0
+    #####:  805:    if(m_is_last_assertion_or_error)
+        -:  806:    {
+    #####:  807:        last_log_entry.output += "\n- context:\n";
+    %%%%%:  807-block  0
+        -:  808:    }
+        -:  809:    else
+        -:  810:    {
+    #####:  811:        last_log_entry.output += "\n\nCONTEXT:\n";
+    %%%%%:  811-block  0
+        -:  812:    }
+        -:  813:}
+        -:  814:
+        -:  815://____________________________________________________________________________//
+        -:  816:
+        -:  817:void
+    #####:  818:junit_log_formatter::entry_context_finish( std::ostream& /*ostr*/, log_level )
+        -:  819:{
+        -:  820:    // no op, may be removed
+    #####:  821:    junit_impl::junit_log_helper& last_entry = get_current_log_entry();
+    %%%%%:  821-block  0
+    #####:  822:    if(last_entry.skipping)
+    #####:  823:        return;
+    %%%%%:  823-block  0
+    #####:  824:    assert(!get_current_log_entry().assertion_entries.back().sealed);
+    %%%%%:  824-block  0
+    %%%%%:  824-block  1
+    %%%%%:  824-block  2
+        -:  825:}
+        -:  826:
+        -:  827://____________________________________________________________________________//
+        -:  828:
+        -:  829:void
+    #####:  830:junit_log_formatter::log_entry_context( std::ostream& /*ostr*/, log_level , const_string context_descr )
+        -:  831:{
+    #####:  832:    junit_impl::junit_log_helper& last_entry = get_current_log_entry();
+    %%%%%:  832-block  0
+    #####:  833:    if(last_entry.skipping)
+    #####:  834:        return;
+    %%%%%:  834-block  0
+        -:  835:
+    #####:  836:    assert(!last_entry.assertion_entries.back().sealed);
+    %%%%%:  836-block  0
+    %%%%%:  836-block  1
+    %%%%%:  836-block  2
+    #####:  837:    junit_impl::junit_log_helper::assertion_entry& last_log_entry = get_current_log_entry().assertion_entries.back();
+    %%%%%:  837-block  0
+        -:  838:
+        -:  839:    last_log_entry.output +=
+    #####:  840:        (m_is_last_assertion_or_error ? "  - '": "- '") + std::string(context_descr.begin(), context_descr.end()) + "'\n"; // quote end
+    %%%%%:  840-block  0
+    %%%%%:  840-block  1
+    %%%%%:  840-block  2
+    %%%%%:  840-block  3
+    %%%%%:  840-block  4
+    %%%%%:  840-block  5
+    %%%%%:  840-block  6
+    $$$$$:  840-block  7
+    $$$$$:  840-block  8
+    $$$$$:  840-block  9
+    $$$$$:  840-block 10
+    $$$$$:  840-block 11
+    $$$$$:  840-block 12
+    $$$$$:  840-block 13
+        -:  841:}
+        -:  842:
+        -:  843://____________________________________________________________________________//
+        -:  844:
+        -:  845:
+        -:  846:std::string
+    #####:  847:junit_log_formatter::get_default_stream_description() const {
+    #####:  848:    std::string name = framework::master_test_suite().p_name.value;
+    %%%%%:  848-block  0
+    %%%%%:  848-block  1
+    $$$$$:  848-block  2
+        -:  849:
+    #####:  850:    static const std::string to_replace[] =  { " ", "\"", "/", "\\", ":"};
+    %%%%%:  850-block  0
+    %%%%%:  850-block  1
+    %%%%%:  850-block  2
+    %%%%%:  850-block  3
+    %%%%%:  850-block  4
+    %%%%%:  850-block  5
+    %%%%%:  850-block  6
+    %%%%%:  850-block  7
+    $$$$$:  850-block  8
+    $$$$$:  850-block  9
+    $$$$$:  850-block 10
+    $$$$$:  850-block 11
+    $$$$$:  850-block 12
+    $$$$$:  850-block 13
+    $$$$$:  850-block 14
+    $$$$$:  850-block 15
+    $$$$$:  850-block 16
+    $$$$$:  850-block 17
+    $$$$$:  850-block 18
+    $$$$$:  850-block 19
+    $$$$$:  850-block 20
+    $$$$$:  850-block 21
+    #####:  851:    static const std::string replacement[] = { "_", "_" , "_", "_" , "_"};
+    %%%%%:  851-block  0
+    %%%%%:  851-block  1
+    %%%%%:  851-block  2
+    %%%%%:  851-block  3
+    %%%%%:  851-block  4
+    %%%%%:  851-block  5
+    %%%%%:  851-block  6
+    %%%%%:  851-block  7
+    $$$$$:  851-block  8
+    $$$$$:  851-block  9
+    $$$$$:  851-block 10
+    $$$$$:  851-block 11
+    $$$$$:  851-block 12
+    $$$$$:  851-block 13
+    $$$$$:  851-block 14
+    $$$$$:  851-block 15
+    $$$$$:  851-block 16
+    $$$$$:  851-block 17
+    $$$$$:  851-block 18
+    $$$$$:  851-block 19
+    $$$$$:  851-block 20
+    $$$$$:  851-block 21
+        -:  852:
+    #####:  853:    name = unit_test::utils::replace_all_occurrences_of(
+    %%%%%:  853-block  0
+    %%%%%:  853-block  1
+    $$$$$:  853-block  2
+    $$$$$:  853-block  3
+        -:  854:        name,
+        -:  855:        to_replace, to_replace + sizeof(to_replace)/sizeof(to_replace[0]),
+    #####:  856:        replacement, replacement + sizeof(replacement)/sizeof(replacement[0]));
+    %%%%%:  856-block  0
+        -:  857:
+    #####:  858:    std::ifstream check_init((name + ".xml").c_str());
+    %%%%%:  858-block  0
+    %%%%%:  858-block  1
+    $$$$$:  858-block  2
+    $$$$$:  858-block  3
+    #####:  859:    if(!check_init)
+    %%%%%:  859-block  0
+    #####:  860:        return name + ".xml";
+    %%%%%:  860-block  0
+    %%%%%:  860-block  1
+        -:  861:
+    #####:  862:    int index = 0;
+    %%%%%:  862-block  0
+    #####:  863:    for(; index < 100; index++) {
+    %%%%%:  863-block  0
+    %%%%%:  863-block  1
+    #####:  864:      std::string candidate = name + "_" + utils::string_cast(index) + ".xml";
+    %%%%%:  864-block  0
+    %%%%%:  864-block  1
+    %%%%%:  864-block  2
+    %%%%%:  864-block  3
+    $$$$$:  864-block  4
+    $$$$$:  864-block  5
+    $$$$$:  864-block  6
+    $$$$$:  864-block  7
+    #####:  865:      std::ifstream file(candidate.c_str());
+    $$$$$:  865-block  0
+    #####:  866:      if(!file)
+    %%%%%:  866-block  0
+    %%%%%:  866-block  1
+    #####:  867:          return candidate;
+    %%%%%:  867-block  0
+        -:  868:    }
+        -:  869:
+    #####:  870:    return name + ".xml";
+    %%%%%:  870-block  0
+    %%%%%:  870-block  1
+        -:  871:}
+        -:  872:
+        -:  873:} // namespace output
+        -:  874:} // namespace unit_test
+        -:  875:} // namespace boost
+        -:  876:
+        -:  877:#include <boost/test/detail/enable_warnings.hpp>
+        -:  878:
+        -:  879:#endif // BOOST_TEST_junit_log_formatter_IPP_020105GER

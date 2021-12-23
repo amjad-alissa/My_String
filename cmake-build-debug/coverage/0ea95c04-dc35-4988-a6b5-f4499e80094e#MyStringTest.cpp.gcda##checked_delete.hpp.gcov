@@ -1,0 +1,474 @@
+        -:    0:Source:F:/Files/vcpkg/installed/x86-windows/include/boost/core/checked_delete.hpp
+        -:    0:Graph:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcno
+        -:    0:Data:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:#ifndef BOOST_CORE_CHECKED_DELETE_HPP
+        -:    2:#define BOOST_CORE_CHECKED_DELETE_HPP
+        -:    3:
+        -:    4:// MS compatible compilers support #pragma once
+        -:    5:
+        -:    6:#if defined(_MSC_VER) && (_MSC_VER >= 1020)
+        -:    7:# pragma once
+        -:    8:#endif
+        -:    9:
+        -:   10:#include <boost/config.hpp>
+        -:   11:
+        -:   12://
+        -:   13://  boost/checked_delete.hpp
+        -:   14://
+        -:   15://  Copyright (c) 2002, 2003 Peter Dimov
+        -:   16://  Copyright (c) 2003 Daniel Frey
+        -:   17://  Copyright (c) 2003 Howard Hinnant
+        -:   18://
+        -:   19://  Distributed under the Boost Software License, Version 1.0. (See
+        -:   20://  accompanying file LICENSE_1_0.txt or copy at
+        -:   21://  http://www.boost.org/LICENSE_1_0.txt)
+        -:   22://
+        -:   23://  See http://www.boost.org/libs/core/doc/html/core/checked_delete.html for documentation.
+        -:   24://
+        -:   25:
+        -:   26:namespace boost
+        -:   27:{
+        -:   28:
+        -:   29:// verify that types are complete for increased safety
+        -:   30:
+     585*:   31:template<class T> inline void checked_delete(T * x) BOOST_NOEXCEPT
+        -:   32:{
+        -:   33:    // intentionally complex - simplification causes regressions
+        -:   34:    typedef char type_must_be_complete[ sizeof(T)? 1: -1 ];
+        -:   35:    (void) sizeof(type_must_be_complete);
+     585*:   36:    delete x;
+     585*:   37:}
+------------------
+_ZN5boost14checked_deleteINS_9unit_test9decorator10depends_onEEEvPT_:
+    #####:   31:template<class T> inline void checked_delete(T * x) BOOST_NOEXCEPT
+        -:   32:{
+        -:   33:    // intentionally complex - simplification causes regressions
+        -:   34:    typedef char type_must_be_complete[ sizeof(T)? 1: -1 ];
+        -:   35:    (void) sizeof(type_must_be_complete);
+    #####:   36:    delete x;
+    %%%%%:   36-block  0
+    %%%%%:   36-block  1
+    #####:   37:}
+------------------
+_ZN5boost14checked_deleteINS_9unit_test23unit_test_log_formatterEEEvPT_:
+        3:   31:template<class T> inline void checked_delete(T * x) BOOST_NOEXCEPT
+        -:   32:{
+        -:   33:    // intentionally complex - simplification causes regressions
+        -:   34:    typedef char type_must_be_complete[ sizeof(T)? 1: -1 ];
+        -:   35:    (void) sizeof(type_must_be_complete);
+        3:   36:    delete x;
+        3:   36-block  0
+        3:   36-block  1
+        3:   37:}
+------------------
+_ZN5boost14checked_deleteINS_23basic_wrap_stringstreamIcEEEEvPT_:
+    #####:   31:template<class T> inline void checked_delete(T * x) BOOST_NOEXCEPT
+        -:   32:{
+        -:   33:    // intentionally complex - simplification causes regressions
+        -:   34:    typedef char type_must_be_complete[ sizeof(T)? 1: -1 ];
+        -:   35:    (void) sizeof(type_must_be_complete);
+    #####:   36:    delete x;
+    %%%%%:   36-block  0
+    %%%%%:   36-block  1
+    #####:   37:}
+------------------
+_ZN5boost14checked_deleteINS_7runtime3cla13rt_cla_detail14parameter_trieEEEvPT_:
+      572:   31:template<class T> inline void checked_delete(T * x) BOOST_NOEXCEPT
+        -:   32:{
+        -:   33:    // intentionally complex - simplification causes regressions
+        -:   34:    typedef char type_must_be_complete[ sizeof(T)? 1: -1 ];
+        -:   35:    (void) sizeof(type_must_be_complete);
+      572:   36:    delete x;
+      572:   36-block  0
+      572:   36-block  1
+      572:   37:}
+------------------
+_ZN5boost14checked_deleteINS_7runtime6optionEEEvPT_:
+    #####:   31:template<class T> inline void checked_delete(T * x) BOOST_NOEXCEPT
+        -:   32:{
+        -:   33:    // intentionally complex - simplification causes regressions
+        -:   34:    typedef char type_must_be_complete[ sizeof(T)? 1: -1 ];
+        -:   35:    (void) sizeof(type_must_be_complete);
+    #####:   36:    delete x;
+    %%%%%:   36-block  0
+    %%%%%:   36-block  1
+    #####:   37:}
+------------------
+_ZN5boost14checked_deleteINS_16exception_detail15error_info_baseEEEvPT_:
+    #####:   31:template<class T> inline void checked_delete(T * x) BOOST_NOEXCEPT
+        -:   32:{
+        -:   33:    // intentionally complex - simplification causes regressions
+        -:   34:    typedef char type_must_be_complete[ sizeof(T)? 1: -1 ];
+        -:   35:    (void) sizeof(type_must_be_complete);
+    #####:   36:    delete x;
+    %%%%%:   36-block  0
+    %%%%%:   36-block  1
+    #####:   37:}
+------------------
+_ZN5boost14checked_deleteINS_9unit_test9framework4impl21global_fixture_handleEEEvPT_:
+    #####:   31:template<class T> inline void checked_delete(T * x) BOOST_NOEXCEPT
+        -:   32:{
+        -:   33:    // intentionally complex - simplification causes regressions
+        -:   34:    typedef char type_must_be_complete[ sizeof(T)? 1: -1 ];
+        -:   35:    (void) sizeof(type_must_be_complete);
+    #####:   36:    delete x;
+    %%%%%:   36-block  0
+    %%%%%:   36-block  1
+    #####:   37:}
+------------------
+_ZN5boost14checked_deleteINS_9unit_test9decorator12preconditionEEEvPT_:
+    #####:   31:template<class T> inline void checked_delete(T * x) BOOST_NOEXCEPT
+        -:   32:{
+        -:   33:    // intentionally complex - simplification causes regressions
+        -:   34:    typedef char type_must_be_complete[ sizeof(T)? 1: -1 ];
+        -:   35:    (void) sizeof(type_must_be_complete);
+    #####:   36:    delete x;
+    %%%%%:   36-block  0
+    %%%%%:   36-block  1
+    #####:   37:}
+------------------
+_ZN5boost14checked_deleteINS_9unit_test9decorator9fixture_tEEEvPT_:
+    #####:   31:template<class T> inline void checked_delete(T * x) BOOST_NOEXCEPT
+        -:   32:{
+        -:   33:    // intentionally complex - simplification causes regressions
+        -:   34:    typedef char type_must_be_complete[ sizeof(T)? 1: -1 ];
+        -:   35:    (void) sizeof(type_must_be_complete);
+    #####:   36:    delete x;
+    %%%%%:   36-block  0
+    %%%%%:   36-block  1
+    #####:   37:}
+------------------
+_ZN5boost14checked_deleteINS_7runtime14typed_argumentIbEEEEvPT_:
+    #####:   31:template<class T> inline void checked_delete(T * x) BOOST_NOEXCEPT
+        -:   32:{
+        -:   33:    // intentionally complex - simplification causes regressions
+        -:   34:    typedef char type_must_be_complete[ sizeof(T)? 1: -1 ];
+        -:   35:    (void) sizeof(type_must_be_complete);
+    #####:   36:    delete x;
+    %%%%%:   36-block  0
+    %%%%%:   36-block  1
+    #####:   37:}
+------------------
+_ZN5boost14checked_deleteINS_9unit_test9decorator11descriptionEEEvPT_:
+    #####:   31:template<class T> inline void checked_delete(T * x) BOOST_NOEXCEPT
+        -:   32:{
+        -:   33:    // intentionally complex - simplification causes regressions
+        -:   34:    typedef char type_must_be_complete[ sizeof(T)? 1: -1 ];
+        -:   35:    (void) sizeof(type_must_be_complete);
+    #####:   36:    delete x;
+    %%%%%:   36-block  0
+    %%%%%:   36-block  1
+    #####:   37:}
+------------------
+_ZN5boost14checked_deleteINS_9unit_test9decorator7timeoutEEEvPT_:
+    #####:   31:template<class T> inline void checked_delete(T * x) BOOST_NOEXCEPT
+        -:   32:{
+        -:   33:    // intentionally complex - simplification causes regressions
+        -:   34:    typedef char type_must_be_complete[ sizeof(T)? 1: -1 ];
+        -:   35:    (void) sizeof(type_must_be_complete);
+    #####:   36:    delete x;
+    %%%%%:   36-block  0
+    %%%%%:   36-block  1
+    #####:   37:}
+------------------
+_ZN5boost14checked_deleteINS_9unit_test9decorator17expected_failuresEEEvPT_:
+    #####:   31:template<class T> inline void checked_delete(T * x) BOOST_NOEXCEPT
+        -:   32:{
+        -:   33:    // intentionally complex - simplification causes regressions
+        -:   34:    typedef char type_must_be_complete[ sizeof(T)? 1: -1 ];
+        -:   35:    (void) sizeof(type_must_be_complete);
+    #####:   36:    delete x;
+    %%%%%:   36-block  0
+    %%%%%:   36-block  1
+    #####:   37:}
+------------------
+_ZN5boost14checked_deleteINS_9unit_test9decorator5labelEEEvPT_:
+    #####:   31:template<class T> inline void checked_delete(T * x) BOOST_NOEXCEPT
+        -:   32:{
+        -:   33:    // intentionally complex - simplification causes regressions
+        -:   34:    typedef char type_must_be_complete[ sizeof(T)? 1: -1 ];
+        -:   35:    (void) sizeof(type_must_be_complete);
+    #####:   36:    delete x;
+    %%%%%:   36-block  0
+    %%%%%:   36-block  1
+    #####:   37:}
+------------------
+_ZN5boost14checked_deleteINS_9unit_test9decorator15stack_decoratorEEEvPT_:
+    #####:   31:template<class T> inline void checked_delete(T * x) BOOST_NOEXCEPT
+        -:   32:{
+        -:   33:    // intentionally complex - simplification causes regressions
+        -:   34:    typedef char type_must_be_complete[ sizeof(T)? 1: -1 ];
+        -:   35:    (void) sizeof(type_must_be_complete);
+    #####:   36:    delete x;
+    %%%%%:   36-block  0
+    %%%%%:   36-block  1
+    #####:   37:}
+------------------
+_ZN5boost14checked_deleteINS_9unit_test16results_reporter6formatEEEvPT_:
+        2:   31:template<class T> inline void checked_delete(T * x) BOOST_NOEXCEPT
+        -:   32:{
+        -:   33:    // intentionally complex - simplification causes regressions
+        -:   34:    typedef char type_must_be_complete[ sizeof(T)? 1: -1 ];
+        -:   35:    (void) sizeof(type_must_be_complete);
+        2:   36:    delete x;
+        2:   36-block  0
+        2:   36-block  1
+        2:   37:}
+------------------
+_ZN5boost14checked_deleteINS_2io18ios_base_all_saverEEEvPT_:
+        7:   31:template<class T> inline void checked_delete(T * x) BOOST_NOEXCEPT
+        -:   32:{
+        -:   33:    // intentionally complex - simplification causes regressions
+        -:   34:    typedef char type_must_be_complete[ sizeof(T)? 1: -1 ];
+        -:   35:    (void) sizeof(type_must_be_complete);
+        7:   36:    delete x;
+        7:   36-block  0
+        7:   36-block  1
+        7:   37:}
+------------------
+_ZN5boost14checked_deleteINS_9unit_test16progress_displayEEEvPT_:
+    #####:   31:template<class T> inline void checked_delete(T * x) BOOST_NOEXCEPT
+        -:   32:{
+        -:   33:    // intentionally complex - simplification causes regressions
+        -:   34:    typedef char type_must_be_complete[ sizeof(T)? 1: -1 ];
+        -:   35:    (void) sizeof(type_must_be_complete);
+    #####:   36:    delete x;
+    %%%%%:   36-block  0
+    #####:   37:}
+------------------
+_ZN5boost14checked_deleteINS_7runtime14enum_parameterINS_9unit_test13output_formatELNS1_11args_amountE0EEEEEvPT_:
+    #####:   31:template<class T> inline void checked_delete(T * x) BOOST_NOEXCEPT
+        -:   32:{
+        -:   33:    // intentionally complex - simplification causes regressions
+        -:   34:    typedef char type_must_be_complete[ sizeof(T)? 1: -1 ];
+        -:   35:    (void) sizeof(type_must_be_complete);
+    #####:   36:    delete x;
+    %%%%%:   36-block  0
+    %%%%%:   36-block  1
+    #####:   37:}
+------------------
+_ZN5boost14checked_deleteINS_7runtime14typed_argumentImEEEEvPT_:
+    #####:   31:template<class T> inline void checked_delete(T * x) BOOST_NOEXCEPT
+        -:   32:{
+        -:   33:    // intentionally complex - simplification causes regressions
+        -:   34:    typedef char type_must_be_complete[ sizeof(T)? 1: -1 ];
+        -:   35:    (void) sizeof(type_must_be_complete);
+    #####:   36:    delete x;
+    %%%%%:   36-block  0
+    %%%%%:   36-block  1
+    #####:   37:}
+------------------
+_ZN5boost14checked_deleteINS_7runtime14typed_argumentINS_9unit_test9log_levelEEEEEvPT_:
+    #####:   31:template<class T> inline void checked_delete(T * x) BOOST_NOEXCEPT
+        -:   32:{
+        -:   33:    // intentionally complex - simplification causes regressions
+        -:   34:    typedef char type_must_be_complete[ sizeof(T)? 1: -1 ];
+        -:   35:    (void) sizeof(type_must_be_complete);
+    #####:   36:    delete x;
+    %%%%%:   36-block  0
+    %%%%%:   36-block  1
+    #####:   37:}
+------------------
+_ZN5boost14checked_deleteINS_7runtime14typed_argumentISt6vectorINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESaIS9_EEEEEEvPT_:
+    #####:   31:template<class T> inline void checked_delete(T * x) BOOST_NOEXCEPT
+        -:   32:{
+        -:   33:    // intentionally complex - simplification causes regressions
+        -:   34:    typedef char type_must_be_complete[ sizeof(T)? 1: -1 ];
+        -:   35:    (void) sizeof(type_must_be_complete);
+    #####:   36:    delete x;
+    %%%%%:   36-block  0
+    %%%%%:   36-block  1
+    #####:   37:}
+------------------
+_ZN5boost14checked_deleteINS_7runtime14typed_argumentIjEEEEvPT_:
+    #####:   31:template<class T> inline void checked_delete(T * x) BOOST_NOEXCEPT
+        -:   32:{
+        -:   33:    // intentionally complex - simplification causes regressions
+        -:   34:    typedef char type_must_be_complete[ sizeof(T)? 1: -1 ];
+        -:   35:    (void) sizeof(type_must_be_complete);
+    #####:   36:    delete x;
+    %%%%%:   36-block  0
+    %%%%%:   36-block  1
+    #####:   37:}
+------------------
+_ZN5boost14checked_deleteINS_7runtime14typed_argumentINS_9unit_test12report_levelEEEEEvPT_:
+    #####:   31:template<class T> inline void checked_delete(T * x) BOOST_NOEXCEPT
+        -:   32:{
+        -:   33:    // intentionally complex - simplification causes regressions
+        -:   34:    typedef char type_must_be_complete[ sizeof(T)? 1: -1 ];
+        -:   35:    (void) sizeof(type_must_be_complete);
+    #####:   36:    delete x;
+    %%%%%:   36-block  0
+    %%%%%:   36-block  1
+    #####:   37:}
+------------------
+_ZN5boost14checked_deleteINS_7runtime9parameterINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEELNS1_11args_amountE0ELb0EEEEEvPT_:
+    #####:   31:template<class T> inline void checked_delete(T * x) BOOST_NOEXCEPT
+        -:   32:{
+        -:   33:    // intentionally complex - simplification causes regressions
+        -:   34:    typedef char type_must_be_complete[ sizeof(T)? 1: -1 ];
+        -:   35:    (void) sizeof(type_must_be_complete);
+    #####:   36:    delete x;
+    %%%%%:   36-block  0
+    %%%%%:   36-block  1
+    #####:   37:}
+------------------
+_ZN5boost14checked_deleteINS_7runtime9parameterImLNS1_11args_amountE0ELb0EEEEEvPT_:
+    #####:   31:template<class T> inline void checked_delete(T * x) BOOST_NOEXCEPT
+        -:   32:{
+        -:   33:    // intentionally complex - simplification causes regressions
+        -:   34:    typedef char type_must_be_complete[ sizeof(T)? 1: -1 ];
+        -:   35:    (void) sizeof(type_must_be_complete);
+    #####:   36:    delete x;
+    %%%%%:   36-block  0
+    %%%%%:   36-block  1
+    #####:   37:}
+------------------
+_ZN5boost14checked_deleteINS_7runtime9parameterINS_9unit_test13output_formatELNS1_11args_amountE0ELb1EEEEEvPT_:
+    #####:   31:template<class T> inline void checked_delete(T * x) BOOST_NOEXCEPT
+        -:   32:{
+        -:   33:    // intentionally complex - simplification causes regressions
+        -:   34:    typedef char type_must_be_complete[ sizeof(T)? 1: -1 ];
+        -:   35:    (void) sizeof(type_must_be_complete);
+    #####:   36:    delete x;
+    %%%%%:   36-block  0
+    %%%%%:   36-block  1
+    #####:   37:}
+------------------
+_ZN5boost14checked_deleteINS_7runtime14typed_argumentINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEEEEvPT_:
+    #####:   31:template<class T> inline void checked_delete(T * x) BOOST_NOEXCEPT
+        -:   32:{
+        -:   33:    // intentionally complex - simplification causes regressions
+        -:   34:    typedef char type_must_be_complete[ sizeof(T)? 1: -1 ];
+        -:   35:    (void) sizeof(type_must_be_complete);
+    #####:   36:    delete x;
+    %%%%%:   36-block  0
+    %%%%%:   36-block  1
+    #####:   37:}
+------------------
+_ZN5boost14checked_deleteINS_7runtime9parameterINS_9unit_test9log_levelELNS1_11args_amountE0ELb1EEEEEvPT_:
+    #####:   31:template<class T> inline void checked_delete(T * x) BOOST_NOEXCEPT
+        -:   32:{
+        -:   33:    // intentionally complex - simplification causes regressions
+        -:   34:    typedef char type_must_be_complete[ sizeof(T)? 1: -1 ];
+        -:   35:    (void) sizeof(type_must_be_complete);
+    #####:   36:    delete x;
+    %%%%%:   36-block  0
+    %%%%%:   36-block  1
+    #####:   37:}
+------------------
+_ZN5boost14checked_deleteINS_7runtime14enum_parameterINS_9unit_test9log_levelELNS1_11args_amountE0EEEEEvPT_:
+    #####:   31:template<class T> inline void checked_delete(T * x) BOOST_NOEXCEPT
+        -:   32:{
+        -:   33:    // intentionally complex - simplification causes regressions
+        -:   34:    typedef char type_must_be_complete[ sizeof(T)? 1: -1 ];
+        -:   35:    (void) sizeof(type_must_be_complete);
+    #####:   36:    delete x;
+    %%%%%:   36-block  0
+    %%%%%:   36-block  1
+    #####:   37:}
+------------------
+_ZN5boost14checked_deleteINS_7runtime9parameterINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEELNS1_11args_amountE2ELb0EEEEEvPT_:
+    #####:   31:template<class T> inline void checked_delete(T * x) BOOST_NOEXCEPT
+        -:   32:{
+        -:   33:    // intentionally complex - simplification causes regressions
+        -:   34:    typedef char type_must_be_complete[ sizeof(T)? 1: -1 ];
+        -:   35:    (void) sizeof(type_must_be_complete);
+    #####:   36:    delete x;
+    %%%%%:   36-block  0
+    %%%%%:   36-block  1
+    #####:   37:}
+------------------
+_ZN5boost14checked_deleteINS_7runtime9parameterIjLNS1_11args_amountE0ELb0EEEEEvPT_:
+    #####:   31:template<class T> inline void checked_delete(T * x) BOOST_NOEXCEPT
+        -:   32:{
+        -:   33:    // intentionally complex - simplification causes regressions
+        -:   34:    typedef char type_must_be_complete[ sizeof(T)? 1: -1 ];
+        -:   35:    (void) sizeof(type_must_be_complete);
+    #####:   36:    delete x;
+    %%%%%:   36-block  0
+    %%%%%:   36-block  1
+    #####:   37:}
+------------------
+_ZN5boost14checked_deleteINS_7runtime9parameterINS_9unit_test12report_levelELNS1_11args_amountE0ELb1EEEEEvPT_:
+    #####:   31:template<class T> inline void checked_delete(T * x) BOOST_NOEXCEPT
+        -:   32:{
+        -:   33:    // intentionally complex - simplification causes regressions
+        -:   34:    typedef char type_must_be_complete[ sizeof(T)? 1: -1 ];
+        -:   35:    (void) sizeof(type_must_be_complete);
+    #####:   36:    delete x;
+    %%%%%:   36-block  0
+    %%%%%:   36-block  1
+    #####:   37:}
+------------------
+_ZN5boost14checked_deleteINS_7runtime14enum_parameterINS_9unit_test12report_levelELNS1_11args_amountE0EEEEEvPT_:
+    #####:   31:template<class T> inline void checked_delete(T * x) BOOST_NOEXCEPT
+        -:   32:{
+        -:   33:    // intentionally complex - simplification causes regressions
+        -:   34:    typedef char type_must_be_complete[ sizeof(T)? 1: -1 ];
+        -:   35:    (void) sizeof(type_must_be_complete);
+    #####:   36:    delete x;
+    %%%%%:   36-block  0
+    %%%%%:   36-block  1
+    #####:   37:}
+------------------
+_ZN5boost14checked_deleteINS_7runtime14typed_argumentINS_9unit_test13output_formatEEEEEvPT_:
+    #####:   31:template<class T> inline void checked_delete(T * x) BOOST_NOEXCEPT
+        -:   32:{
+        -:   33:    // intentionally complex - simplification causes regressions
+        -:   34:    typedef char type_must_be_complete[ sizeof(T)? 1: -1 ];
+        -:   35:    (void) sizeof(type_must_be_complete);
+    #####:   36:    delete x;
+    %%%%%:   36-block  0
+    %%%%%:   36-block  1
+    #####:   37:}
+------------------
+_ZN5boost14checked_deleteINS_7runtime3cla6parserEEEvPT_:
+        1:   31:template<class T> inline void checked_delete(T * x) BOOST_NOEXCEPT
+        -:   32:{
+        -:   33:    // intentionally complex - simplification causes regressions
+        -:   34:    typedef char type_must_be_complete[ sizeof(T)? 1: -1 ];
+        -:   35:    (void) sizeof(type_must_be_complete);
+        1:   36:    delete x;
+        1:   36-block  0
+        1:   36-block  1
+        1:   37:}
+------------------
+        -:   38:
+    #####:   39:template<class T> inline void checked_array_delete(T * x) BOOST_NOEXCEPT
+        -:   40:{
+        -:   41:    typedef char type_must_be_complete[ sizeof(T)? 1: -1 ];
+        -:   42:    (void) sizeof(type_must_be_complete);
+    #####:   43:    delete [] x;
+    %%%%%:   43-block  0
+    %%%%%:   43-block  1
+    #####:   44:}
+        -:   45:
+        -:   46:template<class T> struct checked_deleter
+        -:   47:{
+        -:   48:    typedef void result_type;
+        -:   49:    typedef T * argument_type;
+        -:   50:
+        -:   51:    void operator()(T * x) const BOOST_NOEXCEPT
+        -:   52:    {
+        -:   53:        // boost:: disables ADL
+        -:   54:        boost::checked_delete(x);
+        -:   55:    }
+        -:   56:};
+        -:   57:
+        -:   58:template<class T> struct checked_array_deleter
+        -:   59:{
+        -:   60:    typedef void result_type;
+        -:   61:    typedef T * argument_type;
+        -:   62:
+        -:   63:    void operator()(T * x) const BOOST_NOEXCEPT
+        -:   64:    {
+        -:   65:        boost::checked_array_delete(x);
+        -:   66:    }
+        -:   67:};
+        -:   68:
+        -:   69:} // namespace boost
+        -:   70:
+        -:   71:#endif  // #ifndef BOOST_CORE_CHECKED_DELETE_HPP

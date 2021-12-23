@@ -1,0 +1,1123 @@
+        -:    0:Source:F:/Files/vcpkg/installed/x86-windows/include/boost/test/impl/debug.ipp
+        -:    0:Graph:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcno
+        -:    0:Data:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1://  (C) Copyright Gennadiy Rozental 2001.
+        -:    2://  Use, modification, and distribution are subject to the
+        -:    3://  Boost Software License, Version 1.0. (See accompanying file
+        -:    4://  http://www.boost.org/LICENSE_1_0.txt)
+        -:    5:
+        -:    6://  See http://www.boost.org/libs/test for the library home page.
+        -:    7://
+        -:    8://  File        : $RCSfile$
+        -:    9://
+        -:   10://  Version     : $Revision$
+        -:   11://
+        -:   12://  Description : debug interfaces implementation
+        -:   13:// ***************************************************************************
+        -:   14:
+        -:   15:#ifndef BOOST_TEST_DEBUG_API_IPP_112006GER
+        -:   16:#define BOOST_TEST_DEBUG_API_IPP_112006GER
+        -:   17:
+        -:   18:// Boost.Test
+        -:   19:#include <boost/test/detail/config.hpp>
+        -:   20:#include <boost/test/detail/global_typedef.hpp>
+        -:   21:
+        -:   22:#include <boost/test/debug.hpp>
+        -:   23:#include <boost/test/debug_config.hpp>
+        -:   24:
+        -:   25:#include <boost/core/ignore_unused.hpp>
+        -:   26:
+        -:   27:// Implementation on Windows
+        -:   28:#if defined(_WIN32) && !defined(UNDER_CE) && !defined(BOOST_DISABLE_WIN32) // ******* WIN32
+        -:   29:
+        -:   30:#  define BOOST_WIN32_BASED_DEBUG
+        -:   31:
+        -:   32:// SYSTEM API
+        -:   33:#  include <windows.h>
+        -:   34:#  include <winreg.h>
+        -:   35:#  include <cstdio>
+        -:   36:#  include <cstring>
+        -:   37:
+        -:   38:#  if !defined(NDEBUG) && defined(_MSC_VER)
+        -:   39:#    define BOOST_MS_CRT_BASED_DEBUG
+        -:   40:#    include <crtdbg.h>
+        -:   41:#  endif
+        -:   42:
+        -:   43:
+        -:   44:#  ifdef BOOST_NO_STDC_NAMESPACE
+        -:   45:namespace std { using ::memset; using ::sprintf; }
+        -:   46:#  endif
+        -:   47:
+        -:   48:#elif defined(unix) || defined(__unix) // ********************* UNIX
+        -:   49:
+        -:   50:#  define BOOST_UNIX_BASED_DEBUG
+        -:   51:
+        -:   52:// Boost.Test
+        -:   53:#include <boost/test/utils/class_properties.hpp>
+        -:   54:#include <boost/test/utils/algorithm.hpp>
+        -:   55:
+        -:   56:// STL
+        -:   57:#include <cstring>  // std::memcpy
+        -:   58:#include <map>
+        -:   59:#include <cstdio>
+        -:   60:#include <stdarg.h> // !! ?? cstdarg
+        -:   61:
+        -:   62:// SYSTEM API
+        -:   63:#  include <unistd.h>
+        -:   64:#  include <signal.h>
+        -:   65:#  include <fcntl.h>
+        -:   66:
+        -:   67:#  include <sys/types.h>
+        -:   68:#  include <sys/stat.h>
+        -:   69:#  include <sys/wait.h>
+        -:   70:#  include <sys/time.h>
+        -:   71:#  include <stdio.h>
+        -:   72:#  include <stdlib.h>
+        -:   73:
+        -:   74:#  if defined(sun) || defined(__sun)
+        -:   75:
+        -:   76:#    define BOOST_SUN_BASED_DEBUG
+        -:   77:
+        -:   78:#    ifndef BOOST_TEST_DBG_LIST
+        -:   79:#      define BOOST_TEST_DBG_LIST dbx;gdb
+        -:   80:#    endif
+        -:   81:
+        -:   82:#    define BOOST_TEST_CNL_DBG  dbx
+        -:   83:#    define BOOST_TEST_GUI_DBG  dbx-ddd
+        -:   84:
+        -:   85:#    include <procfs.h>
+        -:   86:
+        -:   87:#  elif defined(linux) || defined(__linux)
+        -:   88:
+        -:   89:#    define BOOST_LINUX_BASED_DEBUG
+        -:   90:
+        -:   91:#    include <sys/ptrace.h>
+        -:   92:
+        -:   93:#    ifndef BOOST_TEST_STAT_LINE_MAX
+        -:   94:#      define BOOST_TEST_STAT_LINE_MAX 500
+        -:   95:#    endif
+        -:   96:
+        -:   97:#    ifndef BOOST_TEST_DBG_LIST
+        -:   98:#      define BOOST_TEST_DBG_LIST gdb
+        -:   99:#    endif
+        -:  100:
+        -:  101:#    define BOOST_TEST_CNL_DBG  gdb
+        -:  102:#    define BOOST_TEST_GUI_DBG  gdb-xterm
+        -:  103:
+        -:  104:#  endif
+        -:  105:
+        -:  106:#endif
+        -:  107:
+        -:  108:#include <boost/test/detail/suppress_warnings.hpp>
+        -:  109:
+        -:  110://____________________________________________________________________________//
+        -:  111:
+        -:  112:namespace boost {
+        -:  113:namespace debug {
+        -:  114:
+        -:  115:using unit_test::const_string;
+        -:  116:
+        -:  117:// ************************************************************************** //
+        -:  118:// **************                debug::info_t                 ************** //
+        -:  119:// ************************************************************************** //
+        -:  120:
+        -:  121:namespace {
+        -:  122:
+        -:  123:#if defined(BOOST_WIN32_BASED_DEBUG) // *********************** WIN32
+        -:  124:
+        -:  125:template<typename T>
+        -:  126:inline void
+        4:  127:dyn_symbol( T& res, char const* module_name, char const* symbol_name )
+        -:  128:{
+        4:  129:    HMODULE m = ::GetModuleHandleA( module_name );
+        -:  130:
+        4:  131:    if( !m )
+       1*:  132:        m = ::LoadLibraryA( module_name );
+        -:  133:
+        4:  134:    res = reinterpret_cast<T>( ::GetProcAddress( m, symbol_name ) );
+        4:  135:}
+------------------
+_ZN5boost5debug12_GLOBAL__N_110dyn_symbolIPFlP6HKEY__EEEvRT_PKcSA_:
+        1:  127:dyn_symbol( T& res, char const* module_name, char const* symbol_name )
+        -:  128:{
+        1:  129:    HMODULE m = ::GetModuleHandleA( module_name );
+        1:  129-block  0
+        -:  130:
+        1:  131:    if( !m )
+    #####:  132:        m = ::LoadLibraryA( module_name );
+    %%%%%:  132-block  0
+        -:  133:
+        1:  134:    res = reinterpret_cast<T>( ::GetProcAddress( m, symbol_name ) );
+        1:  134-block  0
+        1:  135:}
+------------------
+_ZN5boost5debug12_GLOBAL__N_110dyn_symbolIPFlP6HKEY__PKcPmS7_PhS7_EEEvRT_S6_S6_:
+        1:  127:dyn_symbol( T& res, char const* module_name, char const* symbol_name )
+        -:  128:{
+        1:  129:    HMODULE m = ::GetModuleHandleA( module_name );
+        1:  129-block  0
+        -:  130:
+        1:  131:    if( !m )
+    #####:  132:        m = ::LoadLibraryA( module_name );
+    %%%%%:  132-block  0
+        -:  133:
+        1:  134:    res = reinterpret_cast<T>( ::GetProcAddress( m, symbol_name ) );
+        1:  134-block  0
+        1:  135:}
+------------------
+_ZN5boost5debug12_GLOBAL__N_110dyn_symbolIPFlP6HKEY__PKcPS4_EEEvRT_S6_S6_:
+        1:  127:dyn_symbol( T& res, char const* module_name, char const* symbol_name )
+        -:  128:{
+        1:  129:    HMODULE m = ::GetModuleHandleA( module_name );
+        1:  129-block  0
+        -:  130:
+        1:  131:    if( !m )
+        1:  132:        m = ::LoadLibraryA( module_name );
+        1:  132-block  0
+        -:  133:
+        1:  134:    res = reinterpret_cast<T>( ::GetProcAddress( m, symbol_name ) );
+        1:  134-block  0
+        1:  135:}
+------------------
+_ZN5boost5debug12_GLOBAL__N_110dyn_symbolIPFivEEEvRT_PKcS8_:
+        1:  127:dyn_symbol( T& res, char const* module_name, char const* symbol_name )
+        -:  128:{
+        1:  129:    HMODULE m = ::GetModuleHandleA( module_name );
+        1:  129-block  0
+        -:  130:
+        1:  131:    if( !m )
+    #####:  132:        m = ::LoadLibraryA( module_name );
+    %%%%%:  132-block  0
+        -:  133:
+        1:  134:    res = reinterpret_cast<T>( ::GetProcAddress( m, symbol_name ) );
+        1:  134-block  0
+        1:  135:}
+------------------
+        -:  136:
+        -:  137://____________________________________________________________________________//
+        -:  138:
+        -:  139:static struct info_t {
+        -:  140:    typedef BOOL (WINAPI* IsDebuggerPresentT)();
+        -:  141:    typedef LONG (WINAPI* RegQueryValueExT)( HKEY, char const* /*LPTSTR*/, LPDWORD, LPDWORD, LPBYTE, LPDWORD );
+        -:  142:    typedef LONG (WINAPI* RegOpenKeyT)( HKEY, char const* /*LPCTSTR*/, PHKEY );
+        -:  143:    typedef LONG (WINAPI* RegCloseKeyT)( HKEY );
+        -:  144:
+        -:  145:    info_t();
+        -:  146:
+        -:  147:    IsDebuggerPresentT  m_is_debugger_present;
+        -:  148:    RegOpenKeyT         m_reg_open_key;
+        -:  149:    RegQueryValueExT    m_reg_query_value;
+        -:  150:    RegCloseKeyT        m_reg_close_key;
+        -:  151:
+        -:  152:} s_info;
+        -:  153:
+        -:  154://____________________________________________________________________________//
+        -:  155:
+        1:  156:info_t::info_t()
+        -:  157:{
+        1:  158:    dyn_symbol( m_is_debugger_present, "kernel32", "IsDebuggerPresent" );
+        1:  158-block  0
+        1:  159:    dyn_symbol( m_reg_open_key, "advapi32", "RegOpenKeyA" );
+        1:  160:    dyn_symbol( m_reg_query_value, "advapi32", "RegQueryValueExA" );
+        1:  161:    dyn_symbol( m_reg_close_key, "advapi32", "RegCloseKey" );
+        1:  162:}
+        -:  163:
+        -:  164://____________________________________________________________________________//
+        -:  165:
+        -:  166:#elif defined(BOOST_UNIX_BASED_DEBUG)
+        -:  167:
+        -:  168:// ************************************************************************** //
+        -:  169:// **************                   fd_holder                  ************** //
+        -:  170:// ************************************************************************** //
+        -:  171:
+        -:  172:struct fd_holder {
+        -:  173:    explicit fd_holder( int fd ) : m_fd( fd ) {}
+        -:  174:    ~fd_holder()
+        -:  175:    {
+        -:  176:        if( m_fd != -1 )
+        -:  177:            ::close( m_fd );
+        -:  178:    }
+        -:  179:
+        -:  180:    operator int() { return m_fd; }
+        -:  181:
+        -:  182:private:
+        -:  183:    // Data members
+        -:  184:    int m_fd;
+        -:  185:};
+        -:  186:
+        -:  187:
+        -:  188:// ************************************************************************** //
+        -:  189:// **************                 process_info                 ************** //
+        -:  190:// ************************************************************************** //
+        -:  191:
+        -:  192:struct process_info {
+        -:  193:    // Constructor
+        -:  194:    explicit        process_info( int pid );
+        -:  195:
+        -:  196:    // access methods
+        -:  197:    int             parent_pid() const  { return m_parent_pid; }
+        -:  198:    const_string    binary_name() const { return m_binary_name; }
+        -:  199:    const_string    binary_path() const { return m_binary_path; }
+        -:  200:
+        -:  201:private:
+        -:  202:    // Data members
+        -:  203:    int             m_parent_pid;
+        -:  204:    const_string    m_binary_name;
+        -:  205:    const_string    m_binary_path;
+        -:  206:
+        -:  207:#if defined(BOOST_SUN_BASED_DEBUG)
+        -:  208:    struct psinfo   m_psi;
+        -:  209:    char            m_binary_path_buff[500+1]; // !! ??
+        -:  210:#elif defined(BOOST_LINUX_BASED_DEBUG)
+        -:  211:    char            m_stat_line[BOOST_TEST_STAT_LINE_MAX+1];
+        -:  212:    char            m_binary_path_buff[500+1]; // !! ??
+        -:  213:#endif
+        -:  214:};
+        -:  215:
+        -:  216://____________________________________________________________________________//
+        -:  217:
+        -:  218:process_info::process_info( int pid )
+        -:  219:: m_parent_pid( 0 )
+        -:  220:{
+        -:  221:#if defined(BOOST_SUN_BASED_DEBUG)
+        -:  222:    char fname_buff[30];
+        -:  223:
+        -:  224:    ::snprintf( fname_buff, sizeof(fname_buff), "/proc/%d/psinfo", pid );
+        -:  225:
+        -:  226:    fd_holder psinfo_fd( ::open( fname_buff, O_RDONLY ) );
+        -:  227:
+        -:  228:    if( psinfo_fd == -1 )
+        -:  229:        return;
+        -:  230:
+        -:  231:    if( ::read( psinfo_fd, &m_psi, sizeof(m_psi) ) == -1 )
+        -:  232:        return;
+        -:  233:
+        -:  234:    m_parent_pid = m_psi.pr_ppid;
+        -:  235:
+        -:  236:    m_binary_name.assign( m_psi.pr_fname );
+        -:  237:
+        -:  238:    //-------------------------- //
+        -:  239:
+        -:  240:    ::snprintf( fname_buff, sizeof(fname_buff), "/proc/%d/as", pid );
+        -:  241:
+        -:  242:    fd_holder as_fd( ::open( fname_buff, O_RDONLY ) );
+        -:  243:    uintptr_t   binary_name_pos;
+        -:  244:
+        -:  245:    // !! ?? could we avoid reading whole m_binary_path_buff?
+        -:  246:    if( as_fd == -1 ||
+        -:  247:        ::lseek( as_fd, m_psi.pr_argv, SEEK_SET ) == -1 ||
+        -:  248:        ::read ( as_fd, &binary_name_pos, sizeof(binary_name_pos) ) == -1 ||
+        -:  249:        ::lseek( as_fd, binary_name_pos, SEEK_SET ) == -1 ||
+        -:  250:        ::read ( as_fd, m_binary_path_buff, sizeof(m_binary_path_buff) ) == -1 )
+        -:  251:        return;
+        -:  252:
+        -:  253:    m_binary_path.assign( m_binary_path_buff );
+        -:  254:
+        -:  255:#elif defined(BOOST_LINUX_BASED_DEBUG)
+        -:  256:    char fname_buff[30];
+        -:  257:
+        -:  258:    ::snprintf( fname_buff, sizeof(fname_buff), "/proc/%d/stat", pid );
+        -:  259:
+        -:  260:    fd_holder psinfo_fd( ::open( fname_buff, O_RDONLY ) );
+        -:  261:
+        -:  262:    if( psinfo_fd == -1 )
+        -:  263:        return;
+        -:  264:
+        -:  265:    ssize_t num_read = ::read( psinfo_fd, m_stat_line, sizeof(m_stat_line)-1 );
+        -:  266:    if( num_read == -1 )
+        -:  267:        return;
+        -:  268:
+        -:  269:    m_stat_line[num_read] = 0;
+        -:  270:
+        -:  271:    char const* name_beg = m_stat_line;
+        -:  272:    while( *name_beg && *name_beg != '(' )
+        -:  273:        ++name_beg;
+        -:  274:
+        -:  275:    char const* name_end = name_beg+1;
+        -:  276:    while( *name_end && *name_end != ')' )
+        -:  277:        ++name_end;
+        -:  278:
+        -:  279:    std::sscanf( name_end+1, "%*s%d", &m_parent_pid );
+        -:  280:
+        -:  281:    m_binary_name.assign( name_beg+1, name_end );
+        -:  282:
+        -:  283:    ::snprintf( fname_buff, sizeof(fname_buff), "/proc/%d/exe", pid );
+        -:  284:    num_read = ::readlink( fname_buff, m_binary_path_buff, sizeof(m_binary_path_buff)-1 );
+        -:  285:
+        -:  286:    if( num_read == -1 )
+        -:  287:        return;
+        -:  288:
+        -:  289:    m_binary_path_buff[num_read] = 0;
+        -:  290:    m_binary_path.assign( m_binary_path_buff, num_read );
+        -:  291:#endif
+        -:  292:}
+        -:  293:
+        -:  294://____________________________________________________________________________//
+        -:  295:
+        -:  296:// ************************************************************************** //
+        -:  297:// **************             prepare_window_title             ************** //
+        -:  298:// ************************************************************************** //
+        -:  299:
+        -:  300:static char*
+        -:  301:prepare_window_title( dbg_startup_info const& dsi )
+        -:  302:{
+        -:  303:    typedef unit_test::const_string str_t;
+        -:  304:
+        -:  305:    static char title_str[50];
+        -:  306:
+        -:  307:    str_t path_sep( "\\/" );
+        -:  308:
+        -:  309:    str_t::iterator  it = unit_test::utils::find_last_of( dsi.binary_path.begin(), dsi.binary_path.end(),
+        -:  310:                                                          path_sep.begin(), path_sep.end() );
+        -:  311:
+        -:  312:    if( it == dsi.binary_path.end() )
+        -:  313:        it = dsi.binary_path.begin();
+        -:  314:    else
+        -:  315:        ++it;
+        -:  316:
+        -:  317:    ::snprintf( title_str, sizeof(title_str), "%*s %ld", (int)(dsi.binary_path.end()-it), it, dsi.pid );
+        -:  318:
+        -:  319:    return title_str;
+        -:  320:}
+        -:  321:
+        -:  322://____________________________________________________________________________//
+        -:  323:
+        -:  324:// ************************************************************************** //
+        -:  325:// **************                  save_execlp                 ************** //
+        -:  326:// ************************************************************************** //
+        -:  327:
+        -:  328:typedef unit_test::basic_cstring<char> mbuffer;
+        -:  329:
+        -:  330:inline char*
+        -:  331:copy_arg( mbuffer& dest, const_string arg )
+        -:  332:{
+        -:  333:    if( dest.size() < arg.size()+1 )
+        -:  334:        return 0;
+        -:  335:
+        -:  336:    char* res = dest.begin();
+        -:  337:
+        -:  338:    std::memcpy( res, arg.begin(), arg.size()+1 );
+        -:  339:
+        -:  340:    dest.trim_left( arg.size()+1 );
+        -:  341:
+        -:  342:    return res;
+        -:  343:}
+        -:  344:
+        -:  345://____________________________________________________________________________//
+        -:  346:
+        -:  347:bool
+        -:  348:safe_execlp( char const* file, ... )
+        -:  349:{
+        -:  350:    static char* argv_buff[200];
+        -:  351:
+        -:  352:    va_list     args;
+        -:  353:    char const* arg;
+        -:  354:
+        -:  355:    // first calculate actual number of arguments
+        -:  356:    int         num_args = 2; // file name and 0 at least
+        -:  357:
+        -:  358:    va_start( args, file );
+        -:  359:    while( !!(arg = va_arg( args, char const* )) )
+        -:  360:        num_args++;
+        -:  361:    va_end( args );
+        -:  362:
+        -:  363:    // reserve space for the argument pointers array
+        -:  364:    char**      argv_it  = argv_buff;
+        -:  365:    mbuffer     work_buff( reinterpret_cast<char*>(argv_buff), sizeof(argv_buff) );
+        -:  366:    work_buff.trim_left( num_args * sizeof(char*) );
+        -:  367:
+        -:  368:    // copy all the argument values into local storage
+        -:  369:    if( !(*argv_it++ = copy_arg( work_buff, file )) )
+        -:  370:        return false;
+        -:  371:
+        -:  372:    printf( "!! %s\n", file );
+        -:  373:
+        -:  374:    va_start( args, file );
+        -:  375:    while( !!(arg = va_arg( args, char const* )) ) {
+        -:  376:        printf( "!! %s\n", arg );
+        -:  377:        if( !(*argv_it++ = copy_arg( work_buff, arg )) ) {
+        -:  378:            va_end( args );
+        -:  379:            return false;
+        -:  380:        }
+        -:  381:    }
+        -:  382:    va_end( args );
+        -:  383:
+        -:  384:    *argv_it = 0;
+        -:  385:
+        -:  386:    return ::execvp( file, argv_buff ) != -1;
+        -:  387:}
+        -:  388:
+        -:  389://____________________________________________________________________________//
+        -:  390:
+        -:  391:// ************************************************************************** //
+        -:  392:// **************            start_debugger_in_emacs           ************** //
+        -:  393:// ************************************************************************** //
+        -:  394:
+        -:  395:static void
+        -:  396:start_debugger_in_emacs( dbg_startup_info const& dsi, char const* emacs_name, char const* dbg_command )
+        -:  397:{
+        -:  398:    char const* title = prepare_window_title( dsi );
+        -:  399:
+        -:  400:    if( !title )
+        -:  401:        return;
+        -:  402:
+        -:  403:    dsi.display.is_empty()
+        -:  404:        ? safe_execlp( emacs_name, "-title", title, "--eval", dbg_command, 0 )
+        -:  405:        : safe_execlp( emacs_name, "-title", title, "-display", dsi.display.begin(), "--eval", dbg_command, 0 );
+        -:  406:}
+        -:  407:
+        -:  408://____________________________________________________________________________//
+        -:  409:
+        -:  410:// ************************************************************************** //
+        -:  411:// **************                 gdb starters                 ************** //
+        -:  412:// ************************************************************************** //
+        -:  413:
+        -:  414:static char const*
+        -:  415:prepare_gdb_cmnd_file( dbg_startup_info const& dsi )
+        -:  416:{
+        -:  417:    // prepare pid value
+        -:  418:    char pid_buff[16];
+        -:  419:    ::snprintf( pid_buff, sizeof(pid_buff), "%ld", dsi.pid );
+        -:  420:    unit_test::const_string pid_str( pid_buff );
+        -:  421:
+        -:  422:    static char cmd_file_name[] = "/tmp/btl_gdb_cmd_XXXXXX"; // !! ??
+        -:  423:
+        -:  424:    // prepare commands
+        -:  425:    fd_holder cmd_fd( ::mkstemp( cmd_file_name ) );
+        -:  426:
+        -:  427:    if( cmd_fd == -1 )
+        -:  428:        return 0;
+        -:  429:
+        -:  430:#define WRITE_STR( str )  if( ::write( cmd_fd, str.begin(), str.size() ) == -1 ) return 0;
+        -:  431:#define WRITE_CSTR( str ) if( ::write( cmd_fd, str, sizeof( str )-1 ) == -1 ) return 0;
+        -:  432:
+        -:  433:    WRITE_CSTR( "file " );
+        -:  434:    WRITE_STR( dsi.binary_path );
+        -:  435:    WRITE_CSTR( "\nattach " );
+        -:  436:    WRITE_STR( pid_str );
+        -:  437:    WRITE_CSTR( "\nshell unlink " );
+        -:  438:    WRITE_STR( dsi.init_done_lock );
+        -:  439:    WRITE_CSTR( "\ncont" );
+        -:  440:    if( dsi.break_or_continue )
+        -:  441:        WRITE_CSTR( "\nup 4" );
+        -:  442:
+        -:  443:    WRITE_CSTR( "\necho \\n" ); // !! ??
+        -:  444:    WRITE_CSTR( "\nlist -" );
+        -:  445:    WRITE_CSTR( "\nlist" );
+        -:  446:    WRITE_CSTR( "\nshell unlink " );
+        -:  447:    WRITE_CSTR( cmd_file_name );
+        -:  448:
+        -:  449:    return cmd_file_name;
+        -:  450:}
+        -:  451:
+        -:  452://____________________________________________________________________________//
+        -:  453:
+        -:  454:static void
+        -:  455:start_gdb_in_console( dbg_startup_info const& dsi )
+        -:  456:{
+        -:  457:    char const* cmnd_file_name = prepare_gdb_cmnd_file( dsi );
+        -:  458:
+        -:  459:    if( !cmnd_file_name )
+        -:  460:        return;
+        -:  461:
+        -:  462:    safe_execlp( "gdb", "-q", "-x", cmnd_file_name, 0 );
+        -:  463:}
+        -:  464:
+        -:  465://____________________________________________________________________________//
+        -:  466:
+        -:  467:static void
+        -:  468:start_gdb_in_xterm( dbg_startup_info const& dsi )
+        -:  469:{
+        -:  470:    char const* title           = prepare_window_title( dsi );
+        -:  471:    char const* cmnd_file_name  = prepare_gdb_cmnd_file( dsi );
+        -:  472:
+        -:  473:    if( !title || !cmnd_file_name )
+        -:  474:        return;
+        -:  475:
+        -:  476:    safe_execlp( "xterm", "-T", title, "-display", dsi.display.begin(),
+        -:  477:                    "-bg", "black", "-fg", "white", "-geometry", "88x30+10+10", "-fn", "9x15", "-e",
+        -:  478:                 "gdb", "-q", "-x", cmnd_file_name, 0 );
+        -:  479:}
+        -:  480:
+        -:  481://____________________________________________________________________________//
+        -:  482:
+        -:  483:static void
+        -:  484:start_gdb_in_emacs( dbg_startup_info const& dsi )
+        -:  485:{
+        -:  486:    char const* cmnd_file_name  = prepare_gdb_cmnd_file( dsi );
+        -:  487:    if( !cmnd_file_name )
+        -:  488:        return;
+        -:  489:
+        -:  490:    char dbg_cmd_buff[500]; // !! ??
+        -:  491:    ::snprintf( dbg_cmd_buff, sizeof(dbg_cmd_buff), "(progn (gdb \"gdb -q -x %s\"))", cmnd_file_name );
+        -:  492:
+        -:  493:    start_debugger_in_emacs( dsi, "emacs", dbg_cmd_buff );
+        -:  494:}
+        -:  495:
+        -:  496://____________________________________________________________________________//
+        -:  497:
+        -:  498:static void
+        -:  499:start_gdb_in_xemacs( dbg_startup_info const& )
+        -:  500:{
+        -:  501:    // !! ??
+        -:  502:}
+        -:  503:
+        -:  504://____________________________________________________________________________//
+        -:  505:
+        -:  506:// ************************************************************************** //
+        -:  507:// **************                 dbx starters                 ************** //
+        -:  508:// ************************************************************************** //
+        -:  509:
+        -:  510:static char const*
+        -:  511:prepare_dbx_cmd_line( dbg_startup_info const& dsi, bool list_source = true )
+        -:  512:{
+        -:  513:    static char cmd_line_buff[500]; // !! ??
+        -:  514:
+        -:  515:    ::snprintf( cmd_line_buff, sizeof(cmd_line_buff), "unlink %s;cont;%s%s",
+        -:  516:                   dsi.init_done_lock.begin(),
+        -:  517:                   dsi.break_or_continue ? "up 2;": "",
+        -:  518:                   list_source ? "echo \" \";list -w3;" : "" );
+        -:  519:
+        -:  520:    return cmd_line_buff;
+        -:  521:}
+        -:  522:
+        -:  523://____________________________________________________________________________//
+        -:  524:
+        -:  525:static void
+        -:  526:start_dbx_in_console( dbg_startup_info const& dsi )
+        -:  527:{
+        -:  528:    char pid_buff[16];
+        -:  529:    ::snprintf( pid_buff, sizeof(pid_buff), "%ld", dsi.pid );
+        -:  530:
+        -:  531:    safe_execlp( "dbx", "-q", "-c", prepare_dbx_cmd_line( dsi ), dsi.binary_path.begin(), pid_buff, 0 );
+        -:  532:}
+        -:  533:
+        -:  534://____________________________________________________________________________//
+        -:  535:
+        -:  536:static void
+        -:  537:start_dbx_in_xterm( dbg_startup_info const& dsi )
+        -:  538:{
+        -:  539:    char const* title = prepare_window_title( dsi );
+        -:  540:    if( !title )
+        -:  541:        return;
+        -:  542:
+        -:  543:    char pid_buff[16]; // !! ??
+        -:  544:    ::snprintf( pid_buff, sizeof(pid_buff), "%ld", dsi.pid );
+        -:  545:
+        -:  546:    safe_execlp( "xterm", "-T", title, "-display", dsi.display.begin(),
+        -:  547:                    "-bg", "black", "-fg", "white", "-geometry", "88x30+10+10", "-fn", "9x15", "-e",
+        -:  548:                 "dbx", "-q", "-c", prepare_dbx_cmd_line( dsi ), dsi.binary_path.begin(), pid_buff, 0 );
+        -:  549:}
+        -:  550:
+        -:  551://____________________________________________________________________________//
+        -:  552:
+        -:  553:static void
+        -:  554:start_dbx_in_emacs( dbg_startup_info const& /*dsi*/ )
+        -:  555:{
+        -:  556://    char dbg_cmd_buff[500]; // !! ??
+        -:  557://
+        -:  558://    ::snprintf( dbg_cmd_buff, sizeof(dbg_cmd_buff), "(progn (dbx \"dbx -q -c cont %s %ld\"))", dsi.binary_path.begin(), dsi.pid );
+        -:  559:
+        -:  560://    start_debugger_in_emacs( dsi, "emacs", dbg_cmd_buff );
+        -:  561:}
+        -:  562:
+        -:  563://____________________________________________________________________________//
+        -:  564:
+        -:  565:static void
+        -:  566:start_dbx_in_xemacs( dbg_startup_info const& )
+        -:  567:{
+        -:  568:    // !! ??
+        -:  569:}
+        -:  570:
+        -:  571://____________________________________________________________________________//
+        -:  572:
+        -:  573:static void
+        -:  574:start_dbx_in_ddd( dbg_startup_info const& dsi )
+        -:  575:{
+        -:  576:    char const* title = prepare_window_title( dsi );
+        -:  577:    if( !title )
+        -:  578:        return;
+        -:  579:
+        -:  580:    char pid_buff[16]; // !! ??
+        -:  581:    ::snprintf( pid_buff, sizeof(pid_buff), "%ld", dsi.pid );
+        -:  582:
+        -:  583:    safe_execlp( "ddd", "-display", dsi.display.begin(),
+        -:  584:                 "--dbx", "-q", "-c", prepare_dbx_cmd_line( dsi, false ), dsi.binary_path.begin(), pid_buff, 0 );
+        -:  585:}
+        -:  586:
+        -:  587://____________________________________________________________________________//
+        -:  588:
+        -:  589:// ************************************************************************** //
+        -:  590:// **************                debug::info_t                 ************** //
+        -:  591:// ************************************************************************** //
+        -:  592:
+        -:  593:static struct info_t {
+        -:  594:    // Constructor
+        -:  595:    info_t();
+        -:  596:
+        -:  597:    // Public properties
+        -:  598:    unit_test::readwrite_property<std::string>  p_dbg;
+        -:  599:
+        -:  600:    // Data members
+        -:  601:    std::map<std::string,dbg_starter>           m_dbg_starter_reg;
+        -:  602:} s_info;
+        -:  603:
+        -:  604://____________________________________________________________________________//
+        -:  605:
+        -:  606:info_t::info_t()
+        -:  607:{
+        -:  608:    p_dbg.value = ::getenv( "DISPLAY" )
+        -:  609:        ? std::string( BOOST_STRINGIZE( BOOST_TEST_GUI_DBG ) )
+        -:  610:        : std::string( BOOST_STRINGIZE( BOOST_TEST_CNL_DBG ) );
+        -:  611:
+        -:  612:    m_dbg_starter_reg[std::string("gdb")]           = &start_gdb_in_console;
+        -:  613:    m_dbg_starter_reg[std::string("gdb-emacs")]     = &start_gdb_in_emacs;
+        -:  614:    m_dbg_starter_reg[std::string("gdb-xterm")]     = &start_gdb_in_xterm;
+        -:  615:    m_dbg_starter_reg[std::string("gdb-xemacs")]    = &start_gdb_in_xemacs;
+        -:  616:
+        -:  617:    m_dbg_starter_reg[std::string("dbx")]           = &start_dbx_in_console;
+        -:  618:    m_dbg_starter_reg[std::string("dbx-emacs")]     = &start_dbx_in_emacs;
+        -:  619:    m_dbg_starter_reg[std::string("dbx-xterm")]     = &start_dbx_in_xterm;
+        -:  620:    m_dbg_starter_reg[std::string("dbx-xemacs")]    = &start_dbx_in_xemacs;
+        -:  621:    m_dbg_starter_reg[std::string("dbx-ddd")]       = &start_dbx_in_ddd;
+        -:  622:}
+        -:  623:
+        -:  624://____________________________________________________________________________//
+        -:  625:
+        -:  626:#endif
+        -:  627:
+        -:  628:} // local namespace
+        -:  629:
+        -:  630:// ************************************************************************** //
+        -:  631:// **************  check if program is running under debugger  ************** //
+        -:  632:// ************************************************************************** //
+        -:  633:
+        -:  634:bool
+       14:  635:under_debugger()
+        -:  636:{
+        -:  637:#if defined(BOOST_WIN32_BASED_DEBUG) // *********************** WIN32
+        -:  638:
+      14*:  639:    return !!s_info.m_is_debugger_present && s_info.m_is_debugger_present();
+       14:  639-block  0
+       14:  639-block  1
+    %%%%%:  639-block  2
+       14:  639-block  3
+       14:  639-block  4
+        -:  640:
+        -:  641:#elif defined(BOOST_UNIX_BASED_DEBUG) // ********************** UNIX
+        -:  642:
+        -:  643:    // !! ?? could/should we cache the result somehow?
+        -:  644:    const_string    dbg_list = BOOST_TEST_STRINGIZE( BOOST_TEST_DBG_LIST );
+        -:  645:
+        -:  646:    pid_t pid = ::getpid();
+        -:  647:
+        -:  648:    while( pid != 0 ) {
+        -:  649:        process_info pi( pid );
+        -:  650:
+        -:  651:        // !! ?? should we use tokenizer here instead?
+        -:  652:        if( dbg_list.find( pi.binary_name() ) != const_string::npos )
+        -:  653:            return true;
+        -:  654:
+        -:  655:        pid = (pi.parent_pid() == pid ? 0 : pi.parent_pid());
+        -:  656:    }
+        -:  657:
+        -:  658:    return false;
+        -:  659:
+        -:  660:#else // ****************************************************** default
+        -:  661:
+        -:  662:    return false;
+        -:  663:
+        -:  664:#endif
+        -:  665:}
+        -:  666:
+        -:  667://____________________________________________________________________________//
+        -:  668:
+        -:  669:// ************************************************************************** //
+        -:  670:// **************       cause program to break execution       ************** //
+        -:  671:// **************           in debugger at call point          ************** //
+        -:  672:// ************************************************************************** //
+        -:  673:
+        -:  674:void
+    #####:  675:debugger_break()
+        -:  676:{
+        -:  677:    // !! ?? auto-start debugger?
+        -:  678:
+        -:  679:#if defined(BOOST_WIN32_BASED_DEBUG) // *********************** WIN32
+        -:  680:
+        -:  681:#if defined(__GNUC__) && !defined(__MINGW32__)   ||  \
+        -:  682:    defined(__INTEL_COMPILER)
+        -:  683:#   define BOOST_DEBUG_BREAK    __debugbreak
+        -:  684:#else
+        -:  685:#   define BOOST_DEBUG_BREAK    DebugBreak
+        -:  686:#endif
+        -:  687:
+        -:  688:#ifndef __MINGW32__
+        -:  689:    if( !under_debugger() ) {
+        -:  690:        __try {
+        -:  691:            __try {
+        -:  692:                BOOST_DEBUG_BREAK();
+        -:  693:            }
+        -:  694:            __except( UnhandledExceptionFilter(GetExceptionInformation()) )
+        -:  695:            {
+        -:  696:                // User opted to ignore the breakpoint
+        -:  697:                return;
+        -:  698:            }
+        -:  699:        }
+        -:  700:        __except (EXCEPTION_EXECUTE_HANDLER)
+        -:  701:        {
+        -:  702:            // If we got here, the user has pushed Debug. Debugger is already attached to our process and we
+        -:  703:            // continue to let the another BOOST_DEBUG_BREAK to be called.
+        -:  704:        }
+        -:  705:    }
+        -:  706:#endif
+        -:  707:
+    #####:  708:    BOOST_DEBUG_BREAK();
+    %%%%%:  708-block  0
+        -:  709:
+        -:  710:#elif defined(BOOST_UNIX_BASED_DEBUG) // ********************** UNIX
+        -:  711:
+        -:  712:    ::kill( ::getpid(), SIGTRAP );
+        -:  713:
+        -:  714:#else // ****************************************************** default
+        -:  715:
+        -:  716:#endif
+    #####:  717:}
+        -:  718:
+        -:  719://____________________________________________________________________________//
+        -:  720:
+        -:  721:// ************************************************************************** //
+        -:  722:// **************            console debugger setup            ************** //
+        -:  723:// ************************************************************************** //
+        -:  724:
+        -:  725:#if defined(BOOST_UNIX_BASED_DEBUG) // ************************ UNIX
+        -:  726:
+        -:  727:std::string
+        -:  728:set_debugger( unit_test::const_string dbg_id, dbg_starter s )
+        -:  729:{
+        -:  730:    std::string old = s_info.p_dbg;
+        -:  731:
+        -:  732:    assign_op( s_info.p_dbg.value, dbg_id, 0 );
+        -:  733:
+        -:  734:    if( !!s )
+        -:  735:        s_info.m_dbg_starter_reg[s_info.p_dbg.get()] = s;
+        -:  736:
+        -:  737:    return old;
+        -:  738:}
+        -:  739:
+        -:  740:#else  // ***************************************************** default
+        -:  741:
+        -:  742:std::string
+    #####:  743:set_debugger( unit_test::const_string, dbg_starter )
+        -:  744:{
+    #####:  745:    return std::string();
+    %%%%%:  745-block  0
+        -:  746:}
+        -:  747:
+        -:  748:#endif
+        -:  749:
+        -:  750://____________________________________________________________________________//
+        -:  751:
+        -:  752:// ************************************************************************** //
+        -:  753:// **************    attach debugger to the current process    ************** //
+        -:  754:// ************************************************************************** //
+        -:  755:
+        -:  756:#if defined(BOOST_WIN32_BASED_DEBUG)
+        -:  757:
+        -:  758:struct safe_handle_helper
+        -:  759:{
+        -:  760:    HANDLE& handle;
+    #####:  761:    safe_handle_helper(HANDLE &handle_) : handle(handle_) {}
+        -:  762:
+    #####:  763:    void close_handle()
+        -:  764:    {
+    #####:  765:        if( handle != INVALID_HANDLE_VALUE )
+    %%%%%:  765-block  0
+        -:  766:        {
+    #####:  767:            ::CloseHandle( handle );
+    %%%%%:  767-block  0
+    #####:  768:            handle = INVALID_HANDLE_VALUE;
+        -:  769:        }
+    #####:  770:    }
+        -:  771:
+    #####:  772:    ~safe_handle_helper()
+    #####:  773:    {
+    #####:  774:        close_handle();
+    %%%%%:  774-block  0
+    #####:  775:    }
+        -:  776:};
+        -:  777:#endif
+        -:  778:
+        -:  779:bool
+    #####:  780:attach_debugger( bool break_or_continue )
+        -:  781:{
+    #####:  782:    if( under_debugger() )
+    %%%%%:  782-block  0
+    %%%%%:  782-block  1
+    #####:  783:        return false;
+    %%%%%:  783-block  0
+        -:  784:
+        -:  785:#if defined(BOOST_WIN32_BASED_DEBUG) // *********************** WIN32
+        -:  786:
+    #####:  787:    const int MAX_CMD_LINE = 200;
+        -:  788:
+        -:  789:    // *************************************************** //
+        -:  790:    // Debugger "ready" event
+        -:  791:
+        -:  792:    SECURITY_ATTRIBUTES attr;
+    #####:  793:    attr.nLength                = sizeof(attr);
+    #####:  794:    attr.lpSecurityDescriptor   = NULL;
+    #####:  795:    attr.bInheritHandle         = true;
+        -:  796:
+        -:  797:    // manual resettable, initially non signaled, unnamed event,
+        -:  798:    // that will signal me that debugger initialization is done
+    #####:  799:    HANDLE dbg_init_done_ev = ::CreateEvent(
+    %%%%%:  799-block  0
+        -:  800:        &attr,          // pointer to security attributes
+        -:  801:        true,           // flag for manual-reset event
+        -:  802:        false,          // flag for initial state
+        -:  803:        NULL            // pointer to event-object name
+    #####:  804:    );
+        -:  805:
+    #####:  806:    if( !dbg_init_done_ev )
+    %%%%%:  806-block  0
+    #####:  807:        return false;
+    %%%%%:  807-block  0
+        -:  808:
+    #####:  809:    safe_handle_helper safe_handle_obj( dbg_init_done_ev );
+    %%%%%:  809-block  0
+    %%%%%:  809-block  1
+    $$$$$:  809-block  2
+        -:  810:
+        -:  811:    // *************************************************** //
+        -:  812:    // Debugger command line format
+        -:  813:
+        -:  814:    HKEY reg_key;
+        -:  815:
+    #####:  816:    if( !s_info.m_reg_open_key || (*s_info.m_reg_open_key)(
+    %%%%%:  816-block  0
+    %%%%%:  816-block  1
+    %%%%%:  816-block  2
+    %%%%%:  816-block  3
+    %%%%%:  816-block  4
+        -:  817:            HKEY_LOCAL_MACHINE,                                         // handle of open key
+        -:  818:            "Software\\Microsoft\\Windows NT\\CurrentVersion\\AeDebug", // name of subkey to open
+        -:  819:            &reg_key ) != ERROR_SUCCESS )                               // address of handle of open key
+    #####:  820:        return false;
+    %%%%%:  820-block  0
+        -:  821:
+        -:  822:    char  format[MAX_CMD_LINE];
+    #####:  823:    DWORD format_size = MAX_CMD_LINE;
+    #####:  824:    DWORD type = REG_SZ;
+        -:  825:
+    #####:  826:    bool b_read_key = s_info.m_reg_query_value &&
+    %%%%%:  826-block  0
+    %%%%%:  826-block  1
+    %%%%%:  826-block  2
+    #####:  827:          ((*s_info.m_reg_query_value)(
+    %%%%%:  827-block  0
+    %%%%%:  827-block  1
+        -:  828:            reg_key,                            // handle of open key
+        -:  829:            "Debugger",                         // name of subkey to query
+        -:  830:            0,                                  // reserved
+        -:  831:            &type,                              // value type
+        -:  832:            (LPBYTE)format,                     // buffer for returned string
+    #####:  833:            &format_size ) == ERROR_SUCCESS );  // in: buffer size; out: actual size of returned string
+        -:  834:
+    #####:  835:    if( !s_info.m_reg_close_key || (*s_info.m_reg_close_key)( reg_key ) != ERROR_SUCCESS )
+    %%%%%:  835-block  0
+    %%%%%:  835-block  1
+    %%%%%:  835-block  2
+    %%%%%:  835-block  3
+    %%%%%:  835-block  4
+    %%%%%:  835-block  5
+    #####:  836:        return false;
+    %%%%%:  836-block  0
+        -:  837:
+    #####:  838:    if( !b_read_key )
+    %%%%%:  838-block  0
+    #####:  839:        return false;
+    %%%%%:  839-block  0
+        -:  840:
+        -:  841:    // *************************************************** //
+        -:  842:    // Debugger command line
+        -:  843:
+        -:  844:    char cmd_line[MAX_CMD_LINE];
+    #####:  845:    std::sprintf( cmd_line, format, ::GetCurrentProcessId(), dbg_init_done_ev );
+    %%%%%:  845-block  0
+    %%%%%:  845-block  1
+        -:  846:
+        -:  847:    // *************************************************** //
+        -:  848:    // Debugger window parameters
+        -:  849:
+        -:  850:    STARTUPINFOA    startup_info;
+    #####:  851:    std::memset( &startup_info, 0, sizeof(startup_info) );
+        -:  852:
+    #####:  853:    startup_info.cb             = sizeof(startup_info);
+    #####:  854:    startup_info.dwFlags        = STARTF_USESHOWWINDOW;
+    #####:  855:    startup_info.wShowWindow    = SW_SHOWNORMAL;
+        -:  856:
+        -:  857:    // debugger process s_info
+        -:  858:    PROCESS_INFORMATION debugger_info;
+        -:  859:
+    #####:  860:    bool created = !!::CreateProcessA(
+        -:  861:        NULL,           // pointer to name of executable module; NULL - use the one in command line
+        -:  862:        cmd_line,       // pointer to command line string
+        -:  863:        NULL,           // pointer to process security attributes; NULL - debugger's handle can't be inherited
+        -:  864:        NULL,           // pointer to thread security attributes; NULL - debugger's handle can't be inherited
+        -:  865:        true,           // debugger inherit opened handles
+        -:  866:        0,              // priority flags; 0 - normal priority
+        -:  867:        NULL,           // pointer to new environment block; NULL - use this process environment
+        -:  868:        NULL,           // pointer to current directory name; NULL - use this process correct directory
+        -:  869:        &startup_info,  // pointer to STARTUPINFO that specifies main window appearance
+        -:  870:        &debugger_info  // pointer to PROCESS_INFORMATION that will contain the new process identification
+    #####:  871:    );
+        -:  872:
+    #####:  873:    bool debugger_run_ok = false;
+    #####:  874:    if( created )
+    %%%%%:  874-block  0
+        -:  875:    {
+    #####:  876:        DWORD ret_code = ::WaitForSingleObject( dbg_init_done_ev, INFINITE );
+    %%%%%:  876-block  0
+    #####:  877:        debugger_run_ok = ( ret_code == WAIT_OBJECT_0 );
+    %%%%%:  877-block  0
+        -:  878:    }
+        -:  879:
+    #####:  880:    safe_handle_obj.close_handle();
+    %%%%%:  880-block  0
+        -:  881:
+    #####:  882:    if( !created || !debugger_run_ok )
+    %%%%%:  882-block  0
+    %%%%%:  882-block  1
+    #####:  883:        return false;
+    %%%%%:  883-block  0
+        -:  884:
+    #####:  885:    if( break_or_continue )
+    %%%%%:  885-block  0
+    #####:  886:        debugger_break();
+    %%%%%:  886-block  0
+        -:  887:
+    #####:  888:    return true;
+    %%%%%:  888-block  0
+        -:  889:
+        -:  890:#elif defined(BOOST_UNIX_BASED_DEBUG) // ********************** UNIX
+        -:  891:
+        -:  892:    char init_done_lock_fn[] = "/tmp/btl_dbg_init_done_XXXXXX";
+        -:  893:    fd_holder init_done_lock_fd( ::mkstemp( init_done_lock_fn ) );
+        -:  894:
+        -:  895:    if( init_done_lock_fd == -1 )
+        -:  896:        return false;
+        -:  897:
+        -:  898:    pid_t child_pid = fork();
+        -:  899:
+        -:  900:    if( child_pid == -1 )
+        -:  901:        return false;
+        -:  902:
+        -:  903:    if( child_pid != 0 ) { // parent process - here we will start the debugger
+        -:  904:        dbg_startup_info dsi;
+        -:  905:
+        -:  906:        process_info pi( child_pid );
+        -:  907:        if( pi.binary_path().is_empty() )
+        -:  908:            ::exit( -1 );
+        -:  909:
+        -:  910:        dsi.pid                 = child_pid;
+        -:  911:        dsi.break_or_continue   = break_or_continue;
+        -:  912:        dsi.binary_path         = pi.binary_path();
+        -:  913:        dsi.display             = ::getenv( "DISPLAY" );
+        -:  914:        dsi.init_done_lock      = init_done_lock_fn;
+        -:  915:
+        -:  916:        dbg_starter starter = s_info.m_dbg_starter_reg[s_info.p_dbg];
+        -:  917:        if( !!starter )
+        -:  918:            starter( dsi );
+        -:  919:
+        -:  920:        ::perror( "Boost.Test execution monitor failed to start a debugger:" );
+        -:  921:
+        -:  922:        ::exit( -1 );
+        -:  923:    }
+        -:  924:
+        -:  925:    // child process - here we will continue our test module execution ; // !! ?? should it be vice versa
+        -:  926:
+        -:  927:    while( ::access( init_done_lock_fn, F_OK ) == 0 ) {
+        -:  928:        struct timeval to = { 0, 100 };
+        -:  929:
+        -:  930:        ::select( 0, 0, 0, 0, &to );
+        -:  931:    }
+        -:  932:
+        -:  933://    char dummy;
+        -:  934://    while( ::read( init_done_lock_fd, &dummy, sizeof(char) ) == 0 );
+        -:  935:
+        -:  936:    if( break_or_continue )
+        -:  937:        debugger_break();
+        -:  938:
+        -:  939:    return true;
+        -:  940:
+        -:  941:#else // ****************************************************** default
+        -:  942:    (void) break_or_continue; // silence 'unused variable' warning
+        -:  943:    return false;
+        -:  944:
+        -:  945:#endif
+        -:  946:}
+        -:  947:
+        -:  948://____________________________________________________________________________//
+        -:  949:
+        -:  950:// ************************************************************************** //
+        -:  951:// **************   switch on/off detect memory leaks feature  ************** //
+        -:  952:// ************************************************************************** //
+        -:  953:
+        -:  954:void
+        1:  955:detect_memory_leaks( bool on_off, unit_test::const_string report_file )
+        -:  956:{
+        -:  957:    boost::ignore_unused( on_off );
+        -:  958:
+        -:  959:#ifdef BOOST_MS_CRT_BASED_DEBUG
+        -:  960:    int flags = _CrtSetDbgFlag( _CRTDBG_REPORT_FLAG );
+        -:  961:
+        -:  962:    if( !on_off )
+        -:  963:        flags &= ~_CRTDBG_LEAK_CHECK_DF;
+        -:  964:    else  {
+        -:  965:        flags |= _CRTDBG_LEAK_CHECK_DF;
+        -:  966:        _CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_FILE);
+        -:  967:
+        -:  968:        if( report_file.is_empty() )
+        -:  969:            _CrtSetReportFile(_CRT_WARN, _CRTDBG_FILE_STDERR);
+        -:  970:        else {
+        -:  971:            HANDLE hreport_f = ::CreateFileA( report_file.begin(),
+        -:  972:                                              GENERIC_WRITE, FILE_SHARE_WRITE, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+        -:  973:            _CrtSetReportFile(_CRT_WARN, hreport_f );
+        -:  974:        }
+        -:  975:    }
+        -:  976:
+        -:  977:    _CrtSetDbgFlag ( flags );
+        -:  978:#else
+        -:  979:    boost::ignore_unused( report_file );
+        -:  980:#endif // BOOST_MS_CRT_BASED_DEBUG
+        1:  981:}
+        -:  982:
+        -:  983://____________________________________________________________________________//
+        -:  984:
+        -:  985:// ************************************************************************** //
+        -:  986:// **************      cause program to break execution in     ************** //
+        -:  987:// **************     debugger at specific allocation point    ************** //
+        -:  988:// ************************************************************************** //
+        -:  989:
+        -:  990:void
+        1:  991:break_memory_alloc( long mem_alloc_order_num )
+        -:  992:{
+        -:  993:    boost::ignore_unused( mem_alloc_order_num );
+        -:  994:
+        -:  995:#ifdef BOOST_MS_CRT_BASED_DEBUG
+        -:  996:    // only set the value if one was supplied (do not use default used by UTF just as a indicator to enable leak detection)
+        -:  997:    if( mem_alloc_order_num > 1 )
+        -:  998:        _CrtSetBreakAlloc( mem_alloc_order_num );
+        -:  999:#endif // BOOST_MS_CRT_BASED_DEBUG
+        1: 1000:}
+        -: 1001:
+        -: 1002://____________________________________________________________________________//
+        -: 1003:
+        -: 1004:} // namespace debug
+        -: 1005:} // namespace boost
+        -: 1006:
+        -: 1007:#include <boost/test/detail/enable_warnings.hpp>
+        -: 1008:
+        -: 1009:#endif // BOOST_TEST_DEBUG_API_IPP_112006GER

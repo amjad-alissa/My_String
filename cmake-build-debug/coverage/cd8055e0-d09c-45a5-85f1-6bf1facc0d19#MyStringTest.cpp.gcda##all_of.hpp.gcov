@@ -1,0 +1,93 @@
+        -:    0:Source:F:/Files/vcpkg/installed/x86-windows/include/boost/algorithm/cxx11/all_of.hpp
+        -:    0:Graph:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcno
+        -:    0:Data:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/* 
+        -:    2:   Copyright (c) Marshall Clow 2008-2012.
+        -:    3:
+        -:    4:   Distributed under the Boost Software License, Version 1.0. (See accompanying
+        -:    5:   file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+        -:    6:*/
+        -:    7:
+        -:    8:/// \file  all_of.hpp
+        -:    9:/// \brief Test ranges to see if all elements match a value or predicate.
+        -:   10:/// \author Marshall Clow
+        -:   11:
+        -:   12:#ifndef BOOST_ALGORITHM_ALL_OF_HPP
+        -:   13:#define BOOST_ALGORITHM_ALL_OF_HPP
+        -:   14:
+        -:   15:#include <boost/range/begin.hpp>
+        -:   16:#include <boost/range/end.hpp>
+        -:   17:
+        -:   18:namespace boost { namespace algorithm {
+        -:   19:
+        -:   20:/// \fn all_of ( InputIterator first, InputIterator last, Predicate p )
+        -:   21:/// \return true if all elements in [first, last) satisfy the predicate 'p'
+        -:   22:/// \note returns true on an empty range
+        -:   23:/// 
+        -:   24:/// \param first The start of the input sequence
+        -:   25:/// \param last  One past the end of the input sequence
+        -:   26:/// \param p     A predicate for testing the elements of the sequence
+        -:   27:///
+        -:   28:/// \note           This function is part of the C++2011 standard library.
+        -:   29:template<typename InputIterator, typename Predicate> 
+     1131:   30:BOOST_CXX14_CONSTEXPR bool all_of ( InputIterator first, InputIterator last, Predicate p )
+        -:   31:{
+     1131:   32:    for ( ; first != last; ++first )
+     1131:   32-block  0
+      916:   32-block  1
+      916:   33:        if ( !p(*first)) 
+      916:   33-block  0
+    #####:   34:            return false;
+    %%%%%:   34-block  0
+      215:   35:    return true; 
+      215:   35-block  0
+        -:   36:} 
+        -:   37:
+        -:   38:/// \fn all_of ( const Range &r, Predicate p )
+        -:   39:/// \return true if all elements in the range satisfy the predicate 'p'
+        -:   40:/// \note returns true on an empty range
+        -:   41:/// 
+        -:   42:/// \param r    The input range
+        -:   43:/// \param p    A predicate for testing the elements of the range
+        -:   44:///
+        -:   45:template<typename Range, typename Predicate> 
+        -:   46:BOOST_CXX14_CONSTEXPR bool all_of ( const Range &r, Predicate p )
+        -:   47:{
+        -:   48:    return boost::algorithm::all_of ( boost::begin (r), boost::end (r), p );
+        -:   49:} 
+        -:   50:
+        -:   51:/// \fn all_of_equal ( InputIterator first, InputIterator last, const T &val )
+        -:   52:/// \return true if all elements in [first, last) are equal to 'val'
+        -:   53:/// \note returns true on an empty range
+        -:   54:/// 
+        -:   55:/// \param first The start of the input sequence
+        -:   56:/// \param last  One past the end of the input sequence
+        -:   57:/// \param val   A value to compare against
+        -:   58:///
+        -:   59:template<typename InputIterator, typename T> 
+        -:   60:BOOST_CXX14_CONSTEXPR bool all_of_equal ( InputIterator first, InputIterator last, const T &val )
+        -:   61:{
+        -:   62:    for ( ; first != last; ++first )
+        -:   63:    if ( val != *first ) 
+        -:   64:        return false;
+        -:   65:    return true; 
+        -:   66:} 
+        -:   67:
+        -:   68:/// \fn all_of_equal ( const Range &r, const T &val )
+        -:   69:/// \return true if all elements in the range are equal to 'val'
+        -:   70:/// \note returns true on an empty range
+        -:   71:/// 
+        -:   72:/// \param r    The input range
+        -:   73:/// \param val  A value to compare against
+        -:   74:///
+        -:   75:template<typename Range, typename T> 
+        -:   76:BOOST_CXX14_CONSTEXPR bool all_of_equal ( const Range &r, const T &val ) 
+        -:   77:{
+        -:   78:    return boost::algorithm::all_of_equal ( boost::begin (r), boost::end (r), val );
+        -:   79:} 
+        -:   80:
+        -:   81:}} // namespace boost and algorithm
+        -:   82:
+        -:   83:#endif // BOOST_ALGORITHM_ALL_OF_HPP

@@ -1,0 +1,314 @@
+        -:    0:Source:F:/SoftwareProjects/CLionProjects/C++/My_String/test/MyString.cpp
+        -:    0:Graph:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcno
+        -:    0:Data:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:#include <cstring>
+        -:    2:#include <sstream>
+        -:    3:#include "MyString.h"
+        -:    4:
+        -:    5:using namespace Assignment06;
+        -:    6:
+        -:    7:// Default Constructor
+      100:    8:MyString::MyString() {
+      100:    9:    this->initialize_Empty();
+      100:    9-block  0
+      100:   10:}
+        -:   11:
+        -:   12:// Constructor with c-string param
+       58:   13:MyString::MyString(const char str[]) {
+       58:   14:    if (strlen(str) == 0) {
+       58:   14-block  0
+       10:   15:        this->initialize_Empty();
+       10:   15-block  0
+        -:   16:    } else {
+       48:   17:        occupied = strlen(str);
+       48:   18:        capacity = occupied + 1;
+       48:   19:        sequence = new char[capacity];
+       48:   19-block  0
+       48:   20:        strcpy(sequence, str);
+        -:   21:    }
+       58:   22:}
+        -:   23:
+        -:   24:// Constructor with cpp-string param
+       21:   25:MyString::MyString(const std::string str) {
+       21:   26:    if (strlen(str.c_str()) == 0) {
+       21:   26-block  0
+       10:   27:        this->initialize_Empty();
+       10:   27-block  0
+        -:   28:    } else {
+       11:   29:        occupied = strlen(str.c_str());
+       11:   29-block  0
+       11:   30:        capacity = occupied + 1;
+       11:   31:        sequence = new char[capacity];
+       11:   32:        strcpy(sequence, str.c_str());
+        -:   33:    }
+       21:   34:}
+        -:   35:
+        -:   36:// Copy Constructor.
+        4:   37:MyString::MyString(const MyString &source) {
+        -:   38:
+        4:   39:    occupied = source.occupied;
+        4:   40:    capacity = source.capacity;
+        4:   41:    sequence = new char[capacity];
+        4:   41-block  0
+        -:   42:
+       63:   43:    for (size_t i = 0; i < occupied; ++i) {
+       63:   43-block  0
+       59:   44:        sequence[i] = source.sequence[i];
+       59:   44-block  0
+        -:   45:    }
+        4:   46:}
+        -:   47:
+        -:   48:// Destructor
+     366*:   49:MyString::~MyString() {
+      183:   50:    delete[] sequence;
+     183*:   51:}
+------------------
+_ZN12Assignment068MyStringD0Ev:
+    #####:   49:MyString::~MyString() {
+        -:   50:    delete[] sequence;
+    #####:   51:}
+    %%%%%:   51-block  0
+------------------
+_ZN12Assignment068MyStringD2Ev:
+      366:   49:MyString::~MyString() {
+      183:   50:    delete[] sequence;
+      183:   50-block  0
+      183:   50-block  1
+      183:   51:}
+------------------
+        -:   52:
+        -:   53:// operator+= overloading with MyString obj
+        5:   54:MyString &MyString::operator+=(const MyString &addend) {
+        -:   55:
+        5:   56:    capacity += addend.capacity;
+        5:   57:    occupied += addend.occupied;
+        -:   58:
+        5:   59:    char *temp = new char[capacity];
+        5:   59-block  0
+        5:   60:    strcpy(temp, sequence);
+        -:   61:
+        5:   62:    delete[]sequence;
+        5:   62-block  0
+        5:   63:    sequence = temp;
+        5:   64:    strcat(sequence, addend.sequence);
+        -:   65:
+        5:   66:    return *this;
+        5:   66-block  0
+        -:   67:}
+        -:   68:
+        -:   69:// operator+= overloading with c-string
+        5:   70:MyString &MyString::operator+=(const char addend[]) {
+        5:   71:    occupied += strlen(addend);
+        5:   72:    capacity += strlen(addend);
+        -:   73:
+        5:   74:    char *temp = new char[capacity];
+        5:   74-block  0
+        5:   75:    strcpy(temp, sequence);
+        -:   76:
+        5:   77:    delete[]sequence;
+        5:   77-block  0
+        5:   78:    sequence = temp;
+        5:   79:    strcat(sequence, addend);
+        -:   80:
+        5:   81:    return *this;
+        5:   81-block  0
+        -:   82:}
+        -:   83:
+        -:   84:// operator+= overloading with single char
+        1:   85:MyString &MyString::operator+=(char addend) {
+        1:   86:    capacity += 1;
+        -:   87:
+        1:   88:    char *temp = new char[capacity];
+        1:   88-block  0
+        1:   89:    strcpy(temp, sequence);
+        -:   90:
+        1:   91:    delete[]sequence;
+        1:   91-block  0
+        -:   92:
+        1:   93:    sequence = temp;
+        1:   94:    sequence[occupied] = addend;
+        -:   95:
+        1:   96:    occupied += 1;
+        1:   97:    return *this;
+        1:   97-block  0
+        -:   98:}
+        -:   99:
+        -:  100:// operator= overloading
+       97:  101:MyString &MyString::operator=(const MyString &source) {
+       97:  102:    occupied = source.occupied;
+       97:  103:    capacity = source.capacity;
+       97:  104:    sequence = new char[capacity];
+       97:  104-block  0
+       97:  105:    strcpy(sequence, source.sequence);
+       97:  106:    return *this;
+        -:  107:}
+        -:  108:
+        -:  109:// const overloading operator[]
+        3:  110:const char &MyString::operator[](size_t position) const {
+        3:  111:    if ((position >= 0) && (position < occupied)) {
+        3:  111-block  0
+        1:  112:        return sequence[position];
+        1:  112-block  0
+        1:  112-block  1
+        -:  113:    } else {
+        2:  114:        throw std::out_of_range("ILLEGAL OPERATION");
+        2:  114-block  0
+        2:  114-block  1
+    $$$$$:  114-block  2
+        -:  115:    }
+        -:  116:}
+        -:  117:
+        -:  118:// overloading operator[]
+        3:  119:char &MyString::operator[](size_t position) {
+        3:  120:    if ((position >= 0) && (position < occupied)) {
+        3:  120-block  0
+        1:  121:        return sequence[position];
+        1:  121-block  0
+        1:  121-block  1
+        -:  122:    } else {
+        2:  123:        throw std::out_of_range("ILLEGAL OPERATION");
+        2:  123-block  0
+        2:  123-block  1
+    $$$$$:  123-block  2
+        -:  124:    }
+        -:  125:}
+        -:  126:
+        -:  127:// Swapping two MyString Objs
+        2:  128:void MyString::swap(MyString &source) {
+        -:  129:
+        4:  130:    MyString temp = *this;
+        2:  130-block  0
+        2:  130-block  1
+    $$$$$:  130-block  2
+        -:  131:
+        2:  132:    *this = source;
+        2:  132-block  0
+        2:  133:    source = temp;
+        2:  133-block  0
+        2:  134:}
+        -:  135:
+        -:  136:// Global Function, Overloading the operator+ for two MyString objects
+        1:  137:MyString Assignment06::operator+(const MyString &s1, const MyString &s2) {
+        -:  138:
+        1:  139:    MyString result;
+        1:  139-block  0
+        1:  140:    result += s1;
+        1:  141:    result += s2;
+        1:  141-block  0
+        1:  142:    return result;
+        1:  142-block  0
+        1:  142-block  1
+        -:  143:}
+        -:  144:
+        -:  145:// Global Function, Overloading the operator+ for MyString object with C-string.
+        1:  146:MyString Assignment06::operator+(const MyString &s1, const char *s2) {
+        -:  147:
+        1:  148:    MyString result;
+        1:  148-block  0
+        1:  149:    result += s1;
+        1:  150:    result += s2;
+        1:  150-block  0
+        1:  151:    return result;
+        1:  151-block  0
+        1:  151-block  1
+        -:  152:}
+        -:  153:
+        -:  154:// Global Function, Overloading the operator+ for C-string with MyString object.
+        1:  155:MyString Assignment06::operator+(const char *s1, const MyString &s2) {
+        -:  156:
+        1:  157:    MyString result;
+        1:  157-block  0
+        1:  158:    result += s1;
+        1:  159:    result += s2;
+        1:  159-block  0
+        1:  160:    return result;
+        1:  160-block  0
+        1:  160-block  1
+        -:  161:}
+        -:  162:
+        -:  163:namespace Assignment06 {
+        -:  164:
+        -:  165:    // Global Function, operator==
+       24:  166:    bool operator==(const MyString &s1, const MyString &s2) {
+       24:  167:        return ((s1.occupied == s2.occupied) && (*s1.sequence == *s2.sequence));
+       24:  167-block  0
+       18:  167-block  1
+       18:  167-block  2
+        6:  167-block  3
+       24:  167-block  4
+        -:  168:    }
+        -:  169:
+        -:  170:    // Global Function, operator!=
+        3:  171:    bool operator!=(const MyString &s1, const MyString &s2) {
+        3:  172:        return !operator==(s1, s2);
+        3:  172-block  0
+        -:  173:    }
+        -:  174:
+        -:  175:    // Global Function, operator>=
+        2:  176:    bool operator>=(const MyString &s1, const MyString &s2) {
+        2:  177:        return strcmp(s1.sequence, s2.sequence) >= 0;
+        2:  177-block  0
+        -:  178:    }
+        -:  179:
+        -:  180:    // Global Function, operator<=
+        2:  181:    bool operator<=(const MyString &s1, const MyString &s2) {
+        2:  182:        return strcmp(s1.sequence, s2.sequence) <= 0;
+        2:  182-block  0
+        -:  183:    }
+        -:  184:
+        -:  185:    // Global Function, operator>
+        2:  186:    bool operator>(const MyString &s1, const MyString &s2) {
+        2:  187:        return strcmp(s1.sequence, s2.sequence) > 0;
+        2:  187-block  0
+        -:  188:    }
+        -:  189:
+        -:  190:    // Global Function, operator<
+        2:  191:    bool operator<(const MyString &s1, const MyString &s2) {
+        2:  192:        return strcmp(s1.sequence, s2.sequence) < 0;
+        2:  192-block  0
+        -:  193:    }
+        -:  194:
+        -:  195:    // Global Function, operator<<
+        3:  196:    std::ostream &operator<<(std::ostream &outs, const MyString &source) {
+       47:  197:        for (size_t i = 0; i < source.occupied; ++i) {
+        3:  197-block  0
+       47:  197-block  1
+       44:  198:            outs << source.sequence[i];
+       44:  198-block  0
+        -:  199:        }
+        3:  200:        return outs;
+        3:  200-block  0
+        -:  201:    }
+        -:  202:
+        -:  203:    // Initialize Empty object
+      120:  204:    void MyString::initialize_Empty() {
+      120:  205:        occupied = 0;
+      120:  206:        capacity = 1;
+     120*:  207:        sequence = new char[capacity]{'\0'};
+      120:  207-block  0
+    %%%%%:  207-block  1
+      120:  207-block  2
+      120:  207-block  3
+    %%%%%:  207-block  4
+    $$$$$:  207-block  5
+      120:  208:    }
+      120:  208-block  0
+        -:  209:
+        -:  210:    // Global Function, operator>>
+        2:  211:    std::istream &operator>>(std::istream &ins, MyString &target) {
+    #####:  212:        std::string str;
+    $$$$$:  212-block  0
+        2:  213:        ins >> str;
+        2:  214:        char temp[str.length() + 1];
+        2:  214-block  0
+        2:  215:        strcpy(temp, str.c_str());
+        2:  216:        target += temp;
+        6:  217:        return ins;
+        2:  217-block  0
+        2:  217-block  1
+        2:  217-block  2
+        -:  218:    }
+        -:  219:}
+        -:  220:

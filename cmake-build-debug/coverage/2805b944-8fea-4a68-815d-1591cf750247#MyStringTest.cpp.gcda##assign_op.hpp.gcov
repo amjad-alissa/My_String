@@ -1,0 +1,95 @@
+        -:    0:Source:F:/Files/vcpkg/installed/x86-windows/include/boost/test/utils/assign_op.hpp
+        -:    0:Graph:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcno
+        -:    0:Data:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1://  (C) Copyright Gennadiy Rozental 2001.
+        -:    2://  Distributed under the Boost Software License, Version 1.0.
+        -:    3://  (See accompanying file LICENSE_1_0.txt or copy at
+        -:    4://  http://www.boost.org/LICENSE_1_0.txt)
+        -:    5:
+        -:    6://  See http://www.boost.org/libs/test for the library home page.
+        -:    7://
+        -:    8://  File        : $RCSfile$
+        -:    9://
+        -:   10://  Version     : $Revision$
+        -:   11://
+        -:   12://  Description : overloadable assignment
+        -:   13:// ***************************************************************************
+        -:   14:
+        -:   15:#ifndef BOOST_TEST_UTILS_ASSIGN_OP_HPP
+        -:   16:#define BOOST_TEST_UTILS_ASSIGN_OP_HPP
+        -:   17:
+        -:   18:namespace boost {
+        -:   19:namespace unit_test {
+        -:   20:
+        -:   21:// ************************************************************************** //
+        -:   22:// **************             generic assign operator          ************** //
+        -:   23:// ************************************************************************** //
+        -:   24:
+        -:   25:// generic
+        -:   26:template<typename T,typename S>
+        -:   27:inline void
+       39:   28:assign_op( T& t, S const& s, long )
+        -:   29:{
+       39:   30:    t = s;
+       39:   31:}
+------------------
+_ZN5boost9unit_test9assign_opINS0_12report_levelES2_EEvRT_RKT0_l:
+        1:   28:assign_op( T& t, S const& s, long )
+        -:   29:{
+        1:   30:    t = s;
+        1:   31:}
+------------------
+_ZN5boost9unit_test9assign_opINS0_9log_levelES2_EEvRT_RKT0_l:
+        1:   28:assign_op( T& t, S const& s, long )
+        -:   29:{
+        1:   30:    t = s;
+        1:   31:}
+------------------
+_ZN5boost9unit_test9assign_opINS0_13output_formatES2_EEvRT_RKT0_l:
+        4:   28:assign_op( T& t, S const& s, long )
+        -:   29:{
+        4:   30:    t = s;
+        4:   31:}
+------------------
+_ZN5boost9unit_test9assign_opINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES7_EEvRT_RKT0_l:
+        2:   28:assign_op( T& t, S const& s, long )
+        -:   29:{
+        2:   30:    t = s;
+        2:   30-block  0
+        2:   31:}
+------------------
+_ZN5boost9unit_test9assign_opIjjEEvRT_RKT0_l:
+        2:   28:assign_op( T& t, S const& s, long )
+        -:   29:{
+        2:   30:    t = s;
+        2:   31:}
+------------------
+_ZN5boost9unit_test9assign_opImlEEvRT_RKT0_l:
+        2:   28:assign_op( T& t, S const& s, long )
+        -:   29:{
+        2:   30:    t = s;
+        2:   31:}
+------------------
+_ZN5boost9unit_test9assign_opINS_8functionIFvNS0_13basic_cstringIKcEEEEEZNS0_14runtime_config12_GLOBAL__N_119register_parametersERNS_7runtime16parameters_storeEEUlS5_E_EEvRT_RKT0_l:
+        1:   28:assign_op( T& t, S const& s, long )
+        -:   29:{
+        1:   30:    t = s;
+        1:   30-block  0
+        1:   31:}
+------------------
+_ZN5boost9unit_test9assign_opIbbEEvRT_RKT0_l:
+       26:   28:assign_op( T& t, S const& s, long )
+        -:   29:{
+       26:   30:    t = s;
+       26:   31:}
+------------------
+        -:   32:
+        -:   33://____________________________________________________________________________//
+        -:   34:
+        -:   35:} // namespace unit_test
+        -:   36:} // namespace boost
+        -:   37:
+        -:   38:#endif // BOOST_TEST_UTILS_ASSIGN_OP_HPP
+        -:   39:

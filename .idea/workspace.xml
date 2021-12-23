@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CMakeRunConfigurationManager" shouldGenerate="true" shouldDeleteObsolete="true">
+    <generated>
+      <config projectName="My_String" targetName="My_String_src" />
+      <config projectName="My_String" targetName="Boost_Tests_run" />
+    </generated>
+  </component>
+  <component name="CMakeSettings" AUTO_RELOAD="true">
+    <configurations>
+      <configuration PROFILE_NAME="Debug" CONFIG_NAME="Debug" GENERATION_OPTIONS="-DVCPKG_TARGET_TRIPLET=x86-windows -DCMAKE_TOOLCHAIN_FILE=F:/Files/vcpkg/scripts/buildsystems/vcpkg.cmake" />
+    </configurations>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="77dd60f9-25d0-40d6-a8dd-0366ed6cac20" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="CoverageViewManager">
+    <option name="myElementSize" value="481" />
+  </component>
+  <component name="ProjectId" id="1UVrkzLfcJmdcEjNtD0apoXZQd2" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="F:\SoftwareProjects\CLionProjects\C++\My_String\test" />
+      <recent name="F:\SoftwareProjects\CLionProjects\C++\My_String" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Boost.Test.MyString_Test_Suite">
+    <configuration name="Cnstructors_test" type="CMakeBoostTestRunConfigurationType" factoryName="Boost Test" temporary="true" PASS_PARENT_ENVS_2="true" PROJECT_NAME="My_String" TARGET_NAME="Boost_Tests_run" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="My_String" RUN_TARGET_NAME="Boost_Tests_run" TEST_CLASS="MyString_Test_Suite" TEST_METHOD="Cnstructors_test" TEST_MODE="SUITE_TEST">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+        <option name="BeforeTestRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="MyString_Test_Suite" type="CMakeBoostTestRunConfigurationType" factoryName="Boost Test" singleton="false" temporary="true" PASS_PARENT_ENVS_2="true" PROJECT_NAME="My_String" TARGET_NAME="Boost_Tests_run" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="My_String" RUN_TARGET_NAME="Boost_Tests_run" TEST_CLASS="MyString_Test_Suite" TEST_MODE="SUITE_TEST">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+        <option name="BeforeTestRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="My_String_src" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="My_String" TARGET_NAME="My_String_src" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="My_String" RUN_TARGET_NAME="My_String_src">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="Boost.Test.Cnstructors_test" />
+      <item itemvalue="Boost.Test.MyString_Test_Suite" />
+      <item itemvalue="CMake Application.My_String_src" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Boost.Test.MyString_Test_Suite" />
+        <item itemvalue="Boost.Test.Cnstructors_test" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="ServiceViewManager">
+    <option name="viewStates">
+      <list>
+        <serviceView>
+          <treeState>
+            <expand />
+            <select />
+          </treeState>
+        </serviceView>
+      </list>
+    </option>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="77dd60f9-25d0-40d6-a8dd-0366ed6cac20" name="Default Changelist" comment="" />
+      <created>1575452750121</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1575452750121</updated>
+      <workItem from="1575452751290" duration="472000" />
+      <workItem from="1575462995935" duration="22000" />
+      <workItem from="1575463020391" duration="2932000" />
+      <workItem from="1575473170652" duration="3960000" />
+      <workItem from="1575477145568" duration="1900000" />
+      <workItem from="1575481088837" duration="246000" />
+      <workItem from="1575527472372" duration="2080000" />
+      <workItem from="1575543583687" duration="371000" />
+      <workItem from="1575562866987" duration="77000" />
+      <workItem from="1575563377937" duration="55000" />
+      <workItem from="1575565898386" duration="282000" />
+      <workItem from="1575566205173" duration="56000" />
+      <workItem from="1575566263826" duration="1082000" />
+      <workItem from="1575567405826" duration="381000" />
+      <workItem from="1575614078465" duration="3036000" />
+      <workItem from="1575617164994" duration="185000" />
+      <workItem from="1575617363686" duration="18000" />
+      <workItem from="1575620944712" duration="948000" />
+      <workItem from="1575624302966" duration="3068000" />
+      <workItem from="1575627823178" duration="4630000" />
+      <workItem from="1575827453849" duration="880000" />
+      <workItem from="1575828502871" duration="64000" />
+      <workItem from="1575903532079" duration="152000" />
+      <workItem from="1575903697828" duration="99000" />
+      <workItem from="1575903808909" duration="29000" />
+      <workItem from="1576265905767" duration="12000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="898" y="373" width="782" height="683" key="#MyString_Test_Suite" timestamp="1575628669920">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state x="898" y="373" width="782" height="683" key="#MyString_Test_Suite/0.0.2560.1400/2560.349.1920.1040@0.0.2560.1400" timestamp="1575628669920" />
+    <state x="734" y="284" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1575476387939">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state x="734" y="284" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.2560.1400/2560.349.1920.1040@0.0.2560.1400" timestamp="1575476387939" />
+    <state x="947" y="386" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1575903576728">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state x="947" y="386" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.2560.1400/2560.349.1920.1040@0.0.2560.1400" timestamp="1575903576728" />
+    <state width="2509" height="338" key="GridCell.Tab.0.bottom" timestamp="1575903733969">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state width="2509" height="338" key="GridCell.Tab.0.bottom/0.0.2560.1400/2560.349.1920.1040@0.0.2560.1400" timestamp="1575903733969" />
+    <state width="2509" height="338" key="GridCell.Tab.0.center" timestamp="1575903733969">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state width="2509" height="338" key="GridCell.Tab.0.center/0.0.2560.1400/2560.349.1920.1040@0.0.2560.1400" timestamp="1575903733969" />
+    <state width="2509" height="338" key="GridCell.Tab.0.left" timestamp="1575903733969">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state width="2509" height="338" key="GridCell.Tab.0.left/0.0.2560.1400/2560.349.1920.1040@0.0.2560.1400" timestamp="1575903733969" />
+    <state width="2509" height="338" key="GridCell.Tab.0.right" timestamp="1575903733969">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state width="2509" height="338" key="GridCell.Tab.0.right/0.0.2560.1400/2560.349.1920.1040@0.0.2560.1400" timestamp="1575903733969" />
+    <state x="657" y="256" key="SettingsEditor" timestamp="1575903796625">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state x="657" y="256" key="SettingsEditor/0.0.2560.1400/2560.349.1920.1040@0.0.2560.1400" timestamp="1575903796625" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="$PROJECT_DIR$/../../C++/My_String/cmake-build-debug" NAME="MyString_Test_Suite Coverage Results" MODIFIED="1575630510368" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="gcov" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
+  </component>
+</project>

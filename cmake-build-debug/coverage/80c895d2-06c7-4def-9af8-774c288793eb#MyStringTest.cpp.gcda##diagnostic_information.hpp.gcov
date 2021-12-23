@@ -1,0 +1,320 @@
+        -:    0:Source:F:/Files/vcpkg/installed/x86-windows/include/boost/exception/diagnostic_information.hpp
+        -:    0:Graph:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcno
+        -:    0:Data:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1://Copyright (c) 2006-2010 Emil Dotchevski and Reverge Studios, Inc.
+        -:    2:
+        -:    3://Distributed under the Boost Software License, Version 1.0. (See accompanying
+        -:    4://file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+        -:    5:
+        -:    6:#ifndef UUID_0552D49838DD11DD90146B8956D89593
+        -:    7:#define UUID_0552D49838DD11DD90146B8956D89593
+        -:    8:
+        -:    9:#include <boost/config.hpp>
+        -:   10:#include <boost/exception/get_error_info.hpp>
+        -:   11:#include <boost/exception/info.hpp>
+        -:   12:#include <boost/utility/enable_if.hpp>
+        -:   13:#ifndef BOOST_NO_RTTI
+        -:   14:#include <boost/core/demangle.hpp>
+        -:   15:#endif
+        -:   16:#include <exception>
+        -:   17:#include <sstream>
+        -:   18:#include <string>
+        -:   19:#ifndef BOOST_NO_EXCEPTIONS
+        -:   20:#include <boost/exception/current_exception_cast.hpp>
+        -:   21:#endif
+        -:   22:
+        -:   23:#if (__GNUC__*100+__GNUC_MINOR__>301) && !defined(BOOST_EXCEPTION_ENABLE_WARNINGS)
+        -:   24:#pragma GCC system_header
+        -:   25:#endif
+        -:   26:#if defined(_MSC_VER) && !defined(BOOST_EXCEPTION_ENABLE_WARNINGS)
+        -:   27:#pragma warning(push,1)
+        -:   28:#endif
+        -:   29:
+        -:   30:#ifndef BOOST_NO_EXCEPTIONS
+        -:   31:namespace
+        -:   32:boost
+        -:   33:    {
+        -:   34:    namespace
+        -:   35:    exception_detail
+        -:   36:        {
+        -:   37:        std::string diagnostic_information_impl( boost::exception const *, std::exception const *, bool, bool );
+        -:   38:        }
+        -:   39:
+        -:   40:    inline
+        -:   41:    std::string
+        -:   42:    current_exception_diagnostic_information( bool verbose=true)
+        -:   43:        {
+        -:   44:        boost::exception const * be=current_exception_cast<boost::exception const>();
+        -:   45:        std::exception const * se=current_exception_cast<std::exception const>();
+        -:   46:        if( be || se )
+        -:   47:            return exception_detail::diagnostic_information_impl(be,se,true,verbose);
+        -:   48:#if defined(__GLIBCXX__) && __cplusplus >= 201103L && !defined(BOOST_NO_RTTI)
+        -:   49:        else if (auto* p=std::current_exception().__cxa_exception_type())
+        -:   50:            return "Dynamic exception type: "+boost::core::demangle(p->name());
+        -:   51:#endif
+        -:   52:        else
+        -:   53:            return "No diagnostic information available.";
+        -:   54:        }
+        -:   55:    }
+        -:   56:#endif
+        -:   57:
+        -:   58:namespace
+        -:   59:boost
+        -:   60:    {
+        -:   61:    namespace
+        -:   62:    exception_detail
+        -:   63:        {
+        -:   64:        inline
+        -:   65:        exception const *
+    #####:   66:        get_boost_exception( exception const * e )
+        -:   67:            {
+    #####:   68:            return e;
+    %%%%%:   68-block  0
+        -:   69:            }
+        -:   70:
+        -:   71:        inline
+        -:   72:        exception const *
+        -:   73:        get_boost_exception( ... )
+        -:   74:            {
+        -:   75:            return 0;
+        -:   76:            }
+        -:   77:
+        -:   78:        inline
+        -:   79:        std::exception const *
+        -:   80:        get_std_exception( std::exception const * e )
+        -:   81:            {
+        -:   82:            return e;
+        -:   83:            }
+        -:   84:
+        -:   85:        inline
+        -:   86:        std::exception const *
+    #####:   87:        get_std_exception( ... )
+        -:   88:            {
+    #####:   89:            return 0;
+    %%%%%:   89-block  0
+        -:   90:            }
+        -:   91:
+        -:   92:        inline
+        -:   93:        char const *
+    #####:   94:        get_diagnostic_information( exception const & x, char const * header )
+        -:   95:            {
+        -:   96:#ifndef BOOST_NO_EXCEPTIONS
+        -:   97:            try
+        -:   98:                {
+        -:   99:#endif
+    #####:  100:                error_info_container * c=x.data_.get();
+    %%%%%:  100-block  0
+    #####:  101:                if( !c )
+    #####:  102:                    x.data_.adopt(c=new exception_detail::error_info_container_impl);
+    %%%%%:  102-block  0
+    %%%%%:  102-block  1
+    #####:  103:                char const * di=c->diagnostic_information(header);
+    %%%%%:  103-block  0
+    #####:  104:                BOOST_ASSERT(di!=0);
+    %%%%%:  104-block  0
+    %%%%%:  104-block  1
+    %%%%%:  104-block  2
+    %%%%%:  104-block  3
+    #####:  105:                return di;
+    %%%%%:  105-block  0
+        -:  106:#ifndef BOOST_NO_EXCEPTIONS
+        -:  107:                }
+    =====:  108:            catch(...)
+    $$$$$:  108-block  0
+        -:  109:                {
+    =====:  110:                return 0;
+        -:  111:                }
+        -:  112:#endif
+        -:  113:            }
+        -:  114:
+        -:  115:        inline
+        -:  116:        std::string
+    #####:  117:        diagnostic_information_impl( boost::exception const * be, std::exception const * se, bool with_what, bool verbose )
+        -:  118:            {
+    #####:  119:            if( !be && !se )
+    %%%%%:  119-block  0
+    %%%%%:  119-block  1
+    #####:  120:                return "Unknown exception.";
+    %%%%%:  120-block  0
+    %%%%%:  120-block  1
+    $$$$$:  120-block  2
+    $$$$$:  120-block  3
+        -:  121:#ifndef BOOST_NO_RTTI
+    #####:  122:            if( !be )
+    %%%%%:  122-block  0
+    #####:  123:                be=dynamic_cast<boost::exception const *>(se);
+    %%%%%:  123-block  0
+    %%%%%:  123-block  1
+    %%%%%:  123-block  2
+    %%%%%:  123-block  3
+    #####:  124:            if( !se )
+    %%%%%:  124-block  0
+    #####:  125:                se=dynamic_cast<std::exception const *>(be);
+    %%%%%:  125-block  0
+    %%%%%:  125-block  1
+    %%%%%:  125-block  2
+    %%%%%:  125-block  3
+        -:  126:#endif
+    #####:  127:            char const * wh=0;
+    #####:  128:            if( with_what && se )
+    %%%%%:  128-block  0
+    %%%%%:  128-block  1
+        -:  129:                {
+    #####:  130:                wh=se->what();
+    %%%%%:  130-block  0
+    #####:  131:                if( be && exception_detail::get_diagnostic_information(*be,0)==wh )
+    %%%%%:  131-block  0
+    %%%%%:  131-block  1
+    %%%%%:  131-block  2
+    %%%%%:  131-block  3
+    %%%%%:  131-block  4
+    #####:  132:                    return wh;
+    %%%%%:  132-block  0
+    %%%%%:  132-block  1
+    $$$$$:  132-block  2
+    $$$$$:  132-block  3
+        -:  133:                }
+    #####:  134:            std::ostringstream tmp;
+    %%%%%:  134-block  0
+    %%%%%:  134-block  1
+    $$$$$:  134-block  2
+    #####:  135:            if( be && verbose )
+    %%%%%:  135-block  0
+    %%%%%:  135-block  1
+        -:  136:                {
+    #####:  137:                char const * const * f=get_error_info<throw_file>(*be);
+    %%%%%:  137-block  0
+    #####:  138:                int const * l=get_error_info<throw_line>(*be);
+    #####:  139:                char const * const * fn=get_error_info<throw_function>(*be);
+    #####:  140:                if( !f && !l && !fn )
+    %%%%%:  140-block  0
+    %%%%%:  140-block  1
+    #####:  141:                    tmp << "Throw location unknown (consider using BOOST_THROW_EXCEPTION)\n";
+    %%%%%:  141-block  0
+    %%%%%:  141-block  1
+        -:  142:                else
+        -:  143:                    {
+    #####:  144:                    if( f )
+    %%%%%:  144-block  0
+        -:  145:                        {
+    #####:  146:                        tmp << *f;
+    %%%%%:  146-block  0
+    #####:  147:                        if( int const * l=get_error_info<throw_line>(*be) )
+    %%%%%:  147-block  0
+    #####:  148:                            tmp << '(' << *l << "): ";
+    %%%%%:  148-block  0
+    %%%%%:  148-block  1
+    %%%%%:  148-block  2
+        -:  149:                        }
+    #####:  150:                    tmp << "Throw in function ";
+    %%%%%:  150-block  0
+    #####:  151:                    if( char const * const * fn=get_error_info<throw_function>(*be) )
+    %%%%%:  151-block  0
+    #####:  152:                        tmp << *fn;
+    %%%%%:  152-block  0
+        -:  153:                    else
+    #####:  154:                        tmp << "(unknown)";
+    %%%%%:  154-block  0
+    #####:  155:                    tmp << '\n';
+    %%%%%:  155-block  0
+        -:  156:                    }
+        -:  157:                }
+        -:  158:#ifndef BOOST_NO_RTTI
+    #####:  159:            if ( verbose )
+    %%%%%:  159-block  0
+    #####:  160:                tmp << std::string("Dynamic exception type: ") <<
+    %%%%%:  160-block  0
+    $$$$$:  160-block  1
+    $$$$$:  160-block  2
+    $$$$$:  160-block  3
+    $$$$$:  160-block  4
+    #####:  161:                    core::demangle((be?(BOOST_EXCEPTION_DYNAMIC_TYPEID(*be)):(BOOST_EXCEPTION_DYNAMIC_TYPEID(*se))).type_->name()) << '\n';
+    %%%%%:  161-block  0
+    %%%%%:  161-block  1
+    %%%%%:  161-block  2
+    %%%%%:  161-block  3
+    %%%%%:  161-block  4
+    %%%%%:  161-block  5
+    %%%%%:  161-block  6
+    %%%%%:  161-block  7
+    %%%%%:  161-block  8
+    %%%%%:  161-block  9
+    %%%%%:  161-block 10
+    %%%%%:  161-block 11
+    %%%%%:  161-block 12
+    %%%%%:  161-block 13
+    $$$$$:  161-block 14
+    $$$$$:  161-block 15
+    $$$$$:  161-block 16
+        -:  162:#endif
+    #####:  163:            if( with_what && se && verbose )
+    %%%%%:  163-block  0
+    %%%%%:  163-block  1
+    %%%%%:  163-block  2
+    #####:  164:                tmp << "std::exception::what: " << (wh ? wh : "(null)") << '\n';
+    %%%%%:  164-block  0
+    %%%%%:  164-block  1
+    %%%%%:  164-block  2
+    %%%%%:  164-block  3
+    %%%%%:  164-block  4
+    %%%%%:  164-block  5
+    #####:  165:            if( be )
+    %%%%%:  165-block  0
+    #####:  166:                if( char const * s=exception_detail::get_diagnostic_information(*be,tmp.str().c_str()) )
+    %%%%%:  166-block  0
+    %%%%%:  166-block  1
+    %%%%%:  166-block  2
+    $$$$$:  166-block  3
+    $$$$$:  166-block  4
+    #####:  167:                    if( *s )
+    %%%%%:  167-block  0
+    #####:  168:                        return std::string(s);
+    %%%%%:  168-block  0
+    %%%%%:  168-block  1
+    $$$$$:  168-block  2
+    $$$$$:  168-block  3
+    #####:  169:            return tmp.str();
+    %%%%%:  169-block  0
+    %%%%%:  169-block  1
+        -:  170:            }
+        -:  171:        }
+        -:  172:
+        -:  173:    template <class T>
+        -:  174:    std::string
+    #####:  175:    diagnostic_information( T const & e, bool verbose=true )
+        -:  176:        {
+    #####:  177:        return exception_detail::diagnostic_information_impl(exception_detail::get_boost_exception(&e),exception_detail::get_std_exception(&e),true,verbose);
+    %%%%%:  177-block  0
+        -:  178:        }
+        -:  179:
+        -:  180:    inline
+        -:  181:    char const *
+        -:  182:    diagnostic_information_what( exception const & e, bool verbose=true ) BOOST_NOEXCEPT_OR_NOTHROW
+        -:  183:        {
+        -:  184:        char const * w=0;
+        -:  185:#ifndef BOOST_NO_EXCEPTIONS
+        -:  186:        try
+        -:  187:            {
+        -:  188:#endif
+        -:  189:            (void) exception_detail::diagnostic_information_impl(&e,0,false,verbose);
+        -:  190:            if( char const * di=exception_detail::get_diagnostic_information(e,0) )
+        -:  191:                return di;
+        -:  192:            else
+        -:  193:                return "Failed to produce boost::diagnostic_information_what()";
+        -:  194:#ifndef BOOST_NO_EXCEPTIONS
+        -:  195:            }
+        -:  196:        catch(
+        -:  197:        ... )
+        -:  198:            {
+        -:  199:            }
+        -:  200:#endif
+        -:  201:        return w;
+        -:  202:        }
+        -:  203:    }
+        -:  204:
+        -:  205:#if defined(_MSC_VER) && !defined(BOOST_EXCEPTION_ENABLE_WARNINGS)
+        -:  206:#pragma warning(pop)
+        -:  207:#endif
+        -:  208:#endif

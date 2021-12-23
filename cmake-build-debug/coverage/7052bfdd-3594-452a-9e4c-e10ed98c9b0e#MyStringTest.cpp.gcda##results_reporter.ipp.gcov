@@ -1,0 +1,244 @@
+        -:    0:Source:F:/Files/vcpkg/installed/x86-windows/include/boost/test/impl/results_reporter.ipp
+        -:    0:Graph:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcno
+        -:    0:Data:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1://  (C) Copyright Gennadiy Rozental 2001.
+        -:    2://  Distributed under the Boost Software License, Version 1.0.
+        -:    3://  (See accompanying file LICENSE_1_0.txt or copy at
+        -:    4://  http://www.boost.org/LICENSE_1_0.txt)
+        -:    5:
+        -:    6://  See http://www.boost.org/libs/test for the library home page.
+        -:    7://
+        -:    8://  File        : $RCSfile$
+        -:    9://
+        -:   10://  Version     : $Revision$
+        -:   11://
+        -:   12://  Description : result reporting facilties
+        -:   13:// ***************************************************************************
+        -:   14:
+        -:   15:#ifndef BOOST_TEST_RESULTS_REPORTER_IPP_020105GER
+        -:   16:#define BOOST_TEST_RESULTS_REPORTER_IPP_020105GER
+        -:   17:
+        -:   18:// Boost.Test
+        -:   19:#include <boost/test/results_reporter.hpp>
+        -:   20:#include <boost/test/results_collector.hpp>
+        -:   21:#include <boost/test/framework.hpp>
+        -:   22:
+        -:   23:#include <boost/test/output/plain_report_formatter.hpp>
+        -:   24:#include <boost/test/output/xml_report_formatter.hpp>
+        -:   25:
+        -:   26:#include <boost/test/tree/visitor.hpp>
+        -:   27:#include <boost/test/tree/test_unit.hpp>
+        -:   28:#include <boost/test/tree/traverse.hpp>
+        -:   29:
+        -:   30:// Boost
+        -:   31:#include <boost/scoped_ptr.hpp>
+        -:   32:#include <boost/io/ios_state.hpp>
+        -:   33:typedef ::boost::io::ios_base_all_saver io_saver_type;
+        -:   34:
+        -:   35:// STL
+        -:   36:#include <iostream>
+        -:   37:
+        -:   38:#include <boost/test/detail/suppress_warnings.hpp>
+        -:   39:
+        -:   40://____________________________________________________________________________//
+        -:   41:
+        -:   42:namespace boost {
+        -:   43:namespace unit_test {
+        -:   44:namespace results_reporter {
+        -:   45:
+        -:   46:// ************************************************************************** //
+        -:   47:// **************        result reporter implementation        ************** //
+        -:   48:// ************************************************************************** //
+        -:   49:
+        -:   50:namespace {
+        -:   51:
+        -:   52:struct results_reporter_impl : test_tree_visitor {
+        -:   53:    // Constructor
+        1:   54:    results_reporter_impl()
+        1:   55:    : m_stream( &std::cerr )
+        1:   56:    , m_stream_state_saver( new io_saver_type( std::cerr ) )
+        1:   56-block  0
+        -:   57:    , m_report_level( CONFIRMATION_REPORT )
+        2:   58:    , m_formatter( new output::plain_report_formatter )
+        1:   58-block  0
+        1:   58-block  1
+    $$$$$:   58-block  2
+    $$$$$:   58-block  3
+        1:   59:    {}
+        -:   60:
+        -:   61:    // test tree visitor interface implementation
+    #####:   62:    void    visit( test_case const& tc )
+        -:   63:    {
+    #####:   64:        m_formatter->test_unit_report_start( tc, *m_stream );
+    %%%%%:   64-block  0
+    #####:   65:        m_formatter->test_unit_report_finish( tc, *m_stream );
+    #####:   66:    }
+    #####:   67:    bool    test_suite_start( test_suite const& ts )
+        -:   68:    {
+    #####:   69:        m_formatter->test_unit_report_start( ts, *m_stream );
+    %%%%%:   69-block  0
+        -:   70:
+    #####:   71:        if( m_report_level == DETAILED_REPORT && !results_collector.results( ts.p_id ).p_skipped )
+    %%%%%:   71-block  0
+    %%%%%:   71-block  1
+    %%%%%:   71-block  2
+    %%%%%:   71-block  3
+    #####:   72:            return true;
+    %%%%%:   72-block  0
+        -:   73:
+    #####:   74:        m_formatter->test_unit_report_finish( ts, *m_stream );
+    %%%%%:   74-block  0
+    #####:   75:        return false;
+        -:   76:    }
+    #####:   77:    void    test_suite_finish( test_suite const& ts )
+        -:   78:    {
+    #####:   79:        m_formatter->test_unit_report_finish( ts, *m_stream );
+    %%%%%:   79-block  0
+    #####:   80:    }
+        -:   81:
+        -:   82:    typedef scoped_ptr<io_saver_type> saver_ptr;
+        -:   83:
+        -:   84:    // Data members
+        -:   85:    std::ostream*       m_stream;
+        -:   86:    saver_ptr           m_stream_state_saver;
+        -:   87:    report_level        m_report_level;
+        -:   88:    scoped_ptr<format>  m_formatter;
+        -:   89:};
+        -:   90:
+       15:   91:results_reporter_impl& s_rr_impl() { static results_reporter_impl the_inst; return the_inst; }
+       15:   91-block  0
+        1:   91-block  1
+        1:   91-block  2
+        1:   91-block  3
+       15:   91-block  4
+       15:   91-block  5
+    $$$$$:   91-block  6
+    $$$$$:   91-block  7
+        -:   92:
+        -:   93:} // local namespace
+        -:   94:
+        -:   95:// ************************************************************************** //
+        -:   96:// **************              report configuration            ************** //
+        -:   97:// ************************************************************************** //
+        -:   98:
+        -:   99:void
+        1:  100:set_level( report_level l )
+        -:  101:{
+        1:  102:    if( l != INV_REPORT_LEVEL )
+        1:  102-block  0
+        1:  103:        s_rr_impl().m_report_level = l;
+        1:  103-block  0
+        1:  104:}
+        -:  105:
+        -:  106://____________________________________________________________________________//
+        -:  107:
+        -:  108:void
+        1:  109:set_stream( std::ostream& ostr )
+        -:  110:{
+        1:  111:    s_rr_impl().m_stream = &ostr;
+        1:  111-block  0
+        1:  112:    s_rr_impl().m_stream_state_saver.reset( new io_saver_type( ostr ) );
+        1:  113:}
+        -:  114:
+        -:  115://____________________________________________________________________________//
+        -:  116:
+        -:  117:std::ostream&
+    #####:  118:get_stream()
+        -:  119:{
+    #####:  120:    return *s_rr_impl().m_stream;
+    %%%%%:  120-block  0
+        -:  121:}
+        -:  122:
+        -:  123://____________________________________________________________________________//
+        -:  124:
+        -:  125:void
+        1:  126:set_format( output_format rf )
+        -:  127:{
+        1:  128:    switch( rf ) {
+        1:  128-block  0
+        1:  129:    default:
+        -:  130:    case OF_CLF:
+        1:  131:        set_format( new output::plain_report_formatter );
+        1:  131-block  0
+        1:  132:        break;
+    #####:  133:    case OF_XML:
+    #####:  134:        set_format( new output::xml_report_formatter );
+    %%%%%:  134-block  0
+    #####:  135:        break;
+        -:  136:    }
+        1:  137:}
+        -:  138:
+        -:  139://____________________________________________________________________________//
+        -:  140:
+        -:  141:void
+        1:  142:set_format( results_reporter::format* f )
+        -:  143:{
+        1:  144:    if( f )
+        1:  144-block  0
+        1:  145:        s_rr_impl().m_formatter.reset( f );
+        1:  145-block  0
+        1:  146:}
+        -:  147:
+        -:  148://____________________________________________________________________________//
+        -:  149:
+        -:  150:// ************************************************************************** //
+        -:  151:// **************               report initiation              ************** //
+        -:  152:// ************************************************************************** //
+        -:  153:
+        -:  154:void
+        1:  155:make_report( report_level l, test_unit_id id )
+        -:  156:{
+        1:  157:    if( l == INV_REPORT_LEVEL )
+        1:  157-block  0
+        1:  158:        l = s_rr_impl().m_report_level;
+        1:  158-block  0
+        -:  159:
+        1:  160:    if( l == NO_REPORT )
+        1:  160-block  0
+    #####:  161:        return;
+    %%%%%:  161-block  0
+        -:  162:
+        1:  163:    if( id == INV_TEST_UNIT_ID )
+        1:  163-block  0
+    #####:  164:        id = framework::master_test_suite().p_id;
+    %%%%%:  164-block  0
+        -:  165:
+        1:  166:    s_rr_impl().m_stream_state_saver->restore();
+        1:  166-block  0
+        -:  167:
+        1:  168:    report_level bkup = s_rr_impl().m_report_level;
+        1:  169:    s_rr_impl().m_report_level = l;
+        -:  170:
+        1:  171:    s_rr_impl().m_formatter->results_report_start( *s_rr_impl().m_stream );
+        -:  172:
+        1:  173:    switch( l ) {
+        1:  174:    case CONFIRMATION_REPORT:
+        1:  175:        s_rr_impl().m_formatter->do_confirmation_report( framework::get<test_unit>( id ), *s_rr_impl().m_stream );
+        1:  175-block  0
+        1:  176:        break;
+    #####:  177:    case SHORT_REPORT:
+        -:  178:    case DETAILED_REPORT:
+    #####:  179:        traverse_test_tree( id, s_rr_impl() );
+    %%%%%:  179-block  0
+    #####:  180:        break;
+    #####:  181:    default:
+    #####:  182:        break;
+    %%%%%:  182-block  0
+        -:  183:    }
+        -:  184:
+        1:  185:    s_rr_impl().m_formatter->results_report_finish( *s_rr_impl().m_stream );
+        1:  185-block  0
+        1:  186:    s_rr_impl().m_report_level = bkup;
+        -:  187:}
+        -:  188:
+        -:  189://____________________________________________________________________________//
+        -:  190:
+        -:  191:} // namespace results_reporter
+        -:  192:} // namespace unit_test
+        -:  193:} // namespace boost
+        -:  194:
+        -:  195:#include <boost/test/detail/enable_warnings.hpp>
+        -:  196:
+        -:  197:#endif // BOOST_TEST_RESULTS_REPORTER_IPP_020105GER

@@ -1,0 +1,138 @@
+        -:    0:Source:F:/Files/vcpkg/installed/x86-windows/include/boost/test/impl/test_framework_init_observer.ipp
+        -:    0:Graph:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcno
+        -:    0:Data:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:// (c) Copyright Raffi Enficiaud 2017.
+        -:    2:// Distributed under the Boost Software License, Version 1.0.
+        -:    3:// (See accompanying file LICENSE_1_0.txt or copy at
+        -:    4:// http://www.boost.org/LICENSE_1_0.txt)
+        -:    5:
+        -:    6:// See http://www.boost.org/libs/test for the library home page.
+        -:    7://
+        -:    8://! @file
+        -:    9://! An observer for monitoring the success/failure of the other observers
+        -:   10:// ***************************************************************************
+        -:   11:
+        -:   12:#ifndef BOOST_TEST_FRAMEWORK_INIT_OBSERVER_IPP_021105GER
+        -:   13:#define BOOST_TEST_FRAMEWORK_INIT_OBSERVER_IPP_021105GER
+        -:   14:
+        -:   15:// Boost.Test
+        -:   16:#include <boost/test/test_framework_init_observer.hpp>
+        -:   17:#include <boost/test/framework.hpp>
+        -:   18:#include <boost/test/detail/suppress_warnings.hpp>
+        -:   19:
+        -:   20://____________________________________________________________________________//
+        -:   21:
+        -:   22:namespace boost {
+        -:   23:namespace unit_test {
+        -:   24:
+        -:   25:
+        -:   26://____________________________________________________________________________//
+        -:   27:
+        -:   28:// ************************************************************************** //
+        -:   29:// **************           framework_init_observer_t          ************** //
+        -:   30:// ************************************************************************** //
+        -:   31:
+        -:   32:namespace {
+        -:   33:
+        -:   34:struct test_init_observer_check {
+        -:   35:    bool has_failure;
+        -:   36:
+        2:   37:    void clear()
+        -:   38:    {
+        2:   39:      has_failure = false;
+        2:   40:    }
+        -:   41:};
+        -:   42:
+        -:   43:
+       62:   44:test_init_observer_check& s_tioc_impl() { static test_init_observer_check the_inst; return the_inst; }
+       62:   44-block  0
+        -:   45:
+        -:   46:} // local namespace
+        -:   47:
+        -:   48:
+        -:   49://____________________________________________________________________________//
+        -:   50:
+        -:   51:// singleton pattern
+        1:   52:BOOST_TEST_SINGLETON_CONS_IMPL(framework_init_observer_t)
+        1:   52-block  0
+        1:   52-block  1
+        1:   52-block  2
+        1:   52-block  3
+        -:   53:
+        -:   54://____________________________________________________________________________//
+        -:   55:
+        -:   56:void
+        2:   57:framework_init_observer_t::clear()
+        -:   58:{
+        2:   59:    if(!framework::test_in_progress())
+        2:   59-block  0
+        2:   60:        s_tioc_impl().clear();
+        2:   60-block  0
+        2:   61:}
+        -:   62:
+        -:   63://____________________________________________________________________________//
+        -:   64:
+        -:   65:void
+        1:   66:framework_init_observer_t::test_start( counter_t )
+        -:   67:{
+        1:   68:    clear();
+        1:   68-block  0
+        1:   69:}
+        -:   70:
+        -:   71://____________________________________________________________________________//
+        -:   72:
+        -:   73:void
+       56:   74:framework_init_observer_t::assertion_result( unit_test::assertion_result ar )
+        -:   75:{
+       56:   76:    test_init_observer_check& tr = s_tioc_impl();
+       56:   76-block  0
+       56:   77:    switch( ar ) {
+    #####:   78:    case AR_TRIGGERED: break;
+    %%%%%:   78-block  0
+       56:   79:    case AR_PASSED: break;
+       56:   79-block  0
+    #####:   80:    case AR_FAILED: tr.has_failure = true; break;
+    %%%%%:   80-block  0
+    #####:   81:    default:
+    #####:   82:        break;
+    %%%%%:   82-block  0
+        -:   83:    }
+       56:   84:}
+        -:   85:
+        -:   86://____________________________________________________________________________//
+        -:   87:
+        -:   88:void
+    #####:   89:framework_init_observer_t::exception_caught( execution_exception const& )
+        -:   90:{
+    #####:   91:    test_init_observer_check& tr = s_tioc_impl();
+    %%%%%:   91-block  0
+    #####:   92:    tr.has_failure = true;
+    #####:   93:}
+        -:   94:
+        -:   95:void
+    #####:   96:framework_init_observer_t::test_aborted()
+        -:   97:{
+    #####:   98:    s_tioc_impl().has_failure = true;
+    %%%%%:   98-block  0
+    #####:   99:}
+        -:  100:
+        -:  101:
+        -:  102://____________________________________________________________________________//
+        -:  103:
+        -:  104:bool
+        4:  105:framework_init_observer_t::has_failed() const
+        -:  106:{
+        4:  107:    return s_tioc_impl().has_failure;
+        4:  107-block  0
+        -:  108:}
+        -:  109:
+        -:  110://____________________________________________________________________________//
+        -:  111:
+        -:  112:} // namespace unit_test
+        -:  113:} // namespace boost
+        -:  114:
+        -:  115:#include <boost/test/detail/enable_warnings.hpp>
+        -:  116:
+        -:  117:#endif // BOOST_TEST_FRAMEWORK_INIT_OBSERVER_IPP_021105GER

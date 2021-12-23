@@ -1,0 +1,1303 @@
+        -:    0:Source:F:/Files/vcpkg/installed/x86-windows/include/boost/test/utils/runtime/cla/parser.hpp
+        -:    0:Graph:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcno
+        -:    0:Data:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1://  (C) Copyright Gennadiy Rozental 2001.
+        -:    2://  Use, modification, and distribution are subject to the
+        -:    3://  Boost Software License, Version 1.0. (See accompanying file
+        -:    4://  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+        -:    5:
+        -:    6://  See http://www.boost.org/libs/test for the library home page.
+        -:    7://
+        -:    8://!@file
+        -:    9://!@brief CLA parser
+        -:   10:// ***************************************************************************
+        -:   11:
+        -:   12:#ifndef BOOST_TEST_UTILS_RUNTIME_CLA_PARSER_HPP
+        -:   13:#define BOOST_TEST_UTILS_RUNTIME_CLA_PARSER_HPP
+        -:   14:
+        -:   15:// Boost.Test Runtime parameters
+        -:   16:#include <boost/test/utils/runtime/argument.hpp>
+        -:   17:#include <boost/test/utils/runtime/modifier.hpp>
+        -:   18:#include <boost/test/utils/runtime/parameter.hpp>
+        -:   19:
+        -:   20:#include <boost/test/utils/runtime/cla/argv_traverser.hpp>
+        -:   21:
+        -:   22:// Boost.Test
+        -:   23:#include <boost/test/utils/foreach.hpp>
+        -:   24:#include <boost/test/utils/algorithm.hpp>
+        -:   25:#include <boost/test/detail/throw_exception.hpp>
+        -:   26:#include <boost/test/detail/global_typedef.hpp>
+        -:   27:
+        -:   28:#include <boost/algorithm/cxx11/all_of.hpp> // !! ?? unnecessary after cxx11
+        -:   29:
+        -:   30:// STL
+        -:   31:// !! ?? #include <unordered_set>
+        -:   32:#include <set>
+        -:   33:#include <iostream>
+        -:   34:
+        -:   35:#include <boost/test/detail/suppress_warnings.hpp>
+        -:   36:
+        -:   37:namespace boost {
+        -:   38:namespace runtime {
+        -:   39:namespace cla {
+        -:   40:
+        -:   41:// ************************************************************************** //
+        -:   42:// **************         runtime::cla::parameter_trie         ************** //
+        -:   43:// ************************************************************************** //
+        -:   44:
+        -:   45:namespace rt_cla_detail {
+        -:   46:
+        -:   47:struct parameter_trie;
+        -:   48:typedef shared_ptr<parameter_trie> parameter_trie_ptr;
+        -:   49:typedef std::map<char,parameter_trie_ptr> trie_per_char;
+        -:   50:typedef std::vector<boost::reference_wrapper<parameter_cla_id const> > param_cla_id_list;
+        -:   51:
+        -:   52:struct parameter_trie {
+      572:   53:    parameter_trie() : m_has_final_candidate( false ) {}
+      572:   53-block  0
+        -:   54:
+        -:   55:    /// If subtrie corresponding to the char c exists returns it otherwise creates new
+      675:   56:    parameter_trie_ptr  make_subtrie( char c )
+        -:   57:    {
+      675:   58:        trie_per_char::const_iterator it = m_subtrie.find( c );
+      675:   58-block  0
+      675:   58-block  1
+        -:   59:
+      675:   60:        if( it == m_subtrie.end() )
+      569:   61:            it = m_subtrie.insert( std::make_pair( c, parameter_trie_ptr( new parameter_trie ) ) ).first;
+      569:   61-block  0
+      569:   61-block  1
+      569:   61-block  2
+      569:   61-block  3
+      569:   61-block  4
+    $$$$$:   61-block  5
+    $$$$$:   61-block  6
+    $$$$$:   61-block  7
+    $$$$$:   61-block  8
+        -:   62:
+     1350:   63:        return it->second;
+      675:   63-block  0
+      675:   63-block  1
+        -:   64:    }
+        -:   65:
+        -:   66:    /// Creates series of sub-tries per characters in a string
+        -:   67:    parameter_trie_ptr  make_subtrie( cstring s )
+        -:   68:    {
+        -:   69:        parameter_trie_ptr res;
+        -:   70:
+        -:   71:        BOOST_TEST_FOREACH( char, c, s )
+        -:   72:            res = (res ? res->make_subtrie( c ) : make_subtrie( c ));
+        -:   73:
+        -:   74:        return res;
+        -:   75:    }
+        -:   76:
+        -:   77:    /// Registers candidate parameter for this subtrie. If final, it needs to be unique
+      675:   78:    void                add_candidate_id( parameter_cla_id const& param_id, basic_param_ptr param_candidate, bool final )
+        -:   79:    {
+     675*:   80:        BOOST_TEST_I_ASSRT( !m_has_final_candidate && (!final || m_id_candidates.empty()),
+      675:   80-block  0
+      675:   80-block  1
+       71:   80-block  2
+      675:   80-block  3
+    %%%%%:   80-block  4
+      675:   80-block  5
+    %%%%%:   80-block  6
+    %%%%%:   80-block  7
+    %%%%%:   80-block  8
+    %%%%%:   80-block  9
+    %%%%%:   80-block 10
+    %%%%%:   80-block 11
+    %%%%%:   80-block 12
+    %%%%%:   80-block 13
+    $$$$$:   80-block 14
+    $$$$$:   80-block 15
+    $$$$$:   80-block 16
+    $$$$$:   80-block 17
+    $$$$$:   80-block 18
+    $$$$$:   80-block 19
+    $$$$$:   80-block 20
+    $$$$$:   80-block 21
+    $$$$$:   80-block 22
+    $$$$$:   80-block 23
+    $$$$$:   80-block 24
+    $$$$$:   80-block 25
+    $$$$$:   80-block 26
+        -:   81:          conflicting_param() << "Parameter cla id " << param_id.m_tag << " conflicts with the "
+        -:   82:                              << "parameter cla id " << m_id_candidates.back().get().m_tag );
+        -:   83:
+      675:   84:        m_has_final_candidate = final;
+     1350:   85:        m_id_candidates.push_back( ref(param_id) );
+      675:   85-block  0
+      675:   85-block  1
+        -:   86:
+      675:   87:        if( m_id_candidates.size() == 1 )
+      675:   87-block  0
+      569:   88:            m_param_candidate = param_candidate;
+      569:   88-block  0
+        -:   89:        else
+      106:   90:            m_param_candidate.reset();
+      106:   90-block  0
+      675:   91:    }
+      675:   91-block  0
+        -:   92:
+        -:   93:    /// Gets subtrie for specified char if present or nullptr otherwise
+       52:   94:    parameter_trie_ptr  get_subtrie( char c ) const
+        -:   95:    {
+       52:   96:        trie_per_char::const_iterator it = m_subtrie.find( c );
+       52:   96-block  0
+        -:   97:
+      52*:   98:        return it != m_subtrie.end() ? it->second : parameter_trie_ptr();
+       52:   98-block  0
+       52:   98-block  1
+    %%%%%:   98-block  2
+       52:   98-block  3
+       52:   98-block  4
+       52:   98-block  5
+        -:   99:    }
+        -:  100:
+        -:  101:    // Data members
+        -:  102:    trie_per_char       m_subtrie;
+        -:  103:    param_cla_id_list   m_id_candidates;
+        -:  104:    basic_param_ptr     m_param_candidate;
+        -:  105:    bool                m_has_final_candidate;
+        -:  106:};
+        -:  107:
+        -:  108:// ************************************************************************** //
+        -:  109:// **************      runtime::cla::report_foreing_token      ************** //
+        -:  110:// ************************************************************************** //
+        -:  111:
+        -:  112:static void
+    #####:  113:report_foreing_token( cstring program_name, cstring token )
+        -:  114:{
+        -:  115:    std::cerr << "Boost.Test WARNING: token \"" << token << "\" does not correspond to the Boost.Test argument \n"
+        -:  116:              << "                    and should be placed after all Boost.Test arguments and the -- separator.\n"
+    #####:  117:              << "                    For example: " << program_name << " --random -- " << token << "\n";
+    %%%%%:  117-block  0
+    #####:  118:}
+        -:  119:
+        -:  120:} // namespace rt_cla_detail
+        -:  121:
+        -:  122:// ************************************************************************** //
+        -:  123:// **************             runtime::cla::parser             ************** //
+        -:  124:// ************************************************************************** //
+        -:  125:
+        -:  126:class parser {
+        -:  127:public:
+        -:  128:    /// Initializes a parser and builds internal trie representation used for
+        -:  129:    /// parsing based on the supplied parameters
+        -:  130:#ifndef BOOST_NO_CXX11_FUNCTION_TEMPLATE_DEFAULT_ARGS
+        -:  131:    template<typename Modifiers=nfp::no_params_type>
+        1:  132:    parser( parameters_store const& parameters, Modifiers const& m = nfp::no_params )
+        -:  133:#else
+        -:  134:    template<typename Modifiers>
+        -:  135:    parser( parameters_store const& parameters, Modifiers const& m )
+        -:  136:#endif
+        1:  137:    {
+        1:  137-block  0
+    $$$$$:  137-block  1
+    $$$$$:  137-block  2
+    $$$$$:  137-block  3
+        1:  138:        nfp::opt_assign( m_end_of_param_indicator, m, end_of_params );
+        1:  139:        nfp::opt_assign( m_negation_prefix, m, negation_prefix );
+        1:  139-block  0
+        -:  140:
+       1*:  141:        BOOST_TEST_I_ASSRT( algorithm::all_of( m_end_of_param_indicator.begin(),
+        1:  141-block  0
+        1:  141-block  1
+    %%%%%:  141-block  2
+    %%%%%:  141-block  3
+    %%%%%:  141-block  4
+    %%%%%:  141-block  5
+    $$$$$:  141-block  6
+    $$$$$:  141-block  7
+    $$$$$:  141-block  8
+    $$$$$:  141-block  9
+    $$$$$:  141-block 10
+        -:  142:                                               m_end_of_param_indicator.end(),
+        -:  143:                                               parameter_cla_id::valid_prefix_char ),
+        -:  144:                            invalid_cla_id() << "End of parameters indicator can only consist of prefix characters." );
+        -:  145:
+       1*:  146:        BOOST_TEST_I_ASSRT( algorithm::all_of( m_negation_prefix.begin(),
+        1:  146-block  0
+        1:  146-block  1
+    %%%%%:  146-block  2
+    %%%%%:  146-block  3
+    %%%%%:  146-block  4
+    %%%%%:  146-block  5
+    $$$$$:  146-block  6
+    $$$$$:  146-block  7
+    $$$$$:  146-block  8
+    $$$$$:  146-block  9
+    $$$$$:  146-block 10
+        -:  147:                                               m_negation_prefix.end(),
+        -:  148:                                               parameter_cla_id::valid_name_char ),
+        -:  149:                            invalid_cla_id() << "Negation prefix can only consist of prefix characters." );
+        -:  150:
+        1:  151:        build_trie( parameters );
+        1:  151-block  0
+        1:  152:    }
+        1:  152-block  0
+        -:  153:
+        -:  154:    // input processing method
+        -:  155:    int
+        1:  156:    parse( int argc, char** argv, runtime::arguments_store& res )
+        -:  157:    {
+        -:  158:        // save program name for help message
+        1:  159:        m_program_name = argv[0];
+        1:  159-block  0
+        1:  160:        cstring path_sep( "\\/" );
+        1:  160-block  0
+        -:  161:
+        1:  162:        cstring::iterator it = unit_test::utils::find_last_of( m_program_name.begin(), m_program_name.end(),
+        1:  162-block  0
+        -:  163:                                                                path_sep.begin(), path_sep.end() );
+        1:  164:        if( it != m_program_name.end() )
+        1:  164-block  0
+        1:  165:            m_program_name.trim_left( it + 1 );
+        1:  165-block  0
+        -:  166:
+        -:  167:        // Set up the traverser
+        1:  168:        argv_traverser tr( argc, (char const**)argv );
+        1:  168-block  0
+        -:  169:
+        -:  170:        // Loop till we reach end of input
+        6:  171:        while( !tr.eoi() ) {
+        6:  171-block  0
+        5:  171-block  1
+        5:  172:            cstring curr_token = tr.current_token();
+        5:  172-block  0
+        -:  173:
+        5:  174:            cstring prefix;
+        5:  174-block  0
+        5:  175:            cstring name;
+        5:  175-block  0
+        5:  176:            cstring value_separator;
+        5:  176-block  0
+        5:  177:            bool    negative_form = false;
+        -:  178:
+        -:  179:            // Perform format validations and split the argument into prefix, name and separator
+        -:  180:            // False return value indicates end of params indicator is met
+        5:  181:            if( !validate_token_format( curr_token, prefix, name, value_separator, negative_form ) ) {
+        5:  181-block  0
+        5:  181-block  1
+    $$$$$:  181-block  2
+        -:  182:                // get rid of "end of params" token
+    #####:  183:                tr.next_token();
+    %%%%%:  183-block  0
+    #####:  184:                break;
+        -:  185:            }
+        -:  186:
+        -:  187:            // Locate trie corresponding to found prefix and skip it in the input
+        5:  188:            trie_ptr curr_trie = m_param_trie[prefix];
+        5:  188-block  0
+        5:  188-block  1
+    $$$$$:  188-block  2
+        -:  189:
+       5*:  190:            if( !curr_trie ) {
+        -:  191:                //  format_error() << "Unrecognized parameter prefix in the argument " << tr.current_token()
+    #####:  192:                rt_cla_detail::report_foreing_token( m_program_name, curr_token );
+    %%%%%:  192-block  0
+    $$$$$:  192-block  1
+    $$$$$:  192-block  2
+    #####:  193:                tr.save_token();
+    %%%%%:  193-block  0
+    #####:  194:                continue;
+        -:  195:            }
+        -:  196:
+        5:  197:            curr_token.trim_left( prefix.size() );
+        5:  197-block  0
+        -:  198:
+        -:  199:            // Locate parameter based on a name and skip it in the input
+       10:  200:            locate_result locate_res = locate_parameter( curr_trie, name, curr_token );
+    $$$$$:  200-block  0
+    $$$$$:  200-block  1
+    $$$$$:  200-block  2
+    $$$$$:  200-block  3
+        5:  201:            parameter_cla_id const& found_id    = locate_res.first;
+       10:  202:            basic_param_ptr         found_param = locate_res.second;
+        5:  202-block  0
+    $$$$$:  202-block  1
+        -:  203:
+        5:  204:            if( negative_form ) {
+    #####:  205:                BOOST_TEST_I_ASSRT( found_id.m_negatable,
+    %%%%%:  205-block  0
+    %%%%%:  205-block  1
+    %%%%%:  205-block  2
+    %%%%%:  205-block  3
+    %%%%%:  205-block  4
+    %%%%%:  205-block  5
+    $$$$$:  205-block  6
+    $$$$$:  205-block  7
+    $$$$$:  205-block  8
+    $$$$$:  205-block  9
+    $$$$$:  205-block 10
+    $$$$$:  205-block 11
+    $$$$$:  205-block 12
+    $$$$$:  205-block 13
+    $$$$$:  205-block 14
+        -:  206:                                    format_error( found_param->p_name )
+        -:  207:                                        << "Parameter tag " << found_id.m_tag << " is not negatable." );
+        -:  208:
+    #####:  209:                curr_token.trim_left( m_negation_prefix.size() );
+    %%%%%:  209-block  0
+        -:  210:            }
+        -:  211:
+        5:  212:            curr_token.trim_left( name.size() );
+        5:  212-block  0
+        -:  213:
+        5:  214:            bool should_go_to_next = true;
+        5:  215:            cstring value;
+        -:  216:
+        -:  217:
+        -:  218:            // Skip validations if parameter has optional value and we are at the end of token
+       5*:  219:            if( !value_separator.is_empty() || !found_param->p_has_optional_value ) {
+        5:  219-block  0
+    %%%%%:  219-block  1
+        5:  219-block  2
+    %%%%%:  219-block  3
+        5:  219-block  4
+        -:  220:
+        -:  221:                // we are given a separator or there is no optional value
+        -:  222:
+        -:  223:                // Validate and skip value separator in the input
+       5*:  224:                BOOST_TEST_I_ASSRT( found_id.m_value_separator == value_separator,
+        5:  224-block  0
+        5:  224-block  1
+    %%%%%:  224-block  2
+    %%%%%:  224-block  3
+    %%%%%:  224-block  4
+    %%%%%:  224-block  5
+    %%%%%:  224-block  6
+    %%%%%:  224-block  7
+    %%%%%:  224-block  8
+    $$$$$:  224-block  9
+    $$$$$:  224-block 10
+    $$$$$:  224-block 11
+    $$$$$:  224-block 12
+    $$$$$:  224-block 13
+    $$$$$:  224-block 14
+    $$$$$:  224-block 15
+    $$$$$:  224-block 16
+    $$$$$:  224-block 17
+    $$$$$:  224-block 18
+    $$$$$:  224-block 19
+    $$$$$:  224-block 20
+        -:  225:                                    format_error( found_param->p_name )
+        -:  226:                                        << "Invalid separator for the parameter "
+        -:  227:                                        << found_param->p_name
+        -:  228:                                        << " in the argument " << tr.current_token() );
+        -:  229:
+        5:  230:                curr_token.trim_left( value_separator.size() );
+        5:  230-block  0
+        -:  231:
+        -:  232:                // Deduce value source
+        5:  233:                value = curr_token;
+        5:  234:                if( value.is_empty() ) {
+    #####:  235:                    tr.next_token();
+    %%%%%:  235-block  0
+    #####:  236:                    value = tr.current_token();
+    %%%%%:  236-block  0
+        -:  237:                }
+        -:  238:
+       5*:  239:                BOOST_TEST_I_ASSRT( !value.is_empty(),
+        5:  239-block  0
+    %%%%%:  239-block  1
+    %%%%%:  239-block  2
+    %%%%%:  239-block  3
+    %%%%%:  239-block  4
+    %%%%%:  239-block  5
+    %%%%%:  239-block  6
+    %%%%%:  239-block  7
+    $$$$$:  239-block  8
+    $$$$$:  239-block  9
+    $$$$$:  239-block 10
+    $$$$$:  239-block 11
+    $$$$$:  239-block 12
+    $$$$$:  239-block 13
+    $$$$$:  239-block 14
+    $$$$$:  239-block 15
+    $$$$$:  239-block 16
+    $$$$$:  239-block 17
+    $$$$$:  239-block 18
+    $$$$$:  239-block 19
+        -:  240:                                    format_error( found_param->p_name )
+        -:  241:                                        << "Missing an argument value for the parameter "
+        -:  242:                                        << found_param->p_name
+        -:  243:                                        << " in the argument " << tr.current_token() );
+        -:  244:            }
+    #####:  245:            else if( (value_separator.is_empty() && found_id.m_value_separator.empty()) ) {
+    %%%%%:  245-block  0
+    %%%%%:  245-block  1
+    %%%%%:  245-block  2
+    %%%%%:  245-block  3
+    %%%%%:  245-block  4
+        -:  246:                // Deduce value source
+    #####:  247:                value = curr_token;
+    %%%%%:  247-block  0
+    #####:  248:                if( value.is_empty() ) {
+    #####:  249:                    tr.next_token(); // tokenization broke the value, we check the next one
+    %%%%%:  249-block  0
+        -:  250:
+    #####:  251:                    if(!found_param->p_has_optional_value) {
+        -:  252:                        // there is no separator and there is no optional value
+        -:  253:                        // we look for the value on the next token
+        -:  254:                        // example "-t XXXX" (no default)
+        -:  255:                        // and we commit this value as being the passed value
+    #####:  256:                        value = tr.current_token();
+    %%%%%:  256-block  0
+    %%%%%:  256-block  1
+        -:  257:                    }
+        -:  258:                    else {
+        -:  259:                        // there is no separator and the value is optional
+        -:  260:                        // we check the next token
+        -:  261:                        // example "-c" (defaults to true)
+        -:  262:                        // and commit this as the value if this is not a token
+    #####:  263:                        cstring value_check = tr.current_token();
+    %%%%%:  263-block  0
+        -:  264:
+    #####:  265:                        cstring prefix_test, name_test, value_separator_test;
+    %%%%%:  265-block  0
+    %%%%%:  265-block  1
+    %%%%%:  265-block  2
+        -:  266:                        bool negative_form_test;
+    #####:  267:                        if( validate_token_format( value_check, prefix_test, name_test, value_separator_test, negative_form_test )
+    %%%%%:  267-block  0
+    $$$$$:  267-block  1
+    #####:  268:                            && m_param_trie[prefix_test]) {
+    %%%%%:  268-block  0
+    %%%%%:  268-block  1
+    %%%%%:  268-block  2
+    %%%%%:  268-block  3
+    %%%%%:  268-block  4
+    %%%%%:  268-block  5
+        -:  269:                          // this is a token, we consume what we have
+    #####:  270:                          should_go_to_next = false;
+    %%%%%:  270-block  0
+        -:  271:                        }
+        -:  272:                        else {
+        -:  273:                          // this is a value, we commit it
+    #####:  274:                          value = value_check;
+    %%%%%:  274-block  0
+        -:  275:                        }
+        -:  276:                    }
+        -:  277:                }
+        -:  278:            }
+        -:  279:
+        -:  280:            // Validate against argument duplication
+       5*:  281:            BOOST_TEST_I_ASSRT( !res.has( found_param->p_name ) || found_param->p_repeatable,
+        5:  281-block  0
+        5:  281-block  1
+    %%%%%:  281-block  2
+        5:  281-block  3
+    %%%%%:  281-block  4
+        5:  281-block  5
+    %%%%%:  281-block  6
+    %%%%%:  281-block  7
+    %%%%%:  281-block  8
+    %%%%%:  281-block  9
+    %%%%%:  281-block 10
+    %%%%%:  281-block 11
+    %%%%%:  281-block 12
+    $$$$$:  281-block 13
+    $$$$$:  281-block 14
+    $$$$$:  281-block 15
+    $$$$$:  281-block 16
+    $$$$$:  281-block 17
+    $$$$$:  281-block 18
+    $$$$$:  281-block 19
+    $$$$$:  281-block 20
+    $$$$$:  281-block 21
+    $$$$$:  281-block 22
+    $$$$$:  281-block 23
+    $$$$$:  281-block 24
+    $$$$$:  281-block 25
+        -:  282:                                duplicate_arg( found_param->p_name )
+        -:  283:                                    << "Duplicate argument value for the parameter "
+        -:  284:                                    << found_param->p_name
+        -:  285:                                    << " in the argument " << tr.current_token() );
+        -:  286:
+        -:  287:            // Produce argument value
+        5:  288:            found_param->produce_argument( value, negative_form, res );
+        5:  288-block  0
+    $$$$$:  288-block  1
+        -:  289:
+        5:  290:            if(should_go_to_next) {
+        5:  290-block  0
+        5:  291:                tr.next_token();
+        5:  291-block  0
+        -:  292:            }
+        -:  293:        }
+        -:  294:
+        -:  295:        // generate the remainder and return it's size
+        2:  296:        return tr.remainder();
+        1:  296-block  0
+        1:  296-block  1
+        -:  297:    }
+        -:  298:
+        -:  299:    // help/usage/version
+        -:  300:    void
+    #####:  301:    version( std::ostream& ostr )
+        -:  302:    {
+    #####:  303:       ostr << "Boost.Test module ";
+    %%%%%:  303-block  0
+        -:  304:
+        -:  305:#if defined(BOOST_TEST_MODULE)
+        -:  306:       // we do not want to refer to the master test suite there
+    #####:  307:       ostr << '\'' << BOOST_TEST_STRINGIZE( BOOST_TEST_MODULE ).trim( "\"" ) << "' ";
+    %%%%%:  307-block  0
+    %%%%%:  307-block  1
+    %%%%%:  307-block  2
+    $$$$$:  307-block  3
+        -:  308:#endif
+        -:  309:
+    #####:  310:       ostr << "in executable '" << m_program_name << "'\n";
+    %%%%%:  310-block  0
+    #####:  311:       ostr << "Compiled from Boost version "
+    #####:  312:            << BOOST_VERSION/100000      << "."
+    #####:  313:            << BOOST_VERSION/100 % 1000  << "."
+    #####:  314:            << BOOST_VERSION % 100       ;
+    #####:  315:       ostr << " with ";
+        -:  316:#if defined(BOOST_TEST_INCLUDED)
+    #####:  317:       ostr << "header-only inclusion of";
+        -:  318:#elif defined(BOOST_TEST_DYN_LINK)
+        -:  319:       ostr << "dynamic linking to";
+        -:  320:#else
+        -:  321:       ostr << "static linking to";
+        -:  322:#endif
+    #####:  323:       ostr << " Boost.Test\n";
+        -:  324:       ostr << "- Compiler: " << BOOST_COMPILER << '\n'
+        -:  325:            << "- Platform: " << BOOST_PLATFORM << '\n'
+    #####:  326:            << "- STL     : " << BOOST_STDLIB;
+    #####:  327:       ostr << std::endl;
+    #####:  328:    }
+        -:  329:
+        -:  330:    void
+    #####:  331:    usage(std::ostream& ostr,
+        -:  332:          cstring param_name = cstring(),
+        -:  333:          bool use_color = true)
+        -:  334:    {
+        -:  335:        namespace utils = unit_test::utils;
+        -:  336:        namespace ut_detail = unit_test::ut_detail;
+        -:  337:
+    #####:  338:        if( !param_name.is_empty() ) {
+    %%%%%:  338-block  0
+    #####:  339:            basic_param_ptr param = locate_parameter( m_param_trie[help_prefix], param_name, "" ).second;
+    %%%%%:  339-block  0
+    %%%%%:  339-block  1
+    %%%%%:  339-block  2
+    %%%%%:  339-block  3
+    $$$$$:  339-block  4
+    $$$$$:  339-block  5
+    $$$$$:  339-block  6
+    $$$$$:  339-block  7
+    #####:  340:            param->usage( ostr, m_negation_prefix );
+    %%%%%:  340-block  0
+    $$$$$:  340-block  1
+        -:  341:        }
+        -:  342:        else {
+    #####:  343:            ostr << "\n  The program '" << m_program_name << "' is a Boost.Test module containing unit tests.";
+    %%%%%:  343-block  0
+        -:  344:
+        -:  345:            {
+    #####:  346:              BOOST_TEST_SCOPE_SETCOLOR( use_color, ostr, term_attr::BRIGHT, term_color::ORIGINAL );
+    %%%%%:  346-block  0
+    $$$$$:  346-block  1
+    #####:  347:              ostr << "\n\n  Usage\n    ";
+    %%%%%:  347-block  0
+        -:  348:            }
+        -:  349:
+        -:  350:            {
+    #####:  351:                BOOST_TEST_SCOPE_SETCOLOR( use_color, ostr, term_attr::BRIGHT, term_color::GREEN );
+    %%%%%:  351-block  0
+    $$$$$:  351-block  1
+    #####:  352:                ostr << m_program_name << " [Boost.Test argument]... ";
+    %%%%%:  352-block  0
+    %%%%%:  352-block  1
+        -:  353:            }
+    #####:  354:            if( !m_end_of_param_indicator.empty() ) {
+    #####:  355:                BOOST_TEST_SCOPE_SETCOLOR( use_color, ostr, term_attr::BRIGHT, term_color::YELLOW );
+    %%%%%:  355-block  0
+    %%%%%:  355-block  1
+    $$$$$:  355-block  2
+    #####:  356:                ostr << '[' << m_end_of_param_indicator << " [custom test module argument]...]";
+    %%%%%:  356-block  0
+    %%%%%:  356-block  1
+    %%%%%:  356-block  2
+        -:  357:            }
+        -:  358:        }
+        -:  359:
+    #####:  360:        ostr << "\n\n  Use\n      ";
+    %%%%%:  360-block  0
+        -:  361:        {
+        -:  362:
+    #####:  363:            BOOST_TEST_SCOPE_SETCOLOR( use_color, ostr, term_attr::BRIGHT, term_color::GREEN );
+    %%%%%:  363-block  0
+    $$$$$:  363-block  1
+    #####:  364:            ostr << m_program_name << " --help";
+    %%%%%:  364-block  0
+    %%%%%:  364-block  1
+        -:  365:        }
+    #####:  366:        ostr << "\n  or  ";
+        -:  367:        {
+    #####:  368:            BOOST_TEST_SCOPE_SETCOLOR( use_color, ostr, term_attr::BRIGHT, term_color::GREEN );
+    %%%%%:  368-block  0
+    $$$$$:  368-block  1
+    #####:  369:            ostr << m_program_name << " --help=<parameter name>";
+    %%%%%:  369-block  0
+    %%%%%:  369-block  1
+        -:  370:        }
+    #####:  371:        ostr << "\n  for detailed help on Boost.Test parameters.\n";
+    #####:  372:    }
+        -:  373:
+        -:  374:    void
+    #####:  375:    help(std::ostream& ostr,
+        -:  376:         parameters_store const& parameters,
+        -:  377:         cstring param_name,
+        -:  378:         bool use_color = true)
+        -:  379:    {
+        -:  380:        namespace utils = unit_test::utils;
+        -:  381:        namespace ut_detail = unit_test::ut_detail;
+        -:  382:
+    #####:  383:        if( !param_name.is_empty() ) {
+    %%%%%:  383-block  0
+    #####:  384:            basic_param_ptr param = locate_parameter( m_param_trie[help_prefix], param_name, "" ).second;
+    %%%%%:  384-block  0
+    %%%%%:  384-block  1
+    %%%%%:  384-block  2
+    %%%%%:  384-block  3
+    $$$$$:  384-block  4
+    $$$$$:  384-block  5
+    $$$$$:  384-block  6
+    $$$$$:  384-block  7
+    #####:  385:            param->help( ostr, m_negation_prefix, use_color);
+    $$$$$:  385-block  0
+    #####:  386:            return;
+    %%%%%:  386-block  0
+        -:  387:        }
+        -:  388:
+    #####:  389:        usage(ostr, cstring(), use_color);
+    %%%%%:  389-block  0
+    $$$$$:  389-block  1
+        -:  390:
+    #####:  391:        ostr << "\n\n";
+    %%%%%:  391-block  0
+        -:  392:        {
+    #####:  393:          BOOST_TEST_SCOPE_SETCOLOR( use_color, ostr, term_attr::BRIGHT, term_color::ORIGINAL );
+    %%%%%:  393-block  0
+    $$$$$:  393-block  1
+    #####:  394:          ostr << "  Command line flags:\n";
+    %%%%%:  394-block  0
+        -:  395:        }
+        -:  396:        runtime::commandline_pretty_print(
+        -:  397:            ostr,
+        -:  398:            "   ",
+        -:  399:            "The command line flags of Boost.Test are listed below. "
+        -:  400:            "All parameters are optional. You can specify parameter value either "
+        -:  401:            "as a command line argument or as a value of its corresponding environment "
+        -:  402:            "variable. If a flag is specified as a command line argument and an environment variable "
+        -:  403:            "at the same time, the command line takes precedence. "
+        -:  404:            "The command line argument "
+        -:  405:            "support name guessing, and works with shorter names as long as those are not ambiguous."
+    #####:  406:        );
+    %%%%%:  406-block  0
+    %%%%%:  406-block  1
+    %%%%%:  406-block  2
+    $$$$$:  406-block  3
+    $$$$$:  406-block  4
+    $$$$$:  406-block  5
+    $$$$$:  406-block  6
+    $$$$$:  406-block  7
+    $$$$$:  406-block  8
+    $$$$$:  406-block  9
+    $$$$$:  406-block 10
+        -:  407:
+    #####:  408:        if( !m_end_of_param_indicator.empty() ) {
+    #####:  409:            ostr << "\n\n   All the arguments after the '";
+    %%%%%:  409-block  0
+        -:  410:            {
+    #####:  411:                BOOST_TEST_SCOPE_SETCOLOR( use_color, ostr, term_attr::BRIGHT, term_color::YELLOW );
+    %%%%%:  411-block  0
+    $$$$$:  411-block  1
+    #####:  412:                ostr << m_end_of_param_indicator;
+    %%%%%:  412-block  0
+        -:  413:            }
+    #####:  414:            ostr << "' are ignored by Boost.Test.";
+        -:  415:        }
+        -:  416:
+        -:  417:
+        -:  418:        {
+    #####:  419:          BOOST_TEST_SCOPE_SETCOLOR( use_color, ostr, term_attr::BRIGHT, term_color::ORIGINAL );
+    %%%%%:  419-block  0
+    %%%%%:  419-block  1
+    $$$$$:  419-block  2
+    #####:  420:          ostr << "\n\n  Environment variables:\n";
+    %%%%%:  420-block  0
+        -:  421:        }
+        -:  422:        runtime::commandline_pretty_print(
+        -:  423:            ostr,
+        -:  424:            "   ",
+        -:  425:            "Every argument listed below may also be set by a corresponding environment"
+        -:  426:            "variable. For an argument '--argument_x=<value>', the corresponding "
+        -:  427:            "environment variable is 'BOOST_TEST_ARGUMENT_X=value"
+    #####:  428:        );
+    %%%%%:  428-block  0
+    %%%%%:  428-block  1
+    %%%%%:  428-block  2
+    $$$$$:  428-block  3
+    $$$$$:  428-block  4
+    $$$$$:  428-block  5
+    $$$$$:  428-block  6
+    $$$$$:  428-block  7
+    $$$$$:  428-block  8
+    $$$$$:  428-block  9
+    $$$$$:  428-block 10
+        -:  429:
+        -:  430:
+        -:  431:
+    #####:  432:        ostr << "\n\n  The following parameters are supported:\n";
+        -:  433:
+    #####:  434:        BOOST_TEST_FOREACH(
+    %%%%%:  434-block  0
+    %%%%%:  434-block  1
+    %%%%%:  434-block  2
+    %%%%%:  434-block  3
+    %%%%%:  434-block  4
+    %%%%%:  434-block  5
+    %%%%%:  434-block  6
+    %%%%%:  434-block  7
+    %%%%%:  434-block  8
+    %%%%%:  434-block  9
+    %%%%%:  434-block 10
+    %%%%%:  434-block 11
+    %%%%%:  434-block 12
+    %%%%%:  434-block 13
+    %%%%%:  434-block 14
+    %%%%%:  434-block 15
+    %%%%%:  434-block 16
+    %%%%%:  434-block 17
+    $$$$$:  434-block 18
+    $$$$$:  434-block 19
+    $$$$$:  434-block 20
+    $$$$$:  434-block 21
+        -:  435:            parameters_store::storage_type::value_type const&,
+        -:  436:            v,
+        -:  437:            parameters.all() )
+        -:  438:        {
+    #####:  439:            basic_param_ptr param = v.second;
+    %%%%%:  439-block  0
+    $$$$$:  439-block  1
+    #####:  440:            ostr << "\n";
+    #####:  441:            param->usage( ostr, m_negation_prefix, use_color);
+    %%%%%:  441-block  0
+    %%%%%:  441-block  1
+    $$$$$:  441-block  2
+        -:  442:        }
+        -:  443:
+        -:  444:    }
+        -:  445:
+        -:  446:private:
+        -:  447:    typedef rt_cla_detail::parameter_trie_ptr   trie_ptr;
+        -:  448:    typedef rt_cla_detail::trie_per_char        trie_per_char;
+        -:  449:    typedef std::map<cstring,trie_ptr>          str_to_trie;
+        -:  450:
+        -:  451:    void
+        1:  452:    build_trie( parameters_store const& parameters )
+        -:  453:    {
+        -:  454:        // Iterate over all parameters
+      57*:  455:        BOOST_TEST_FOREACH( parameters_store::storage_type::value_type const&, v, parameters.all() ) {
+        1:  455-block  0
+        1:  455-block  1
+        1:  455-block  2
+        1:  455-block  3
+        1:  455-block  4
+       29:  455-block  5
+       29:  455-block  6
+       29:  455-block  7
+       28:  455-block  8
+        1:  455-block  9
+       29:  455-block 10
+       28:  455-block 11
+       28:  455-block 12
+       28:  455-block 13
+       56:  455-block 14
+       28:  455-block 15
+       28:  455-block 16
+    %%%%%:  455-block 17
+       28:  455-block 18
+    $$$$$:  455-block 19
+    $$$$$:  455-block 20
+    $$$$$:  455-block 21
+    $$$$$:  455-block 22
+       56:  456:            basic_param_ptr param = v.second;
+       28:  456-block  0
+       28:  456-block  1
+    $$$$$:  456-block  2
+        -:  457:
+        -:  458:            // Register all parameter's ids in trie.
+     170*:  459:            BOOST_TEST_FOREACH( parameter_cla_id const&, id, param->cla_ids() ) {
+       28:  459-block  0
+       28:  459-block  1
+       28:  459-block  2
+       28:  459-block  3
+       99:  459-block  4
+       99:  459-block  5
+       99:  459-block  6
+       71:  459-block  7
+       28:  459-block  8
+       99:  459-block  9
+       71:  459-block 10
+       71:  459-block 11
+       71:  459-block 12
+      142:  459-block 13
+       71:  459-block 14
+       71:  459-block 15
+    %%%%%:  459-block 16
+       71:  459-block 17
+    $$$$$:  459-block 18
+    $$$$$:  459-block 19
+    $$$$$:  459-block 20
+    $$$$$:  459-block 21
+    $$$$$:  459-block 22
+        -:  460:                // This is the trie corresponding to the prefix.
+      142:  461:                trie_ptr next_trie = m_param_trie[id.m_prefix];
+       71:  461-block  0
+       71:  461-block  1
+       71:  461-block  2
+    $$$$$:  461-block  3
+    $$$$$:  461-block  4
+       71:  462:                if( !next_trie )
+        3:  463:                    next_trie = m_param_trie[id.m_prefix] = trie_ptr( new rt_cla_detail::parameter_trie );
+        3:  463-block  0
+        3:  463-block  1
+        3:  463-block  2
+        3:  463-block  3
+    $$$$$:  463-block  4
+    $$$$$:  463-block  5
+    $$$$$:  463-block  6
+        -:  464:
+        -:  465:                // Build the trie, by following name's characters
+        -:  466:                // and register this parameter as candidate on each level
+      746:  467:                for( size_t index = 0; index < id.m_tag.size(); ++index ) {
+       71:  467-block  0
+      746:  467-block  1
+      675:  468:                    next_trie = next_trie->make_subtrie( id.m_tag[index] );
+      675:  468-block  0
+      675:  468-block  1
+        -:  469:
+      675:  470:                    next_trie->add_candidate_id( id, param, index == (id.m_tag.size() - 1) );
+      675:  470-block  0
+    $$$$$:  470-block  1
+    $$$$$:  470-block  2
+        -:  471:                }
+        -:  472:            }
+        -:  473:        }
+        1:  474:    }
+        1:  474-block  0
+        -:  475:
+        -:  476:    bool
+        5:  477:    validate_token_format( cstring token, cstring& prefix, cstring& name, cstring& separator, bool& negative_form )
+        -:  478:    {
+        -:  479:        // Match prefix
+        5:  480:        cstring::iterator it = token.begin();
+        5:  480-block  0
+       15:  481:        while( it != token.end() && parameter_cla_id::valid_prefix_char( *it ) )
+       15:  481-block  0
+       15:  481-block  1
+       10:  481-block  2
+        5:  481-block  3
+       15:  481-block  4
+       10:  482:            ++it;
+       10:  482-block  0
+        -:  483:
+        5:  484:        prefix.assign( token.begin(), it );
+        5:  484-block  0
+        -:  485:
+        5:  486:        if( prefix.empty() )
+    #####:  487:            return true;
+    %%%%%:  487-block  0
+        -:  488:
+        -:  489:        // Match name
+       57:  490:        while( it != token.end() && parameter_cla_id::valid_name_char( *it ) )
+       57:  490-block  0
+       57:  490-block  1
+       52:  490-block  2
+        5:  490-block  3
+       57:  490-block  4
+       52:  491:            ++it;
+       52:  491-block  0
+        -:  492:
+        5:  493:        name.assign( prefix.end(), it );
+        5:  493-block  0
+        -:  494:
+        5:  495:        if( name.empty() ) {
+    #####:  496:            if( prefix == m_end_of_param_indicator )
+    %%%%%:  496-block  0
+    #####:  497:                return false;
+    %%%%%:  497-block  0
+        -:  498:
+    #####:  499:            BOOST_TEST_I_THROW( format_error() << "Invalid format for an actual argument " << token );
+    %%%%%:  499-block  0
+    %%%%%:  499-block  1
+    %%%%%:  499-block  2
+    %%%%%:  499-block  3
+    $$$$$:  499-block  4
+    $$$$$:  499-block  5
+    $$$$$:  499-block  6
+    $$$$$:  499-block  7
+    $$$$$:  499-block  8
+    $$$$$:  499-block  9
+    $$$$$:  499-block 10
+        -:  500:        }
+        -:  501:
+        -:  502:        // Match value separator
+       10:  503:        while( it != token.end() && parameter_cla_id::valid_separator_char( *it ) )
+       10:  503-block  0
+       10:  503-block  1
+        5:  503-block  2
+        5:  503-block  3
+       10:  503-block  4
+        5:  504:            ++it;
+        5:  504-block  0
+        -:  505:
+        5:  506:        separator.assign( name.end(), it );
+        5:  506-block  0
+        -:  507:
+        -:  508:        // Match negation prefix
+       5*:  509:        negative_form = !m_negation_prefix.empty() && ( name.substr( 0, m_negation_prefix.size() ) == m_negation_prefix );
+        5:  509-block  0
+        5:  509-block  1
+        5:  509-block  2
+    %%%%%:  509-block  3
+        5:  509-block  4
+        5:  510:        if( negative_form )
+        5:  510-block  0
+    #####:  511:            name.trim_left( m_negation_prefix.size() );
+    %%%%%:  511-block  0
+        -:  512:
+        5:  513:        return true;
+        5:  513-block  0
+        -:  514:    }
+        -:  515:
+        -:  516:    // C++03: cannot have references as types
+        -:  517:    typedef std::pair<parameter_cla_id, basic_param_ptr> locate_result;
+        -:  518:
+        -:  519:    locate_result
+        5:  520:    locate_parameter( trie_ptr curr_trie, cstring name, cstring token )
+        -:  521:    {
+       10:  522:        std::vector<trie_ptr> typo_candidates;
+        5:  522-block  0
+    $$$$$:  522-block  1
+       10:  523:        std::vector<trie_ptr> next_typo_candidates;
+    $$$$$:  523-block  0
+        5:  524:        trie_ptr next_trie;
+        5:  524-block  0
+    $$$$$:  524-block  1
+        -:  525:
+      109:  526:        BOOST_TEST_FOREACH( char, c, name ) {
+        5:  526-block  0
+        5:  526-block  1
+        5:  526-block  2
+        5:  526-block  3
+       57:  526-block  4
+       57:  526-block  5
+       57:  526-block  6
+       52:  526-block  7
+        5:  526-block  8
+       57:  526-block  9
+       52:  526-block 10
+       52:  526-block 11
+       52:  526-block 12
+      104:  526-block 13
+       52:  526-block 14
+       52:  526-block 15
+       52:  526-block 16
+       52:  526-block 17
+    $$$$$:  526-block 18
+    $$$$$:  526-block 19
+    $$$$$:  526-block 20
+    $$$$$:  526-block 21
+    $$$$$:  526-block 22
+       52:  527:            if( curr_trie ) {
+       52:  527-block  0
+        -:  528:                // locate next subtrie corresponding to the char
+       52:  529:                next_trie = curr_trie->get_subtrie( c );
+       52:  529-block  0
+       52:  529-block  1
+        -:  530:
+       52:  531:                if( next_trie )
+       52:  532:                    curr_trie = next_trie;
+       52:  532-block  0
+        -:  533:                else {
+        -:  534:                    // Initiate search for typo candicates. We will account for 'wrong char' typo
+        -:  535:                    // 'missing char' typo and 'extra char' typo
+    #####:  536:                    BOOST_TEST_FOREACH( trie_per_char::value_type const&, typo_cand, curr_trie->m_subtrie ) {
+    %%%%%:  536-block  0
+    %%%%%:  536-block  1
+    %%%%%:  536-block  2
+    %%%%%:  536-block  3
+    %%%%%:  536-block  4
+    %%%%%:  536-block  5
+    %%%%%:  536-block  6
+    %%%%%:  536-block  7
+    %%%%%:  536-block  8
+    %%%%%:  536-block  9
+    %%%%%:  536-block 10
+    %%%%%:  536-block 11
+    %%%%%:  536-block 12
+    %%%%%:  536-block 13
+    %%%%%:  536-block 14
+    %%%%%:  536-block 15
+    %%%%%:  536-block 16
+    %%%%%:  536-block 17
+    %%%%%:  536-block 18
+    %%%%%:  536-block 19
+    $$$$$:  536-block 20
+    $$$$$:  536-block 21
+    $$$$$:  536-block 22
+    $$$$$:  536-block 23
+    $$$$$:  536-block 24
+        -:  537:                        // 'wrong char' typo
+    #####:  538:                        typo_candidates.push_back( typo_cand.second );
+    %%%%%:  538-block  0
+        -:  539:
+        -:  540:                        // 'missing char' typo
+    #####:  541:                        if( (next_trie = typo_cand.second->get_subtrie( c )) )
+    %%%%%:  541-block  0
+    %%%%%:  541-block  1
+    #####:  542:                            typo_candidates.push_back( next_trie );
+    %%%%%:  542-block  0
+        -:  543:                    }
+        -:  544:
+        -:  545:                    // 'extra char' typo
+    #####:  546:                    typo_candidates.push_back( curr_trie );
+    %%%%%:  546-block  0
+        -:  547:
+    #####:  548:                    curr_trie.reset();
+    %%%%%:  548-block  0
+        -:  549:                }
+        -:  550:            }
+        -:  551:            else {
+        -:  552:                // go over existing typo candidates and see if they are still viable
+    #####:  553:                BOOST_TEST_FOREACH( trie_ptr, typo_cand, typo_candidates ) {
+    %%%%%:  553-block  0
+    %%%%%:  553-block  1
+    %%%%%:  553-block  2
+    %%%%%:  553-block  3
+    %%%%%:  553-block  4
+    %%%%%:  553-block  5
+    %%%%%:  553-block  6
+    %%%%%:  553-block  7
+    %%%%%:  553-block  8
+    %%%%%:  553-block  9
+    %%%%%:  553-block 10
+    %%%%%:  553-block 11
+    %%%%%:  553-block 12
+    %%%%%:  553-block 13
+    %%%%%:  553-block 14
+    %%%%%:  553-block 15
+    %%%%%:  553-block 16
+    %%%%%:  553-block 17
+    %%%%%:  553-block 18
+    $$$$$:  553-block 19
+    $$$$$:  553-block 20
+    $$$$$:  553-block 21
+    $$$$$:  553-block 22
+    $$$$$:  553-block 23
+    $$$$$:  553-block 24
+    #####:  554:                    trie_ptr next_typo_cand = typo_cand->get_subtrie( c );
+    %%%%%:  554-block  0
+    %%%%%:  554-block  1
+    $$$$$:  554-block  2
+        -:  555:
+    #####:  556:                    if( next_typo_cand )
+    %%%%%:  556-block  0
+    #####:  557:                        next_typo_candidates.push_back( next_typo_cand );
+    %%%%%:  557-block  0
+        -:  558:                }
+        -:  559:
+    #####:  560:                next_typo_candidates.swap( typo_candidates );
+    %%%%%:  560-block  0
+    #####:  561:                next_typo_candidates.clear();
+        -:  562:            }
+        -:  563:        }
+        -:  564:
+        5:  565:        if( !curr_trie ) {
+        5:  565-block  0
+    #####:  566:            std::vector<cstring> typo_candidate_names;
+    %%%%%:  566-block  0
+    $$$$$:  566-block  1
+    #####:  567:            std::set<parameter_cla_id const*> unique_typo_candidate; // !! ?? unordered_set
+    $$$$$:  567-block  0
+    #####:  568:            typo_candidate_names.reserve( typo_candidates.size() );
+        -:  569:// !! ??            unique_typo_candidate.reserve( typo_candidates.size() );
+        -:  570:
+    #####:  571:            BOOST_TEST_FOREACH( trie_ptr, trie_cand, typo_candidates ) {
+    %%%%%:  571-block  0
+    %%%%%:  571-block  1
+    %%%%%:  571-block  2
+    %%%%%:  571-block  3
+    %%%%%:  571-block  4
+    %%%%%:  571-block  5
+    %%%%%:  571-block  6
+    %%%%%:  571-block  7
+    %%%%%:  571-block  8
+    %%%%%:  571-block  9
+    %%%%%:  571-block 10
+    %%%%%:  571-block 11
+    %%%%%:  571-block 12
+    %%%%%:  571-block 13
+    %%%%%:  571-block 14
+    %%%%%:  571-block 15
+    %%%%%:  571-block 16
+    %%%%%:  571-block 17
+    %%%%%:  571-block 18
+    %%%%%:  571-block 19
+    $$$$$:  571-block 20
+    $$$$$:  571-block 21
+    $$$$$:  571-block 22
+    $$$$$:  571-block 23
+    $$$$$:  571-block 24
+    $$$$$:  571-block 25
+        -:  572:                // avoid ambiguos candidate trie
+    #####:  573:                if( trie_cand->m_id_candidates.size() > 1 )
+    %%%%%:  573-block  0
+    #####:  574:                    continue;
+    %%%%%:  574-block  0
+        -:  575:
+    #####:  576:                BOOST_TEST_FOREACH( parameter_cla_id const&, param_cand, trie_cand->m_id_candidates ) {
+    %%%%%:  576-block  0
+    %%%%%:  576-block  1
+    %%%%%:  576-block  2
+    %%%%%:  576-block  3
+    %%%%%:  576-block  4
+    %%%%%:  576-block  5
+    %%%%%:  576-block  6
+    %%%%%:  576-block  7
+    %%%%%:  576-block  8
+    %%%%%:  576-block  9
+    %%%%%:  576-block 10
+    %%%%%:  576-block 11
+    %%%%%:  576-block 12
+    %%%%%:  576-block 13
+    %%%%%:  576-block 14
+    %%%%%:  576-block 15
+    %%%%%:  576-block 16
+    %%%%%:  576-block 17
+    %%%%%:  576-block 18
+    %%%%%:  576-block 19
+    $$$$$:  576-block 20
+    $$$$$:  576-block 21
+    $$$$$:  576-block 22
+    $$$$$:  576-block 23
+    $$$$$:  576-block 24
+    #####:  577:                    if( !unique_typo_candidate.insert( &param_cand ).second )
+    %%%%%:  577-block  0
+    %%%%%:  577-block  1
+    $$$$$:  577-block  2
+    #####:  578:                        continue;
+    %%%%%:  578-block  0
+        -:  579:
+    #####:  580:                    typo_candidate_names.push_back( param_cand.m_tag );
+    %%%%%:  580-block  0
+    %%%%%:  580-block  1
+    $$$$$:  580-block  2
+        -:  581:                }
+        -:  582:            }
+        -:  583:
+        -:  584:#ifndef BOOST_NO_CXX11_RVALUE_REFERENCES
+    #####:  585:            BOOST_TEST_I_THROW( unrecognized_param( std::move(typo_candidate_names) )
+    %%%%%:  585-block  0
+    %%%%%:  585-block  1
+    %%%%%:  585-block  2
+    %%%%%:  585-block  3
+    $$$$$:  585-block  4
+    $$$$$:  585-block  5
+    $$$$$:  585-block  6
+    $$$$$:  585-block  7
+    $$$$$:  585-block  8
+    $$$$$:  585-block  9
+        -:  586:                                << "An unrecognized parameter in the argument "
+        -:  587:                                << token );
+        -:  588:#else
+        -:  589:            BOOST_TEST_I_THROW( unrecognized_param( typo_candidate_names )
+        -:  590:                                << "An unrecognized parameter in the argument "
+        -:  591:                                << token );
+        -:  592:#endif
+        -:  593:        }
+        -:  594:
+        5:  595:        if( curr_trie->m_id_candidates.size() > 1 ) {
+        5:  595-block  0
+    #####:  596:            std::vector<cstring> amb_names;
+    %%%%%:  596-block  0
+    $$$$$:  596-block  1
+    #####:  597:            BOOST_TEST_FOREACH( parameter_cla_id const&, param_id, curr_trie->m_id_candidates )
+    %%%%%:  597-block  0
+    %%%%%:  597-block  1
+    %%%%%:  597-block  2
+    %%%%%:  597-block  3
+    %%%%%:  597-block  4
+    %%%%%:  597-block  5
+    %%%%%:  597-block  6
+    %%%%%:  597-block  7
+    %%%%%:  597-block  8
+    %%%%%:  597-block  9
+    %%%%%:  597-block 10
+    %%%%%:  597-block 11
+    %%%%%:  597-block 12
+    %%%%%:  597-block 13
+    %%%%%:  597-block 14
+    %%%%%:  597-block 15
+    %%%%%:  597-block 16
+    %%%%%:  597-block 17
+    $$$$$:  597-block 18
+    $$$$$:  597-block 19
+    $$$$$:  597-block 20
+    $$$$$:  597-block 21
+    $$$$$:  597-block 22
+    #####:  598:                amb_names.push_back( param_id.m_tag );
+    %%%%%:  598-block  0
+    %%%%%:  598-block  1
+    $$$$$:  598-block  2
+        -:  599:
+        -:  600:#ifndef BOOST_NO_CXX11_RVALUE_REFERENCES
+    #####:  601:            BOOST_TEST_I_THROW( ambiguous_param( std::move( amb_names ) )
+    %%%%%:  601-block  0
+    %%%%%:  601-block  1
+    %%%%%:  601-block  2
+    %%%%%:  601-block  3
+    $$$$$:  601-block  4
+    $$$$$:  601-block  5
+    $$$$$:  601-block  6
+    $$$$$:  601-block  7
+    $$$$$:  601-block  8
+    $$$$$:  601-block  9
+        -:  602:                                << "An ambiguous parameter name in the argument " << token );
+        -:  603:#else
+        -:  604:            BOOST_TEST_I_THROW( ambiguous_param( amb_names )
+        -:  605:                                << "An ambiguous parameter name in the argument " << token );
+        -:  606:#endif
+        -:  607:        }
+        -:  608:
+       15:  609:        return locate_result( curr_trie->m_id_candidates.back().get(), curr_trie->m_param_candidate );
+        5:  609-block  0
+        5:  609-block  1
+        5:  609-block  2
+        5:  609-block  3
+        -:  610:    }
+        -:  611:
+        -:  612:    // Data members
+        -:  613:    cstring     m_program_name;
+        -:  614:    std::string m_end_of_param_indicator;
+        -:  615:    std::string m_negation_prefix;
+        -:  616:    str_to_trie m_param_trie;
+        -:  617:};
+        -:  618:
+        -:  619:} // namespace cla
+        -:  620:} // namespace runtime
+        -:  621:} // namespace boost
+        -:  622:
+        -:  623:#include <boost/test/detail/enable_warnings.hpp>
+        -:  624:
+        -:  625:#endif // BOOST_TEST_UTILS_RUNTIME_CLA_PARSER_HPP

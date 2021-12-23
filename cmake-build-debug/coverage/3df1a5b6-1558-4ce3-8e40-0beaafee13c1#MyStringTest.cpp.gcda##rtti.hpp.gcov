@@ -1,0 +1,135 @@
+        -:    0:Source:F:/Files/vcpkg/installed/x86-windows/include/boost/test/utils/rtti.hpp
+        -:    0:Graph:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcno
+        -:    0:Data:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1://  (C) Copyright Gennadiy Rozental 2001.
+        -:    2://  Distributed under the Boost Software License, Version 1.0.
+        -:    3://  (See accompanying file LICENSE_1_0.txt or copy at
+        -:    4://  http://www.boost.org/LICENSE_1_0.txt)
+        -:    5:
+        -:    6://  See http://www.boost.org/libs/test for the library home page.
+        -:    7://
+        -:    8://  File        : $RCSfile$
+        -:    9://
+        -:   10://  Version     : $Revision$
+        -:   11://
+        -:   12://  Description : simple facilities for accessing type information at runtime
+        -:   13:// ***************************************************************************
+        -:   14:
+        -:   15:#ifndef BOOST_TEST_UTILS_RTTI_HPP
+        -:   16:#define BOOST_TEST_UTILS_RTTI_HPP
+        -:   17:
+        -:   18:// C Runtime
+        -:   19:#include <cstddef>
+        -:   20:#include <boost/test/detail/config.hpp>
+        -:   21:
+        -:   22:namespace boost {
+        -:   23:namespace rtti {
+        -:   24:
+        -:   25:// ************************************************************************** //
+        -:   26:// **************                   rtti::type_id              ************** //
+        -:   27:// ************************************************************************** //
+        -:   28:
+        -:   29:typedef std::ptrdiff_t id_t;
+        -:   30:
+        -:   31:namespace rtti_detail {
+        -:   32:
+        -:   33:template<typename T>
+        -:   34:struct BOOST_TEST_DECL rttid_holder {
+       97:   35:    static id_t id() { return reinterpret_cast<id_t>( &inst() ); }
+------------------
+_ZN5boost4rtti11rtti_detail12rttid_holderImE2idEv:
+        2:   35:    static id_t id() { return reinterpret_cast<id_t>( &inst() ); }
+        2:   35-block  0
+------------------
+_ZN5boost4rtti11rtti_detail12rttid_holderINS_9unit_test12report_levelEE2idEv:
+        2:   35:    static id_t id() { return reinterpret_cast<id_t>( &inst() ); }
+        2:   35-block  0
+------------------
+_ZN5boost4rtti11rtti_detail12rttid_holderINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEE2idEv:
+        2:   35:    static id_t id() { return reinterpret_cast<id_t>( &inst() ); }
+        2:   35-block  0
+------------------
+_ZN5boost4rtti11rtti_detail12rttid_holderINS_9unit_test9log_levelEE2idEv:
+        1:   35:    static id_t id() { return reinterpret_cast<id_t>( &inst() ); }
+        1:   35-block  0
+------------------
+_ZN5boost4rtti11rtti_detail12rttid_holderIjE2idEv:
+        4:   35:    static id_t id() { return reinterpret_cast<id_t>( &inst() ); }
+        4:   35-block  0
+------------------
+_ZN5boost4rtti11rtti_detail12rttid_holderISt6vectorINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESaIS9_EEE2idEv:
+        6:   35:    static id_t id() { return reinterpret_cast<id_t>( &inst() ); }
+        6:   35-block  0
+------------------
+_ZN5boost4rtti11rtti_detail12rttid_holderIbE2idEv:
+       75:   35:    static id_t id() { return reinterpret_cast<id_t>( &inst() ); }
+       75:   35-block  0
+------------------
+_ZN5boost4rtti11rtti_detail12rttid_holderINS_9unit_test13output_formatEE2idEv:
+        5:   35:    static id_t id() { return reinterpret_cast<id_t>( &inst() ); }
+        5:   35-block  0
+------------------
+        -:   36:
+        -:   37:private:
+        -:   38:    struct rttid {};
+        -:   39:
+       97:   40:    static rttid const& inst() { static rttid s_inst; return s_inst; }
+------------------
+_ZN5boost4rtti11rtti_detail12rttid_holderImE4instEv:
+        2:   40:    static rttid const& inst() { static rttid s_inst; return s_inst; }
+        2:   40-block  0
+------------------
+_ZN5boost4rtti11rtti_detail12rttid_holderINS_9unit_test12report_levelEE4instEv:
+        2:   40:    static rttid const& inst() { static rttid s_inst; return s_inst; }
+        2:   40-block  0
+------------------
+_ZN5boost4rtti11rtti_detail12rttid_holderINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEE4instEv:
+        2:   40:    static rttid const& inst() { static rttid s_inst; return s_inst; }
+        2:   40-block  0
+------------------
+_ZN5boost4rtti11rtti_detail12rttid_holderINS_9unit_test9log_levelEE4instEv:
+        1:   40:    static rttid const& inst() { static rttid s_inst; return s_inst; }
+        1:   40-block  0
+------------------
+_ZN5boost4rtti11rtti_detail12rttid_holderIjE4instEv:
+        4:   40:    static rttid const& inst() { static rttid s_inst; return s_inst; }
+        4:   40-block  0
+------------------
+_ZN5boost4rtti11rtti_detail12rttid_holderISt6vectorINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESaIS9_EEE4instEv:
+        6:   40:    static rttid const& inst() { static rttid s_inst; return s_inst; }
+        6:   40-block  0
+------------------
+_ZN5boost4rtti11rtti_detail12rttid_holderIbE4instEv:
+       75:   40:    static rttid const& inst() { static rttid s_inst; return s_inst; }
+       75:   40-block  0
+------------------
+_ZN5boost4rtti11rtti_detail12rttid_holderINS_9unit_test13output_formatEE4instEv:
+        5:   40:    static rttid const& inst() { static rttid s_inst; return s_inst; }
+        5:   40-block  0
+------------------
+        -:   41:};
+        -:   42:
+        -:   43:} // namespace rtti_detail
+        -:   44:
+        -:   45://____________________________________________________________________________//
+        -:   46:
+        -:   47:template<typename T>
+        -:   48:BOOST_TEST_DECL inline id_t
+       97:   49:type_id()
+        -:   50:{
+       97:   51:    return rtti_detail::rttid_holder<T>::id();
+        -:   52:}
+        -:   53:
+        -:   54://____________________________________________________________________________//
+        -:   55:
+        -:   56:#define BOOST_RTTI_SWITCH( type_id_ ) if( ::boost::rtti::id_t switch_by_id = type_id_ )
+        -:   57:#define BOOST_RTTI_CASE( type )       if( switch_by_id == ::boost::rtti::type_id<type>() )
+        -:   58:
+        -:   59://____________________________________________________________________________//
+        -:   60:
+        -:   61:} // namespace rtti
+        -:   62:} // namespace boost
+        -:   63:
+        -:   64:#endif // BOOST_TEST_UTILS_RTTI_HPP

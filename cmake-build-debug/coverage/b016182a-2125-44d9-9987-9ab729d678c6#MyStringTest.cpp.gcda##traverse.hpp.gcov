@@ -1,0 +1,66 @@
+        -:    0:Source:F:/Files/vcpkg/installed/x86-windows/include/boost/test/tree/traverse.hpp
+        -:    0:Graph:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcno
+        -:    0:Data:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1://  (C) Copyright Gennadiy Rozental 2001.
+        -:    2://  Distributed under the Boost Software License, Version 1.0.
+        -:    3://  (See accompanying file LICENSE_1_0.txt or copy at
+        -:    4://  http://www.boost.org/LICENSE_1_0.txt)
+        -:    5:
+        -:    6://  See http://www.boost.org/libs/test for the library home page.
+        -:    7://
+        -:    8://  File        : $RCSfile$
+        -:    9://
+        -:   10://  Version     : $Revision: -1 $
+        -:   11://
+        -:   12://  Description : defines traverse_test_tree algorithm
+        -:   13:// ***************************************************************************
+        -:   14:
+        -:   15:#ifndef BOOST_TEST_TREE_TRAVERSE_HPP_100211GER
+        -:   16:#define BOOST_TEST_TREE_TRAVERSE_HPP_100211GER
+        -:   17:
+        -:   18:// Boost.Test
+        -:   19:#include <boost/test/detail/config.hpp>
+        -:   20:
+        -:   21:#include <boost/test/tree/test_unit.hpp>
+        -:   22:#include <boost/test/tree/visitor.hpp>
+        -:   23:
+        -:   24:#include <boost/test/detail/suppress_warnings.hpp>
+        -:   25:
+        -:   26:
+        -:   27://____________________________________________________________________________//
+        -:   28:
+        -:   29:namespace boost {
+        -:   30:namespace unit_test {
+        -:   31:
+        -:   32:// ************************************************************************** //
+        -:   33:// **************               traverse_test_tree             ************** //
+        -:   34:// ************************************************************************** //
+        -:   35:
+        -:   36:BOOST_TEST_DECL void    traverse_test_tree( test_case const&, test_tree_visitor&, bool ignore_status = false );
+        -:   37:BOOST_TEST_DECL void    traverse_test_tree( test_suite const&, test_tree_visitor&, bool ignore_status = false );
+        -:   38:BOOST_TEST_DECL void    traverse_test_tree( test_unit_id     , test_tree_visitor&, bool ignore_status = false );
+        -:   39:
+        -:   40://____________________________________________________________________________//
+        -:   41:
+        -:   42:inline void
+        2:   43:traverse_test_tree( test_unit const& tu, test_tree_visitor& V, bool ignore_status = false )
+        -:   44:{
+        2:   45:    if( tu.p_type == TUT_CASE )
+        2:   45-block  0
+    #####:   46:        traverse_test_tree( static_cast<test_case const&>( tu ), V, ignore_status );
+    %%%%%:   46-block  0
+        -:   47:    else
+        2:   48:        traverse_test_tree( static_cast<test_suite const&>( tu ), V, ignore_status );
+        2:   48-block  0
+        2:   49:}
+        -:   50:
+        -:   51://____________________________________________________________________________//
+        -:   52:
+        -:   53:} // namespace unit_test
+        -:   54:} // namespace boost
+        -:   55:
+        -:   56:#include <boost/test/detail/enable_warnings.hpp>
+        -:   57:
+        -:   58:#endif // BOOST_TEST_TREE_TRAVERSE_HPP_100211GER

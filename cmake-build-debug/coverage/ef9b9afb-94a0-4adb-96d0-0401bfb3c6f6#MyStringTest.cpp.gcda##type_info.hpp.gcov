@@ -1,0 +1,88 @@
+        -:    0:Source:F:/Files/vcpkg/installed/x86-windows/include/boost/exception/detail/type_info.hpp
+        -:    0:Graph:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcno
+        -:    0:Data:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1://Copyright (c) 2006-2010 Emil Dotchevski and Reverge Studios, Inc.
+        -:    2:
+        -:    3://Distributed under the Boost Software License, Version 1.0. (See accompanying
+        -:    4://file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+        -:    5:
+        -:    6:#ifndef UUID_C3E1741C754311DDB2834CCA55D89593
+        -:    7:#define UUID_C3E1741C754311DDB2834CCA55D89593
+        -:    8:
+        -:    9:#include <boost/config.hpp>
+        -:   10:#include <boost/core/typeinfo.hpp>
+        -:   11:#include <boost/core/demangle.hpp>
+        -:   12:#include <boost/current_function.hpp>
+        -:   13:#include <string>
+        -:   14:
+        -:   15:#if (__GNUC__*100+__GNUC_MINOR__>301) && !defined(BOOST_EXCEPTION_ENABLE_WARNINGS)
+        -:   16:#pragma GCC system_header
+        -:   17:#endif
+        -:   18:#if defined(_MSC_VER) && !defined(BOOST_EXCEPTION_ENABLE_WARNINGS)
+        -:   19:#pragma warning(push,1)
+        -:   20:#endif
+        -:   21:
+        -:   22:namespace
+        -:   23:boost
+        -:   24:    {
+        -:   25:    template <class T>
+        -:   26:    inline
+        -:   27:    std::string
+        -:   28:    tag_type_name()
+        -:   29:        {
+        -:   30:#ifdef BOOST_NO_TYPEID
+        -:   31:        return BOOST_CURRENT_FUNCTION;
+        -:   32:#else
+        -:   33:        return core::demangle(typeid(T*).name());
+        -:   34:#endif
+        -:   35:        }
+        -:   36:
+        -:   37:    template <class T>
+        -:   38:    inline
+        -:   39:    std::string
+        -:   40:    type_name()
+        -:   41:        {
+        -:   42:#ifdef BOOST_NO_TYPEID
+        -:   43:        return BOOST_CURRENT_FUNCTION;
+        -:   44:#else
+        -:   45:        return core::demangle(typeid(T).name());
+        -:   46:#endif
+        -:   47:        }
+        -:   48:
+        -:   49:    namespace
+        -:   50:    exception_detail
+        -:   51:        {
+        -:   52:        struct
+        -:   53:        type_info_
+        -:   54:            {
+        -:   55:            core::typeinfo const * type_;
+        -:   56:
+        -:   57:            explicit
+    #####:   58:            type_info_( core::typeinfo const & type ):
+    #####:   59:                type_(&type)
+        -:   60:                {
+    #####:   61:                }
+        -:   62:
+        -:   63:            friend
+        -:   64:            bool
+    #####:   65:            operator<( type_info_ const & a, type_info_ const & b )
+        -:   66:                {
+    #####:   67:                return 0!=(a.type_->before(*b.type_));
+    %%%%%:   67-block  0
+        -:   68:                }
+        -:   69:            };
+        -:   70:        }
+        -:   71:    }
+        -:   72:
+        -:   73:#define BOOST_EXCEPTION_STATIC_TYPEID(T) ::boost::exception_detail::type_info_(BOOST_CORE_TYPEID(T))
+        -:   74:
+        -:   75:#ifndef BOOST_NO_RTTI
+        -:   76:#define BOOST_EXCEPTION_DYNAMIC_TYPEID(x) ::boost::exception_detail::type_info_(typeid(x))
+        -:   77:#endif
+        -:   78:
+        -:   79:#if defined(_MSC_VER) && !defined(BOOST_EXCEPTION_ENABLE_WARNINGS)
+        -:   80:#pragma warning(pop)
+        -:   81:#endif
+        -:   82:#endif

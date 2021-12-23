@@ -1,0 +1,127 @@
+        -:    0:Source:F:/Files/vcpkg/installed/x86-windows/include/boost/test/results_reporter.hpp
+        -:    0:Graph:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcno
+        -:    0:Data:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1://  (C) Copyright Gennadiy Rozental 2001.
+        -:    2://  Distributed under the Boost Software License, Version 1.0.
+        -:    3://  (See accompanying file LICENSE_1_0.txt or copy at
+        -:    4://  http://www.boost.org/LICENSE_1_0.txt)
+        -:    5:
+        -:    6://  See http://www.boost.org/libs/test for the library home page.
+        -:    7://
+        -:    8:/// @file
+        -:    9:/// @brief defines testing result reporter interfaces
+        -:   10:///
+        -:   11:/// This file defines interfaces that are responsible for results reporting. Interface is presented in a form of
+        -:   12:/// free standing function implemented in namespace result_reporter
+        -:   13:// ***************************************************************************
+        -:   14:
+        -:   15:#ifndef BOOST_TEST_RESULTS_REPORTER_HPP_021205GER
+        -:   16:#define BOOST_TEST_RESULTS_REPORTER_HPP_021205GER
+        -:   17:
+        -:   18:// Boost.Test
+        -:   19:#include <boost/test/detail/global_typedef.hpp>
+        -:   20:#include <boost/test/detail/fwd_decl.hpp>
+        -:   21:
+        -:   22:// STL
+        -:   23:#include <iosfwd>   // for std::ostream&
+        -:   24:
+        -:   25:#include <boost/test/detail/suppress_warnings.hpp>
+        -:   26:
+        -:   27://____________________________________________________________________________//
+        -:   28:
+        -:   29:namespace boost {
+        -:   30:namespace unit_test {
+        -:   31:
+        -:   32:/// Namespace for results reporter interfaces
+        -:   33:namespace results_reporter {
+        -:   34:
+        -:   35:// ************************************************************************** //
+        -:   36:/// @brief Results report formatter interface
+        -:   37:///
+        -:   38:/// This is abstract interface for the report formatter used by results reporter routines.
+        -:   39:/// You can define a custom formatter by implementing this interface and setting the formatter using set_format function.
+        -:   40:/// This is usually done during test module initialization
+        -:   41:// ************************************************************************** //
+        -:   42:
+        -:   43:class BOOST_TEST_DECL format {
+        -:   44:public:
+        -:   45:    // Destructor
+        2:   46:    virtual ~format() {}
+        -:   47:
+        -:   48:    virtual void    results_report_start( std::ostream& ostr ) = 0;
+        -:   49:    virtual void    results_report_finish( std::ostream& ostr ) = 0;
+        -:   50:
+        -:   51:    virtual void    test_unit_report_start( test_unit const&, std::ostream& ostr ) = 0;
+        -:   52:    virtual void    test_unit_report_finish( test_unit const&, std::ostream& ostr ) = 0;
+        -:   53:
+        -:   54:    virtual void    do_confirmation_report( test_unit const&, std::ostream& ostr ) = 0;
+        -:   55:};
+        -:   56:
+        -:   57:// ************************************************************************** //
+        -:   58:/// @name report configuration
+        -:   59:// ************************************************************************** //
+        -:   60:
+        -:   61:/// Sets reporting level
+        -:   62:
+        -:   63:/// There are only four possible levels for results report:
+        -:   64:/// - confirmation report (boost::unit_test::CONFIRMATION_REPORT). This report level only produces short confirmation
+        -:   65:///   message about test module pass/fail status
+        -:   66:/// - short report (boost::unit_test::SHORT_REPORT). This report level produces short summary report for failed/passed
+        -:   67:///   assertions and test units.
+        -:   68:/// - detailed report (boost::unit_test::DETAILED_REPORT). This report level produces detailed report per test unit for
+        -:   69:///   passed/failed assertions and uncaught exceptions
+        -:   70:/// - no report (boost::unit_test::NO_REPORT). This report level produces no results report. This is used for test modules
+        -:   71:///   running as part of some kind of continues integration framework
+        -:   72:/// @param[in] l report level
+        -:   73:BOOST_TEST_DECL void    set_level( report_level l );
+        -:   74:
+        -:   75:/// Sets output stream for results reporting
+        -:   76:
+        -:   77:/// By default std::cerr is used. Use this function to set a different stream. The framework
+        -:   78:/// refers to the stream by reference, so you need to make sure the stream object lifetime exceeds the testing main scope.
+        -:   79:BOOST_TEST_DECL void    set_stream( std::ostream& );
+        -:   80:
+        -:   81:/// Sets one of the predefined formats
+        -:   82:
+        -:   83:/// The framework implements two results report formats:
+        -:   84:/// - plain human readable format (boost::unit_test::OF_CLF)
+        -:   85:/// - XML format (boost::unit_test::OF_XML)
+        -:   86:/// @param[in] of one of the presefined enumeration values for output formats
+        -:   87:BOOST_TEST_DECL void    set_format( output_format of );
+        -:   88:
+        -:   89:/// Sets custom report formatter
+        -:   90:
+        -:   91:/// The framework takes ownership of the pointer passed as an argument. So this should be a pointer to
+        -:   92:/// a heap allocated object
+        -:   93:/// @param[in] f pointer to heap allocated instance of custom report formatter class
+        -:   94:BOOST_TEST_DECL void    set_format( results_reporter::format* f );
+        -:   95:
+        -:   96:/// @brief Access to configured results reporter stream
+        -:   97:///
+        -:   98:/// Use this stream to report additional information abut test module execution
+        -:   99:BOOST_TEST_DECL std::ostream& get_stream();
+        -:  100:
+        -:  101:/// @}
+        -:  102:
+        -:  103:// ************************************************************************** //
+        -:  104:// **************               report initiation              ************** //
+        -:  105:// ************************************************************************** //
+        -:  106:
+        -:  107:BOOST_TEST_DECL void    make_report( report_level l = INV_REPORT_LEVEL, test_unit_id = INV_TEST_UNIT_ID );
+        -:  108:inline void             confirmation_report( test_unit_id id = INV_TEST_UNIT_ID )
+        -:  109:{ make_report( CONFIRMATION_REPORT, id ); }
+        -:  110:inline void             short_report( test_unit_id id = INV_TEST_UNIT_ID )
+        -:  111:{ make_report( SHORT_REPORT, id ); }
+        -:  112:inline void             detailed_report( test_unit_id id = INV_TEST_UNIT_ID )
+        -:  113:{ make_report( DETAILED_REPORT, id ); }
+        -:  114:
+        -:  115:} // namespace results_reporter
+        -:  116:} // namespace unit_test
+        -:  117:} // namespace boost
+        -:  118:
+        -:  119:#include <boost/test/detail/enable_warnings.hpp>
+        -:  120:
+        -:  121:#endif // BOOST_TEST_RESULTS_REPORTER_HPP_021205GER
+        -:  122:

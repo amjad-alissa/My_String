@@ -1,0 +1,120 @@
+        -:    0:Source:F:/Files/vcpkg/installed/x86-windows/include/boost/test/utils/runtime/finalize.hpp
+        -:    0:Graph:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcno
+        -:    0:Data:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1://  (C) Copyright Gennadiy Rozental 2001.
+        -:    2://  Distributed under the Boost Software License, Version 1.0.
+        -:    3://  (See accompanying file LICENSE_1_0.txt or copy at
+        -:    4://  http://www.boost.org/LICENSE_1_0.txt)
+        -:    5:
+        -:    6://  See http://www.boost.org/libs/test for the library home page.
+        -:    7://
+        -:    8://  File        : $RCSfile$
+        -:    9://
+        -:   10://  Version     : $Revision$
+        -:   11://
+        -:   12://  Description : runtime parameters initialization final step
+        -:   13:// ***************************************************************************
+        -:   14:
+        -:   15:#ifndef BOOST_TEST_UTILS_RUNTIME_FINALIZE_HPP
+        -:   16:#define BOOST_TEST_UTILS_RUNTIME_FINALIZE_HPP
+        -:   17:
+        -:   18:// Boost.Test Runtime parameters
+        -:   19:#include <boost/test/utils/runtime/parameter.hpp>
+        -:   20:#include <boost/test/utils/runtime/argument.hpp>
+        -:   21:
+        -:   22:// Boost.Test
+        -:   23:#include <boost/test/utils/foreach.hpp>
+        -:   24:
+        -:   25:#include <boost/test/detail/suppress_warnings.hpp>
+        -:   26:
+        -:   27:namespace boost {
+        -:   28:namespace runtime {
+        -:   29:
+        -:   30:inline void
+        1:   31:finalize_arguments( parameters_store const& params, runtime::arguments_store& args )
+        -:   32:{
+      57*:   33:    BOOST_TEST_FOREACH( parameters_store::storage_type::value_type const&, v, params.all() ) {
+        1:   33-block  0
+        1:   33-block  1
+        1:   33-block  2
+        1:   33-block  3
+        1:   33-block  4
+       29:   33-block  5
+       29:   33-block  6
+       29:   33-block  7
+       28:   33-block  8
+        1:   33-block  9
+       29:   33-block 10
+       28:   33-block 11
+       28:   33-block 12
+       28:   33-block 13
+       56:   33-block 14
+       28:   33-block 15
+       28:   33-block 16
+    %%%%%:   33-block 17
+       28:   33-block 18
+    $$$$$:   33-block 19
+    $$$$$:   33-block 20
+    $$$$$:   33-block 21
+    $$$$$:   33-block 22
+       56:   34:        basic_param_ptr param = v.second;
+       28:   34-block  0
+       28:   34-block  1
+    $$$$$:   34-block  2
+        -:   35:
+       28:   36:        if( !args.has( param->p_name ) ) {
+       28:   36-block  0
+    $$$$$:   36-block  1
+       23:   37:            if( param->p_has_default_value )
+       23:   37-block  0
+       18:   38:                param->produce_default( args );
+       18:   38-block  0
+        -:   39:
+       23:   40:            if( !args.has( param->p_name ) ) {
+       23:   40-block  0
+       23:   40-block  1
+    $$$$$:   40-block  2
+       5*:   41:                BOOST_TEST_I_ASSRT( param->p_optional,
+        5:   41-block  0
+    %%%%%:   41-block  1
+    %%%%%:   41-block  2
+    %%%%%:   41-block  3
+    %%%%%:   41-block  4
+    %%%%%:   41-block  5
+    $$$$$:   41-block  6
+    $$$$$:   41-block  7
+    $$$$$:   41-block  8
+    $$$$$:   41-block  9
+    $$$$$:   41-block 10
+    $$$$$:   41-block 11
+    $$$$$:   41-block 12
+    $$$$$:   41-block 13
+    $$$$$:   41-block 14
+        -:   42:                    missing_req_arg( param->p_name ) << "Missing argument for required parameter " << param->p_name << "." );
+        -:   43:            }
+        -:   44:        }
+        -:   45:
+      28*:   46:        if( args.has( param->p_name ) && !!param->p_callback )
+       28:   46-block  0
+       28:   46-block  1
+       23:   46-block  2
+    %%%%%:   46-block  3
+       28:   46-block  4
+       28:   46-block  5
+    $$$$$:   46-block  6
+    #####:   47:            param->p_callback( param->p_name );
+    %%%%%:   47-block  0
+    %%%%%:   47-block  1
+    $$$$$:   47-block  2
+        -:   48:    }
+        1:   49:}
+        1:   49-block  0
+        -:   50:
+        -:   51:} // namespace runtime
+        -:   52:} // namespace boost
+        -:   53:
+        -:   54:#include <boost/test/detail/enable_warnings.hpp>
+        -:   55:
+        -:   56:#endif // BOOST_TEST_UTILS_RUNTIME_FINALIZE_HPP

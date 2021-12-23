@@ -1,0 +1,342 @@
+        -:    0:Source:F:/Files/vcpkg/installed/x86-windows/include/boost/test/unit_test_log_formatter.hpp
+        -:    0:Graph:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcno
+        -:    0:Data:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1://  (C) Copyright Gennadiy Rozental 2001.
+        -:    2://  Distributed under the Boost Software License, Version 1.0.
+        -:    3://  (See accompanying file LICENSE_1_0.txt or copy at
+        -:    4://  http://www.boost.org/LICENSE_1_0.txt)
+        -:    5:
+        -:    6://  See http://www.boost.org/libs/test for the library home page.
+        -:    7://
+        -:    8:/// @file
+        -:    9:/// @brief Defines unit test log formatter interface
+        -:   10:///
+        -:   11:/// You can define a class with implements this interface and use an instance of it
+        -:   12:/// as a Unit Test Framework log formatter
+        -:   13:// ***************************************************************************
+        -:   14:
+        -:   15:#ifndef BOOST_TEST_UNIT_TEST_LOG_FORMATTER_HPP_071894GER
+        -:   16:#define BOOST_TEST_UNIT_TEST_LOG_FORMATTER_HPP_071894GER
+        -:   17:
+        -:   18:// Boost.Test
+        -:   19:#include <boost/test/detail/global_typedef.hpp>
+        -:   20:#include <boost/test/detail/log_level.hpp>
+        -:   21:#include <boost/test/detail/fwd_decl.hpp>
+        -:   22:
+        -:   23:// STL
+        -:   24:#include <iosfwd>
+        -:   25:#include <string> // for std::string
+        -:   26:#include <iostream>
+        -:   27:
+        -:   28:#include <boost/test/detail/suppress_warnings.hpp>
+        -:   29:
+        -:   30://____________________________________________________________________________//
+        -:   31:
+        -:   32:namespace boost {
+        -:   33:namespace unit_test {
+        -:   34:
+        -:   35:// ************************************************************************** //
+        -:   36:/// Collection of log entry attributes
+        -:   37:// ************************************************************************** //
+        -:   38:
+        -:   39:struct BOOST_TEST_DECL log_entry_data {
+        1:   40:    log_entry_data()
+        1:   41:    {
+        1:   41-block  0
+    $$$$$:   41-block  1
+        1:   42:        m_file_name.reserve( 200 );
+        1:   43:    }
+        1:   43-block  0
+        -:   44:
+        -:   45:    std::string     m_file_name; ///< log entry file name
+        -:   46:    std::size_t     m_line_num;  ///< log entry line number
+        -:   47:    log_level       m_level;     ///< log entry level
+        -:   48:
+       56:   49:    void clear()
+        -:   50:    {
+       56:   51:        m_file_name.erase();
+       56:   51-block  0
+       56:   52:        m_line_num      = 0;
+       56:   53:        m_level     = log_nothing;
+       56:   54:    }
+        -:   55:};
+        -:   56:
+        -:   57:// ************************************************************************** //
+        -:   58:/// Collection of log checkpoint attributes
+        -:   59:// ************************************************************************** //
+        -:   60:
+        -:   61:struct BOOST_TEST_DECL log_checkpoint_data
+        -:   62:{
+        -:   63:    const_string    m_file_name; ///< log checkpoint file name
+        -:   64:    std::size_t     m_line_num;  ///< log checkpoint file name
+        -:   65:    std::string     m_message;   ///< log checkpoint message
+        -:   66:
+       12:   67:    void clear()
+        -:   68:    {
+       12:   69:        m_file_name.clear();
+       12:   69-block  0
+       12:   70:        m_line_num  = 0;
+       12:   71:        m_message   = std::string();
+       12:   72:    }
+        -:   73:};
+        -:   74:
+        -:   75:// ************************************************************************** //
+        -:   76:/// @brief Abstract Unit Test Framework log formatter interface
+        -:   77:///
+        -:   78:/// During the test module execution Unit Test Framework can report messages about success
+        -:   79:/// or failure of assertions, which test suites are being run and more (specifically which
+        -:   80:/// messages are reported depends on log level threshold selected by the user).
+        -:   81:///
+        -:   82:/// All these messages constitute Unit Test Framework log. There are many ways (formats) to present
+        -:   83:/// these messages to the user.
+        -:   84:///
+        -:   85:/// Boost.Test comes with three formats:
+        -:   86:/// - Compiler-like log format: intended for human consumption/diagnostic
+        -:   87:/// - XML based log format:  intended for processing by automated regression test systems.
+        -:   88:/// - JUNIT based log format:  intended for processing by automated regression test systems.
+        -:   89:///
+        -:   90:/// If you want to produce some other format you need to implement class with specific interface and use
+        -:   91:/// method @c unit_test_log_t::set_formatter during a test module initialization to set an active formatter.
+        -:   92:/// The class unit_test_log_formatter defines this interface.
+        -:   93:///
+        -:   94:/// This interface requires you to format all possible messages being produced in the log.
+        -:   95:/// These includes error messages about failed assertions, messages about caught exceptions and
+        -:   96:/// information messages about test units being started/ended. All the methods in this interface takes
+        -:   97:/// a reference to standard stream as a first argument. This is where final messages needs to be directed
+        -:   98:/// to. Also you are given all the information necessary to produce a message.
+        -:   99:///
+        -:  100:/// @par Since Boost 1.62:
+        -:  101:/// - Each formatter may indicate the default output stream. This is convenient for instance for streams intended
+        -:  102:///   for automated processing that indicate a file. See @c get_default_stream_description for more details.
+        -:  103:/// - Each formatter may manage its own log level through the getter/setter @c get_log_level and @c set_log_level .
+        -:  104:///
+        -:  105:/// @see
+        -:  106:/// - boost::unit_test::test_observer for an indication of the calls of the test observer interface
+        -:  107:class BOOST_TEST_DECL unit_test_log_formatter {
+        -:  108:public:
+        -:  109:    /// Types of log entries (messages written into a log)
+        -:  110:    enum log_entry_types { BOOST_UTL_ET_INFO,       ///< Information message from the framework
+        -:  111:                           BOOST_UTL_ET_MESSAGE,    ///< Information message from the user
+        -:  112:                           BOOST_UTL_ET_WARNING,    ///< Warning (non error) condition notification message
+        -:  113:                           BOOST_UTL_ET_ERROR,      ///< Non fatal error notification message
+        -:  114:                           BOOST_UTL_ET_FATAL_ERROR ///< Fatal error notification message
+        -:  115:    };
+        -:  116:
+        -:  117:    //! Constructor
+        3:  118:    unit_test_log_formatter()
+        3:  119:        : m_log_level(log_all_errors)
+        3:  120:    {}
+        -:  121:
+        -:  122:    // Destructor
+        3:  123:    virtual             ~unit_test_log_formatter() {}
+        -:  124:
+        -:  125:    // @name Test start/finish
+        -:  126:
+        -:  127:    /// Invoked at the beginning of test module execution
+        -:  128:    ///
+        -:  129:    /// @param[in] os   output stream to write a messages to
+        -:  130:    /// @param[in] test_cases_amount total test case amount to be run
+        -:  131:    /// @see log_finish
+        -:  132:    virtual void        log_start( std::ostream& os, counter_t test_cases_amount ) = 0;
+        -:  133:
+        -:  134:    /// Invoked at the end of test module execution
+        -:  135:    ///
+        -:  136:    /// @param[in] os   output stream to write a messages into
+        -:  137:    /// @see log_start
+        -:  138:    virtual void        log_finish( std::ostream& os ) = 0;
+        -:  139:
+        -:  140:    /// Invoked when Unit Test Framework build information is requested
+        -:  141:    ///
+        -:  142:    /// @param[in] os               output stream to write a messages into
+        -:  143:    /// @param[in] log_build_info   indicates if build info should be logged or not
+        -:  144:    virtual void        log_build_info( std::ostream& os, bool log_build_info = true ) = 0;
+        -:  145:    // @}
+        -:  146:
+        -:  147:    // @name Test unit start/finish
+        -:  148:
+        -:  149:    /// Invoked when test unit starts (either test suite or test case)
+        -:  150:    ///
+        -:  151:    /// @param[in] os   output stream to write a messages into
+        -:  152:    /// @param[in] tu   test unit being started
+        -:  153:    /// @see test_unit_finish
+        -:  154:    virtual void        test_unit_start( std::ostream& os, test_unit const& tu ) = 0;
+        -:  155:
+        -:  156:    /// Invoked when test unit finishes
+        -:  157:    ///
+        -:  158:    /// @param[in] os   output stream to write a messages into
+        -:  159:    /// @param[in] tu   test unit being finished
+        -:  160:    /// @param[in] elapsed time in microseconds spend executing this test unit
+        -:  161:    /// @see test_unit_start
+        -:  162:    virtual void        test_unit_finish( std::ostream& os, test_unit const& tu, unsigned long elapsed ) = 0;
+        -:  163:
+        -:  164:    /// Invoked if test unit skipped for any reason
+        -:  165:    ///
+        -:  166:    /// @param[in] os   output stream to write a messages into
+        -:  167:    /// @param[in] tu   skipped test unit
+        -:  168:    /// @param[in] reason explanation why was it skipped
+    #####:  169:    virtual void        test_unit_skipped( std::ostream& os, test_unit const& tu, const_string /* reason */)
+        -:  170:    {
+    #####:  171:        test_unit_skipped( os, tu );
+    %%%%%:  171-block  0
+    #####:  172:    }
+        -:  173:
+        -:  174:    /// Deprecated version of this interface
+        -:  175:    /// @deprecated
+    #####:  176:    virtual void        test_unit_skipped( std::ostream& /* os */, test_unit const& /* tu */) {}
+        -:  177:
+        -:  178:    /// Invoked when a test unit is aborted
+    #####:  179:    virtual void        test_unit_aborted( std::ostream& /* os */, test_unit const& /* tu */) {}
+        -:  180:
+        -:  181:    /// Invoked when a test unit times-out
+    #####:  182:    virtual void        test_unit_timed_out( std::ostream& /* os */, test_unit const& /* tu */) {}
+        -:  183:
+        -:  184:
+        -:  185:    // @}
+        -:  186:
+        -:  187:    // @name Uncaught exception report
+        -:  188:
+        -:  189:    /// Invoked when Unit Test Framework detects uncaught exception
+        -:  190:    ///
+        -:  191:    /// The framwork calls this function when an uncaught exception it detected.
+        -:  192:    /// This call is followed by context information:
+        -:  193:    /// - one call to @c entry_context_start,
+        -:  194:    /// - as many calls to @c log_entry_context as there are context entries
+        -:  195:    /// - one call to @c entry_context_finish
+        -:  196:    ///
+        -:  197:    /// The logging of the exception information is finilized by a call to @c log_exception_finish.
+        -:  198:    ///
+        -:  199:    /// @param[in] os   output stream to write a messages into
+        -:  200:    /// @param[in] lcd  information about the last checkpoint before the exception was triggered
+        -:  201:    /// @param[in] ex   information about the caught exception
+        -:  202:    /// @see log_exception_finish
+        -:  203:    virtual void        log_exception_start( std::ostream& os, log_checkpoint_data const& lcd, execution_exception const& ex ) = 0;
+        -:  204:
+        -:  205:    /// Invoked when Unit Test Framework detects uncaught exception
+        -:  206:    ///
+        -:  207:    /// Call to this function finishes uncaught exception report.
+        -:  208:    /// @param[in] os   output stream to write a messages into
+        -:  209:    /// @see log_exception_start
+        -:  210:    virtual void        log_exception_finish( std::ostream& os ) = 0;
+        -:  211:    // @}
+        -:  212:
+        -:  213:    // @name Regular log entry
+        -:  214:
+        -:  215:    /// Invoked by Unit Test Framework to start new log entry
+        -:  216:
+        -:  217:    /// Call to this function starts new log entry. It is followed by series of log_entry_value calls and finally call to log_entry_finish.
+        -:  218:    /// A log entry may consist of one or more values being reported. Some of these values will be plain strings, while others can be complicated
+        -:  219:    /// expressions in a form of "lazy" expression template lazy_ostream.
+        -:  220:    /// @param[in] os   output stream to write a messages into
+        -:  221:    /// @param[in] led  log entry attributes
+        -:  222:    /// @param[in] let  log entry type log_entry_finish
+        -:  223:    /// @see log_entry_value, log_entry_finish
+        -:  224:    ///
+        -:  225:    /// @note call to this function may happen before any call to test_unit_start or all calls to test_unit_finish as the
+        -:  226:    /// framework might log errors raised during global initialization/shutdown.
+        -:  227:    virtual void        log_entry_start( std::ostream& os, log_entry_data const& led, log_entry_types let ) = 0;
+        -:  228:
+        -:  229:    /// Invoked by Unit Test Framework to report a log entry content
+        -:  230:    ///
+        -:  231:    /// This is one of two overloaded methods to report log entry content. This one is used to report plain string value.
+        -:  232:    /// @param[in] os   output stream to write a messages into.
+        -:  233:    /// @param[in] value log entry string value
+        -:  234:    /// @see log_entry_start, log_entry_finish
+        -:  235:    virtual void        log_entry_value( std::ostream& os, const_string value ) = 0;
+        -:  236:
+        -:  237:    /// Invoked by Unit Test Framework to report a log entry content
+        -:  238:
+        -:  239:    /// This is one of two overloaded methods to report log entry content. This one is used to report some complicated expression passed as
+        -:  240:    /// an expression template lazy_ostream. In most cases default implementation provided by the framework should work as is (it just converts
+        -:  241:    /// the lazy expression into a string.
+        -:  242:    /// @param[in] os   output stream to write a messages into
+        -:  243:    /// @param[in] value log entry "lazy" value
+        -:  244:    /// @see log_entry_start, log_entry_finish
+        -:  245:    virtual void        log_entry_value( std::ostream& os, lazy_ostream const& value ); // there is a default impl
+        -:  246:
+        -:  247:    /// Invoked by Unit Test Framework to finish a log entry report
+        -:  248:
+        -:  249:    /// @param[in] os   output stream to write a messages into
+        -:  250:    /// @see log_entry_start, log_entry_start
+        -:  251:    virtual void        log_entry_finish( std::ostream& os ) = 0;
+        -:  252:    // @}
+        -:  253:
+        -:  254:    // @name Log entry context report
+        -:  255:
+        -:  256:    /// Invoked by Unit Test Framework to start log entry context report
+        -:  257:    //
+        -:  258:    /// Unit Test Framework logs for failed assertions and uncaught exceptions context if one was defined by a test module.
+        -:  259:    /// Context consists of multiple "scopes" identified by description messages assigned by the test module using
+        -:  260:    /// BOOST_TEST_INFO/BOOST_TEST_CONTEXT statements.
+        -:  261:    /// @param[in] os   output stream to write a messages into
+        -:  262:    /// @param[in] l    entry log_level, to be used to fine tune the message
+        -:  263:    /// @see log_entry_context, entry_context_finish
+        -:  264:    virtual void        entry_context_start( std::ostream& os, log_level l ) = 0;
+        -:  265:
+        -:  266:    /// Invoked by Unit Test Framework to report log entry context "scope" description
+        -:  267:    //
+        -:  268:    /// Each "scope" description is reported by separate call to log_entry_context.
+        -:  269:    /// @param[in] os   output stream to write a messages into
+        -:  270:    /// @param[in] l    entry log_level, to be used to fine tune the message
+        -:  271:    /// @param[in] value  context "scope" description
+        -:  272:    /// @see log_entry_start, entry_context_finish
+        -:  273:    virtual void        log_entry_context( std::ostream& os, log_level l, const_string value ) = 0;
+        -:  274:
+        -:  275:    /// Invoked by Unit Test Framework to finish log entry context report
+        -:  276:    ///
+        -:  277:    /// @param[in] os   output stream to write a messages into
+        -:  278:    /// @param[in] l    entry log_level, to be used to fine tune the message
+        -:  279:    /// @see log_entry_start, entry_context_context
+        -:  280:    virtual void        entry_context_finish( std::ostream& os, log_level l ) = 0;
+        -:  281:    // @}
+        -:  282:
+        -:  283:    // @name Log level management
+        -:  284:
+        -:  285:    /// Sets the log level of the logger/formatter
+        -:  286:    ///
+        -:  287:    /// Some loggers need to manage the log level by their own. This
+        -:  288:    /// member function let the implementation decide of that.
+        -:  289:    /// @par Since Boost 1.62
+        -:  290:    virtual void        set_log_level(log_level new_log_level);
+        -:  291:
+        -:  292:    /// Returns the log level of the logger/formatter
+        -:  293:    /// @par Since Boost 1.62
+        -:  294:    virtual log_level   get_log_level() const;
+        -:  295:    // @}
+        -:  296:
+        -:  297:
+        -:  298:    // @name Stream management
+        -:  299:
+        -:  300:    /// Returns a default stream for this logger.
+        -:  301:    ///
+        -:  302:    /// The returned string describes the stream as if it was passed from
+        -:  303:    /// the command line @c "--log_sink" parameter. With that regards, @b stdout and @b stderr
+        -:  304:    /// have special meaning indicating the standard output or error stream respectively.
+        -:  305:    ///
+        -:  306:    /// @par Since Boost 1.62
+        1:  307:    virtual std::string  get_default_stream_description() const
+        -:  308:    {
+        1:  309:        return "stdout";
+        1:  309-block  0
+        1:  309-block  1
+        1:  309-block  2
+    $$$$$:  309-block  3
+        -:  310:    }
+        -:  311:
+        -:  312:    // @}
+        -:  313:
+        -:  314:
+        -:  315:protected:
+        -:  316:    log_level           m_log_level;
+        -:  317:
+        -:  318:};
+        -:  319:
+        -:  320:} // namespace unit_test
+        -:  321:} // namespace boost
+        -:  322:
+        -:  323://____________________________________________________________________________//
+        -:  324:
+        -:  325:#include <boost/test/detail/enable_warnings.hpp>
+        -:  326:
+        -:  327:#endif // BOOST_TEST_UNIT_TEST_LOG_FORMATTER_HPP_071894GER

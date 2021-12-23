@@ -1,0 +1,138 @@
+        -:    0:Source:F:/Files/vcpkg/installed/x86-windows/include/boost/smart_ptr/scoped_array.hpp
+        -:    0:Graph:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcno
+        -:    0:Data:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:#ifndef BOOST_SMART_PTR_SCOPED_ARRAY_HPP_INCLUDED
+        -:    2:#define BOOST_SMART_PTR_SCOPED_ARRAY_HPP_INCLUDED
+        -:    3:
+        -:    4://  (C) Copyright Greg Colvin and Beman Dawes 1998, 1999.
+        -:    5://  Copyright (c) 2001, 2002 Peter Dimov
+        -:    6://
+        -:    7://  Distributed under the Boost Software License, Version 1.0. (See
+        -:    8://  accompanying file LICENSE_1_0.txt or copy at
+        -:    9://  http://www.boost.org/LICENSE_1_0.txt)
+        -:   10://
+        -:   11://  See http://www.boost.org/libs/smart_ptr/ for documentation.
+        -:   12:
+        -:   13:#include <boost/config.hpp>
+        -:   14:#include <boost/assert.hpp>
+        -:   15:#include <boost/checked_delete.hpp>
+        -:   16:#include <boost/smart_ptr/detail/sp_nullptr_t.hpp>
+        -:   17:#include <boost/smart_ptr/detail/sp_noexcept.hpp>
+        -:   18:
+        -:   19:#include <boost/detail/workaround.hpp>
+        -:   20:
+        -:   21:#include <cstddef>            // for std::ptrdiff_t
+        -:   22:
+        -:   23:namespace boost
+        -:   24:{
+        -:   25:
+        -:   26:// Debug hooks
+        -:   27:
+        -:   28:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   29:
+        -:   30:void sp_array_constructor_hook(void * p);
+        -:   31:void sp_array_destructor_hook(void * p);
+        -:   32:
+        -:   33:#endif
+        -:   34:
+        -:   35://  scoped_array extends scoped_ptr to arrays. Deletion of the array pointed to
+        -:   36://  is guaranteed, either on destruction of the scoped_array or via an explicit
+        -:   37://  reset(). Use shared_array or std::vector if your needs are more complex.
+        -:   38:
+        -:   39:template<class T> class scoped_array // noncopyable
+        -:   40:{
+        -:   41:private:
+        -:   42:
+        -:   43:    T * px;
+        -:   44:
+        -:   45:    scoped_array(scoped_array const &);
+        -:   46:    scoped_array & operator=(scoped_array const &);
+        -:   47:
+        -:   48:    typedef scoped_array<T> this_type;
+        -:   49:
+        -:   50:    void operator==( scoped_array const& ) const;
+        -:   51:    void operator!=( scoped_array const& ) const;
+        -:   52:
+        -:   53:public:
+        -:   54:
+        -:   55:    typedef T element_type;
+        -:   56:
+        2:   57:    explicit scoped_array( T * p = 0 ) BOOST_SP_NOEXCEPT : px( p )
+        -:   58:    {
+        -:   59:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   60:        boost::sp_array_constructor_hook( px );
+        -:   61:#endif
+        2:   62:    }
+        -:   63:
+    #####:   64:    ~scoped_array() BOOST_SP_NOEXCEPT
+        -:   65:    {
+        -:   66:#if defined(BOOST_SP_ENABLE_DEBUG_HOOKS)
+        -:   67:        boost::sp_array_destructor_hook( px );
+        -:   68:#endif
+    #####:   69:        boost::checked_array_delete( px );
+    %%%%%:   69-block  0
+    #####:   70:    }
+        -:   71:
+        -:   72:    void reset(T * p = 0) BOOST_SP_NOEXCEPT_WITH_ASSERT
+        -:   73:    {
+        -:   74:        BOOST_ASSERT( p == 0 || p != px ); // catch self-reset errors
+        -:   75:        this_type(p).swap(*this);
+        -:   76:    }
+        -:   77:
+        -:   78:    T & operator[](std::ptrdiff_t i) const BOOST_SP_NOEXCEPT_WITH_ASSERT
+        -:   79:    {
+        -:   80:        BOOST_ASSERT( px != 0 );
+        -:   81:        BOOST_ASSERT( i >= 0 );
+        -:   82:        return px[i];
+        -:   83:    }
+        -:   84:
+        -:   85:    T * get() const BOOST_SP_NOEXCEPT
+        -:   86:    {
+        -:   87:        return px;
+        -:   88:    }
+        -:   89:
+        -:   90:// implicit conversion to "bool"
+        -:   91:#include <boost/smart_ptr/detail/operator_bool.hpp>
+        -:   92:
+        -:   93:    void swap(scoped_array & b) BOOST_SP_NOEXCEPT
+        -:   94:    {
+        -:   95:        T * tmp = b.px;
+        -:   96:        b.px = px;
+        -:   97:        px = tmp;
+        -:   98:    }
+        -:   99:};
+        -:  100:
+        -:  101:#if !defined( BOOST_NO_CXX11_NULLPTR )
+        -:  102:
+        -:  103:template<class T> inline bool operator==( scoped_array<T> const & p, boost::detail::sp_nullptr_t ) BOOST_SP_NOEXCEPT
+        -:  104:{
+        -:  105:    return p.get() == 0;
+        -:  106:}
+        -:  107:
+        -:  108:template<class T> inline bool operator==( boost::detail::sp_nullptr_t, scoped_array<T> const & p ) BOOST_SP_NOEXCEPT
+        -:  109:{
+        -:  110:    return p.get() == 0;
+        -:  111:}
+        -:  112:
+        -:  113:template<class T> inline bool operator!=( scoped_array<T> const & p, boost::detail::sp_nullptr_t ) BOOST_SP_NOEXCEPT
+        -:  114:{
+        -:  115:    return p.get() != 0;
+        -:  116:}
+        -:  117:
+        -:  118:template<class T> inline bool operator!=( boost::detail::sp_nullptr_t, scoped_array<T> const & p ) BOOST_SP_NOEXCEPT
+        -:  119:{
+        -:  120:    return p.get() != 0;
+        -:  121:}
+        -:  122:
+        -:  123:#endif
+        -:  124:
+        -:  125:template<class T> inline void swap(scoped_array<T> & a, scoped_array<T> & b) BOOST_SP_NOEXCEPT
+        -:  126:{
+        -:  127:    a.swap(b);
+        -:  128:}
+        -:  129:
+        -:  130:} // namespace boost
+        -:  131:
+        -:  132:#endif  // #ifndef BOOST_SMART_PTR_SCOPED_ARRAY_HPP_INCLUDED

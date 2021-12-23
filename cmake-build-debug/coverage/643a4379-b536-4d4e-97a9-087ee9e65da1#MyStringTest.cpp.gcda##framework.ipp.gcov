@@ -1,0 +1,3652 @@
+        -:    0:Source:F:/Files/vcpkg/installed/x86-windows/include/boost/test/impl/framework.ipp
+        -:    0:Graph:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcno
+        -:    0:Data:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1://  (C) Copyright Gennadiy Rozental 2001.
+        -:    2://  Distributed under the Boost Software License, Version 1.0.
+        -:    3://  (See accompanying file LICENSE_1_0.txt or copy at
+        -:    4://  http://www.boost.org/LICENSE_1_0.txt)
+        -:    5:
+        -:    6://  See http://www.boost.org/libs/test for the library home page.
+        -:    7://
+        -:    8://  File        : $RCSfile$
+        -:    9://
+        -:   10://  Version     : $Revision$
+        -:   11://
+        -:   12://  Description : implements framework API - main driver for the test
+        -:   13:// ***************************************************************************
+        -:   14:
+        -:   15:#ifndef BOOST_TEST_FRAMEWORK_IPP_021005GER
+        -:   16:#define BOOST_TEST_FRAMEWORK_IPP_021005GER
+        -:   17:
+        -:   18:// Boost.Test
+        -:   19:#include <boost/test/framework.hpp>
+        -:   20:#include <boost/test/execution_monitor.hpp>
+        -:   21:#include <boost/test/debug.hpp>
+        -:   22:#include <boost/test/unit_test_parameters.hpp>
+        -:   23:
+        -:   24:#include <boost/test/unit_test_log.hpp>
+        -:   25:#include <boost/test/unit_test_log_formatter.hpp>
+        -:   26:#include <boost/test/unit_test_monitor.hpp>
+        -:   27:#include <boost/test/results_collector.hpp>
+        -:   28:#include <boost/test/progress_monitor.hpp>
+        -:   29:#include <boost/test/results_reporter.hpp>
+        -:   30:#include <boost/test/test_framework_init_observer.hpp>
+        -:   31:
+        -:   32:#include <boost/test/tree/observer.hpp>
+        -:   33:#include <boost/test/tree/test_unit.hpp>
+        -:   34:#include <boost/test/tree/visitor.hpp>
+        -:   35:#include <boost/test/tree/traverse.hpp>
+        -:   36:#include <boost/test/tree/test_case_counter.hpp>
+        -:   37:#include <boost/test/tree/global_fixture.hpp>
+        -:   38:
+        -:   39:#if BOOST_TEST_SUPPORT_TOKEN_ITERATOR
+        -:   40:#include <boost/test/utils/iterator/token_iterator.hpp>
+        -:   41:#endif
+        -:   42:
+        -:   43:#include <boost/test/utils/foreach.hpp>
+        -:   44:#include <boost/test/utils/basic_cstring/io.hpp>
+        -:   45:#include <boost/test/utils/basic_cstring/compare.hpp>
+        -:   46:
+        -:   47:#include <boost/test/detail/global_typedef.hpp>
+        -:   48:#include <boost/test/detail/throw_exception.hpp>
+        -:   49:
+        -:   50:// Boost
+        -:   51:#include <boost/test/utils/timer.hpp>
+        -:   52:#include <boost/bind.hpp>
+        -:   53:
+        -:   54:// STL
+        -:   55:#include <limits>
+        -:   56:#include <map>
+        -:   57:#include <set>
+        -:   58:#include <cstdlib>
+        -:   59:#include <ctime>
+        -:   60:#include <numeric>
+        -:   61:#include <cmath>
+        -:   62:#ifdef BOOST_NO_CXX98_RANDOM_SHUFFLE
+        -:   63:#include <iterator>
+        -:   64:#endif
+        -:   65:
+        -:   66:#ifdef BOOST_NO_STDC_NAMESPACE
+        -:   67:namespace std { using ::time; using ::srand; }
+        -:   68:#endif
+        -:   69:
+        -:   70:#include <boost/test/detail/suppress_warnings.hpp>
+        -:   71:
+        -:   72://____________________________________________________________________________//
+        -:   73:
+        -:   74:namespace boost {
+        -:   75:namespace unit_test {
+        -:   76:namespace framework {
+        -:   77:
+        -:   78:namespace impl {
+        -:   79:
+        -:   80:// ************************************************************************** //
+        -:   81:// **************            order detection helpers           ************** //
+        -:   82:// ************************************************************************** //
+        -:   83:
+        -:   84:struct order_info {
+       11:   85:    order_info() : depth(-1) {}
+       11:   85-block  0
+        -:   86:
+        -:   87:    int                         depth;
+        -:   88:    std::vector<test_unit_id>   dependant_siblings;
+        -:   89:};
+        -:   90:
+        -:   91:typedef std::set<test_unit_id> tu_id_set;
+        -:   92:typedef std::map<test_unit_id,order_info> order_info_per_tu; // !! ?? unordered map
+        -:   93:
+        -:   94://____________________________________________________________________________//
+        -:   95:
+        -:   96:static test_unit_id
+    #####:   97:get_tu_parent( test_unit_id tu_id )
+        -:   98:{
+    #####:   99:    return framework::get( tu_id, TUT_ANY ).p_parent_id;
+    %%%%%:   99-block  0
+        -:  100:}
+        -:  101:
+        -:  102://____________________________________________________________________________//
+        -:  103:
+        -:  104:static int
+    #####:  105:tu_depth( test_unit_id tu_id, test_unit_id master_tu_id, order_info_per_tu& tuoi )
+        -:  106:{
+    #####:  107:    if( tu_id == master_tu_id )
+    %%%%%:  107-block  0
+    #####:  108:        return 0;
+    %%%%%:  108-block  0
+        -:  109:
+    #####:  110:    order_info& info = tuoi[tu_id];
+    %%%%%:  110-block  0
+        -:  111:
+    #####:  112:    if( info.depth == -1 )
+    #####:  113:        info.depth = tu_depth( get_tu_parent( tu_id ), master_tu_id, tuoi ) + 1;
+    %%%%%:  113-block  0
+        -:  114:
+    #####:  115:    return info.depth;
+    %%%%%:  115-block  0
+        -:  116:}
+        -:  117:
+        -:  118://____________________________________________________________________________//
+        -:  119:
+        -:  120:static void
+    #####:  121:collect_dependant_siblings( test_unit_id from, test_unit_id to, test_unit_id master_tu_id, order_info_per_tu& tuoi )
+        -:  122:{
+    #####:  123:    int from_depth  = tu_depth( from, master_tu_id, tuoi );
+    %%%%%:  123-block  0
+    #####:  124:    int to_depth    = tu_depth( to, master_tu_id, tuoi );
+        -:  125:
+    #####:  126:    while(from_depth > to_depth) {
+    %%%%%:  126-block  0
+    #####:  127:        from = get_tu_parent( from );
+    %%%%%:  127-block  0
+    #####:  128:        --from_depth;
+        -:  129:    }
+        -:  130:
+    #####:  131:    while(from_depth < to_depth) {
+    %%%%%:  131-block  0
+    #####:  132:        to = get_tu_parent( to );
+    %%%%%:  132-block  0
+    #####:  133:        --to_depth;
+        -:  134:    }
+        -:  135:
+        -:  136:    while(true) {
+    #####:  137:        test_unit_id from_parent = get_tu_parent( from );
+    %%%%%:  137-block  0
+    #####:  138:        test_unit_id to_parent = get_tu_parent( to );
+    #####:  139:        if( from_parent == to_parent )
+    #####:  140:            break;
+    %%%%%:  140-block  0
+    #####:  141:        from = from_parent;
+    #####:  142:        to   = to_parent;
+    #####:  143:    }
+    %%%%%:  143-block  0
+        -:  144:
+    #####:  145:    tuoi[from].dependant_siblings.push_back( to );
+    %%%%%:  145-block  0
+    #####:  146:}
+        -:  147:
+        -:  148://____________________________________________________________________________//
+        -:  149:
+        -:  150:static counter_t
+       11:  151:assign_sibling_rank( test_unit_id tu_id, order_info_per_tu& tuoi )
+        -:  152:{
+       11:  153:    test_unit& tu = framework::get( tu_id, TUT_ANY );
+       11:  153-block  0
+        -:  154:
+      11*:  155:    BOOST_TEST_SETUP_ASSERT( tu.p_sibling_rank != (std::numeric_limits<counter_t>::max)(),
+       11:  155-block  0
+       11:  155-block  1
+    %%%%%:  155-block  2
+    %%%%%:  155-block  3
+    %%%%%:  155-block  4
+    %%%%%:  155-block  5
+    %%%%%:  155-block  6
+    $$$$$:  155-block  7
+    $$$$$:  155-block  8
+    $$$$$:  155-block  9
+    $$$$$:  155-block 10
+    $$$$$:  155-block 11
+    $$$$$:  155-block 12
+    $$$$$:  155-block 13
+    $$$$$:  155-block 14
+    $$$$$:  155-block 15
+    $$$$$:  155-block 16
+        -:  156:                             "Cyclic dependency detected involving test unit \"" + tu.full_name() + "\"" );
+        -:  157:
+       11:  158:    if( tu.p_sibling_rank != 0 )
+       11:  158-block  0
+    #####:  159:        return tu.p_sibling_rank;
+    %%%%%:  159-block  0
+        -:  160:
+       11:  161:    order_info const& info = tuoi[tu_id];
+       11:  161-block  0
+        -:  162:
+        -:  163:    // indicate in progress
+       11:  164:    tu.p_sibling_rank.value = (std::numeric_limits<counter_t>::max)();
+       11:  164-block  0
+        -:  165:
+       11:  166:    counter_t new_rank = 1;
+      11*:  167:    BOOST_TEST_FOREACH( test_unit_id, sibling_id, info.dependant_siblings )
+       11:  167-block  0
+       11:  167-block  1
+       11:  167-block  2
+       11:  167-block  3
+       11:  167-block  4
+       11:  167-block  5
+       11:  167-block  6
+    %%%%%:  167-block  7
+       11:  167-block  8
+       11:  167-block  9
+    %%%%%:  167-block 10
+    %%%%%:  167-block 11
+    %%%%%:  167-block 12
+    %%%%%:  167-block 13
+    %%%%%:  167-block 14
+    %%%%%:  167-block 15
+    %%%%%:  167-block 16
+    $$$$$:  167-block 17
+    $$$$$:  167-block 18
+    $$$$$:  167-block 19
+    $$$$$:  167-block 20
+    $$$$$:  167-block 21
+    #####:  168:        new_rank = (std::max)(new_rank, assign_sibling_rank( sibling_id, tuoi ) + 1);
+    %%%%%:  168-block  0
+    %%%%%:  168-block  1
+        -:  169:
+       11:  170:    return tu.p_sibling_rank.value = new_rank;
+       11:  170-block  0
+        -:  171:}
+        -:  172:
+        -:  173://____________________________________________________________________________//
+        -:  174:
+        -:  175:// ************************************************************************** //
+        -:  176:// **************            test_init call wrapper            ************** //
+        -:  177:// ************************************************************************** //
+        -:  178:
+        -:  179:static void
+        1:  180:invoke_init_func( init_unit_test_func init_func )
+        -:  181:{
+        -:  182:#ifdef BOOST_TEST_ALTERNATIVE_INIT_API
+        -:  183:    BOOST_TEST_I_ASSRT( (*init_func)(), std::runtime_error( "test module initialization failed" ) );
+        -:  184:#else
+        1:  185:    test_suite*  manual_test_units = (*init_func)( framework::master_test_suite().argc, framework::master_test_suite().argv );
+        1:  185-block  0
+        -:  186:
+        1:  187:    if( manual_test_units )
+    #####:  188:        framework::master_test_suite().add( manual_test_units );
+    %%%%%:  188-block  0
+    %%%%%:  188-block  1
+    %%%%%:  188-block  2
+    %%%%%:  188-block  3
+        -:  189:#endif
+        1:  190:}
+        -:  191:
+        -:  192:// ************************************************************************** //
+        -:  193:// **************                  name_filter                 ************** //
+        -:  194:// ************************************************************************** //
+        -:  195:
+        -:  196:class name_filter : public test_tree_visitor {
+        -:  197:    struct component {
+        1:  198:        component( const_string name ) // has to be implicit
+        1:  199:        {
+        1:  199-block  0
+        1:  200:            if( name == "*" )
+    #####:  201:                m_kind  = SFK_ALL;
+    %%%%%:  201-block  0
+       1*:  202:            else if( first_char( name ) == '*' && last_char( name ) == '*' ) {
+        1:  202-block  0
+    %%%%%:  202-block  1
+    %%%%%:  202-block  2
+        1:  202-block  3
+        1:  202-block  4
+    #####:  203:                m_kind  = SFK_SUBSTR;
+    #####:  204:                m_name  = name.substr( 1, name.size()-1 );
+    %%%%%:  204-block  0
+        -:  205:            }
+        1:  206:            else if( first_char( name ) == '*' ) {
+        1:  206-block  0
+    #####:  207:                m_kind  = SFK_TRAILING;
+    #####:  208:                m_name  = name.substr( 1 );
+    %%%%%:  208-block  0
+        -:  209:            }
+        1:  210:            else if( last_char( name ) == '*' ) {
+        1:  210-block  0
+    #####:  211:                m_kind  = SFK_LEADING;
+    #####:  212:                m_name  = name.substr( 0, name.size()-1 );
+    %%%%%:  212-block  0
+        -:  213:            }
+        -:  214:            else {
+        1:  215:                m_kind  = SFK_MATCH;
+        1:  216:                m_name  = name;
+        1:  216-block  0
+        -:  217:            }
+        1:  218:        }
+        -:  219:
+        1:  220:        bool            pass( test_unit const& tu ) const
+        -:  221:        {
+        1:  222:            const_string name( tu.p_name );
+        1:  222-block  0
+        -:  223:
+        1:  224:            switch( m_kind ) {
+    #####:  225:            default:
+        -:  226:            case SFK_ALL:
+    #####:  227:                return true;
+    %%%%%:  227-block  0
+    #####:  228:            case SFK_LEADING:
+    #####:  229:                return name.substr( 0, m_name.size() ) == m_name;
+    %%%%%:  229-block  0
+    %%%%%:  229-block  1
+    %%%%%:  229-block  2
+    %%%%%:  229-block  3
+    $$$$$:  229-block  4
+    #####:  230:            case SFK_TRAILING:
+    #####:  231:                return name.size() >= m_name.size() && name.substr( name.size() - m_name.size() ) == m_name;
+    %%%%%:  231-block  0
+    %%%%%:  231-block  1
+    %%%%%:  231-block  2
+    %%%%%:  231-block  3
+    %%%%%:  231-block  4
+    %%%%%:  231-block  5
+    %%%%%:  231-block  6
+    $$$$$:  231-block  7
+    #####:  232:            case SFK_SUBSTR:
+    #####:  233:                return name.find( m_name ) != const_string::npos;
+    %%%%%:  233-block  0
+    %%%%%:  233-block  1
+    $$$$$:  233-block  2
+        1:  234:            case SFK_MATCH:
+        1:  235:                return m_name == tu.p_name.get();
+        1:  235-block  0
+        1:  235-block  1
+        -:  236:            }
+        -:  237:        }
+        -:  238:        enum kind { SFK_ALL, SFK_LEADING, SFK_TRAILING, SFK_SUBSTR, SFK_MATCH };
+        -:  239:
+        -:  240:        kind            m_kind;
+        -:  241:        const_string    m_name;
+        -:  242:    };
+        -:  243:
+        -:  244:public:
+        -:  245:    // Constructor
+        1:  246:    name_filter( test_unit_id_list& targ_list, const_string filter_expr ) : m_targ_list( targ_list ), m_depth( 0 )
+        1:  246-block  0
+    $$$$$:  246-block  1
+    $$$$$:  246-block  2
+        -:  247:    {
+        -:  248:#ifdef BOOST_TEST_SUPPORT_TOKEN_ITERATOR
+        1:  249:        utils::string_token_iterator tit( filter_expr, (utils::dropped_delimeters = "/",
+        1:  249-block  0
+        1:  249-block  1
+    $$$$$:  249-block  2
+    $$$$$:  249-block  3
+        2:  250:                                                        utils::kept_delimeters = utils::dt_none) );
+        1:  250-block  0
+        1:  250-block  1
+    $$$$$:  250-block  2
+    $$$$$:  250-block  3
+    $$$$$:  250-block  4
+        -:  251:
+        2:  252:        while( tit != utils::string_token_iterator() ) {
+        2:  252-block  0
+        2:  252-block  1
+        2:  252-block  2
+        1:  252-block  3
+    $$$$$:  252-block  4
+        1:  253:            m_components.push_back(
+        1:  253-block  0
+        3:  254:                std::vector<component>( utils::string_token_iterator( *tit, (utils::dropped_delimeters = ",",
+        1:  254-block  0
+        1:  254-block  1
+        1:  254-block  2
+        1:  254-block  3
+        1:  254-block  4
+        1:  254-block  5
+        1:  254-block  6
+    $$$$$:  254-block  7
+    $$$$$:  254-block  8
+    $$$$$:  254-block  9
+    $$$$$:  254-block 10
+    $$$$$:  254-block 11
+    $$$$$:  254-block 12
+    $$$$$:  254-block 13
+    $$$$$:  254-block 14
+        1:  255:                                                                             utils::kept_delimeters = utils::dt_none) ),
+        1:  255-block  0
+    $$$$$:  255-block  1
+    $$$$$:  255-block  2
+        2:  256:                                        utils::string_token_iterator() ) );
+    $$$$$:  256-block  0
+        -:  257:
+        1:  258:            ++tit;
+        -:  259:        }
+        -:  260:#endif
+        1:  261:    }
+        1:  261-block  0
+        -:  262:
+        -:  263:private:
+        2:  264:    bool            filter_unit( test_unit const& tu )
+        -:  265:    {
+        -:  266:        // skip master test suite
+        2:  267:        if( m_depth == 0 )
+        2:  267-block  0
+        1:  268:            return true;
+        1:  268-block  0
+        -:  269:
+        -:  270:        // corresponding name filters are at level m_depth-1
+        1:  271:        std::vector<component> const& filters = m_components[m_depth-1];
+        1:  271-block  0
+        -:  272:
+        -:  273:        // look for match
+        -:  274:        using namespace boost::placeholders;
+        2:  275:        return std::find_if( filters.begin(), filters.end(), bind( &component::pass, _1, boost::ref(tu) ) ) != filters.end();
+        1:  275-block  0
+        1:  275-block  1
+        1:  275-block  2
+        -:  276:    }
+        -:  277:
+        -:  278:    // test_tree_visitor interface
+    #####:  279:    virtual void    visit( test_case const& tc )
+        -:  280:    {
+        -:  281:        // make sure we only accept test cases if we match last component of the filter
+    #####:  282:        if( m_depth == m_components.size() && filter_unit( tc ) )
+    %%%%%:  282-block  0
+    %%%%%:  282-block  1
+    %%%%%:  282-block  2
+    %%%%%:  282-block  3
+    %%%%%:  282-block  4
+    #####:  283:            m_targ_list.push_back( tc.p_id ); // found a test case
+    %%%%%:  283-block  0
+    #####:  284:    }
+        2:  285:    virtual bool    test_suite_start( test_suite const& ts )
+        -:  286:    {
+        2:  287:        if( !filter_unit( ts ) )
+        2:  287-block  0
+    #####:  288:            return false;
+    %%%%%:  288-block  0
+        -:  289:
+        2:  290:        if( m_depth < m_components.size() ) {
+        2:  290-block  0
+        1:  291:            ++m_depth;
+        1:  292:            return true;
+        1:  292-block  0
+        -:  293:        }
+        -:  294:
+        1:  295:        m_targ_list.push_back( ts.p_id ); // found a test suite
+        1:  295-block  0
+        -:  296:
+        1:  297:        return false;
+        -:  298:    }
+        1:  299:    virtual void    test_suite_finish( test_suite const& /*ts*/ )
+        -:  300:    {
+        1:  301:        --m_depth;
+        1:  302:    }
+        -:  303:
+        -:  304:    // Data members
+        -:  305:    typedef std::vector<std::vector<component> > components_per_level;
+        -:  306:
+        -:  307:    components_per_level    m_components;
+        -:  308:    test_unit_id_list&      m_targ_list;
+        -:  309:    unsigned                m_depth;
+        -:  310:};
+        -:  311:
+        -:  312:// ************************************************************************** //
+        -:  313:// **************                 label_filter                 ************** //
+        -:  314:// ************************************************************************** //
+        -:  315:
+        -:  316:class label_filter : public test_tree_visitor {
+        -:  317:public:
+    #####:  318:    label_filter( test_unit_id_list& targ_list, const_string label )
+    #####:  319:    : m_targ_list( targ_list )
+    #####:  320:    , m_label( label )
+    %%%%%:  320-block  0
+    #####:  321:    {}
+        -:  322:
+        -:  323:private:
+        -:  324:    // test_tree_visitor interface
+    #####:  325:    virtual bool    visit( test_unit const& tu )
+        -:  326:    {
+    #####:  327:        if( tu.has_label( m_label ) ) {
+    %%%%%:  327-block  0
+    %%%%%:  327-block  1
+        -:  328:            // found a test unit; add it to list of tu to enable with children and stop recursion in case of suites
+    #####:  329:            m_targ_list.push_back( tu.p_id );
+    %%%%%:  329-block  0
+    #####:  330:            return false;
+        -:  331:        }
+        -:  332:
+    #####:  333:        return true;
+    %%%%%:  333-block  0
+        -:  334:    }
+        -:  335:
+        -:  336:    // Data members
+        -:  337:    test_unit_id_list&  m_targ_list;
+        -:  338:    const_string        m_label;
+        -:  339:};
+        -:  340:
+        -:  341:// ************************************************************************** //
+        -:  342:// **************                set_run_status                ************** //
+        -:  343:// ************************************************************************** //
+        -:  344:
+        -:  345:class set_run_status : public test_tree_visitor {
+        -:  346:public:
+        2:  347:    explicit set_run_status( test_unit::run_status rs, test_unit_id_list* dep_collector = 0 )
+        2:  348:    : m_new_status( rs )
+        2:  349:    , m_dep_collector( dep_collector )
+        2:  349-block  0
+        2:  350:    {}
+        -:  351:
+        -:  352:    // test_tree_visitor interface
+       23:  353:    virtual bool    visit( test_unit const& tu )
+        -:  354:    {
+      23*:  355:        const_cast<test_unit&>(tu).p_run_status.value = m_new_status == test_unit::RS_INVALID ? tu.p_default_status : m_new_status;
+       23:  355-block  0
+    %%%%%:  355-block  1
+       23:  355-block  2
+       23:  356:        if( m_dep_collector ) {
+       23:  356-block  0
+      11*:  357:            BOOST_TEST_FOREACH( test_unit_id, dep_id, tu.p_dependencies.get() ) {
+       11:  357-block  0
+       11:  357-block  1
+       11:  357-block  2
+       11:  357-block  3
+       11:  357-block  4
+       11:  357-block  5
+       11:  357-block  6
+       11:  357-block  7
+    %%%%%:  357-block  8
+       11:  357-block  9
+       11:  357-block 10
+    %%%%%:  357-block 11
+    %%%%%:  357-block 12
+    %%%%%:  357-block 13
+    %%%%%:  357-block 14
+    %%%%%:  357-block 15
+    %%%%%:  357-block 16
+    %%%%%:  357-block 17
+    %%%%%:  357-block 18
+    %%%%%:  357-block 19
+    $$$$$:  357-block 20
+    $$$$$:  357-block 21
+    $$$$$:  357-block 22
+    $$$$$:  357-block 23
+    #####:  358:                test_unit const& dep = framework::get( dep_id, TUT_ANY );
+    %%%%%:  358-block  0
+        -:  359:
+    #####:  360:                if( dep.p_run_status == tu.p_run_status )
+    %%%%%:  360-block  0
+    %%%%%:  360-block  1
+    #####:  361:                    continue;
+    %%%%%:  361-block  0
+        -:  362:
+    #####:  363:                BOOST_TEST_FRAMEWORK_MESSAGE( "Including test " << dep.p_type_name << ' ' << dep.full_name() <<
+    %%%%%:  363-block  0
+    %%%%%:  363-block  1
+    %%%%%:  363-block  2
+    %%%%%:  363-block  3
+    %%%%%:  363-block  4
+    %%%%%:  363-block  5
+    %%%%%:  363-block  6
+    %%%%%:  363-block  7
+    %%%%%:  363-block  8
+    %%%%%:  363-block  9
+    %%%%%:  363-block 10
+    %%%%%:  363-block 11
+    %%%%%:  363-block 12
+    %%%%%:  363-block 13
+    %%%%%:  363-block 14
+    %%%%%:  363-block 15
+    $$$$$:  363-block 16
+    $$$$$:  363-block 17
+    $$$$$:  363-block 18
+    $$$$$:  363-block 19
+    $$$$$:  363-block 20
+    $$$$$:  363-block 21
+    $$$$$:  363-block 22
+    $$$$$:  363-block 23
+    $$$$$:  363-block 24
+    $$$$$:  363-block 25
+    $$$$$:  363-block 26
+    $$$$$:  363-block 27
+    $$$$$:  363-block 28
+    $$$$$:  363-block 29
+    $$$$$:  363-block 30
+    $$$$$:  363-block 31
+    $$$$$:  363-block 32
+    $$$$$:  363-block 33
+    $$$$$:  363-block 34
+    $$$$$:  363-block 35
+    $$$$$:  363-block 36
+    $$$$$:  363-block 37
+    $$$$$:  363-block 38
+    $$$$$:  363-block 39
+    $$$$$:  363-block 40
+    $$$$$:  363-block 41
+        -:  364:                                              " as a dependency of test " << tu.p_type_name << ' ' << tu.full_name() );
+        -:  365:
+    #####:  366:                m_dep_collector->push_back( dep_id );
+        -:  367:            }
+        -:  368:        }
+       23:  369:        return true;
+       23:  369-block  0
+       23:  369-block  1
+        -:  370:    }
+        -:  371:
+        -:  372:private:
+        -:  373:    // Data members
+        -:  374:    test_unit::run_status   m_new_status;
+        -:  375:    test_unit_id_list*      m_dep_collector;
+        -:  376:};
+        -:  377:
+        -:  378:// ************************************************************************** //
+        -:  379:// **************                 parse_filters                ************** //
+        -:  380:// ************************************************************************** //
+        -:  381:
+        -:  382:static void
+        1:  383:add_filtered_test_units( test_unit_id master_tu_id, const_string filter, test_unit_id_list& targ )
+        -:  384:{
+        -:  385:    // Choose between two kinds of filters
+        1:  386:    if( filter[0] == '@' ) {
+        1:  386-block  0
+    #####:  387:        filter.trim_left( 1 );
+    %%%%%:  387-block  0
+    #####:  388:        label_filter lf( targ, filter );
+    %%%%%:  388-block  0
+    $$$$$:  388-block  1
+    $$$$$:  388-block  2
+    #####:  389:        traverse_test_tree( master_tu_id, lf, true );
+    %%%%%:  389-block  0
+        -:  390:    }
+        -:  391:    else {
+        2:  392:        name_filter nf( targ, filter );
+        1:  392-block  0
+        1:  392-block  1
+    $$$$$:  392-block  2
+    $$$$$:  392-block  3
+        1:  393:        traverse_test_tree( master_tu_id, nf, true );
+        1:  393-block  0
+        -:  394:    }
+        1:  395:}
+        1:  395-block  0
+        -:  396:
+        -:  397://____________________________________________________________________________//
+        -:  398:
+        -:  399:static bool
+        1:  400:parse_filters( test_unit_id master_tu_id, test_unit_id_list& tu_to_enable, test_unit_id_list& tu_to_disable )
+        -:  401:{
+        -:  402:    // 10. collect tu to enable and disable based on filters
+        1:  403:    bool had_selector_filter = false;
+        -:  404:
+        1:  405:    std::vector<std::string> const& filters = runtime_config::get<std::vector<std::string> >( runtime_config::btrt_run_filters );
+        1:  405-block  0
+    $$$$$:  405-block  1
+        -:  406:
+        4:  407:    BOOST_TEST_FOREACH( const_string, filter, filters ) {
+        1:  407-block  0
+        1:  407-block  1
+        1:  407-block  2
+        1:  407-block  3
+        1:  407-block  4
+        2:  407-block  5
+        2:  407-block  6
+        2:  407-block  7
+        1:  407-block  8
+        1:  407-block  9
+        2:  407-block 10
+        1:  407-block 11
+        1:  407-block 12
+        1:  407-block 13
+        2:  407-block 14
+        1:  407-block 15
+        1:  407-block 16
+        1:  407-block 17
+        1:  407-block 18
+    $$$$$:  407-block 19
+    $$$$$:  407-block 20
+    $$$$$:  407-block 21
+    $$$$$:  407-block 22
+       1*:  408:        BOOST_TEST_SETUP_ASSERT( !filter.is_empty(), "Invalid filter specification" );
+        1:  408-block  0
+    %%%%%:  408-block  1
+    %%%%%:  408-block  2
+    %%%%%:  408-block  3
+    $$$$$:  408-block  4
+    $$$$$:  408-block  5
+    $$$$$:  408-block  6
+        -:  409:
+        -:  410:        // each --run_test command may also be separated by a ':' (environment variable)
+        1:  411:        utils::string_token_iterator t_filter_it( filter, (utils::dropped_delimeters = ":",
+        1:  411-block  0
+        1:  411-block  1
+    $$$$$:  411-block  2
+    $$$$$:  411-block  3
+        2:  412:                                                           utils::kept_delimeters = utils::dt_none) );
+        1:  412-block  0
+        1:  412-block  1
+        1:  412-block  2
+    $$$$$:  412-block  3
+    $$$$$:  412-block  4
+    $$$$$:  412-block  5
+        -:  413:
+        2:  414:        while( t_filter_it != utils::string_token_iterator() ) {
+        2:  414-block  0
+        2:  414-block  1
+        2:  414-block  2
+        1:  414-block  3
+    $$$$$:  414-block  4
+        1:  415:            const_string filter_token = *t_filter_it;
+        1:  415-block  0
+        -:  416:
+        1:  417:            enum { SELECTOR, ENABLER, DISABLER } filter_type = SELECTOR;
+        -:  418:
+        -:  419:            // 11. Deduce filter type
+       1*:  420:            if( filter_token[0] == '!' || filter_token[0] == '+' ) {
+        1:  420-block  0
+        1:  420-block  1
+    %%%%%:  420-block  2
+        1:  420-block  3
+        1:  420-block  4
+    #####:  421:                filter_type = filter_token[0] == '+' ? ENABLER : DISABLER;
+    %%%%%:  421-block  0
+    %%%%%:  421-block  1
+    %%%%%:  421-block  2
+    #####:  422:                filter_token.trim_left( 1 );
+    %%%%%:  422-block  0
+    #####:  423:                BOOST_TEST_SETUP_ASSERT( !filter_token.is_empty(), "Invalid filter specification" );
+    %%%%%:  423-block  0
+    %%%%%:  423-block  1
+    %%%%%:  423-block  2
+    $$$$$:  423-block  3
+    $$$$$:  423-block  4
+    $$$$$:  423-block  5
+        -:  424:            }
+        -:  425:
+        1:  426:            had_selector_filter |= filter_type == SELECTOR;
+        -:  427:
+        -:  428:            // 12. Add test units to corresponding list
+        1:  429:            switch( filter_type ) {
+        1:  429-block  0
+        1:  430:            case SELECTOR:
+        1:  431:            case ENABLER:  add_filtered_test_units( master_tu_id, filter_token, tu_to_enable ); break;
+        1:  431-block  0
+        1:  431-block  1
+    $$$$$:  431-block  2
+    #####:  432:            case DISABLER: add_filtered_test_units( master_tu_id, filter_token, tu_to_disable ); break;
+    %%%%%:  432-block  0
+    %%%%%:  432-block  1
+    $$$$$:  432-block  2
+        -:  433:            }
+        -:  434:
+        1:  435:            ++t_filter_it;
+        1:  435-block  0
+        -:  436:        }
+        -:  437:    }
+        -:  438:
+        1:  439:    return had_selector_filter;
+        1:  439-block  0
+        1:  439-block  1
+        -:  440:}
+        -:  441:
+        -:  442://____________________________________________________________________________//
+        -:  443:
+        -:  444:#ifdef BOOST_NO_CXX98_RANDOM_SHUFFLE
+        -:  445:
+        -:  446:// a poor man's implementation of random_shuffle
+        -:  447:template< class RandomIt, class RandomFunc >
+        -:  448:void random_shuffle( RandomIt first, RandomIt last, RandomFunc &r )
+        -:  449:{
+        -:  450:    typedef typename std::iterator_traits<RandomIt>::difference_type difference_type;
+        -:  451:    difference_type n = last - first;
+        -:  452:    for (difference_type i = n-1; i > 0; --i) {
+        -:  453:        difference_type j = r(i+1);
+        -:  454:        if (j != i) {
+        -:  455:            using std::swap;
+        -:  456:            swap(first[i], first[j]);
+        -:  457:        }
+        -:  458:    }
+        -:  459:}
+        -:  460:
+        -:  461:#endif
+        -:  462:
+        -:  463:
+        -:  464:// A simple handle for registering the global fixtures to the master test suite
+        -:  465:// without deleting an existing static object (the global fixture itself) when the program
+        -:  466:// terminates (shared_ptr).
+        -:  467:class global_fixture_handle : public test_unit_fixture {
+        -:  468:public:
+    #####:  469:    global_fixture_handle(test_unit_fixture* fixture) : m_global_fixture(fixture) {}
+    %%%%%:  469-block  0
+    #####:  470:    ~global_fixture_handle() {}
+------------------
+_ZN5boost9unit_test9framework4impl21global_fixture_handleD0Ev:
+    #####:  470:    ~global_fixture_handle() {}
+    %%%%%:  470-block  0
+------------------
+_ZN5boost9unit_test9framework4impl21global_fixture_handleD1Ev:
+    #####:  470:    ~global_fixture_handle() {}
+    %%%%%:  470-block  0
+------------------
+        -:  471:
+    #####:  472:    virtual void    setup() {
+    #####:  473:        m_global_fixture->setup();
+    %%%%%:  473-block  0
+    #####:  474:    }
+    #####:  475:    virtual void    teardown() {
+    #####:  476:        m_global_fixture->teardown();
+    %%%%%:  476-block  0
+    #####:  477:    }
+        -:  478:
+        -:  479:private:
+        -:  480:    test_unit_fixture* m_global_fixture;
+        -:  481:};
+        -:  482:
+        -:  483:
+        -:  484:} // namespace impl
+        -:  485:
+        -:  486:// ************************************************************************** //
+        -:  487:// **************               framework::state               ************** //
+        -:  488:// ************************************************************************** //
+        -:  489:
+        -:  490:unsigned long int const TIMEOUT_EXCEEDED = static_cast<unsigned long int>( -1 );
+        -:  491:
+        -:  492:class state {
+        -:  493:public:
+        1:  494:    state()
+        1:  495:    : m_master_test_suite( 0 )
+        -:  496:    , m_curr_test_unit( INV_TEST_UNIT_ID )
+        -:  497:    , m_next_test_case_id( MIN_TEST_CASE_ID )
+        -:  498:    , m_next_test_suite_id( MIN_TEST_SUITE_ID )
+        -:  499:    , m_test_in_progress( false )
+        -:  500:    , m_context_idx( 0 )
+        -:  501:    , m_log_sinks( )
+        1:  502:    , m_report_sink( std::cerr )
+        1:  502-block  0
+        1:  502-block  1
+    $$$$$:  502-block  2
+    $$$$$:  502-block  3
+    $$$$$:  502-block  4
+    $$$$$:  502-block  5
+    $$$$$:  502-block  6
+        -:  503:    {
+        1:  504:    }
+        -:  505:
+    #####:  506:    ~state() { clear(); }
+    %%%%%:  506-block  0
+        -:  507:
+    #####:  508:    void            clear()
+        -:  509:    {
+    #####:  510:        while( !m_test_units.empty() ) {
+    %%%%%:  510-block  0
+    %%%%%:  510-block  1
+    #####:  511:            test_unit_store::value_type const& tu     = *m_test_units.begin();
+    %%%%%:  511-block  0
+    #####:  512:            test_unit const*                   tu_ptr = tu.second;
+        -:  513:
+        -:  514:            // the delete will erase this element from map
+    #####:  515:            if( ut_detail::test_id_2_unit_type( tu.second->p_id ) == TUT_SUITE )
+    #####:  516:                delete static_cast<test_suite const*>(tu_ptr);
+    %%%%%:  516-block  0
+    %%%%%:  516-block  1
+    %%%%%:  516-block  2
+    %%%%%:  516-block  3
+    %%%%%:  516-block  4
+    %%%%%:  516-block  5
+    %%%%%:  516-block  6
+    %%%%%:  516-block  7
+    %%%%%:  516-block  8
+    %%%%%:  516-block  9
+    %%%%%:  516-block 10
+    %%%%%:  516-block 11
+        -:  517:            else
+    #####:  518:                delete static_cast<test_case const*>(tu_ptr);
+    %%%%%:  518-block  0
+    %%%%%:  518-block  1
+        -:  519:        }
+    #####:  520:    }
+        -:  521:
+       12:  522:    void            set_tu_id( test_unit& tu, test_unit_id id ) { tu.p_id.value = id; }
+        -:  523:
+        -:  524:    //////////////////////////////////////////////////////////////////
+        -:  525:
+        -:  526:    // Validates the dependency graph and deduces the sibling dependency rank for each child
+       12:  527:    void       deduce_siblings_order( test_unit_id tu_id, test_unit_id master_tu_id, impl::order_info_per_tu& tuoi )
+        -:  528:    {
+       12:  529:        test_unit& tu = framework::get( tu_id, TUT_ANY );
+       12:  529-block  0
+        -:  530:
+        -:  531:        // collect all sibling dependancy from tu own list
+      12*:  532:        BOOST_TEST_FOREACH( test_unit_id, dep_id, tu.p_dependencies.get() )
+       12:  532-block  0
+       12:  532-block  1
+       12:  532-block  2
+       12:  532-block  3
+       12:  532-block  4
+       12:  532-block  5
+       12:  532-block  6
+    %%%%%:  532-block  7
+       12:  532-block  8
+       12:  532-block  9
+    %%%%%:  532-block 10
+    %%%%%:  532-block 11
+    %%%%%:  532-block 12
+    %%%%%:  532-block 13
+    %%%%%:  532-block 14
+    %%%%%:  532-block 15
+    %%%%%:  532-block 16
+    %%%%%:  532-block 17
+    $$$$$:  532-block 18
+    $$$$$:  532-block 19
+    $$$$$:  532-block 20
+    $$$$$:  532-block 21
+    $$$$$:  532-block 22
+    #####:  533:            collect_dependant_siblings( tu_id, dep_id, master_tu_id, tuoi );
+    %%%%%:  533-block  0
+        -:  534:
+       12:  535:        if( tu.p_type != TUT_SUITE )
+       12:  535-block  0
+       10:  536:            return;
+       10:  536-block  0
+        -:  537:
+        2:  538:        test_suite& ts = static_cast<test_suite&>(tu);
+        -:  539:
+        -:  540:        // recursive call to children first
+       24:  541:        BOOST_TEST_FOREACH( test_unit_id, chld_id, ts.m_children )
+        2:  541-block  0
+        2:  541-block  1
+        2:  541-block  2
+        2:  541-block  3
+        2:  541-block  4
+       13:  541-block  5
+       13:  541-block  6
+       13:  541-block  7
+       11:  541-block  8
+        2:  541-block  9
+       13:  541-block 10
+       11:  541-block 11
+       11:  541-block 12
+       11:  541-block 13
+       22:  541-block 14
+       11:  541-block 15
+       11:  541-block 16
+       11:  541-block 17
+    $$$$$:  541-block 18
+    $$$$$:  541-block 19
+    $$$$$:  541-block 20
+    $$$$$:  541-block 21
+    $$$$$:  541-block 22
+       11:  542:            deduce_siblings_order( chld_id, master_tu_id, tuoi );
+       11:  542-block  0
+        -:  543:
+        2:  544:        ts.m_ranked_children.clear();
+        2:  544-block  0
+       35:  545:        BOOST_TEST_FOREACH( test_unit_id, chld_id, ts.m_children ) {
+        2:  545-block  0
+        2:  545-block  1
+        2:  545-block  2
+        2:  545-block  3
+       13:  545-block  4
+       13:  545-block  5
+       13:  545-block  6
+       11:  545-block  7
+        2:  545-block  8
+       13:  545-block  9
+       11:  545-block 10
+       11:  545-block 11
+       11:  545-block 12
+       22:  545-block 13
+       11:  545-block 14
+       11:  545-block 15
+       11:  545-block 16
+    $$$$$:  545-block 17
+    $$$$$:  545-block 18
+    $$$$$:  545-block 19
+    $$$$$:  545-block 20
+       11:  546:            counter_t rank = assign_sibling_rank( chld_id, tuoi );
+       11:  546-block  0
+       11:  547:            ts.m_ranked_children.insert( std::make_pair( rank, chld_id ) );
+       11:  547-block  0
+       11:  547-block  1
+       11:  547-block  2
+    $$$$$:  547-block  3
+        -:  548:        }
+        -:  549:    }
+        -:  550:
+        -:  551:    //////////////////////////////////////////////////////////////////
+        -:  552:
+        -:  553:    // Finalize default run status:
+        -:  554:    //  1) inherit run status from parent where applicable
+        -:  555:    //  2) if any of test units in test suite enabled enable it as well
+       12:  556:    bool            finalize_default_run_status( test_unit_id tu_id, test_unit::run_status parent_status )
+        -:  557:    {
+       12:  558:        test_unit& tu = framework::get( tu_id, TUT_ANY );
+       12:  558-block  0
+        -:  559:
+       12:  560:        if( tu.p_default_status == test_suite::RS_INHERIT )
+       12:  560-block  0
+    $$$$$:  560-block  1
+       11:  561:            tu.p_default_status.value = parent_status;
+       11:  561-block  0
+        -:  562:
+        -:  563:        // go through list of children
+       12:  564:        if( tu.p_type == TUT_SUITE ) {
+       12:  564-block  0
+        2:  565:            bool has_enabled_child = false;
+       24:  566:            BOOST_TEST_FOREACH( test_unit_id, chld_id, static_cast<test_suite const&>(tu).m_children )
+        2:  566-block  0
+        2:  566-block  1
+        2:  566-block  2
+        2:  566-block  3
+        2:  566-block  4
+       13:  566-block  5
+       13:  566-block  6
+       13:  566-block  7
+       11:  566-block  8
+        2:  566-block  9
+       13:  566-block 10
+       11:  566-block 11
+       11:  566-block 12
+       11:  566-block 13
+       22:  566-block 14
+       11:  566-block 15
+       11:  566-block 16
+       11:  566-block 17
+    $$$$$:  566-block 18
+    $$$$$:  566-block 19
+    $$$$$:  566-block 20
+    $$$$$:  566-block 21
+    $$$$$:  566-block 22
+       11:  567:                has_enabled_child |= finalize_default_run_status( chld_id, tu.p_default_status );
+       11:  567-block  0
+        -:  568:
+       2*:  569:            tu.p_default_status.value = has_enabled_child ? test_suite::RS_ENABLED : test_suite::RS_DISABLED;
+        2:  569-block  0
+        2:  569-block  1
+    %%%%%:  569-block  2
+        2:  569-block  3
+        -:  570:        }
+        -:  571:
+       12:  572:        return tu.p_default_status == test_suite::RS_ENABLED;
+       12:  572-block  0
+       12:  572-block  1
+       12:  572-block  2
+       12:  572-block  3
+        -:  573:    }
+        -:  574:
+        -:  575:    //////////////////////////////////////////////////////////////////
+        -:  576:
+       12:  577:    bool            finalize_run_status( test_unit_id tu_id )
+        -:  578:    {
+       12:  579:        test_unit& tu = framework::get( tu_id, TUT_ANY );
+       12:  579-block  0
+        -:  580:
+        -:  581:        // go through list of children
+       12:  582:        if( tu.p_type == TUT_SUITE ) {
+        2:  583:            bool has_enabled_child = false;
+       24:  584:            BOOST_TEST_FOREACH( test_unit_id, chld_id, static_cast<test_suite const&>(tu).m_children)
+        2:  584-block  0
+        2:  584-block  1
+        2:  584-block  2
+        2:  584-block  3
+        2:  584-block  4
+       13:  584-block  5
+       13:  584-block  6
+       13:  584-block  7
+       11:  584-block  8
+        2:  584-block  9
+       13:  584-block 10
+       11:  584-block 11
+       11:  584-block 12
+       11:  584-block 13
+       22:  584-block 14
+       11:  584-block 15
+       11:  584-block 16
+       11:  584-block 17
+    $$$$$:  584-block 18
+    $$$$$:  584-block 19
+    $$$$$:  584-block 20
+    $$$$$:  584-block 21
+       11:  585:                has_enabled_child |= finalize_run_status( chld_id );
+       11:  585-block  0
+        -:  586:
+       2*:  587:            tu.p_run_status.value = has_enabled_child ? test_suite::RS_ENABLED : test_suite::RS_DISABLED;
+        2:  587-block  0
+        2:  587-block  1
+    %%%%%:  587-block  2
+        2:  587-block  3
+        -:  588:        }
+        -:  589:
+       12:  590:        return tu.is_enabled();
+       12:  590-block  0
+       12:  590-block  1
+        -:  591:    }
+        -:  592:
+        -:  593:    //////////////////////////////////////////////////////////////////
+        -:  594:
+        1:  595:    void            deduce_run_status( test_unit_id master_tu_id )
+        -:  596:    {
+        -:  597:        using namespace framework::impl;
+        2:  598:        test_unit_id_list tu_to_enable;
+        1:  598-block  0
+    $$$$$:  598-block  1
+        2:  599:        test_unit_id_list tu_to_disable;
+    $$$$$:  599-block  0
+        -:  600:
+        -:  601:        // 10. If there are any filters supplied, figure out lists of test units to enable/disable
+       2*:  602:        bool had_selector_filter = !runtime_config::get<std::vector<std::string> >( runtime_config::btrt_run_filters ).empty() &&
+        1:  602-block  0
+        1:  602-block  1
+    %%%%%:  602-block  2
+    $$$$$:  602-block  3
+        1:  603:                                   parse_filters( master_tu_id, tu_to_enable, tu_to_disable );
+        1:  603-block  0
+        1:  603-block  1
+        -:  604:
+        -:  605:        // 20. Set the stage: either use default run status or disable all test units
+       2*:  606:        set_run_status initial_setter( had_selector_filter ? test_unit::RS_DISABLED : test_unit::RS_INVALID );
+        1:  606-block  0
+        1:  606-block  1
+    %%%%%:  606-block  2
+        1:  606-block  3
+        1:  606-block  4
+    $$$$$:  606-block  5
+        1:  607:        traverse_test_tree( master_tu_id, initial_setter, true );
+        -:  608:
+        -:  609:        // 30. Apply all selectors and enablers.
+        2:  610:        while( !tu_to_enable.empty() ) {
+        2:  610-block  0
+        1:  610-block  1
+        1:  611:            test_unit& tu = framework::get( tu_to_enable.back(), TUT_ANY );
+        1:  611-block  0
+        -:  612:
+        1:  613:            tu_to_enable.pop_back();
+        1:  613-block  0
+        -:  614:
+        -:  615:            // 35. Ignore test units which are already enabled
+       1*:  616:            if( tu.is_enabled() )
+        1:  616-block  0
+    #####:  617:                continue;
+    %%%%%:  617-block  0
+        -:  618:
+        -:  619:            // set new status and add all dependencies into tu_to_enable
+        2:  620:            set_run_status enabler( test_unit::RS_ENABLED, &tu_to_enable );
+        1:  620-block  0
+        1:  620-block  1
+    $$$$$:  620-block  2
+        1:  621:            traverse_test_tree( tu.p_id, enabler, true );
+        -:  622:
+        -:  623:            // Add the dependencies of the parent suites, see trac #13149
+        1:  624:            test_unit_id parent_id = tu.p_parent_id;
+        1:  624-block  0
+    #####:  625:            while(   parent_id != INV_TEST_UNIT_ID
+        1:  626:                  && parent_id != master_tu_id )
+        1:  626-block  0
+        1:  626-block  1
+        -:  627:            {
+        -:  628:                // we do not use the traverse_test_tree as otherwise it would enable the sibblings and subtree
+        -:  629:                // of the test case we want to enable (we need to enable the parent suites and their dependencies only)
+        -:  630:                // the parent_id needs to be enabled in order to be properly parsed by finalize_run_status, the visit
+        -:  631:                // does the job
+    #####:  632:                test_unit& tu_parent = framework::get( parent_id, TUT_ANY );
+    %%%%%:  632-block  0
+    #####:  633:                enabler.visit( tu_parent );
+    %%%%%:  633-block  0
+    #####:  634:                parent_id = tu_parent.p_parent_id;
+    %%%%%:  634-block  0
+        -:  635:            }
+        -:  636:        }
+        -:  637:
+        -:  638:        // 40. Apply all disablers
+       1*:  639:        while( !tu_to_disable.empty() ) {
+        1:  639-block  0
+    %%%%%:  639-block  1
+    #####:  640:            test_unit const& tu = framework::get( tu_to_disable.back(), TUT_ANY );
+    %%%%%:  640-block  0
+        -:  641:
+    #####:  642:            tu_to_disable.pop_back();
+    %%%%%:  642-block  0
+        -:  643:
+        -:  644:            // 35. Ignore test units which already disabled
+    #####:  645:            if( !tu.is_enabled() )
+    %%%%%:  645-block  0
+    #####:  646:                continue;
+    %%%%%:  646-block  0
+        -:  647:
+    #####:  648:            set_run_status disabler( test_unit::RS_DISABLED );
+    %%%%%:  648-block  0
+    %%%%%:  648-block  1
+    $$$$$:  648-block  2
+    #####:  649:            traverse_test_tree( tu.p_id, disabler, true );
+        -:  650:        }
+        -:  651:
+        -:  652:        // 50. Make sure parents of enabled test units are also enabled
+        1:  653:        finalize_run_status( master_tu_id );
+        1:  653-block  0
+        1:  654:    }
+        -:  655:
+        -:  656:    //////////////////////////////////////////////////////////////////
+        -:  657:
+        -:  658:    typedef unit_test_monitor_t::error_level execution_result;
+        -:  659:
+        -:  660:    // Random generator using the std::rand function (seeded prior to the call)
+        -:  661:    struct random_generator_helper {
+    #####:  662:      size_t operator()(size_t i) const {
+    #####:  663:        return std::rand() % i;
+    %%%%%:  663-block  0
+        -:  664:      }
+        -:  665:    };
+        -:  666:
+        -:  667:    // Executes the test tree with the root at specified test unit
+       12:  668:    execution_result execute_test_tree( test_unit_id tu_id,
+        -:  669:                                        unsigned long int timeout_microseconds = 0,
+        -:  670:                                        random_generator_helper const * const p_random_generator = 0)
+        -:  671:    {
+       12:  672:        test_unit const& tu = framework::get( tu_id, TUT_ANY );
+       12:  672-block  0
+        -:  673:
+       12:  674:        execution_result result = unit_test_monitor_t::test_ok;
+        -:  675:
+       12:  676:        if( !tu.is_enabled() )
+       12:  676-block  0
+       12:  676-block  1
+    #####:  677:            return result;
+    %%%%%:  677-block  0
+        -:  678:
+        -:  679:        // 10. Check preconditions, including zero time left for execution and
+        -:  680:        // successful execution of all dependencies
+       12:  681:        if( timeout_microseconds == TIMEOUT_EXCEEDED ) {
+       12:  681-block  0
+        -:  682:            // notify all observers about skipped test unit
+    #####:  683:            BOOST_TEST_FOREACH( test_observer*, to, m_observers )
+    %%%%%:  683-block  0
+    %%%%%:  683-block  1
+    %%%%%:  683-block  2
+    %%%%%:  683-block  3
+    %%%%%:  683-block  4
+    %%%%%:  683-block  5
+    %%%%%:  683-block  6
+    %%%%%:  683-block  7
+    %%%%%:  683-block  8
+    %%%%%:  683-block  9
+    %%%%%:  683-block 10
+    %%%%%:  683-block 11
+    %%%%%:  683-block 12
+    %%%%%:  683-block 13
+    %%%%%:  683-block 14
+    %%%%%:  683-block 15
+    %%%%%:  683-block 16
+    %%%%%:  683-block 17
+    $$$$$:  683-block 18
+    $$$$$:  683-block 19
+    $$$$$:  683-block 20
+    $$$$$:  683-block 21
+    $$$$$:  683-block 22
+    #####:  684:                to->test_unit_skipped( tu, "timeout for the test unit is exceeded" );
+    %%%%%:  684-block  0
+    %%%%%:  684-block  1
+    %%%%%:  684-block  2
+    $$$$$:  684-block  3
+        -:  685:
+    #####:  686:            return unit_test_monitor_t::os_timeout;
+    %%%%%:  686-block  0
+        -:  687:        }
+      12*:  688:        else if( timeout_microseconds == 0 || (tu.p_timeout > 0 && timeout_microseconds > (tu.p_timeout * 1000000) ) ) // deduce timeout for this test unit
+       12:  688-block  0
+    %%%%%:  688-block  1
+    %%%%%:  688-block  2
+       12:  688-block  3
+    %%%%%:  688-block  4
+       12:  688-block  5
+       12:  689:            timeout_microseconds = tu.p_timeout * 1000000;
+       12:  689-block  0
+        -:  690:
+        -:  691:
+       24:  692:        test_tools::assertion_result const precondition_res = tu.check_preconditions();
+       12:  692-block  0
+       12:  692-block  1
+    $$$$$:  692-block  2
+       12:  693:        if( !precondition_res ) {
+       12:  693-block  0
+       12:  693-block  1
+        -:  694:            // notify all observers about skipped test unit
+    #####:  695:            BOOST_TEST_FOREACH( test_observer*, to, m_observers )
+    %%%%%:  695-block  0
+    %%%%%:  695-block  1
+    %%%%%:  695-block  2
+    %%%%%:  695-block  3
+    %%%%%:  695-block  4
+    %%%%%:  695-block  5
+    %%%%%:  695-block  6
+    %%%%%:  695-block  7
+    %%%%%:  695-block  8
+    %%%%%:  695-block  9
+    %%%%%:  695-block 10
+    %%%%%:  695-block 11
+    %%%%%:  695-block 12
+    %%%%%:  695-block 13
+    %%%%%:  695-block 14
+    %%%%%:  695-block 15
+    %%%%%:  695-block 16
+    %%%%%:  695-block 17
+    $$$$$:  695-block 18
+    $$$$$:  695-block 19
+    $$$$$:  695-block 20
+    $$$$$:  695-block 21
+    $$$$$:  695-block 22
+    #####:  696:                to->test_unit_skipped( tu, precondition_res.message() );
+    %%%%%:  696-block  0
+    %%%%%:  696-block  1
+    %%%%%:  696-block  2
+    $$$$$:  696-block  3
+        -:  697:
+        -:  698:            // It is not an error to skip the test if any of the parent tests
+        -:  699:            // have failed. This one should be reported as skipped as if it was
+        -:  700:            // disabled
+    #####:  701:            return unit_test_monitor_t::test_ok;
+    %%%%%:  701-block  0
+        -:  702:        }
+        -:  703:
+        -:  704:        // 20. Notify all observers about the start of the test unit
+       84:  705:        BOOST_TEST_FOREACH( test_observer*, to, m_observers )
+       12:  705-block  0
+       12:  705-block  1
+       12:  705-block  2
+       12:  705-block  3
+       12:  705-block  4
+       48:  705-block  5
+       48:  705-block  6
+       48:  705-block  7
+       36:  705-block  8
+       12:  705-block  9
+       48:  705-block 10
+       36:  705-block 11
+       36:  705-block 12
+       36:  705-block 13
+       72:  705-block 14
+       36:  705-block 15
+       36:  705-block 16
+       36:  705-block 17
+       36:  705-block 18
+    $$$$$:  705-block 19
+    $$$$$:  705-block 20
+    $$$$$:  705-block 21
+    $$$$$:  705-block 22
+    $$$$$:  705-block 23
+       36:  706:            to->test_unit_start( tu );
+       36:  706-block  0
+        -:  707:
+        -:  708:        // 30. Execute setup fixtures if any; any failure here leads to test unit abortion
+      12*:  709:        BOOST_TEST_FOREACH( test_unit_fixture_ptr, F, tu.p_fixtures.get() ) {
+       12:  709-block  0
+       12:  709-block  1
+       12:  709-block  2
+       12:  709-block  3
+       12:  709-block  4
+       12:  709-block  5
+       12:  709-block  6
+       12:  709-block  7
+    %%%%%:  709-block  8
+       12:  709-block  9
+       12:  709-block 10
+    %%%%%:  709-block 11
+    %%%%%:  709-block 12
+    %%%%%:  709-block 13
+    %%%%%:  709-block 14
+    %%%%%:  709-block 15
+    %%%%%:  709-block 16
+    %%%%%:  709-block 17
+    %%%%%:  709-block 18
+    %%%%%:  709-block 19
+    %%%%%:  709-block 20
+    $$$$$:  709-block 21
+    $$$$$:  709-block 22
+    $$$$$:  709-block 23
+    $$$$$:  709-block 24
+    $$$$$:  709-block 25
+    $$$$$:  709-block 26
+    #####:  710:            ut_detail::test_unit_id_restore restore_current_test_unit(m_curr_test_unit, tu.p_id);
+    %%%%%:  710-block  0
+    $$$$$:  710-block  1
+    #####:  711:            result = unit_test_monitor.execute_and_translate( boost::bind( &test_unit_fixture::setup, F ) );
+    %%%%%:  711-block  0
+    %%%%%:  711-block  1
+    %%%%%:  711-block  2
+    $$$$$:  711-block  3
+    $$$$$:  711-block  4
+    $$$$$:  711-block  5
+    $$$$$:  711-block  6
+    $$$$$:  711-block  7
+    $$$$$:  711-block  8
+    #####:  712:            if( result != unit_test_monitor_t::test_ok )
+    #####:  713:                break;
+    %%%%%:  713-block  0
+    #####:  714:            test_results const& test_rslt = unit_test::results_collector.results( m_curr_test_unit );
+    %%%%%:  714-block  0
+    #####:  715:            if( test_rslt.aborted() ) {
+    %%%%%:  715-block  0
+    %%%%%:  715-block  1
+    #####:  716:                result = unit_test_monitor_t::test_setup_failure;
+    #####:  717:                break;
+    %%%%%:  717-block  0
+        -:  718:            }
+        -:  719:        }
+        -:  720:
+        -:  721:        // This is the time we are going to spend executing the test unit (in microseconds
+        -:  722:        // as expected by test_observer::test_unit_finish)
+       12:  723:        unsigned long elapsed_microseconds = 0;
+        -:  724:
+       12:  725:        if( result == unit_test_monitor_t::test_ok ) {
+       12:  725-block  0
+        -:  726:            // 40. We are going to time the execution
+       12:  727:            boost::unit_test::timer::timer tu_timer;
+       12:  727-block  0
+        -:  728:
+        -:  729:            // we pass the random generator
+       12:  730:            const random_generator_helper& rand_gen = p_random_generator ? *p_random_generator : random_generator_helper();
+        -:  731:
+       12:  732:            if( tu.p_type == TUT_SUITE ) {
+       12:  732-block  0
+        2:  733:                test_suite const& ts = static_cast<test_suite const&>( tu );
+        -:  734:
+        2:  735:                if( runtime_config::get<unsigned>( runtime_config::btrt_random_seed ) == 0 ) {
+        2:  735-block  0
+        2:  735-block  1
+    $$$$$:  735-block  2
+        -:  736:                    typedef std::pair<counter_t,test_unit_id> value_type;
+        -:  737:
+       35:  738:                    BOOST_TEST_FOREACH( value_type, chld, ts.m_ranked_children ) {
+        2:  738-block  0
+        2:  738-block  1
+        2:  738-block  2
+        2:  738-block  3
+        2:  738-block  4
+       13:  738-block  5
+       13:  738-block  6
+       13:  738-block  7
+       11:  738-block  8
+        2:  738-block  9
+       13:  738-block 10
+       11:  738-block 11
+       11:  738-block 12
+       11:  738-block 13
+       22:  738-block 14
+       11:  738-block 15
+       11:  738-block 16
+       11:  738-block 17
+       11:  738-block 18
+    $$$$$:  738-block 19
+    $$$$$:  738-block 20
+    $$$$$:  738-block 21
+    $$$$$:  738-block 22
+    $$$$$:  738-block 23
+        -:  739:                        // tu_timer.elapsed() returns nanosec, timeout and child_timeout in microsec
+       11:  740:                        unsigned long int chld_timeout = child_timeout(
+        -:  741:                            timeout_microseconds,
+       11:  742:                            static_cast<unsigned long int>( microsecond_wall_time(tu_timer.elapsed()) ));
+       11:  742-block  0
+       11:  742-block  1
+        -:  743:
+       11:  744:                        result = (std::min)( result, execute_test_tree( chld.second, chld_timeout, &rand_gen ) );
+       11:  744-block  0
+        -:  745:
+       11:  746:                        if( unit_test_monitor.is_critical_error( result ) )
+    #####:  747:                            break;
+    %%%%%:  747-block  0
+        -:  748:
+        -:  749:                        // we check for the time elapsed. If this is too high, we fail the current suite and return from here
+       11:  750:                        elapsed_microseconds = static_cast<unsigned long int>( microsecond_wall_time(tu_timer.elapsed()) );
+       11:  750-block  0
+       11:  750-block  1
+        -:  751:
+      11*:  752:                        if( (timeout_microseconds > 0) && (elapsed_microseconds > timeout_microseconds) && (timeout_microseconds != TIMEOUT_EXCEEDED ) ) {
+    %%%%%:  752-block  0
+    %%%%%:  752-block  1
+    #####:  753:                            BOOST_TEST_FOREACH( test_observer*, to, m_observers ) {
+    %%%%%:  753-block  0
+    %%%%%:  753-block  1
+    %%%%%:  753-block  2
+    %%%%%:  753-block  3
+    %%%%%:  753-block  4
+    %%%%%:  753-block  5
+    %%%%%:  753-block  6
+    %%%%%:  753-block  7
+    %%%%%:  753-block  8
+    %%%%%:  753-block  9
+    %%%%%:  753-block 10
+    %%%%%:  753-block 11
+    %%%%%:  753-block 12
+    %%%%%:  753-block 13
+    %%%%%:  753-block 14
+    %%%%%:  753-block 15
+    %%%%%:  753-block 16
+    %%%%%:  753-block 17
+    %%%%%:  753-block 18
+    $$$$$:  753-block 19
+    $$$$$:  753-block 20
+    $$$$$:  753-block 21
+    $$$$$:  753-block 22
+    $$$$$:  753-block 23
+    #####:  754:                                to->test_unit_timed_out(tu);
+    %%%%%:  754-block  0
+        -:  755:                            }
+    #####:  756:                            result = (std::min)( result, unit_test_monitor_t::os_timeout );
+    %%%%%:  756-block  0
+    #####:  757:                            timeout_microseconds = TIMEOUT_EXCEEDED;
+        -:  758:                            //break;
+        -:  759:                            // we continue to explore the children, such that we can at least update their
+        -:  760:                            // status to skipped
+        -:  761:                        }
+        -:  762:                    }
+        -:  763:                }
+        -:  764:                else {
+        -:  765:                    // Go through ranges of children with the same dependency rank and shuffle them
+        -:  766:                    // independently. Execute each subtree in this order
+    #####:  767:                    test_unit_id_list children_with_the_same_rank;
+    %%%%%:  767-block  0
+    %%%%%:  767-block  1
+    $$$$$:  767-block  2
+        -:  768:
+        -:  769:                    typedef test_suite::children_per_rank::const_iterator it_type;
+    #####:  770:                    it_type it = ts.m_ranked_children.begin();
+    #####:  771:                    while( it != ts.m_ranked_children.end() ) {
+    %%%%%:  771-block  0
+    %%%%%:  771-block  1
+    #####:  772:                        children_with_the_same_rank.clear();
+    %%%%%:  772-block  0
+        -:  773:
+    #####:  774:                        std::pair<it_type,it_type> range = ts.m_ranked_children.equal_range( it->first );
+    #####:  775:                        it = range.first;
+    %%%%%:  775-block  0
+    #####:  776:                        while( it != range.second ) {
+    %%%%%:  776-block  0
+    #####:  777:                            children_with_the_same_rank.push_back( it->second );
+    %%%%%:  777-block  0
+    #####:  778:                            it++;
+    %%%%%:  778-block  0
+        -:  779:                        }
+        -:  780:
+        -:  781:#ifdef BOOST_NO_CXX98_RANDOM_SHUFFLE
+        -:  782:                        impl::random_shuffle( children_with_the_same_rank.begin(), children_with_the_same_rank.end(), rand_gen );
+        -:  783:#else
+    #####:  784:                        std::random_shuffle( children_with_the_same_rank.begin(), children_with_the_same_rank.end(), rand_gen );
+    %%%%%:  784-block  0
+        -:  785:#endif
+        -:  786:
+    #####:  787:                        BOOST_TEST_FOREACH( test_unit_id, chld, children_with_the_same_rank ) {
+    %%%%%:  787-block  0
+    %%%%%:  787-block  1
+    %%%%%:  787-block  2
+    %%%%%:  787-block  3
+    %%%%%:  787-block  4
+    %%%%%:  787-block  5
+    %%%%%:  787-block  6
+    %%%%%:  787-block  7
+    %%%%%:  787-block  8
+    %%%%%:  787-block  9
+    %%%%%:  787-block 10
+    %%%%%:  787-block 11
+    %%%%%:  787-block 12
+    %%%%%:  787-block 13
+    %%%%%:  787-block 14
+    %%%%%:  787-block 15
+    %%%%%:  787-block 16
+    %%%%%:  787-block 17
+    %%%%%:  787-block 18
+    $$$$$:  787-block 19
+    $$$$$:  787-block 20
+    $$$$$:  787-block 21
+    $$$$$:  787-block 22
+    $$$$$:  787-block 23
+    #####:  788:                            unsigned long int chld_timeout = child_timeout(
+        -:  789:                                timeout_microseconds,
+    #####:  790:                                static_cast<unsigned long int>(microsecond_wall_time(tu_timer.elapsed())) );
+    %%%%%:  790-block  0
+    %%%%%:  790-block  1
+        -:  791:
+    #####:  792:                            result = (std::min)( result, execute_test_tree( chld, chld_timeout, &rand_gen ) );
+    %%%%%:  792-block  0
+        -:  793:
+    #####:  794:                            if( unit_test_monitor.is_critical_error( result ) )
+    #####:  795:                                break;
+    %%%%%:  795-block  0
+        -:  796:
+        -:  797:                            // we check for the time elapsed. If this is too high, we fail the current suite and return from here
+    #####:  798:                            elapsed_microseconds = static_cast<unsigned long int>( microsecond_wall_time(tu_timer.elapsed()) );
+    %%%%%:  798-block  0
+    %%%%%:  798-block  1
+    #####:  799:                            if( (timeout_microseconds > 0) && (elapsed_microseconds > timeout_microseconds) && (timeout_microseconds != TIMEOUT_EXCEEDED ) ) {
+    %%%%%:  799-block  0
+    %%%%%:  799-block  1
+    #####:  800:                                BOOST_TEST_FOREACH( test_observer*, to, m_observers ) {
+    %%%%%:  800-block  0
+    %%%%%:  800-block  1
+    %%%%%:  800-block  2
+    %%%%%:  800-block  3
+    %%%%%:  800-block  4
+    %%%%%:  800-block  5
+    %%%%%:  800-block  6
+    %%%%%:  800-block  7
+    %%%%%:  800-block  8
+    %%%%%:  800-block  9
+    %%%%%:  800-block 10
+    %%%%%:  800-block 11
+    %%%%%:  800-block 12
+    %%%%%:  800-block 13
+    %%%%%:  800-block 14
+    %%%%%:  800-block 15
+    %%%%%:  800-block 16
+    %%%%%:  800-block 17
+    %%%%%:  800-block 18
+    $$$$$:  800-block 19
+    $$$$$:  800-block 20
+    $$$$$:  800-block 21
+    $$$$$:  800-block 22
+    $$$$$:  800-block 23
+    #####:  801:                                    to->test_unit_timed_out(tu);
+    %%%%%:  801-block  0
+        -:  802:                                }
+    #####:  803:                                result = (std::min)( result, unit_test_monitor_t::os_timeout );
+    %%%%%:  803-block  0
+    #####:  804:                                timeout_microseconds = TIMEOUT_EXCEEDED;
+        -:  805:                                //break;
+        -:  806:                                // we continue to explore the children, such that we can at least update their
+        -:  807:                                // status to skipped
+        -:  808:                            }
+        -:  809:                        }
+        -:  810:                    }
+        -:  811:                }
+        -:  812:            }
+        -:  813:            else { // TUT_CASE
+       10:  814:                test_case const& tc = static_cast<test_case const&>( tu );
+        -:  815:
+        -:  816:                // setup contexts
+       10:  817:                m_context_idx = 0;
+        -:  818:
+        -:  819:                // setup current test case
+       20:  820:                ut_detail::test_unit_id_restore restore_current_test_unit(m_curr_test_unit, tc.p_id);
+       10:  820-block  0
+    $$$$$:  820-block  1
+        -:  821:
+        -:  822:                // execute the test case body, transforms the time out to seconds
+       10:  823:                result = unit_test_monitor.execute_and_translate( tc.p_test_func, timeout_microseconds );
+       10:  824:                elapsed_microseconds = static_cast<unsigned long int>( microsecond_wall_time(tu_timer.elapsed()) );
+       10:  824-block  0
+       10:  824-block  1
+        -:  825:
+        -:  826:                // cleanup leftover context
+       10:  827:                m_context.clear();
+        -:  828:
+        -:  829:                // restore state (scope exit) and abort if necessary
+        -:  830:            }
+        -:  831:        }
+        -:  832:
+        -:  833:        // if run error is critical skip teardown, who knows what the state of the program at this point
+       12:  834:        if( !unit_test_monitor.is_critical_error( result ) ) {
+       12:  834-block  0
+        -:  835:            // execute teardown fixtures if any in reverse order
+      12*:  836:            BOOST_TEST_REVERSE_FOREACH( test_unit_fixture_ptr, F, tu.p_fixtures.get() ) {
+       12:  836-block  0
+       12:  836-block  1
+       12:  836-block  2
+       12:  836-block  3
+       12:  836-block  4
+       12:  836-block  5
+       12:  836-block  6
+       12:  836-block  7
+    %%%%%:  836-block  8
+       12:  836-block  9
+       12:  836-block 10
+    %%%%%:  836-block 11
+    %%%%%:  836-block 12
+    %%%%%:  836-block 13
+    %%%%%:  836-block 14
+    %%%%%:  836-block 15
+    %%%%%:  836-block 16
+    %%%%%:  836-block 17
+    %%%%%:  836-block 18
+    %%%%%:  836-block 19
+    $$$$$:  836-block 20
+    $$$$$:  836-block 21
+    $$$$$:  836-block 22
+    $$$$$:  836-block 23
+    $$$$$:  836-block 24
+    $$$$$:  836-block 25
+    #####:  837:                ut_detail::test_unit_id_restore restore_current_test_unit(m_curr_test_unit, tu.p_id);
+    %%%%%:  837-block  0
+    $$$$$:  837-block  1
+    #####:  838:                result = (std::min)( result, unit_test_monitor.execute_and_translate( boost::bind( &test_unit_fixture::teardown, F ), 0 ) );
+    %%%%%:  838-block  0
+    %%%%%:  838-block  1
+    %%%%%:  838-block  2
+    $$$$$:  838-block  3
+    $$$$$:  838-block  4
+    $$$$$:  838-block  5
+    $$$$$:  838-block  6
+    $$$$$:  838-block  7
+    $$$$$:  838-block  8
+        -:  839:
+    #####:  840:                if( unit_test_monitor.is_critical_error( result ) )
+    #####:  841:                    break;
+    %%%%%:  841-block  0
+        -:  842:            }
+        -:  843:        }
+        -:  844:
+        -:  845:        // notify all observers about abortion
+       12:  846:        if( unit_test_monitor.is_critical_error( result ) ) {
+       12:  846-block  0
+    #####:  847:            BOOST_TEST_FOREACH( test_observer*, to, m_observers )
+    %%%%%:  847-block  0
+    %%%%%:  847-block  1
+    %%%%%:  847-block  2
+    %%%%%:  847-block  3
+    %%%%%:  847-block  4
+    %%%%%:  847-block  5
+    %%%%%:  847-block  6
+    %%%%%:  847-block  7
+    %%%%%:  847-block  8
+    %%%%%:  847-block  9
+    %%%%%:  847-block 10
+    %%%%%:  847-block 11
+    %%%%%:  847-block 12
+    %%%%%:  847-block 13
+    %%%%%:  847-block 14
+    %%%%%:  847-block 15
+    %%%%%:  847-block 16
+    %%%%%:  847-block 17
+    %%%%%:  847-block 18
+    $$$$$:  847-block 19
+    $$$$$:  847-block 20
+    $$$$$:  847-block 21
+    $$$$$:  847-block 22
+    $$$$$:  847-block 23
+    #####:  848:                to->test_aborted();
+    %%%%%:  848-block  0
+        -:  849:        }
+        -:  850:
+        -:  851:        // notify all observers about completion
+       84:  852:        BOOST_TEST_REVERSE_FOREACH( test_observer*, to, m_observers )
+       12:  852-block  0
+       12:  852-block  1
+       12:  852-block  2
+       12:  852-block  3
+       12:  852-block  4
+       48:  852-block  5
+       48:  852-block  6
+       48:  852-block  7
+       36:  852-block  8
+       12:  852-block  9
+       48:  852-block 10
+       36:  852-block 11
+       36:  852-block 12
+       36:  852-block 13
+       36:  852-block 14
+       36:  852-block 15
+       72:  852-block 16
+       36:  852-block 17
+       36:  852-block 18
+    $$$$$:  852-block 19
+    $$$$$:  852-block 20
+    $$$$$:  852-block 21
+    $$$$$:  852-block 22
+    $$$$$:  852-block 23
+       36:  853:            to->test_unit_finish( tu, elapsed_microseconds );
+       36:  853-block  0
+        -:  854:
+       12:  855:        return result;
+       12:  855-block  0
+        -:  856:    }
+        -:  857:
+        -:  858:    //////////////////////////////////////////////////////////////////
+        -:  859:
+       11:  860:    unsigned long int child_timeout( unsigned long tu_timeout_microseconds, unsigned long elpsed_microsec )
+        -:  861:    {
+      11*:  862:      if( tu_timeout_microseconds == 0UL || tu_timeout_microseconds == TIMEOUT_EXCEEDED)
+       11:  862-block  0
+    %%%%%:  862-block  1
+       11:  863:          return tu_timeout_microseconds;
+       11:  863-block  0
+        -:  864:
+    #####:  865:      return tu_timeout_microseconds > elpsed_microsec ?
+    %%%%%:  865-block  0
+    %%%%%:  865-block  1
+    %%%%%:  865-block  2
+        -:  866:                tu_timeout_microseconds - elpsed_microsec
+    #####:  867:                : TIMEOUT_EXCEEDED;
+    %%%%%:  867-block  0
+        -:  868:    }
+        -:  869:
+        -:  870:    struct priority_order {
+       14:  871:        bool operator()( test_observer* lhs, test_observer* rhs ) const
+        -:  872:        {
+       14:  873:            return (lhs->priority() < rhs->priority()) || ((lhs->priority() == rhs->priority()) && (lhs < rhs));
+       14:  873-block  0
+        7:  873-block  1
+        6:  873-block  2
+        7:  873-block  3
+        7:  873-block  4
+       14:  873-block  5
+        -:  874:        }
+        -:  875:    };
+        -:  876:
+        -:  877:    // Data members
+        -:  878:    typedef std::map<test_unit_id,test_unit*>       test_unit_store;
+        -:  879:    typedef std::set<test_observer*,priority_order> observer_store;
+        -:  880:    struct context_frame {
+    #####:  881:        context_frame( std::string const& d, int id, bool sticky )
+    #####:  882:        : descr( d )
+        -:  883:        , frame_id( id )
+    #####:  884:        , is_sticky( sticky )
+    %%%%%:  884-block  0
+    #####:  885:        {}
+        -:  886:
+        -:  887:        std::string descr;
+        -:  888:        int         frame_id;
+        -:  889:        bool        is_sticky;
+        -:  890:    };
+        -:  891:    typedef std::vector<context_frame> context_data;
+        -:  892:
+        -:  893:    master_test_suite_t* m_master_test_suite;
+        -:  894:    std::vector<test_suite*> m_auto_test_suites;
+        -:  895:
+        -:  896:    test_unit_id    m_curr_test_unit;
+        -:  897:    test_unit_store m_test_units;
+        -:  898:
+        -:  899:    test_unit_id    m_next_test_case_id;
+        -:  900:    test_unit_id    m_next_test_suite_id;
+        -:  901:
+        -:  902:    bool            m_test_in_progress;
+        -:  903:
+        -:  904:    observer_store  m_observers;
+        -:  905:    context_data    m_context;
+        -:  906:    int             m_context_idx;
+        -:  907:
+        -:  908:    std::set<global_fixture*>  m_global_fixtures;
+        -:  909:
+        -:  910:    boost::execution_monitor m_aux_em;
+        -:  911:
+        -:  912:    std::map<output_format, runtime_config::stream_holder> m_log_sinks;
+        -:  913:    runtime_config::stream_holder m_report_sink;
+        -:  914:};
+        -:  915:
+        -:  916://____________________________________________________________________________//
+        -:  917:
+        -:  918:namespace impl {
+        -:  919:namespace {
+        -:  920:
+        -:  921:#if defined(__CYGWIN__)
+        -:  922:framework::state& s_frk_state() { static framework::state* the_inst = 0; if(!the_inst) the_inst = new framework::state; return *the_inst; }
+        -:  923:#else
+     1886:  924:framework::state& s_frk_state() { static framework::state the_inst; return the_inst; }
+     1886:  924-block  0
+        1:  924-block  1
+        1:  924-block  2
+        1:  924-block  3
+     1886:  924-block  4
+     1886:  924-block  5
+    $$$$$:  924-block  6
+    $$$$$:  924-block  7
+        -:  925:#endif
+        -:  926:
+        -:  927:} // local namespace
+        -:  928:
+        -:  929:void
+    #####:  930:setup_for_execution( test_unit const& tu )
+        -:  931:{
+    #####:  932:    s_frk_state().deduce_run_status( tu.p_id );
+    %%%%%:  932-block  0
+    #####:  933:}
+        -:  934:
+        -:  935:struct sum_to_first_only {
+    #####:  936:    sum_to_first_only() : is_first(true) {}
+        -:  937:    template <class T, class U>
+    #####:  938:    T operator()(T const& l_, U const& r_) {
+    #####:  939:        if(is_first) {
+    #####:  940:            is_first = false;
+    #####:  941:            return l_ + r_.first;
+        -:  942:        }
+    #####:  943:        return l_ + ", " + r_.first;
+        -:  944:    }
+------------------
+_ZN5boost9unit_test9framework4impl17sum_to_first_onlyclINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESt4pairIPKcNS0_9log_levelEEEET_RKSG_RKT0_:
+    #####:  938:    T operator()(T const& l_, U const& r_) {
+    #####:  939:        if(is_first) {
+    %%%%%:  939-block  0
+    #####:  940:            is_first = false;
+    #####:  941:            return l_ + r_.first;
+    %%%%%:  941-block  0
+        -:  942:        }
+    #####:  943:        return l_ + ", " + r_.first;
+    %%%%%:  943-block  0
+    %%%%%:  943-block  1
+    $$$$$:  943-block  2
+        -:  944:    }
+------------------
+_ZN5boost9unit_test9framework4impl17sum_to_first_onlyclINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESt4pairIPKcNS0_13output_formatEEEET_RKSG_RKT0_:
+    #####:  938:    T operator()(T const& l_, U const& r_) {
+    #####:  939:        if(is_first) {
+    %%%%%:  939-block  0
+    #####:  940:            is_first = false;
+    #####:  941:            return l_ + r_.first;
+    %%%%%:  941-block  0
+        -:  942:        }
+    #####:  943:        return l_ + ", " + r_.first;
+    %%%%%:  943-block  0
+    %%%%%:  943-block  1
+    $$$$$:  943-block  2
+        -:  944:    }
+------------------
+        -:  945:
+        -:  946:    bool is_first;
+        -:  947:};
+        -:  948:
+        -:  949:void
+        1:  950:shutdown_loggers_and_reports()
+        -:  951:{
+        1:  952:    s_frk_state().m_log_sinks.clear();
+        1:  952-block  0
+        1:  953:    s_frk_state().m_report_sink.setup( "stderr" );
+        1:  953-block  0
+        1:  953-block  1
+    $$$$$:  953-block  2
+    $$$$$:  953-block  3
+        1:  954:}
+        -:  955:
+        -:  956:void
+        1:  957:unregister_global_fixture_and_configuration()
+        -:  958:{
+        -:  959:    // we make a copy as the set will change in the iteration
+        2:  960:    std::set<global_fixture*> gfixture_copy(s_frk_state().m_global_fixtures);
+        1:  960-block  0
+        1:  960-block  1
+    $$$$$:  960-block  2
+       1*:  961:    BOOST_TEST_FOREACH( global_fixture*, tuf, gfixture_copy ) {
+        1:  961-block  0
+        1:  961-block  1
+        1:  961-block  2
+        1:  961-block  3
+        1:  961-block  4
+        1:  961-block  5
+        1:  961-block  6
+        1:  961-block  7
+    %%%%%:  961-block  8
+        1:  961-block  9
+        1:  961-block 10
+    %%%%%:  961-block 11
+    %%%%%:  961-block 12
+    %%%%%:  961-block 13
+    %%%%%:  961-block 14
+    %%%%%:  961-block 15
+    %%%%%:  961-block 16
+    %%%%%:  961-block 17
+    %%%%%:  961-block 18
+    $$$$$:  961-block 19
+    $$$$$:  961-block 20
+    $$$$$:  961-block 21
+    $$$$$:  961-block 22
+    $$$$$:  961-block 23
+    #####:  962:        tuf->unregister_from_framework();
+    %%%%%:  962-block  0
+        -:  963:    }
+        1:  964:    s_frk_state().m_global_fixtures.clear();
+        1:  964-block  0
+        1:  964-block  1
+        -:  965:
+        2:  966:    state::observer_store gobserver_copy(s_frk_state().m_observers);
+        1:  966-block  0
+    $$$$$:  966-block  1
+        7:  967:    BOOST_TEST_FOREACH( test_observer*, to, gobserver_copy ) {
+        1:  967-block  0
+        1:  967-block  1
+        1:  967-block  2
+        1:  967-block  3
+        1:  967-block  4
+        4:  967-block  5
+        4:  967-block  6
+        4:  967-block  7
+        3:  967-block  8
+        1:  967-block  9
+        4:  967-block 10
+        3:  967-block 11
+        3:  967-block 12
+        3:  967-block 13
+        6:  967-block 14
+        3:  967-block 15
+        3:  967-block 16
+        3:  967-block 17
+        3:  967-block 18
+    $$$$$:  967-block 19
+    $$$$$:  967-block 20
+    $$$$$:  967-block 21
+    $$$$$:  967-block 22
+    $$$$$:  967-block 23
+        3:  968:        framework::deregister_observer( *to );
+        3:  968-block  0
+        -:  969:    }
+        1:  970:    s_frk_state().m_observers.clear();
+        1:  970-block  0
+        1:  970-block  1
+        1:  971:}
+        -:  972:
+        -:  973:void
+        1:  974:setup_loggers()
+        -:  975:{
+        -:  976:
+        -:  977:    BOOST_TEST_I_TRY {
+        -:  978:
+        -:  979:#ifdef BOOST_TEST_SUPPORT_TOKEN_ITERATOR
+        1:  980:        bool has_combined_logger = runtime_config::has( runtime_config::btrt_combined_logger )
+        1:  980-block  0
+    $$$$$:  980-block  1
+       1*:  981:            && !runtime_config::get< std::vector<std::string> >( runtime_config::btrt_combined_logger ).empty();
+        1:  981-block  0
+        1:  981-block  1
+        1:  981-block  2
+        1:  981-block  3
+    %%%%%:  981-block  4
+    $$$$$:  981-block  5
+        -:  982:#else
+        -:  983:        bool has_combined_logger = false;
+        -:  984:#endif
+        -:  985:
+        1:  986:        if( !has_combined_logger ) {
+        1:  986-block  0
+    #####:  987:            unit_test_log.set_threshold_level( runtime_config::get<log_level>( runtime_config::btrt_log_level ) );
+    %%%%%:  987-block  0
+    %%%%%:  987-block  1
+    $$$$$:  987-block  2
+    #####:  988:            const output_format format = runtime_config::get<output_format>( runtime_config::btrt_log_format );
+    %%%%%:  988-block  0
+    $$$$$:  988-block  1
+    #####:  989:            unit_test_log.set_format( format );
+    %%%%%:  989-block  0
+        -:  990:
+    #####:  991:            runtime_config::stream_holder& stream_logger = s_frk_state().m_log_sinks[format];
+    %%%%%:  991-block  0
+    %%%%%:  991-block  1
+    #####:  992:            if( runtime_config::has( runtime_config::btrt_log_sink ) ) {
+    %%%%%:  992-block  0
+    %%%%%:  992-block  1
+    $$$$$:  992-block  2
+        -:  993:                // we remove all streams in this case, so we do not specify the format
+        -:  994:                boost::function< void () > log_cleaner = boost::bind( &unit_test_log_t::set_stream,
+        -:  995:                                                                      &unit_test_log,
+        -:  996:                                                                      boost::ref(std::cout)
+    #####:  997:                                                                      );
+    %%%%%:  997-block  0
+    %%%%%:  997-block  1
+    $$$$$:  997-block  2
+    #####:  998:                stream_logger.setup( runtime_config::get<std::string>( runtime_config::btrt_log_sink ),
+    %%%%%:  998-block  0
+    %%%%%:  998-block  1
+    %%%%%:  998-block  2
+    $$$$$:  998-block  3
+    $$$$$:  998-block  4
+        -:  999:                                     log_cleaner );
+        -: 1000:            }
+    #####: 1001:            unit_test_log.set_stream( stream_logger.ref() );
+    %%%%%: 1001-block  0
+        -: 1002:        }
+        -: 1003:        else
+        -: 1004:        {
+        -: 1005:
+        1: 1006:            const std::vector<std::string>& v_output_format = runtime_config::get< std::vector<std::string> >( runtime_config::btrt_combined_logger ) ;
+        1: 1006-block  0
+    $$$$$: 1006-block  1
+        -: 1007:
+        -: 1008:            static const std::pair<const char*, log_level> all_log_levels[] = {
+        -: 1009:                std::make_pair( "all"           , log_successful_tests ),
+        -: 1010:                std::make_pair( "success"       , log_successful_tests ),
+        -: 1011:                std::make_pair( "test_suite"    , log_test_units ),
+        -: 1012:                std::make_pair( "unit_scope"    , log_test_units ),
+        -: 1013:                std::make_pair( "message"       , log_messages ),
+        -: 1014:                std::make_pair( "warning"       , log_warnings ),
+        -: 1015:                std::make_pair( "error"         , log_all_errors ),
+        -: 1016:                std::make_pair( "cpp_exception" , log_cpp_exception_errors ),
+        -: 1017:                std::make_pair( "system_error"  , log_system_errors ),
+        -: 1018:                std::make_pair( "fatal_error"   , log_fatal_errors ),
+        -: 1019:                std::make_pair( "nothing"       , log_nothing )
+        -: 1020:            };
+        -: 1021:
+        -: 1022:            static const std::pair<const char*, output_format> all_formats[] = {
+        -: 1023:                std::make_pair( "HRF"  , OF_CLF ),
+        -: 1024:                std::make_pair( "CLF"  , OF_CLF ),
+        -: 1025:                std::make_pair( "XML"  , OF_XML ),
+        -: 1026:                std::make_pair( "JUNIT", OF_JUNIT )
+        -: 1027:            };
+        -: 1028:
+        -: 1029:
+        1: 1030:            bool is_first = true;
+        -: 1031:
+        4: 1032:            BOOST_TEST_FOREACH( const_string, current_multi_config, v_output_format ) {
+        1: 1032-block  0
+        1: 1032-block  1
+        1: 1032-block  2
+        1: 1032-block  3
+        1: 1032-block  4
+        2: 1032-block  5
+        2: 1032-block  6
+        2: 1032-block  7
+        1: 1032-block  8
+        1: 1032-block  9
+        2: 1032-block 10
+        1: 1032-block 11
+        1: 1032-block 12
+        1: 1032-block 13
+        2: 1032-block 14
+        1: 1032-block 15
+        1: 1032-block 16
+        1: 1032-block 17
+    $$$$$: 1032-block 18
+    $$$$$: 1032-block 19
+    $$$$$: 1032-block 20
+    $$$$$: 1032-block 21
+    $$$$$: 1032-block 22
+        -: 1033:
+        -: 1034:    #ifdef BOOST_TEST_SUPPORT_TOKEN_ITERATOR
+        -: 1035:
+        -: 1036:                // ':' may be used for file names: C:/tmp/mylogsink.xml
+        -: 1037:                // we merge the tokens that start with / or \ with the previous one.
+        2: 1038:                std::vector<std::string> v_processed_tokens;
+        1: 1038-block  0
+        1: 1038-block  1
+    $$$$$: 1038-block  2
+        -: 1039:
+        -: 1040:                {
+        1: 1041:                    utils::string_token_iterator current_config( current_multi_config, (utils::dropped_delimeters = ":",
+        1: 1041-block  0
+        1: 1041-block  1
+    $$$$$: 1041-block  2
+    $$$$$: 1041-block  3
+        2: 1042:                                                                                        utils::kept_delimeters = utils::dt_none) );
+        1: 1042-block  0
+        1: 1042-block  1
+    $$$$$: 1042-block  2
+    $$$$$: 1042-block  3
+    $$$$$: 1042-block  4
+        -: 1043:
+        2: 1044:                    for( ; current_config != utils::string_token_iterator() ; ++current_config) {
+        2: 1044-block  0
+        2: 1044-block  1
+        2: 1044-block  2
+        1: 1044-block  3
+    $$$$$: 1044-block  4
+        2: 1045:                        std::string str_copy(current_config->begin(), current_config->end());
+        1: 1045-block  0
+        1: 1045-block  1
+        1: 1045-block  2
+        1: 1045-block  3
+        1: 1045-block  4
+    $$$$$: 1045-block  5
+    $$$$$: 1045-block  6
+    $$$$$: 1045-block  7
+    $$$$$: 1045-block  8
+        2: 1046:                        if( ( str_copy[0] == '\\' || str_copy[0] == '/' )
+        1: 1046-block  0
+        1: 1046-block  1
+       2*: 1047:                            && v_processed_tokens.size() > 0) {
+        1: 1047-block  0
+    %%%%%: 1047-block  1
+    %%%%%: 1047-block  2
+        1: 1047-block  3
+        1: 1047-block  4
+    #####: 1048:                            v_processed_tokens.back() += ":" + str_copy; // ':' has been eaten up
+    %%%%%: 1048-block  0
+    %%%%%: 1048-block  1
+    %%%%%: 1048-block  2
+    $$$$$: 1048-block  3
+    $$$$$: 1048-block  4
+        -: 1049:                        }
+        -: 1050:                        else {
+        1: 1051:                            v_processed_tokens.push_back(str_copy);
+        1: 1051-block  0
+        -: 1052:                        }
+        -: 1053:                    }
+        -: 1054:                }
+        -: 1055:
+        3: 1056:                BOOST_TEST_FOREACH( std::string const&, current_config, v_processed_tokens ) {
+        1: 1056-block  0
+        1: 1056-block  1
+        1: 1056-block  2
+        1: 1056-block  3
+        1: 1056-block  4
+        2: 1056-block  5
+        2: 1056-block  6
+        2: 1056-block  7
+        1: 1056-block  8
+        1: 1056-block  9
+        2: 1056-block 10
+        1: 1056-block 11
+        1: 1056-block 12
+        1: 1056-block 13
+        2: 1056-block 14
+        1: 1056-block 15
+        1: 1056-block 16
+        1: 1056-block 17
+    $$$$$: 1056-block 18
+    $$$$$: 1056-block 19
+    $$$$$: 1056-block 20
+    $$$$$: 1056-block 21
+    $$$$$: 1056-block 22
+        -: 1057:
+        1: 1058:                    utils::string_token_iterator current_format_specs( current_config, (utils::keep_empty_tokens,
+        1: 1058-block  0
+    $$$$$: 1058-block  1
+        2: 1059:                                                                                        utils::dropped_delimeters = ",",
+        1: 1059-block  0
+        1: 1059-block  1
+    $$$$$: 1059-block  2
+    $$$$$: 1059-block  3
+        2: 1060:                                                                                        utils::kept_delimeters = utils::dt_none) );
+        1: 1060-block  0
+        1: 1060-block  1
+    $$$$$: 1060-block  2
+    $$$$$: 1060-block  3
+    $$$$$: 1060-block  4
+        -: 1061:
+        1: 1062:                    output_format format = OF_INVALID ; // default
+       2*: 1063:                    if( current_format_specs != utils::string_token_iterator() &&
+        1: 1063-block  0
+        1: 1063-block  1
+        1: 1063-block  2
+        1: 1063-block  3
+    %%%%%: 1063-block  4
+    $$$$$: 1063-block  5
+        2: 1064:                        current_format_specs->size() ) {
+        1: 1064-block  0
+        1: 1064-block  1
+        1: 1064-block  2
+    $$$$$: 1064-block  3
+        -: 1065:
+       1*: 1066:                        for(size_t elem=0; elem < sizeof(all_formats)/sizeof(all_formats[0]); elem++) {
+        1: 1066-block  0
+        1: 1066-block  1
+    %%%%%: 1066-block  2
+        1: 1067:                            if(const_string(all_formats[elem].first) == *current_format_specs) {
+        1: 1067-block  0
+        1: 1067-block  1
+        1: 1067-block  2
+        1: 1067-block  3
+    $$$$$: 1067-block  4
+    $$$$$: 1067-block  5
+        1: 1068:                                format = all_formats[elem].second;
+        1: 1069:                                break;
+        1: 1069-block  0
+        -: 1070:                            }
+        -: 1071:                        }
+        -: 1072:                    }
+        -: 1073:
+       1*: 1074:                    BOOST_TEST_I_ASSRT( format != OF_INVALID,
+        1: 1074-block  0
+    %%%%%: 1074-block  1
+    %%%%%: 1074-block  2
+    %%%%%: 1074-block  3
+    %%%%%: 1074-block  4
+    %%%%%: 1074-block  5
+    %%%%%: 1074-block  6
+    %%%%%: 1074-block  7
+    %%%%%: 1074-block  8
+    %%%%%: 1074-block  9
+    $$$$$: 1074-block 10
+    $$$$$: 1074-block 11
+    $$$$$: 1074-block 12
+    $$$$$: 1074-block 13
+    $$$$$: 1074-block 14
+    $$$$$: 1074-block 15
+    $$$$$: 1074-block 16
+    $$$$$: 1074-block 17
+    $$$$$: 1074-block 18
+    $$$$$: 1074-block 19
+    $$$$$: 1074-block 20
+    $$$$$: 1074-block 21
+    $$$$$: 1074-block 22
+    $$$$$: 1074-block 23
+    $$$$$: 1074-block 24
+    $$$$$: 1074-block 25
+    $$$$$: 1074-block 26
+    $$$$$: 1074-block 27
+        -: 1075:                                        boost::runtime::access_to_missing_argument()
+        -: 1076:                                            << "Unable to determine the logger type from '"
+        -: 1077:                                            << current_config
+        -: 1078:                                            << "'. Possible choices are: "
+        -: 1079:                                            << std::accumulate(all_formats,
+        -: 1080:                                                               all_formats + sizeof(all_formats)/sizeof(all_formats[0]),
+        -: 1081:                                                               std::string(""),
+        -: 1082:                                                               sum_to_first_only())
+        -: 1083:                                      );
+        -: 1084:
+        -: 1085:                    // activates this format
+        1: 1086:                    if( is_first ) {
+        1: 1086-block  0
+        1: 1087:                        unit_test_log.set_format( format );
+        1: 1087-block  0
+        -: 1088:                    }
+        -: 1089:                    else {
+    #####: 1090:                        unit_test_log.add_format( format );
+    %%%%%: 1090-block  0
+        -: 1091:                    }
+        1: 1092:                    is_first = false;
+        -: 1093:
+        1: 1094:                    unit_test_log_formatter * const formatter = unit_test_log.get_formatter(format);
+        1: 1094-block  0
+       1*: 1095:                    BOOST_TEST_SETUP_ASSERT( formatter, "Logger setup error" );
+        1: 1095-block  0
+    %%%%%: 1095-block  1
+    %%%%%: 1095-block  2
+    %%%%%: 1095-block  3
+    $$$$$: 1095-block  4
+    $$$$$: 1095-block  5
+    $$$$$: 1095-block  6
+        -: 1096:
+        1: 1097:                    log_level formatter_log_level = invalid_log_level;
+        1: 1098:                    ++current_format_specs ;
+        1: 1098-block  0
+        1: 1099:                    if( !current_format_specs->size() ) {
+        1: 1099-block  0
+        1: 1099-block  1
+    #####: 1100:                        formatter_log_level = formatter->get_log_level(); // default log level given by the formatter
+    %%%%%: 1100-block  0
+    %%%%%: 1100-block  1
+        -: 1101:                    }
+        1: 1102:                    else if( current_format_specs != utils::string_token_iterator() ) {
+        1: 1102-block  0
+        1: 1102-block  1
+        1: 1102-block  2
+    $$$$$: 1102-block  3
+        -: 1103:
+       1*: 1104:                        for(size_t elem=0; elem < sizeof(all_log_levels)/sizeof(all_log_levels[0]); elem++) {
+        1: 1104-block  0
+        1: 1104-block  1
+    %%%%%: 1104-block  2
+        1: 1105:                            if(const_string(all_log_levels[elem].first) == *current_format_specs) {
+        1: 1105-block  0
+        1: 1105-block  1
+        1: 1105-block  2
+        1: 1105-block  3
+    $$$$$: 1105-block  4
+    $$$$$: 1105-block  5
+        1: 1106:                                formatter_log_level = all_log_levels[elem].second;
+        1: 1107:                                break;
+        1: 1107-block  0
+        -: 1108:                            }
+        -: 1109:                        }
+        -: 1110:                    }
+        -: 1111:
+       1*: 1112:                    BOOST_TEST_I_ASSRT( formatter_log_level != invalid_log_level,
+        1: 1112-block  0
+    %%%%%: 1112-block  1
+    %%%%%: 1112-block  2
+    %%%%%: 1112-block  3
+    %%%%%: 1112-block  4
+    %%%%%: 1112-block  5
+    %%%%%: 1112-block  6
+    %%%%%: 1112-block  7
+    %%%%%: 1112-block  8
+    %%%%%: 1112-block  9
+    $$$$$: 1112-block 10
+    $$$$$: 1112-block 11
+    $$$$$: 1112-block 12
+    $$$$$: 1112-block 13
+    $$$$$: 1112-block 14
+    $$$$$: 1112-block 15
+    $$$$$: 1112-block 16
+    $$$$$: 1112-block 17
+    $$$$$: 1112-block 18
+    $$$$$: 1112-block 19
+    $$$$$: 1112-block 20
+    $$$$$: 1112-block 21
+    $$$$$: 1112-block 22
+    $$$$$: 1112-block 23
+    $$$$$: 1112-block 24
+    $$$$$: 1112-block 25
+    $$$$$: 1112-block 26
+    $$$$$: 1112-block 27
+        -: 1113:                                        boost::runtime::access_to_missing_argument()
+        -: 1114:                                            << "Unable to determine the log level from '"
+        -: 1115:                                            << current_config
+        -: 1116:                                            << "'. Possible choices are: "
+        -: 1117:                                            << std::accumulate(all_log_levels,
+        -: 1118:                                                               all_log_levels + sizeof(all_log_levels)/sizeof(all_log_levels[0]),
+        -: 1119:                                                               std::string(""),
+        -: 1120:                                                               sum_to_first_only())
+        -: 1121:                                       );
+        -: 1122:
+        1: 1123:                    unit_test_log.set_threshold_level( format, formatter_log_level );
+        1: 1123-block  0
+        -: 1124:
+        1: 1125:                    runtime_config::stream_holder& stream_logger = s_frk_state().m_log_sinks[format];
+        1: 1125-block  0
+        1: 1125-block  1
+        1: 1125-block  2
+        -: 1126:                    boost::function< void () > log_cleaner = boost::bind( &unit_test_log_t::set_stream,
+        -: 1127:                                                                          &unit_test_log,
+        -: 1128:                                                                          format,
+        2: 1129:                                                                          boost::ref(std::cout) );
+        1: 1129-block  0
+        1: 1129-block  1
+        1: 1129-block  2
+    $$$$$: 1129-block  3
+       1*: 1130:                    if( ++current_format_specs != utils::string_token_iterator() &&
+        1: 1130-block  0
+        1: 1130-block  1
+        1: 1130-block  2
+        1: 1130-block  3
+    %%%%%: 1130-block  4
+        1: 1130-block  5
+    $$$$$: 1130-block  6
+       1*: 1131:                        current_format_specs->size() ) {
+    %%%%%: 1131-block  0
+    %%%%%: 1131-block  1
+        1: 1131-block  2
+    $$$$$: 1131-block  3
+    #####: 1132:                        stream_logger.setup( *current_format_specs,
+    %%%%%: 1132-block  0
+    %%%%%: 1132-block  1
+    %%%%%: 1132-block  2
+    $$$$$: 1132-block  3
+        -: 1133:                                             log_cleaner );
+        -: 1134:                    }
+        -: 1135:                    else {
+        1: 1136:                        stream_logger.setup( formatter->get_default_stream_description(),
+        1: 1136-block  0
+        1: 1136-block  1
+        1: 1136-block  2
+    $$$$$: 1136-block  3
+    $$$$$: 1136-block  4
+    $$$$$: 1136-block  5
+        -: 1137:                                             log_cleaner );
+        -: 1138:                    }
+        1: 1139:                    unit_test_log.set_stream( format, stream_logger.ref() );
+        1: 1139-block  0
+        -: 1140:                }
+        -: 1141:    #endif
+        -: 1142:            } // for each logger
+        -: 1143:
+        -: 1144:        } // if/else new logger API
+        -: 1145:    } // BOOST_TEST_I_TRY
+    =====: 1146:    BOOST_TEST_I_CATCH( boost::runtime::init_error, ex ) {
+    $$$$$: 1146-block  0
+    $$$$$: 1146-block  1
+    =====: 1147:        BOOST_TEST_SETUP_ASSERT( false, ex.msg );
+    $$$$$: 1147-block  0
+    $$$$$: 1147-block  1
+    $$$$$: 1147-block  2
+    $$$$$: 1147-block  3
+        -: 1148:    }
+    =====: 1149:    BOOST_TEST_I_CATCH( boost::runtime::input_error, ex ) {
+    $$$$$: 1149-block  0
+    $$$$$: 1149-block  1
+    =====: 1150:        std::cerr << ex.msg << "\n\n";
+    $$$$$: 1150-block  0
+        -: 1151:
+    =====: 1152:        BOOST_TEST_I_THROW( framework::nothing_to_test( boost::exit_exception_failure ) );
+    $$$$$: 1152-block  0
+    $$$$$: 1152-block  1
+        -: 1153:    }
+        -: 1154:
+        -: 1155:
+        1: 1156:}
+        1: 1156-block  0
+        -: 1157:
+        -: 1158://____________________________________________________________________________//
+        -: 1159:
+        -: 1160:} // namespace impl
+        -: 1161:
+        -: 1162://____________________________________________________________________________//
+        -: 1163:
+        -: 1164:// ************************************************************************** //
+        -: 1165:// **************                framework::init               ************** //
+        -: 1166:// ************************************************************************** //
+        -: 1167:
+        -: 1168:void
+        1: 1169:init( init_unit_test_func init_func, int argc, char* argv[] )
+        -: 1170:{
+        -: 1171:    using namespace impl;
+        -: 1172:
+        -: 1173:    // 10. Set up runtime parameters
+        1: 1174:    runtime_config::init( argc, argv );
+        1: 1174-block  0
+        -: 1175:
+        -: 1176:    // 20. Set the desired log level, format and sink
+        1: 1177:    impl::setup_loggers();
+        -: 1178:
+        -: 1179:    // 30. Set the desired report level, format and sink
+        1: 1180:    results_reporter::set_level( runtime_config::get<report_level>( runtime_config::btrt_report_level ) );
+        1: 1180-block  0
+    $$$$$: 1180-block  1
+        1: 1181:    results_reporter::set_format( runtime_config::get<output_format>( runtime_config::btrt_report_format ) );
+        1: 1181-block  0
+        1: 1181-block  1
+    $$$$$: 1181-block  2
+        -: 1182:
+        1: 1183:    if( runtime_config::has( runtime_config::btrt_report_sink ) ) {
+        1: 1183-block  0
+        1: 1183-block  1
+    $$$$$: 1183-block  2
+        -: 1184:        boost::function< void () > report_cleaner = boost::bind( &results_reporter::set_stream,
+        -: 1185:                                                                 boost::ref(std::cerr)
+    #####: 1186:                                                                );
+    %%%%%: 1186-block  0
+    %%%%%: 1186-block  1
+    $$$$$: 1186-block  2
+    #####: 1187:        s_frk_state().m_report_sink.setup( runtime_config::get<std::string>( runtime_config::btrt_report_sink ),
+    %%%%%: 1187-block  0
+    %%%%%: 1187-block  1
+    %%%%%: 1187-block  2
+    %%%%%: 1187-block  3
+    $$$$$: 1187-block  4
+    $$$$$: 1187-block  5
+        -: 1188:                                           report_cleaner );
+        -: 1189:    }
+        -: 1190:
+        1: 1191:    results_reporter::set_stream( s_frk_state().m_report_sink.ref() );
+        1: 1191-block  0
+        -: 1192:
+        -: 1193:    // 40. Register default test observers
+        1: 1194:    register_observer( results_collector );
+        1: 1195:    register_observer( unit_test_log );
+        1: 1196:    register_observer( framework_init_observer );
+        -: 1197:
+        1: 1198:    if( runtime_config::get<bool>( runtime_config::btrt_show_progress ) ) {
+        1: 1198-block  0
+    $$$$$: 1198-block  1
+    #####: 1199:        progress_monitor.set_stream( std::cout ); // defaults to stdout
+    %%%%%: 1199-block  0
+    #####: 1200:        register_observer( progress_monitor );
+        -: 1201:    }
+        -: 1202:
+        -: 1203:    // 50. Set up memory leak detection
+        1: 1204:    unsigned long detect_mem_leak = runtime_config::get<unsigned long>( runtime_config::btrt_detect_mem_leaks );
+        1: 1204-block  0
+    $$$$$: 1204-block  1
+        1: 1205:    if( detect_mem_leak > 0 ) {
+        1: 1205-block  0
+        1: 1206:        debug::detect_memory_leaks( true, runtime_config::get<std::string>( runtime_config::btrt_report_mem_leaks ) );
+        1: 1206-block  0
+        1: 1206-block  1
+    $$$$$: 1206-block  2
+    $$$$$: 1206-block  3
+        1: 1207:        debug::break_memory_alloc( (long)detect_mem_leak );
+        1: 1207-block  0
+        -: 1208:    }
+        -: 1209:
+        -: 1210:    // 60. Initialize master unit test suite
+        1: 1211:    master_test_suite().argc = argc;
+        1: 1211-block  0
+        1: 1212:    master_test_suite().argv = argv;
+        -: 1213:
+        -: 1214:    // 70. Invoke test module initialization routine
+        -: 1215:    BOOST_TEST_I_TRY {
+        1: 1216:        s_frk_state().m_aux_em.vexecute( boost::bind( &impl::invoke_init_func, init_func ) );
+        1: 1216-block  0
+        1: 1216-block  1
+        1: 1216-block  2
+        1: 1216-block  3
+    $$$$$: 1216-block  4
+    $$$$$: 1216-block  5
+        -: 1217:    }
+    =====: 1218:    BOOST_TEST_I_CATCH( execution_exception, ex )  {
+    $$$$$: 1218-block  0
+    $$$$$: 1218-block  1
+    =====: 1219:        BOOST_TEST_SETUP_ASSERT( false, ex.what() );
+    $$$$$: 1219-block  0
+    $$$$$: 1219-block  1
+    $$$$$: 1219-block  2
+    $$$$$: 1219-block  3
+    $$$$$: 1219-block  4
+        -: 1220:    }
+        1: 1221:}
+        -: 1222:
+        -: 1223://____________________________________________________________________________//
+        -: 1224:
+        -: 1225:void
+        1: 1226:finalize_setup_phase( test_unit_id master_tu_id )
+        -: 1227:{
+        1: 1228:    if( master_tu_id == INV_TEST_UNIT_ID )
+        1: 1228-block  0
+        1: 1229:        master_tu_id = master_test_suite().p_id;
+        1: 1229-block  0
+        1: 1229-block  1
+        -: 1230:
+        -: 1231:    // 10. Apply all decorators to the auto test units
+        -: 1232:    // 10. checks for consistency (duplicate names, etc)
+        -: 1233:    class apply_decorators : public test_tree_visitor {
+        -: 1234:    private:
+        -: 1235:        // test_tree_visitor interface
+        -: 1236:
+        2: 1237:        virtual bool    test_suite_start( test_suite const& ts)
+        -: 1238:        {
+        2: 1239:            const_cast<test_suite&>(ts).generate();
+        2: 1239-block  0
+        2: 1240:            const_cast<test_suite&>(ts).check_for_duplicate_test_cases();
+        2: 1241:            return test_tree_visitor::test_suite_start(ts);
+        -: 1242:        }
+        -: 1243:
+       12: 1244:        virtual bool    visit( test_unit const& tu )
+        -: 1245:        {
+      12*: 1246:            BOOST_TEST_FOREACH( decorator::base_ptr, d, tu.p_decorators.get() )
+       12: 1246-block  0
+       12: 1246-block  1
+       12: 1246-block  2
+       12: 1246-block  3
+       12: 1246-block  4
+       12: 1246-block  5
+       12: 1246-block  6
+       12: 1246-block  7
+    %%%%%: 1246-block  8
+       12: 1246-block  9
+       12: 1246-block 10
+    %%%%%: 1246-block 11
+    %%%%%: 1246-block 12
+    %%%%%: 1246-block 13
+    %%%%%: 1246-block 14
+    %%%%%: 1246-block 15
+    %%%%%: 1246-block 16
+    %%%%%: 1246-block 17
+    %%%%%: 1246-block 18
+    %%%%%: 1246-block 19
+    %%%%%: 1246-block 20
+    $$$$$: 1246-block 21
+    $$$$$: 1246-block 22
+    $$$$$: 1246-block 23
+    $$$$$: 1246-block 24
+    $$$$$: 1246-block 25
+    #####: 1247:                d->apply( const_cast<test_unit&>(tu) );
+    %%%%%: 1247-block  0
+        -: 1248:
+       12: 1249:            return true;
+       12: 1249-block  0
+       12: 1249-block  1
+        -: 1250:        }
+        1: 1251:    } ad;
+    $$$$$: 1251-block  0
+        1: 1252:    traverse_test_tree( master_tu_id, ad, true );
+        1: 1252-block  0
+        -: 1253:
+        -: 1254:    // 20. Finalize setup phase
+        2: 1255:    impl::order_info_per_tu tuoi;
+        1: 1255-block  0
+        1: 1255-block  1
+    $$$$$: 1255-block  2
+        1: 1256:    impl::s_frk_state().deduce_siblings_order( master_tu_id, master_tu_id, tuoi );
+        1: 1256-block  0
+        1: 1257:    impl::s_frk_state().finalize_default_run_status( master_tu_id, test_unit::RS_INVALID );
+        1: 1257-block  0
+        1: 1257-block  1
+        1: 1258:}
+        -: 1259:
+        -: 1260:// ************************************************************************** //
+        -: 1261:// **************               test_in_progress               ************** //
+        -: 1262:// ************************************************************************** //
+        -: 1263:
+        -: 1264:bool
+       59: 1265:test_in_progress()
+        -: 1266:{
+       59: 1267:    return impl::s_frk_state().m_test_in_progress;
+       59: 1267-block  0
+        -: 1268:}
+        -: 1269:
+        -: 1270://____________________________________________________________________________//
+        -: 1271:
+        -: 1272:// ************************************************************************** //
+        -: 1273:// **************             framework::shutdown              ************** //
+        -: 1274:// ************************************************************************** //
+        -: 1275:
+        -: 1276:void
+        1: 1277:shutdown()
+        -: 1278:{
+        -: 1279:    // shuts down the loggers singleton to avoid any further reference to the
+        -: 1280:    // framework during the destruction of those
+        1: 1281:    impl::shutdown_loggers_and_reports();
+        1: 1281-block  0
+        -: 1282:
+        -: 1283:    // unregisters any global fixture and configuration object
+        1: 1284:    impl::unregister_global_fixture_and_configuration();
+        -: 1285:
+        -: 1286:    // eliminating some fake memory leak reports. See for more details:
+        -: 1287:    // http://connect.microsoft.com/VisualStudio/feedback/details/106937/memory-leaks-reported-by-debug-crt-inside-typeinfo-name
+        -: 1288:
+        -: 1289:#  if BOOST_WORKAROUND(BOOST_MSVC,  <= 1600 ) && !defined(_DLL) && defined(_DEBUG)
+        -: 1290:#  if BOOST_WORKAROUND(BOOST_MSVC,  < 1600 )
+        -: 1291:#define _Next next
+        -: 1292:#define _MemPtr memPtr
+        -: 1293:#endif
+        -: 1294:   __type_info_node* pNode   = __type_info_root_node._Next;
+        -: 1295:   __type_info_node* tmpNode = &__type_info_root_node;
+        -: 1296:
+        -: 1297:   for( ; pNode!=NULL; pNode = tmpNode ) {
+        -: 1298:      tmpNode = pNode->_Next;
+        -: 1299:      delete pNode->_MemPtr;
+        -: 1300:      delete pNode;
+        -: 1301:   }
+        -: 1302:#  if BOOST_WORKAROUND(BOOST_MSVC,  < 1600 )
+        -: 1303:#undef _Next
+        -: 1304:#undef _MemPtr
+        -: 1305:#endif
+        -: 1306:#  endif
+        1: 1307:}
+        -: 1308:
+        -: 1309://____________________________________________________________________________//
+        -: 1310:
+        -: 1311:// ************************************************************************** //
+        -: 1312:// **************              register_test_unit              ************** //
+        -: 1313:// ************************************************************************** //
+        -: 1314:
+        -: 1315:void
+       10: 1316:register_test_unit( test_case* tc )
+        -: 1317:{
+      10*: 1318:    BOOST_TEST_SETUP_ASSERT( tc->p_id == INV_TEST_UNIT_ID, BOOST_TEST_L( "test case already registered" ) );
+       10: 1318-block  0
+       10: 1318-block  1
+    %%%%%: 1318-block  2
+    %%%%%: 1318-block  3
+    $$$$$: 1318-block  4
+    $$$$$: 1318-block  5
+    $$$$$: 1318-block  6
+        -: 1319:
+       10: 1320:    test_unit_id new_id = impl::s_frk_state().m_next_test_case_id;
+       10: 1320-block  0
+        -: 1321:
+      10*: 1322:    BOOST_TEST_SETUP_ASSERT( new_id != MAX_TEST_CASE_ID, BOOST_TEST_L( "too many test cases" ) );
+       10: 1322-block  0
+    %%%%%: 1322-block  1
+    %%%%%: 1322-block  2
+    $$$$$: 1322-block  3
+    $$$$$: 1322-block  4
+    $$$$$: 1322-block  5
+        -: 1323:
+        -: 1324:    typedef state::test_unit_store::value_type map_value_type;
+        -: 1325:
+       10: 1326:    impl::s_frk_state().m_test_units.insert( map_value_type( new_id, tc ) );
+       10: 1326-block  0
+       10: 1326-block  1
+    $$$$$: 1326-block  2
+       10: 1327:    impl::s_frk_state().m_next_test_case_id++;
+       10: 1327-block  0
+        -: 1328:
+       10: 1329:    impl::s_frk_state().set_tu_id( *tc, new_id );
+       10: 1329-block  0
+       10: 1329-block  1
+       10: 1330:}
+        -: 1331:
+        -: 1332://____________________________________________________________________________//
+        -: 1333:
+        -: 1334:// ************************************************************************** //
+        -: 1335:// **************              register_test_unit              ************** //
+        -: 1336:// ************************************************************************** //
+        -: 1337:
+        -: 1338:void
+        2: 1339:register_test_unit( test_suite* ts )
+        -: 1340:{
+       2*: 1341:    BOOST_TEST_SETUP_ASSERT( ts->p_id == INV_TEST_UNIT_ID, BOOST_TEST_L( "test suite already registered" ) );
+        2: 1341-block  0
+        2: 1341-block  1
+    %%%%%: 1341-block  2
+    %%%%%: 1341-block  3
+    $$$$$: 1341-block  4
+    $$$$$: 1341-block  5
+    $$$$$: 1341-block  6
+        -: 1342:
+        2: 1343:    test_unit_id new_id = impl::s_frk_state().m_next_test_suite_id;
+        2: 1343-block  0
+        -: 1344:
+       2*: 1345:    BOOST_TEST_SETUP_ASSERT( new_id != MAX_TEST_SUITE_ID, BOOST_TEST_L( "too many test suites" ) );
+        2: 1345-block  0
+    %%%%%: 1345-block  1
+    %%%%%: 1345-block  2
+    $$$$$: 1345-block  3
+    $$$$$: 1345-block  4
+    $$$$$: 1345-block  5
+        -: 1346:
+        -: 1347:    typedef state::test_unit_store::value_type map_value_type;
+        -: 1348:
+        2: 1349:    impl::s_frk_state().m_test_units.insert( map_value_type( new_id, ts ) );
+        2: 1349-block  0
+        2: 1349-block  1
+    $$$$$: 1349-block  2
+        2: 1350:    impl::s_frk_state().m_next_test_suite_id++;
+        2: 1350-block  0
+        -: 1351:
+        2: 1352:    impl::s_frk_state().set_tu_id( *ts, new_id );
+        2: 1352-block  0
+        2: 1352-block  1
+        2: 1353:}
+        -: 1354:
+        -: 1355://____________________________________________________________________________//
+        -: 1356:
+        -: 1357:// ************************************************************************** //
+        -: 1358:// **************             deregister_test_unit             ************** //
+        -: 1359:// ************************************************************************** //
+        -: 1360:
+        -: 1361:void
+    #####: 1362:deregister_test_unit( test_unit* tu )
+        -: 1363:{
+    #####: 1364:    impl::s_frk_state().m_test_units.erase( tu->p_id );
+    %%%%%: 1364-block  0
+    #####: 1365:}
+        -: 1366:
+        -: 1367://____________________________________________________________________________//
+        -: 1368:
+        -: 1369:// ************************************************************************** //
+        -: 1370:// **************                     clear                    ************** //
+        -: 1371:// ************************************************************************** //
+        -: 1372:
+        -: 1373:void
+    #####: 1374:clear()
+        -: 1375:{
+    #####: 1376:    impl::s_frk_state().clear();
+    %%%%%: 1376-block  0
+    #####: 1377:}
+        -: 1378:
+        -: 1379://____________________________________________________________________________//
+        -: 1380:
+        -: 1381:// ************************************************************************** //
+        -: 1382:// **************               register_observer              ************** //
+        -: 1383:// ************************************************************************** //
+        -: 1384:
+        -: 1385:void
+        3: 1386:register_observer( test_observer& to )
+        -: 1387:{
+        3: 1388:    impl::s_frk_state().m_observers.insert( &to );
+        3: 1388-block  0
+        3: 1389:}
+        3: 1389-block  0
+        -: 1390:
+        -: 1391://____________________________________________________________________________//
+        -: 1392:
+        -: 1393:// ************************************************************************** //
+        -: 1394:// **************              deregister_observer             ************** //
+        -: 1395:// ************************************************************************** //
+        -: 1396:
+        -: 1397:void
+        3: 1398:deregister_observer( test_observer& to )
+        -: 1399:{
+        3: 1400:    impl::s_frk_state().m_observers.erase( &to );
+        3: 1400-block  0
+        3: 1401:}
+        3: 1401-block  0
+        -: 1402:
+        -: 1403://____________________________________________________________________________//
+        -: 1404:
+        -: 1405:// ************************************************************************** //
+        -: 1406:// **************           register_global_fixture            ************** //
+        -: 1407:// ************************************************************************** //
+        -: 1408:
+        -: 1409:void
+    #####: 1410:register_global_fixture( global_fixture& tuf )
+        -: 1411:{
+    #####: 1412:    impl::s_frk_state().m_global_fixtures.insert( &tuf );
+    %%%%%: 1412-block  0
+    #####: 1413:}
+    %%%%%: 1413-block  0
+        -: 1414:
+        -: 1415://____________________________________________________________________________//
+        -: 1416:
+        -: 1417:// ************************************************************************** //
+        -: 1418:// **************           deregister_global_fixture          ************** //
+        -: 1419:// ************************************************************************** //
+        -: 1420:
+        -: 1421:void
+    #####: 1422:deregister_global_fixture( global_fixture &tuf )
+        -: 1423:{
+    #####: 1424:    impl::s_frk_state().m_global_fixtures.erase( &tuf );
+    %%%%%: 1424-block  0
+    #####: 1425:}
+    %%%%%: 1425-block  0
+        -: 1426:
+        -: 1427://____________________________________________________________________________//
+        -: 1428:
+        -: 1429:// ************************************************************************** //
+        -: 1430:// **************                  add_context                 ************** //
+        -: 1431:// ************************************************************************** //
+        -: 1432:
+        -: 1433:int
+    #####: 1434:add_context( ::boost::unit_test::lazy_ostream const& context_descr, bool sticky )
+        -: 1435:{
+    #####: 1436:    std::stringstream buffer;
+    %%%%%: 1436-block  0
+    $$$$$: 1436-block  1
+    #####: 1437:    context_descr( buffer );
+    %%%%%: 1437-block  0
+    #####: 1438:    int res_idx  = impl::s_frk_state().m_context_idx++;
+    %%%%%: 1438-block  0
+        -: 1439:
+    #####: 1440:    impl::s_frk_state().m_context.push_back( state::context_frame( buffer.str(), res_idx, sticky ) );
+    %%%%%: 1440-block  0
+    %%%%%: 1440-block  1
+    %%%%%: 1440-block  2
+    %%%%%: 1440-block  3
+    %%%%%: 1440-block  4
+    $$$$$: 1440-block  5
+    $$$$$: 1440-block  6
+    $$$$$: 1440-block  7
+    $$$$$: 1440-block  8
+        -: 1441:
+    #####: 1442:    return res_idx;
+    %%%%%: 1442-block  0
+        -: 1443:}
+        -: 1444:
+        -: 1445://____________________________________________________________________________//
+        -: 1446:
+        -: 1447:// ************************************************************************** //
+        -: 1448:// **************                 clear_context                ************** //
+        -: 1449:// ************************************************************************** //
+        -: 1450:
+        -: 1451:struct frame_with_id {
+    #####: 1452:    explicit frame_with_id( int id ) : m_id( id ) {}
+        -: 1453:
+    #####: 1454:    bool    operator()( state::context_frame const& f )
+        -: 1455:    {
+    #####: 1456:        return f.frame_id == m_id;
+    %%%%%: 1456-block  0
+        -: 1457:    }
+        -: 1458:    int     m_id;
+        -: 1459:};
+        -: 1460:
+        -: 1461://____________________________________________________________________________//
+        -: 1462:
+        -: 1463:void
+       56: 1464:clear_context( int frame_id )
+        -: 1465:{
+       56: 1466:    if( frame_id == -1 ) {   // clear all non sticky frames
+       56: 1466-block  0
+      56*: 1467:        for( int i=static_cast<int>(impl::s_frk_state().m_context.size())-1; i>=0; i-- )
+       56: 1467-block  0
+       56: 1467-block  1
+    %%%%%: 1467-block  2
+    #####: 1468:            if( !impl::s_frk_state().m_context[i].is_sticky )
+    %%%%%: 1468-block  0
+    #####: 1469:                impl::s_frk_state().m_context.erase( impl::s_frk_state().m_context.begin()+i );
+    %%%%%: 1469-block  0
+    %%%%%: 1469-block  1
+    $$$$$: 1469-block  2
+    $$$$$: 1469-block  3
+    $$$$$: 1469-block  4
+        -: 1470:    }
+        -: 1471:
+        -: 1472:    else { // clear specific frame
+        -: 1473:        state::context_data::iterator it =
+    #####: 1474:            std::find_if( impl::s_frk_state().m_context.begin(), impl::s_frk_state().m_context.end(), frame_with_id( frame_id ) );
+    %%%%%: 1474-block  0
+    %%%%%: 1474-block  1
+    %%%%%: 1474-block  2
+    $$$$$: 1474-block  3
+        -: 1475:
+    #####: 1476:        if( it != impl::s_frk_state().m_context.end() ) // really an internal error if this is not true
+    %%%%%: 1476-block  0
+    %%%%%: 1476-block  1
+    #####: 1477:            impl::s_frk_state().m_context.erase( it );
+    %%%%%: 1477-block  0
+    %%%%%: 1477-block  1
+    %%%%%: 1477-block  2
+    $$$$$: 1477-block  3
+        -: 1478:    }
+       56: 1479:}
+       56: 1479-block  0
+        -: 1480:
+        -: 1481://____________________________________________________________________________//
+        -: 1482:
+        -: 1483:// ************************************************************************** //
+        -: 1484:// **************                  get_context                 ************** //
+        -: 1485:// ************************************************************************** //
+        -: 1486:
+        -: 1487:context_generator
+       56: 1488:get_context()
+        -: 1489:{
+       56: 1490:    return context_generator();
+       56: 1490-block  0
+        -: 1491:}
+        -: 1492:
+        -: 1493://____________________________________________________________________________//
+        -: 1494:
+        -: 1495:// ************************************************************************** //
+        -: 1496:// **************               context_generator              ************** //
+        -: 1497:// ************************************************************************** //
+        -: 1498:
+        -: 1499:bool
+       56: 1500:context_generator::is_empty() const
+        -: 1501:{
+       56: 1502:    return impl::s_frk_state().m_context.empty();
+       56: 1502-block  0
+        -: 1503:}
+        -: 1504:
+        -: 1505://____________________________________________________________________________//
+        -: 1506:
+        -: 1507:const_string
+    #####: 1508:context_generator::next() const
+        -: 1509:{
+    #####: 1510:    return m_curr_frame < impl::s_frk_state().m_context.size() ? impl::s_frk_state().m_context[m_curr_frame++].descr : const_string();
+    %%%%%: 1510-block  0
+    %%%%%: 1510-block  1
+    %%%%%: 1510-block  2
+    %%%%%: 1510-block  3
+        -: 1511:}
+        -: 1512:
+        -: 1513://____________________________________________________________________________//
+        -: 1514:
+        -: 1515:// ************************************************************************** //
+        -: 1516:// **************               master_test_suite              ************** //
+        -: 1517:// ************************************************************************** //
+        -: 1518:
+        -: 1519:master_test_suite_t&
+        9: 1520:master_test_suite()
+        -: 1521:{
+        9: 1522:    if( !impl::s_frk_state().m_master_test_suite )
+        9: 1522-block  0
+        1: 1523:        impl::s_frk_state().m_master_test_suite = new master_test_suite_t;
+        1: 1523-block  0
+        1: 1523-block  1
+    $$$$$: 1523-block  2
+        -: 1524:
+        9: 1525:    return *impl::s_frk_state().m_master_test_suite;
+        9: 1525-block  0
+        9: 1525-block  1
+        -: 1526:}
+        -: 1527:
+        -: 1528:namespace impl {
+        -: 1529:
+        1: 1530:master_test_suite_name_setter::master_test_suite_name_setter(const_string name) {
+        1: 1531:  assign_op( master_test_suite().p_name.value, name.trim( "\"" ), 0 );
+        1: 1531-block  0
+        1: 1531-block  1
+        1: 1531-block  2
+    $$$$$: 1531-block  3
+        1: 1532:}
+        1: 1532-block  0
+        -: 1533:
+        -: 1534:}
+        -: 1535:
+        -: 1536://____________________________________________________________________________//
+        -: 1537:
+        -: 1538:// ************************************************************************** //
+        -: 1539:// **************            current_auto_test_suite           ************** //
+        -: 1540:// ************************************************************************** //
+        -: 1541:
+        -: 1542:test_suite&
+       14: 1543:current_auto_test_suite( test_suite* ts, bool push_or_pop )
+        -: 1544:{
+       14: 1545:    if( impl::s_frk_state().m_auto_test_suites.empty() )
+       14: 1545-block  0
+        1: 1546:        impl::s_frk_state().m_auto_test_suites.push_back( &framework::master_test_suite() );
+        1: 1546-block  0
+        1: 1546-block  1
+        -: 1547:
+       14: 1548:    if( !push_or_pop )
+       14: 1548-block  0
+        1: 1549:        impl::s_frk_state().m_auto_test_suites.pop_back();
+        1: 1549-block  0
+       13: 1550:    else if( ts )
+       13: 1550-block  0
+        1: 1551:        impl::s_frk_state().m_auto_test_suites.push_back( ts );
+        1: 1551-block  0
+        -: 1552:
+       14: 1553:    return *impl::s_frk_state().m_auto_test_suites.back();
+       14: 1553-block  0
+       14: 1553-block  1
+        -: 1554:}
+        -: 1555:
+        -: 1556://____________________________________________________________________________//
+        -: 1557:
+        -: 1558:// ************************************************************************** //
+        -: 1559:// **************               current_test_case              ************** //
+        -: 1560:// ************************************************************************** //
+        -: 1561:
+        -: 1562:test_case const&
+    #####: 1563:current_test_case()
+        -: 1564:{
+    #####: 1565:    return get<test_case>( impl::s_frk_state().m_curr_test_unit );
+    %%%%%: 1565-block  0
+        -: 1566:}
+        -: 1567:
+        -: 1568:
+        -: 1569:test_unit const&
+    #####: 1570:current_test_unit()
+        -: 1571:{
+    #####: 1572:    return *impl::s_frk_state().m_test_units[impl::s_frk_state().m_curr_test_unit];
+    %%%%%: 1572-block  0
+        -: 1573:}
+        -: 1574:
+        -: 1575://____________________________________________________________________________//
+        -: 1576:
+        -: 1577:test_unit_id
+       56: 1578:current_test_case_id()
+        -: 1579:{
+       56: 1580:    return impl::s_frk_state().m_curr_test_unit;
+       56: 1580-block  0
+        -: 1581:}
+        -: 1582:
+        -: 1583://____________________________________________________________________________//
+        -: 1584:
+        -: 1585:// ************************************************************************** //
+        -: 1586:// **************                framework::get                ************** //
+        -: 1587:// ************************************************************************** //
+        -: 1588:
+        -: 1589:test_unit&
+      133: 1590:get( test_unit_id id, test_unit_type t )
+        -: 1591:{
+      133: 1592:    test_unit* res = impl::s_frk_state().m_test_units[id];
+      133: 1592-block  0
+        -: 1593:
+     133*: 1594:    BOOST_TEST_I_ASSRT( (res->p_type & t) != 0, internal_error( "Invalid test unit type" ) );
+    %%%%%: 1594-block  0
+    %%%%%: 1594-block  1
+    $$$$$: 1594-block  2
+    $$$$$: 1594-block  3
+        -: 1595:
+      133: 1596:    return *res;
+      133: 1596-block  0
+      133: 1596-block  1
+        -: 1597:}
+        -: 1598:
+        -: 1599://____________________________________________________________________________//
+        -: 1600:
+        -: 1601:// ************************************************************************** //
+        -: 1602:// **************                framework::run                ************** //
+        -: 1603:// ************************************************************************** //
+        -: 1604:
+        -: 1605:template <class Cont>
+        -: 1606:struct swap_on_delete {
+        1: 1607:    swap_on_delete(Cont& c1, Cont& c2) : m_c1(c1), m_c2(c2){}
+        1: 1608:    ~swap_on_delete() {
+        1: 1609:        m_c1.swap(m_c2);
+        1: 1609-block  0
+        1: 1610:    }
+        -: 1611:
+        -: 1612:    Cont& m_c1;
+        -: 1613:    Cont& m_c2;
+        -: 1614:};
+        -: 1615:
+        -: 1616:void
+        1: 1617:run( test_unit_id id, bool continue_test )
+        -: 1618:{
+        1: 1619:    if( id == INV_TEST_UNIT_ID )
+        1: 1619-block  0
+        1: 1620:        id = master_test_suite().p_id;
+        1: 1620-block  0
+        1: 1620-block  1
+        -: 1621:
+        -: 1622:    // Figure out run status for execution phase
+        1: 1623:    impl::s_frk_state().deduce_run_status( id );
+        1: 1623-block  0
+        1: 1623-block  1
+        -: 1624:
+        2: 1625:    test_case_counter tcc;
+        1: 1625-block  0
+        1: 1625-block  1
+    $$$$$: 1625-block  2
+        1: 1626:    traverse_test_tree( id, tcc );
+        1: 1626-block  0
+        -: 1627:
+       1*: 1628:    BOOST_TEST_SETUP_ASSERT( tcc.p_count != 0 , runtime_config::get<std::vector<std::string> >( runtime_config::btrt_run_filters ).empty()
+        1: 1628-block  0
+    %%%%%: 1628-block  1
+    %%%%%: 1628-block  2
+    %%%%%: 1628-block  3
+    %%%%%: 1628-block  4
+    %%%%%: 1628-block  5
+    %%%%%: 1628-block  6
+    $$$$$: 1628-block  7
+    $$$$$: 1628-block  8
+    $$$$$: 1628-block  9
+    $$$$$: 1628-block 10
+        -: 1629:        ? BOOST_TEST_L( "test tree is empty" )
+        -: 1630:        : BOOST_TEST_L( "no test cases matching filter or all test cases were disabled" ) );
+        -: 1631:
+        1: 1632:    bool    was_in_progress     = framework::test_in_progress();
+        1: 1632-block  0
+       1*: 1633:    bool    call_start_finish   = !continue_test || !was_in_progress;
+        1: 1633-block  0
+        1: 1633-block  1
+        1: 1633-block  2
+    %%%%%: 1633-block  3
+        1: 1634:    bool    init_ok             = true;
+        1: 1635:    const_string setup_error;
+        1: 1635-block  0
+        -: 1636:
+        1: 1637:    if( call_start_finish ) {
+        1: 1637-block  0
+        -: 1638:        // indicates the framework that no test is in progress now if observers need to be notified
+        1: 1639:        impl::s_frk_state().m_test_in_progress = false;
+        1: 1639-block  0
+        -: 1640:        // unit_test::framework_init_observer will get cleared first
+       7*: 1641:        BOOST_TEST_FOREACH( test_observer*, to, impl::s_frk_state().m_observers ) {
+        1: 1641-block  0
+        1: 1641-block  1
+        1: 1641-block  2
+        1: 1641-block  3
+        1: 1641-block  4
+        1: 1641-block  5
+        1: 1641-block  6
+        1: 1641-block  7
+        1: 1641-block  8
+        4: 1641-block  9
+        4: 1641-block 10
+        4: 1641-block 11
+        4: 1641-block 12
+        4: 1641-block 13
+        3: 1641-block 14
+        1: 1641-block 15
+        4: 1641-block 16
+        3: 1641-block 17
+        3: 1641-block 18
+        3: 1641-block 19
+        3: 1641-block 20
+        3: 1641-block 21
+        6: 1641-block 22
+        3: 1641-block 23
+        3: 1641-block 24
+        3: 1641-block 25
+        3: 1641-block 26
+        3: 1641-block 27
+    %%%%%: 1641-block 28
+    %%%%%: 1641-block 29
+        3: 1641-block 30
+    $$$$$: 1641-block 31
+    $$$$$: 1641-block 32
+    $$$$$: 1641-block 33
+    $$$$$: 1641-block 34
+    $$$$$: 1641-block 35
+        -: 1642:            BOOST_TEST_I_TRY {
+        6: 1643:                ut_detail::test_unit_id_restore restore_current_test_unit(impl::s_frk_state().m_curr_test_unit, id);
+        3: 1643-block  0
+        3: 1643-block  1
+        3: 1643-block  2
+    $$$$$: 1643-block  3
+        3: 1644:                unit_test_monitor_t::error_level result = unit_test_monitor.execute_and_translate( boost::bind( &test_observer::test_start, to, tcc.p_count ) );
+        3: 1644-block  0
+        3: 1644-block  1
+        3: 1644-block  2
+    $$$$$: 1644-block  3
+    $$$$$: 1644-block  4
+        3: 1645:                if( init_ok ) {
+        3: 1646:                    if( result != unit_test_monitor_t::test_ok ) {
+        3: 1646-block  0
+    #####: 1647:                        init_ok = false;
+    %%%%%: 1647-block  0
+        -: 1648:                    }
+        -: 1649:                    else {
+        3: 1650:                        if( unit_test::framework_init_observer.has_failed() ) {
+        3: 1650-block  0
+    #####: 1651:                            init_ok = false;
+    %%%%%: 1651-block  0
+        -: 1652:                        }
+        -: 1653:                    }
+        -: 1654:                }
+        -: 1655:            }
+    =====: 1656:            BOOST_TEST_I_CATCH( execution_exception, ex ) {
+    $$$$$: 1656-block  0
+    $$$$$: 1656-block  1
+    $$$$$: 1656-block  2
+    =====: 1657:                if( init_ok ) {
+        -: 1658:                    // log only the first error
+    =====: 1659:                    init_ok = false;
+    =====: 1660:                    setup_error = ex.what();
+    $$$$$: 1660-block  0
+    $$$$$: 1660-block  1
+        -: 1661:                }
+        -: 1662:                // break; // we should continue otherwise loggers may have improper structure (XML start missing for instance)
+        -: 1663:            }
+        -: 1664:        }
+        -: 1665:    }
+        -: 1666:
+        1: 1667:    if( init_ok ) {
+        1: 1667-block  0
+        -: 1668:
+        -: 1669:        // attaching the global fixtures to the main entry point
+        1: 1670:        test_unit& entry_test_unit = framework::get( id, TUT_ANY );
+        1: 1670-block  0
+        -: 1671:        std::vector<test_unit_fixture_ptr> v_saved_fixture(entry_test_unit.p_fixtures.value.begin(),
+        2: 1672:                                                           entry_test_unit.p_fixtures.value.end());
+        1: 1672-block  0
+    $$$$$: 1672-block  1
+    $$$$$: 1672-block  2
+        -: 1673:
+       1*: 1674:        BOOST_TEST_FOREACH( test_unit_fixture*, tuf, impl::s_frk_state().m_global_fixtures ) {
+        1: 1674-block  0
+        1: 1674-block  1
+        1: 1674-block  2
+        1: 1674-block  3
+        1: 1674-block  4
+        1: 1674-block  5
+        1: 1674-block  6
+        1: 1674-block  7
+        1: 1674-block  8
+        1: 1674-block  9
+        1: 1674-block 10
+        1: 1674-block 11
+        1: 1674-block 12
+    %%%%%: 1674-block 13
+        1: 1674-block 14
+        1: 1674-block 15
+    %%%%%: 1674-block 16
+    %%%%%: 1674-block 17
+    %%%%%: 1674-block 18
+    %%%%%: 1674-block 19
+    %%%%%: 1674-block 20
+    %%%%%: 1674-block 21
+    %%%%%: 1674-block 22
+    %%%%%: 1674-block 23
+    %%%%%: 1674-block 24
+    %%%%%: 1674-block 25
+    %%%%%: 1674-block 26
+    %%%%%: 1674-block 27
+    %%%%%: 1674-block 28
+    $$$$$: 1674-block 29
+    $$$$$: 1674-block 30
+    $$$$$: 1674-block 31
+    $$$$$: 1674-block 32
+    $$$$$: 1674-block 33
+    #####: 1675:            entry_test_unit.p_fixtures.value.insert( entry_test_unit.p_fixtures.value.begin(),
+    %%%%%: 1675-block  0
+    $$$$$: 1675-block  1
+    #####: 1676:                                                     test_unit_fixture_ptr(new impl::global_fixture_handle(tuf)) );
+    %%%%%: 1676-block  0
+    %%%%%: 1676-block  1
+    %%%%%: 1676-block  2
+    $$$$$: 1676-block  3
+    $$$$$: 1676-block  4
+    $$$$$: 1676-block  5
+        -: 1677:        }
+        -: 1678:
+        2: 1679:        swap_on_delete< std::vector<test_unit_fixture_ptr> > raii_fixture(v_saved_fixture, entry_test_unit.p_fixtures.value);
+        1: 1679-block  0
+        1: 1679-block  1
+    $$$$$: 1679-block  2
+        -: 1680:
+        -: 1681:        // now work in progress
+        1: 1682:        impl::s_frk_state().m_test_in_progress = true;
+        1: 1683:        unsigned seed = runtime_config::get<unsigned>( runtime_config::btrt_random_seed );
+        1: 1683-block  0
+    $$$$$: 1683-block  1
+        1: 1684:        switch( seed ) {
+        1: 1684-block  0
+        1: 1685:        case 0:
+        1: 1686:            break;
+        1: 1686-block  0
+    #####: 1687:        case 1:
+    #####: 1688:            seed = static_cast<unsigned>( std::rand() ^ std::time( 0 ) ); // better init using std::rand() ^ ...
+    %%%%%: 1688-block  0
+        -: 1689:            BOOST_FALLTHROUGH;
+    #####: 1690:        default:
+    #####: 1691:            BOOST_TEST_FRAMEWORK_MESSAGE( "Test cases order is shuffled using seed: " << seed );
+    %%%%%: 1691-block  0
+    %%%%%: 1691-block  1
+    %%%%%: 1691-block  2
+    %%%%%: 1691-block  3
+    %%%%%: 1691-block  4
+    %%%%%: 1691-block  5
+    %%%%%: 1691-block  6
+    %%%%%: 1691-block  7
+    $$$$$: 1691-block  8
+    $$$$$: 1691-block  9
+    $$$$$: 1691-block 10
+    $$$$$: 1691-block 11
+    $$$$$: 1691-block 12
+    $$$$$: 1691-block 13
+    $$$$$: 1691-block 14
+    $$$$$: 1691-block 15
+    #####: 1692:            std::srand( seed );
+        -: 1693:        }
+        -: 1694:
+        -: 1695:        // executing the test tree
+        1: 1696:        impl::s_frk_state().execute_test_tree( id );
+        1: 1696-block  0
+        1: 1696-block  1
+        -: 1697:
+        -: 1698:        // removing previously added global fixtures: dtor raii_fixture
+        -: 1699:    }
+        -: 1700:
+        1: 1701:    impl::s_frk_state().m_test_in_progress = false;
+        1: 1701-block  0
+        -: 1702:
+        1: 1703:    results_reporter::make_report( INV_REPORT_LEVEL, id );
+        1: 1703-block  0
+        -: 1704:
+        1: 1705:    unit_test::framework_init_observer.clear();
+        1: 1705-block  0
+        1: 1706:    if( call_start_finish ) {
+        1: 1706-block  0
+        -: 1707:        // indicates the framework that no test is in progress anymore if observers need to be notified
+        -: 1708:        // and this is a teardown, so assertions should not raise any exception otherwise an exception
+        -: 1709:        // might be raised in a dtor of a global fixture
+        1: 1710:        impl::s_frk_state().m_test_in_progress = false;
+        1: 1710-block  0
+        7: 1711:        BOOST_TEST_REVERSE_FOREACH( test_observer*, to, impl::s_frk_state().m_observers ) {
+        1: 1711-block  0
+        1: 1711-block  1
+        1: 1711-block  2
+        1: 1711-block  3
+        1: 1711-block  4
+        1: 1711-block  5
+        1: 1711-block  6
+        1: 1711-block  7
+        1: 1711-block  8
+        4: 1711-block  9
+        4: 1711-block 10
+        4: 1711-block 11
+        4: 1711-block 12
+        4: 1711-block 13
+        3: 1711-block 14
+        1: 1711-block 15
+        4: 1711-block 16
+        3: 1711-block 17
+        3: 1711-block 18
+        3: 1711-block 19
+        3: 1711-block 20
+        3: 1711-block 21
+        3: 1711-block 22
+        3: 1711-block 23
+        3: 1711-block 24
+        3: 1711-block 25
+        6: 1711-block 26
+        3: 1711-block 27
+    $$$$$: 1711-block 28
+    $$$$$: 1711-block 29
+    $$$$$: 1711-block 30
+    $$$$$: 1711-block 31
+    $$$$$: 1711-block 32
+        6: 1712:            ut_detail::test_unit_id_restore restore_current_test_unit(impl::s_frk_state().m_curr_test_unit, id);
+        3: 1712-block  0
+        3: 1712-block  1
+        3: 1712-block  2
+    $$$$$: 1712-block  3
+        3: 1713:            to->test_finish();
+        -: 1714:        }
+        -: 1715:    }
+        -: 1716:
+        1: 1717:    impl::s_frk_state().m_test_in_progress = was_in_progress;
+        1: 1717-block  0
+        -: 1718:
+        -: 1719:    // propagates the init/teardown error if any
+       1*: 1720:    BOOST_TEST_SETUP_ASSERT( init_ok && !unit_test::framework_init_observer.has_failed(), setup_error );
+        1: 1720-block  0
+        1: 1720-block  1
+        1: 1720-block  2
+    %%%%%: 1720-block  3
+        1: 1720-block  4
+    %%%%%: 1720-block  5
+    %%%%%: 1720-block  6
+    $$$$$: 1720-block  7
+    $$$$$: 1720-block  8
+    $$$$$: 1720-block  9
+        1: 1721:}
+        -: 1722:
+        -: 1723://____________________________________________________________________________//
+        -: 1724:
+        -: 1725:void
+    #####: 1726:run( test_unit const* tu, bool continue_test )
+        -: 1727:{
+    #####: 1728:    run( tu->p_id, continue_test );
+    %%%%%: 1728-block  0
+    #####: 1729:}
+        -: 1730:
+        -: 1731://____________________________________________________________________________//
+        -: 1732:
+        -: 1733:// ************************************************************************** //
+        -: 1734:// **************               assertion_result               ************** //
+        -: 1735:// ************************************************************************** //
+        -: 1736:
+        -: 1737:void
+       56: 1738:assertion_result( unit_test::assertion_result ar )
+        -: 1739:{
+     392*: 1740:    BOOST_TEST_FOREACH( test_observer*, to, impl::s_frk_state().m_observers )
+       56: 1740-block  0
+       56: 1740-block  1
+       56: 1740-block  2
+       56: 1740-block  3
+       56: 1740-block  4
+       56: 1740-block  5
+       56: 1740-block  6
+      224: 1740-block  7
+      224: 1740-block  8
+      224: 1740-block  9
+      224: 1740-block 10
+      224: 1740-block 11
+      168: 1740-block 12
+       56: 1740-block 13
+      224: 1740-block 14
+      168: 1740-block 15
+      168: 1740-block 16
+      168: 1740-block 17
+      168: 1740-block 18
+      336: 1740-block 19
+      168: 1740-block 20
+      168: 1740-block 21
+      168: 1740-block 22
+      168: 1740-block 23
+    %%%%%: 1740-block 24
+    %%%%%: 1740-block 25
+      168: 1740-block 26
+    $$$$$: 1740-block 27
+    $$$$$: 1740-block 28
+    $$$$$: 1740-block 29
+    $$$$$: 1740-block 30
+      168: 1741:        to->assertion_result( ar );
+      168: 1741-block  0
+       56: 1742:}
+       56: 1742-block  0
+        -: 1743:
+        -: 1744://____________________________________________________________________________//
+        -: 1745:
+        -: 1746:// ************************************************************************** //
+        -: 1747:// **************               exception_caught               ************** //
+        -: 1748:// ************************************************************************** //
+        -: 1749:
+        -: 1750:void
+    #####: 1751:exception_caught( execution_exception const& ex )
+        -: 1752:{
+    #####: 1753:    BOOST_TEST_FOREACH( test_observer*, to, impl::s_frk_state().m_observers )
+    %%%%%: 1753-block  0
+    %%%%%: 1753-block  1
+    %%%%%: 1753-block  2
+    %%%%%: 1753-block  3
+    %%%%%: 1753-block  4
+    %%%%%: 1753-block  5
+    %%%%%: 1753-block  6
+    %%%%%: 1753-block  7
+    %%%%%: 1753-block  8
+    %%%%%: 1753-block  9
+    %%%%%: 1753-block 10
+    %%%%%: 1753-block 11
+    %%%%%: 1753-block 12
+    %%%%%: 1753-block 13
+    %%%%%: 1753-block 14
+    %%%%%: 1753-block 15
+    %%%%%: 1753-block 16
+    %%%%%: 1753-block 17
+    %%%%%: 1753-block 18
+    %%%%%: 1753-block 19
+    %%%%%: 1753-block 20
+    %%%%%: 1753-block 21
+    %%%%%: 1753-block 22
+    %%%%%: 1753-block 23
+    %%%%%: 1753-block 24
+    %%%%%: 1753-block 25
+    %%%%%: 1753-block 26
+    $$$$$: 1753-block 27
+    $$$$$: 1753-block 28
+    $$$$$: 1753-block 29
+    $$$$$: 1753-block 30
+    #####: 1754:        to->exception_caught( ex );
+    %%%%%: 1754-block  0
+    #####: 1755:}
+    %%%%%: 1755-block  0
+        -: 1756:
+        -: 1757://____________________________________________________________________________//
+        -: 1758:
+        -: 1759:// ************************************************************************** //
+        -: 1760:// **************               test_unit_aborted              ************** //
+        -: 1761:// ************************************************************************** //
+        -: 1762:
+        -: 1763:void
+    #####: 1764:test_unit_aborted( test_unit const& tu )
+        -: 1765:{
+    #####: 1766:    BOOST_TEST_FOREACH( test_observer*, to, impl::s_frk_state().m_observers )
+    %%%%%: 1766-block  0
+    %%%%%: 1766-block  1
+    %%%%%: 1766-block  2
+    %%%%%: 1766-block  3
+    %%%%%: 1766-block  4
+    %%%%%: 1766-block  5
+    %%%%%: 1766-block  6
+    %%%%%: 1766-block  7
+    %%%%%: 1766-block  8
+    %%%%%: 1766-block  9
+    %%%%%: 1766-block 10
+    %%%%%: 1766-block 11
+    %%%%%: 1766-block 12
+    %%%%%: 1766-block 13
+    %%%%%: 1766-block 14
+    %%%%%: 1766-block 15
+    %%%%%: 1766-block 16
+    %%%%%: 1766-block 17
+    %%%%%: 1766-block 18
+    %%%%%: 1766-block 19
+    %%%%%: 1766-block 20
+    %%%%%: 1766-block 21
+    %%%%%: 1766-block 22
+    %%%%%: 1766-block 23
+    %%%%%: 1766-block 24
+    %%%%%: 1766-block 25
+    %%%%%: 1766-block 26
+    $$$$$: 1766-block 27
+    $$$$$: 1766-block 28
+    $$$$$: 1766-block 29
+    $$$$$: 1766-block 30
+    #####: 1767:        to->test_unit_aborted( tu );
+    %%%%%: 1767-block  0
+    #####: 1768:}
+    %%%%%: 1768-block  0
+        -: 1769:
+        -: 1770:// ************************************************************************** //
+        -: 1771:// **************               test_aborted                   ************** //
+        -: 1772:// ************************************************************************** //
+        -: 1773:
+        -: 1774:void
+    #####: 1775:test_aborted( )
+        -: 1776:{
+    #####: 1777:    BOOST_TEST_FOREACH( test_observer*, to, impl::s_frk_state().m_observers )
+    %%%%%: 1777-block  0
+    %%%%%: 1777-block  1
+    %%%%%: 1777-block  2
+    %%%%%: 1777-block  3
+    %%%%%: 1777-block  4
+    %%%%%: 1777-block  5
+    %%%%%: 1777-block  6
+    %%%%%: 1777-block  7
+    %%%%%: 1777-block  8
+    %%%%%: 1777-block  9
+    %%%%%: 1777-block 10
+    %%%%%: 1777-block 11
+    %%%%%: 1777-block 12
+    %%%%%: 1777-block 13
+    %%%%%: 1777-block 14
+    %%%%%: 1777-block 15
+    %%%%%: 1777-block 16
+    %%%%%: 1777-block 17
+    %%%%%: 1777-block 18
+    %%%%%: 1777-block 19
+    %%%%%: 1777-block 20
+    %%%%%: 1777-block 21
+    %%%%%: 1777-block 22
+    %%%%%: 1777-block 23
+    %%%%%: 1777-block 24
+    %%%%%: 1777-block 25
+    %%%%%: 1777-block 26
+    $$$$$: 1777-block 27
+    $$$$$: 1777-block 28
+    $$$$$: 1777-block 29
+    $$$$$: 1777-block 30
+    #####: 1778:        to->test_aborted( );
+    %%%%%: 1778-block  0
+    #####: 1779:}
+    %%%%%: 1779-block  0
+        -: 1780:
+        -: 1781:
+        -: 1782://____________________________________________________________________________//
+        -: 1783:
+        -: 1784:} // namespace framework
+        -: 1785:} // namespace unit_test
+        -: 1786:} // namespace boost
+        -: 1787:
+        -: 1788:#include <boost/test/detail/enable_warnings.hpp>
+        -: 1789:
+        -: 1790:#endif // BOOST_TEST_FRAMEWORK_IPP_021005GER

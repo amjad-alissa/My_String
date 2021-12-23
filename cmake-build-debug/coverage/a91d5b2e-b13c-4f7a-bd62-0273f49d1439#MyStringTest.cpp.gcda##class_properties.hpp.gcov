@@ -1,0 +1,482 @@
+        -:    0:Source:F:/Files/vcpkg/installed/x86-windows/include/boost/test/utils/class_properties.hpp
+        -:    0:Graph:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcno
+        -:    0:Data:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1://  (C) Copyright Gennadiy Rozental 2001.
+        -:    2://  Distributed under the Boost Software License, Version 1.0.
+        -:    3://  (See accompanying file LICENSE_1_0.txt or copy at
+        -:    4://  http://www.boost.org/LICENSE_1_0.txt)
+        -:    5:
+        -:    6://  See http://www.boost.org/libs/test for the library home page.
+        -:    7://
+        -:    8://  File        : $RCSfile$
+        -:    9://
+        -:   10://  Version     : $Revision$
+        -:   11://
+        -:   12://  Description : simple facility that mimmic notion of read-only read-write
+        -:   13://  properties in C++ classes. Original idea by Henrik Ravn.
+        -:   14:// ***************************************************************************
+        -:   15:
+        -:   16:#ifndef BOOST_TEST_UTILS_CLASS_PROPERTIES_HPP
+        -:   17:#define BOOST_TEST_UTILS_CLASS_PROPERTIES_HPP
+        -:   18:
+        -:   19:// Boost.Test
+        -:   20:#include <boost/test/detail/config.hpp>
+        -:   21:
+        -:   22:// Boost
+        -:   23:#if !BOOST_WORKAROUND(__IBMCPP__, BOOST_TESTED_AT(600))
+        -:   24:#include <boost/preprocessor/seq/for_each.hpp>
+        -:   25:#endif
+        -:   26:#include <boost/call_traits.hpp>
+        -:   27:#include <boost/type_traits/add_pointer.hpp>
+        -:   28:#include <boost/type_traits/add_const.hpp>
+        -:   29:#include <boost/utility/addressof.hpp>
+        -:   30:
+        -:   31:// STL
+        -:   32:#include <iosfwd>
+        -:   33:
+        -:   34:#include <boost/test/detail/suppress_warnings.hpp>
+        -:   35:
+        -:   36://____________________________________________________________________________//
+        -:   37:
+        -:   38:namespace boost {
+        -:   39:namespace unit_test {
+        -:   40:
+        -:   41:// ************************************************************************** //
+        -:   42:// **************                 class_property               ************** //
+        -:   43:// ************************************************************************** //
+        -:   44:
+        -:   45:template<class PropertyType>
+        -:   46:class class_property {
+        -:   47:protected:
+        -:   48:    typedef typename call_traits<PropertyType>::const_reference     read_access_t;
+        -:   49:    typedef typename call_traits<PropertyType>::param_type          write_param_t;
+        -:   50:    typedef typename add_pointer<typename add_const<PropertyType>::type>::type address_res_t;
+        -:   51:public:
+        -:   52:    // Constructor
+      264:   53:                    class_property() : value( PropertyType() ) {}
+------------------
+_ZN5boost9unit_test14class_propertyISt6vectorINS_10shared_ptrINS0_17test_unit_fixtureEEESaIS5_EEEC2Ev:
+       12:   53:                    class_property() : value( PropertyType() ) {}
+       12:   53-block  0
+------------------
+_ZN5boost9unit_test14class_propertyISt6vectorINS_10shared_ptrINS0_9decorator4baseEEESaIS6_EEEC2Ev:
+       12:   53:                    class_property() : value( PropertyType() ) {}
+       12:   53-block  0
+------------------
+_ZN5boost9unit_test14class_propertyINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEC2Ev:
+       12:   53:                    class_property() : value( PropertyType() ) {}
+       12:   53-block  0
+------------------
+_ZN5boost9unit_test14class_propertyISt6vectorINS_8functionIFNS_10test_tools16assertion_resultEmEEESaIS7_EEEC2Ev:
+       12:   53:                    class_property() : value( PropertyType() ) {}
+       12:   53-block  0
+------------------
+_ZN5boost9unit_test14class_propertyISt6vectorINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESaIS8_EEEC2Ev:
+       12:   53:                    class_property() : value( PropertyType() ) {}
+       12:   53-block  0
+------------------
+_ZN5boost9unit_test14class_propertyISt6vectorImSaImEEEC2Ev:
+       12:   53:                    class_property() : value( PropertyType() ) {}
+       12:   53-block  0
+------------------
+_ZN5boost9unit_test14class_propertyImEC2Ev:
+      156:   53:                    class_property() : value( PropertyType() ) {}
+------------------
+_ZN5boost9unit_test14class_propertyIbEC2Ev:
+       36:   53:                    class_property() : value( PropertyType() ) {}
+------------------
+      264:   54:    explicit        class_property( write_param_t init_value )
+      264:   55:    : value( init_value ) {}
+------------------
+_ZN5boost9unit_test14class_propertyINS0_9log_levelEEC2ES2_:
+        1:   54:    explicit        class_property( write_param_t init_value )
+        1:   55:    : value( init_value ) {}
+------------------
+_ZN5boost9unit_test14class_propertyINS0_12report_levelEEC2ES2_:
+        1:   54:    explicit        class_property( write_param_t init_value )
+        1:   55:    : value( init_value ) {}
+------------------
+_ZN5boost9unit_test14class_propertyINS0_13output_formatEEC2ES2_:
+        3:   54:    explicit        class_property( write_param_t init_value )
+        3:   55:    : value( init_value ) {}
+------------------
+_ZN5boost9unit_test14class_propertyINS0_9test_unit10run_statusEEC2ES3_:
+       24:   54:    explicit        class_property( write_param_t init_value )
+       24:   55:    : value( init_value ) {}
+------------------
+_ZN5boost9unit_test14class_propertyINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEC2ERKS7_:
+       13:   54:    explicit        class_property( write_param_t init_value )
+       13:   55:    : value( init_value ) {}
+       13:   55-block  0
+------------------
+_ZN5boost9unit_test14class_propertyIjEC2Ej:
+       15:   54:    explicit        class_property( write_param_t init_value )
+       15:   55:    : value( init_value ) {}
+------------------
+_ZN5boost9unit_test14class_propertyINS_8functionIFvvEEEEC2ERKS4_:
+       10:   54:    explicit        class_property( write_param_t init_value )
+       10:   55:    : value( init_value ) {}
+       10:   55-block  0
+------------------
+_ZN5boost9unit_test14class_propertyISt6vectorINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESaIS8_EEEC2ERKSA_:
+        2:   54:    explicit        class_property( write_param_t init_value )
+        2:   55:    : value( init_value ) {}
+        2:   55-block  0
+------------------
+_ZN5boost9unit_test14class_propertyImEC2Em:
+       52:   54:    explicit        class_property( write_param_t init_value )
+       52:   55:    : value( init_value ) {}
+------------------
+_ZN5boost9unit_test14class_propertyIbEC2Eb:
+      143:   54:    explicit        class_property( write_param_t init_value )
+      143:   55:    : value( init_value ) {}
+------------------
+        -:   56:
+        -:   57:    // Access methods
+      516:   58:    operator        read_access_t() const   { return value; }
+------------------
+_ZNK5boost9unit_test14class_propertyINS_8functionIFvvEEEEcvRKS4_Ev:
+       10:   58:    operator        read_access_t() const   { return value; }
+       10:   58-block  0
+------------------
+_ZNK5boost9unit_test14class_propertyIjEcvRKjEv:
+       26:   58:    operator        read_access_t() const   { return value; }
+       26:   58-block  0
+------------------
+_ZNK5boost9unit_test14class_propertyINS0_9test_unit10run_statusEEcvRKS3_Ev:
+       11:   58:    operator        read_access_t() const   { return value; }
+       11:   58-block  0
+------------------
+_ZNK5boost9unit_test14class_propertyINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEcvRKS7_Ev:
+       12:   58:    operator        read_access_t() const   { return value; }
+       12:   58-block  0
+------------------
+_ZNK5boost9unit_test14class_propertyIbEcvRKbEv:
+       56:   58:    operator        read_access_t() const   { return value; }
+       56:   58-block  0
+------------------
+_ZNK5boost9unit_test14class_propertyImEcvRKmEv:
+      401:   58:    operator        read_access_t() const   { return value; }
+      401:   58-block  0
+------------------
+     668*:   59:    read_access_t   get() const             { return value; }
+------------------
+_ZNK5boost9unit_test14class_propertyIjE3getEv:
+    #####:   59:    read_access_t   get() const             { return value; }
+    %%%%%:   59-block  0
+------------------
+_ZNK5boost9unit_test14class_propertyImE3getEv:
+       29:   59:    read_access_t   get() const             { return value; }
+       29:   59-block  0
+------------------
+_ZNK5boost9unit_test14class_propertyINS0_9test_unit10run_statusEE3getEv:
+      116:   59:    read_access_t   get() const             { return value; }
+      116:   59-block  0
+------------------
+_ZNK5boost9unit_test14class_propertyISt6vectorINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESaIS8_EEE3getEv:
+    #####:   59:    read_access_t   get() const             { return value; }
+    %%%%%:   59-block  0
+------------------
+_ZNK5boost9unit_test14class_propertyISt6vectorINS_8functionIFNS_10test_tools16assertion_resultEmEEESaIS7_EEE3getEv:
+       72:   59:    read_access_t   get() const             { return value; }
+       72:   59-block  0
+------------------
+_ZNK5boost9unit_test14class_propertyISt6vectorINS_10shared_ptrINS0_9decorator4baseEEESaIS6_EEE3getEv:
+       72:   59:    read_access_t   get() const             { return value; }
+       72:   59-block  0
+------------------
+_ZNK5boost9unit_test14class_propertyISt6vectorINS_10shared_ptrINS0_17test_unit_fixtureEEESaIS5_EEE3getEv:
+      144:   59:    read_access_t   get() const             { return value; }
+      144:   59-block  0
+------------------
+_ZNK5boost9unit_test14class_propertyISt6vectorImSaImEEE3getEv:
+      210:   59:    read_access_t   get() const             { return value; }
+      210:   59-block  0
+------------------
+_ZNK5boost9unit_test14class_propertyINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEE3getEv:
+       25:   59:    read_access_t   get() const             { return value; }
+       25:   59-block  0
+------------------
+      107:   60:    bool            operator!() const       { return !value; }
+      107:   60-block  0
+        -:   61:    address_res_t   operator&() const       { return &value; }
+        -:   62:
+        -:   63:    // Data members
+        -:   64:#ifndef BOOST_TEST_NO_PROTECTED_USING
+        -:   65:protected:
+        -:   66:#endif
+        -:   67:    PropertyType        value;
+        -:   68:};
+        -:   69:
+        -:   70://____________________________________________________________________________//
+        -:   71:
+        -:   72:#ifdef BOOST_CLASSIC_IOSTREAMS
+        -:   73:
+        -:   74:template<class PropertyType>
+        -:   75:inline std::ostream&
+        -:   76:operator<<( std::ostream& os, class_property<PropertyType> const& p )
+        -:   77:
+        -:   78:#else
+        -:   79:
+        -:   80:template<typename CharT1, typename Tr,class PropertyType>
+        -:   81:inline std::basic_ostream<CharT1,Tr>&
+      24*:   82:operator<<( std::basic_ostream<CharT1,Tr>& os, class_property<PropertyType> const& p )
+        -:   83:
+        -:   84:#endif
+        -:   85:{
+      24*:   86:    return os << p.get();
+        -:   87:}
+------------------
+_ZN5boost9unit_testlsIcSt11char_traitsIcEjEERSt13basic_ostreamIT_T0_ES8_RKNS0_14class_propertyIT1_EE:
+    #####:   82:operator<<( std::basic_ostream<CharT1,Tr>& os, class_property<PropertyType> const& p )
+        -:   83:
+        -:   84:#endif
+        -:   85:{
+    #####:   86:    return os << p.get();
+    %%%%%:   86-block  0
+        -:   87:}
+------------------
+_ZN5boost9unit_testlsIcSt11char_traitsIcEmEERSt13basic_ostreamIT_T0_ES8_RKNS0_14class_propertyIT1_EE:
+    #####:   82:operator<<( std::basic_ostream<CharT1,Tr>& os, class_property<PropertyType> const& p )
+        -:   83:
+        -:   84:#endif
+        -:   85:{
+    #####:   86:    return os << p.get();
+    %%%%%:   86-block  0
+        -:   87:}
+------------------
+_ZN5boost9unit_testlsIcSt11char_traitsIcENSt7__cxx1112basic_stringIcS3_SaIcEEEEERSt13basic_ostreamIT_T0_ESC_RKNS0_14class_propertyIT1_EE:
+       24:   82:operator<<( std::basic_ostream<CharT1,Tr>& os, class_property<PropertyType> const& p )
+        -:   83:
+        -:   84:#endif
+        -:   85:{
+       24:   86:    return os << p.get();
+       24:   86-block  0
+        -:   87:}
+------------------
+        -:   88:
+        -:   89://____________________________________________________________________________//
+        -:   90:
+        -:   91:#define DEFINE_PROPERTY_FREE_BINARY_OPERATOR( op )                              \
+        -:   92:template<class PropertyType>                                                    \
+        -:   93:inline bool                                                                     \
+        -:   94:operator op( PropertyType const& lhs, class_property<PropertyType> const& rhs ) \
+        -:   95:{                                                                               \
+        -:   96:    return lhs op rhs.get();                                                    \
+        -:   97:}                                                                               \
+        -:   98:template<class PropertyType>                                                    \
+        -:   99:inline bool                                                                     \
+        -:  100:operator op( class_property<PropertyType> const& lhs, PropertyType const& rhs ) \
+        -:  101:{                                                                               \
+        -:  102:    return lhs.get() op rhs;                                                    \
+        -:  103:}                                                                               \
+        -:  104:template<class PropertyType>                                                    \
+        -:  105:inline bool                                                                     \
+        -:  106:operator op( class_property<PropertyType> const& lhs,                           \
+        -:  107:             class_property<PropertyType> const& rhs )                          \
+        -:  108:{                                                                               \
+        -:  109:    return lhs.get() op rhs.get();                                              \
+        -:  110:}                                                                               \
+        -:  111:/**/
+        -:  112:
+     131*:  113:DEFINE_PROPERTY_FREE_BINARY_OPERATOR( == )
+------------------
+_ZN5boost9unit_testeqINS0_9test_unit10run_statusEEEbRKNS0_14class_propertyIT_EES8_:
+    #####:  113:DEFINE_PROPERTY_FREE_BINARY_OPERATOR( == )
+    %%%%%:  113-block  0
+------------------
+_ZN5boost9unit_testeqImEEbRKNS0_14class_propertyIT_EERKS3_:
+       12:  113:DEFINE_PROPERTY_FREE_BINARY_OPERATOR( == )
+       12:  113-block  0
+------------------
+_ZN5boost9unit_testeqImEEbRKNS0_14class_propertyIT_EES6_:
+        3:  113:DEFINE_PROPERTY_FREE_BINARY_OPERATOR( == )
+        3:  113-block  0
+------------------
+_ZN5boost9unit_testeqINS0_9test_unit10run_statusEEEbRKNS0_14class_propertyIT_EERKS5_:
+      116:  113:DEFINE_PROPERTY_FREE_BINARY_OPERATOR( == )
+      116:  113-block  0
+------------------
+      11*:  114:DEFINE_PROPERTY_FREE_BINARY_OPERATOR( != )
+------------------
+_ZN5boost9unit_testneImEEbRKNS0_14class_propertyIT_EES6_:
+    #####:  114:DEFINE_PROPERTY_FREE_BINARY_OPERATOR( != )
+    %%%%%:  114-block  0
+------------------
+_ZN5boost9unit_testneImEEbRKNS0_14class_propertyIT_EERKS3_:
+       11:  114:DEFINE_PROPERTY_FREE_BINARY_OPERATOR( != )
+       11:  114-block  0
+------------------
+_ZN5boost9unit_testneImEEbRKT_RKNS0_14class_propertyIS2_EE:
+    #####:  114:DEFINE_PROPERTY_FREE_BINARY_OPERATOR( != )
+    %%%%%:  114-block  0
+------------------
+        -:  115:
+        -:  116:#undef DEFINE_PROPERTY_FREE_BINARY_OPERATOR
+        -:  117:
+        -:  118:// ************************************************************************** //
+        -:  119:// **************               readonly_property              ************** //
+        -:  120:// ************************************************************************** //
+        -:  121:
+        -:  122:template<class PropertyType>
+        -:  123:class readonly_property : public class_property<PropertyType> {
+        -:  124:    typedef class_property<PropertyType>         base_prop;
+        -:  125:    typedef typename base_prop::address_res_t    arrow_res_t;
+        -:  126:protected:
+        -:  127:    typedef typename base_prop::write_param_t    write_param_t;
+        -:  128:public:
+        -:  129:    // Constructor
+      228:  130:                    readonly_property() {}
+------------------
+_ZN5boost9unit_test17readonly_propertyISt6vectorINS_8functionIFNS_10test_tools16assertion_resultEmEEESaIS7_EEEC2Ev:
+       12:  130:                    readonly_property() {}
+       12:  130-block  0
+------------------
+_ZN5boost9unit_test17readonly_propertyISt6vectorINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESaIS8_EEEC2Ev:
+       12:  130:                    readonly_property() {}
+       12:  130-block  0
+------------------
+_ZN5boost9unit_test17readonly_propertyISt6vectorImSaImEEEC2Ev:
+       12:  130:                    readonly_property() {}
+       12:  130-block  0
+------------------
+_ZN5boost9unit_test17readonly_propertyImEC2Ev:
+      156:  130:                    readonly_property() {}
+      156:  130-block  0
+------------------
+_ZN5boost9unit_test17readonly_propertyIbEC2Ev:
+       36:  130:                    readonly_property() {}
+       36:  130-block  0
+------------------
+      103:  131:    explicit        readonly_property( write_param_t init_value ) : base_prop( init_value ) {}
+------------------
+_ZN5boost9unit_test17readonly_propertyINS_8functionIFvvEEEEC2ERKS4_:
+       10:  131:    explicit        readonly_property( write_param_t init_value ) : base_prop( init_value ) {}
+       10:  131-block  0
+------------------
+_ZN5boost9unit_test17readonly_propertyImEC2Em:
+       25:  131:    explicit        readonly_property( write_param_t init_value ) : base_prop( init_value ) {}
+       25:  131-block  0
+------------------
+_ZN5boost9unit_test17readonly_propertyIbEC2Eb:
+       68:  131:    explicit        readonly_property( write_param_t init_value ) : base_prop( init_value ) {}
+       68:  131-block  0
+------------------
+        -:  132:
+        -:  133:    // access methods
+    #####:  134:    arrow_res_t     operator->() const      { return boost::addressof( base_prop::value ); }
+    %%%%%:  134-block  0
+        -:  135:};
+        -:  136:
+        -:  137://____________________________________________________________________________//
+        -:  138:
+        -:  139:#if BOOST_WORKAROUND(__IBMCPP__, BOOST_TESTED_AT(600))
+        -:  140:
+        -:  141:#define BOOST_READONLY_PROPERTY( property_type, friends ) boost::unit_test::readwrite_property<property_type >
+        -:  142:
+        -:  143:#else
+        -:  144:
+        -:  145:#define BOOST_READONLY_PROPERTY_DECLARE_FRIEND(r, data, elem) friend class elem;
+        -:  146:
+        -:  147:#define BOOST_READONLY_PROPERTY( property_type, friends )                           \
+        -:  148:class BOOST_JOIN( readonly_property, __LINE__ )                                     \
+        -:  149:: public boost::unit_test::readonly_property<property_type > {                      \
+        -:  150:    typedef boost::unit_test::readonly_property<property_type > base_prop;          \
+        -:  151:    BOOST_PP_SEQ_FOR_EACH( BOOST_READONLY_PROPERTY_DECLARE_FRIEND, ' ', friends )   \
+        -:  152:    typedef base_prop::write_param_t  write_param_t;                                \
+        -:  153:public:                                                                             \
+        -:  154:                BOOST_JOIN( readonly_property, __LINE__ )() {}                      \
+        -:  155:    explicit    BOOST_JOIN( readonly_property, __LINE__ )( write_param_t init_v  )  \
+        -:  156:    : base_prop( init_v ) {}                                                        \
+        -:  157:}                                                                                   \
+        -:  158:/**/
+        -:  159:
+        -:  160:#endif
+        -:  161:
+        -:  162:// ************************************************************************** //
+        -:  163:// **************              readwrite_property              ************** //
+        -:  164:// ************************************************************************** //
+        -:  165:
+        -:  166:template<class PropertyType>
+        -:  167:class readwrite_property : public class_property<PropertyType> {
+        -:  168:    typedef class_property<PropertyType>                base_prop;
+        -:  169:    typedef typename add_pointer<PropertyType>::type    arrow_res_t;
+        -:  170:    typedef typename base_prop::address_res_t           const_arrow_res_t;
+        -:  171:    typedef typename base_prop::write_param_t           write_param_t;
+        -:  172:public:
+       36:  173:                    readwrite_property() : base_prop() {}
+------------------
+_ZN5boost9unit_test18readwrite_propertyISt6vectorINS_10shared_ptrINS0_17test_unit_fixtureEEESaIS5_EEEC1Ev:
+       12:  173:                    readwrite_property() : base_prop() {}
+       12:  173-block  0
+------------------
+_ZN5boost9unit_test18readwrite_propertyISt6vectorINS_10shared_ptrINS0_9decorator4baseEEESaIS6_EEEC1Ev:
+       12:  173:                    readwrite_property() : base_prop() {}
+       12:  173-block  0
+------------------
+_ZN5boost9unit_test18readwrite_propertyINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEC1Ev:
+       12:  173:                    readwrite_property() : base_prop() {}
+       12:  173-block  0
+------------------
+      161:  174:    explicit        readwrite_property( write_param_t init_value ) : base_prop( init_value ) {}
+------------------
+_ZN5boost9unit_test18readwrite_propertyINS0_9log_levelEEC1ES2_:
+        1:  174:    explicit        readwrite_property( write_param_t init_value ) : base_prop( init_value ) {}
+        1:  174-block  0
+------------------
+_ZN5boost9unit_test18readwrite_propertyISt6vectorINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESaIS8_EEEC1ERKSA_:
+        2:  174:    explicit        readwrite_property( write_param_t init_value ) : base_prop( init_value ) {}
+        2:  174-block  0
+------------------
+_ZN5boost9unit_test18readwrite_propertyINS0_12report_levelEEC1ES2_:
+        1:  174:    explicit        readwrite_property( write_param_t init_value ) : base_prop( init_value ) {}
+        1:  174-block  0
+------------------
+_ZN5boost9unit_test18readwrite_propertyINS0_13output_formatEEC1ES2_:
+        3:  174:    explicit        readwrite_property( write_param_t init_value ) : base_prop( init_value ) {}
+        3:  174-block  0
+------------------
+_ZN5boost9unit_test18readwrite_propertyINS0_9test_unit10run_statusEEC1ES3_:
+       24:  174:    explicit        readwrite_property( write_param_t init_value ) : base_prop( init_value ) {}
+       24:  174-block  0
+------------------
+_ZN5boost9unit_test18readwrite_propertyINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEC1ERKS7_:
+       13:  174:    explicit        readwrite_property( write_param_t init_value ) : base_prop( init_value ) {}
+       13:  174-block  0
+------------------
+_ZN5boost9unit_test18readwrite_propertyIjEC1Ej:
+       15:  174:    explicit        readwrite_property( write_param_t init_value ) : base_prop( init_value ) {}
+       15:  174-block  0
+------------------
+_ZN5boost9unit_test18readwrite_propertyImEC1Em:
+       27:  174:    explicit        readwrite_property( write_param_t init_value ) : base_prop( init_value ) {}
+       27:  174-block  0
+------------------
+_ZN5boost9unit_test18readwrite_propertyIbEC1Eb:
+       75:  174:    explicit        readwrite_property( write_param_t init_value ) : base_prop( init_value ) {}
+       75:  174-block  0
+------------------
+        -:  175:
+        -:  176:    // access methods
+        -:  177:    void            set( write_param_t v )  { base_prop::value = v; }
+        -:  178:    arrow_res_t     operator->()            { return boost::addressof( base_prop::value ); }
+    #####:  179:    const_arrow_res_t operator->() const    { return boost::addressof( base_prop::value ); }
+    %%%%%:  179-block  0
+        -:  180:
+        -:  181:#ifndef BOOST_TEST_NO_PROTECTED_USING
+        -:  182:    using           base_prop::value;
+        -:  183:#endif
+        -:  184:};
+        -:  185:
+        -:  186://____________________________________________________________________________//
+        -:  187:
+        -:  188:} // unit_test
+        -:  189:} // namespace boost
+        -:  190:
+        -:  191:#include <boost/test/detail/enable_warnings.hpp>
+        -:  192:
+        -:  193:#undef BOOST_TEST_NO_PROTECTED_USING
+        -:  194:
+        -:  195:#endif // BOOST_TEST_UTILS_CLASS_PROPERTIES_HPP

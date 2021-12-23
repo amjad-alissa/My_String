@@ -1,0 +1,963 @@
+        -:    0:Source:F:/Files/vcpkg/installed/x86-windows/include/boost/test/utils/runtime/argument_factory.hpp
+        -:    0:Graph:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcno
+        -:    0:Data:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1://  (C) Copyright Gennadiy Rozental 2001.
+        -:    2://  Distributed under the Boost Software License, Version 1.0.
+        -:    3://  (See accompanying file LICENSE_1_0.txt or copy at
+        -:    4://  http://www.boost.org/LICENSE_1_0.txt)
+        -:    5:
+        -:    6://  See http://www.boost.org/libs/test for the library home page.
+        -:    7://
+        -:    8://  File        : $RCSfile$
+        -:    9://
+        -:   10://  Version     : $Revision$
+        -:   11://
+        -:   12://  Description : argument factories for different kinds of parameters
+        -:   13:// ***************************************************************************
+        -:   14:
+        -:   15:#ifndef BOOST_TEST_UTILS_RUNTIME_ARGUMENT_FACTORY_HPP
+        -:   16:#define BOOST_TEST_UTILS_RUNTIME_ARGUMENT_FACTORY_HPP
+        -:   17:
+        -:   18:// Boost.Test Runtime parameters
+        -:   19:#include <boost/test/utils/runtime/errors.hpp>
+        -:   20:#include <boost/test/utils/runtime/argument.hpp>
+        -:   21:#include <boost/test/utils/runtime/modifier.hpp>
+        -:   22:
+        -:   23:// Boost.Test
+        -:   24:#include <boost/test/utils/basic_cstring/io.hpp>
+        -:   25:#include <boost/test/utils/basic_cstring/compare.hpp>
+        -:   26:#include <boost/test/utils/string_cast.hpp>
+        -:   27:
+        -:   28:// Boost
+        -:   29:#include <boost/function/function2.hpp>
+        -:   30:
+        -:   31:// STL
+        -:   32:#include <vector>
+        -:   33:
+        -:   34:#include <boost/test/detail/suppress_warnings.hpp>
+        -:   35:
+        -:   36:namespace boost {
+        -:   37:namespace runtime {
+        -:   38:
+        -:   39:// ************************************************************************** //
+        -:   40:// **************          runtime::value_interpreter          ************** //
+        -:   41:// ************************************************************************** //
+        -:   42:
+        -:   43:template<typename ValueType, bool is_enum>
+        -:   44:struct value_interpreter;
+        -:   45:
+        -:   46://____________________________________________________________________________//
+        -:   47:
+        -:   48:template<typename ValueType>
+        -:   49:struct value_interpreter<ValueType, false> {
+        -:   50:    template<typename Modifiers>
+        2:   51:    explicit    value_interpreter( Modifiers const& ) {}
+------------------
+_ZN5boost7runtime17value_interpreterIjLb0EEC2INS_3nfp23named_parameter_combineINS4_15named_parameterIKNS_9unit_test13basic_cstringIKcEENS0_12_GLOBAL__N_16help_tERSB_EENS5_INS6_ISB_NSC_12value_hint_tESE_EENS5_INS6_IKjNSC_16optional_value_tERSI_EENS5_INS6_ISI_NSC_15default_value_tESK_EENS5_INS6_ISB_NSC_9env_var_tESE_EENS6_ISB_NSC_13description_tESE_EEEEEEEEEEEEEERKT_:
+        1:   51:    explicit    value_interpreter( Modifiers const& ) {}
+------------------
+_ZN5boost7runtime17value_interpreterImLb0EEC2INS_3nfp23named_parameter_combineINS4_15named_parameterIKNS_9unit_test13basic_cstringIKcEENS0_12_GLOBAL__N_16help_tERSB_EENS5_INS6_ISB_NSC_12value_hint_tESE_EENS5_INS6_IKlNSC_16optional_value_tERSI_EENS5_INS6_ISI_NSC_15default_value_tESK_EENS5_INS6_ISB_NSC_9env_var_tESE_EENS6_ISB_NSC_13description_tESE_EEEEEEEEEEEEEERKT_:
+        1:   51:    explicit    value_interpreter( Modifiers const& ) {}
+------------------
+        -:   52:
+    #####:   53:    ValueType interpret( cstring param_name, cstring source ) const
+        -:   54:    {
+        -:   55:        ValueType res;
+    #####:   56:        if( !unit_test::utils::string_as<ValueType>( source, res ) )
+    #####:   57:            BOOST_TEST_I_THROW( format_error( param_name ) << source <<
+        -:   58:                                " can't be interpreted as value of parameter " << param_name << "." );
+    #####:   59:        return res;
+        -:   60:    }
+------------------
+_ZNK5boost7runtime17value_interpreterImLb0EE9interpretENS_9unit_test13basic_cstringIKcEES6_:
+    #####:   53:    ValueType interpret( cstring param_name, cstring source ) const
+        -:   54:    {
+        -:   55:        ValueType res;
+    #####:   56:        if( !unit_test::utils::string_as<ValueType>( source, res ) )
+    %%%%%:   56-block  0
+    %%%%%:   56-block  1
+    $$$$$:   56-block  2
+    #####:   57:            BOOST_TEST_I_THROW( format_error( param_name ) << source <<
+    %%%%%:   57-block  0
+    %%%%%:   57-block  1
+    %%%%%:   57-block  2
+    %%%%%:   57-block  3
+    %%%%%:   57-block  4
+    %%%%%:   57-block  5
+    $$$$$:   57-block  6
+    $$$$$:   57-block  7
+    $$$$$:   57-block  8
+    $$$$$:   57-block  9
+    $$$$$:   57-block 10
+    $$$$$:   57-block 11
+    $$$$$:   57-block 12
+    $$$$$:   57-block 13
+    $$$$$:   57-block 14
+    $$$$$:   57-block 15
+    $$$$$:   57-block 16
+        -:   58:                                " can't be interpreted as value of parameter " << param_name << "." );
+    #####:   59:        return res;
+    %%%%%:   59-block  0
+    %%%%%:   59-block  1
+        -:   60:    }
+------------------
+_ZNK5boost7runtime17value_interpreterIjLb0EE9interpretENS_9unit_test13basic_cstringIKcEES6_:
+    #####:   53:    ValueType interpret( cstring param_name, cstring source ) const
+        -:   54:    {
+        -:   55:        ValueType res;
+    #####:   56:        if( !unit_test::utils::string_as<ValueType>( source, res ) )
+    %%%%%:   56-block  0
+    %%%%%:   56-block  1
+    $$$$$:   56-block  2
+    #####:   57:            BOOST_TEST_I_THROW( format_error( param_name ) << source <<
+    %%%%%:   57-block  0
+    %%%%%:   57-block  1
+    %%%%%:   57-block  2
+    %%%%%:   57-block  3
+    %%%%%:   57-block  4
+    %%%%%:   57-block  5
+    $$$$$:   57-block  6
+    $$$$$:   57-block  7
+    $$$$$:   57-block  8
+    $$$$$:   57-block  9
+    $$$$$:   57-block 10
+    $$$$$:   57-block 11
+    $$$$$:   57-block 12
+    $$$$$:   57-block 13
+    $$$$$:   57-block 14
+    $$$$$:   57-block 15
+    $$$$$:   57-block 16
+        -:   58:                                " can't be interpreted as value of parameter " << param_name << "." );
+    #####:   59:        return res;
+    %%%%%:   59-block  0
+    %%%%%:   59-block  1
+        -:   60:    }
+------------------
+        -:   61:};
+        -:   62:
+        -:   63://____________________________________________________________________________//
+        -:   64:
+        -:   65:template<>
+        -:   66:struct value_interpreter<std::string, false> {
+        -:   67:    template<typename Modifiers>
+        7:   68:    explicit    value_interpreter( Modifiers const& ) {}
+------------------
+_ZN5boost7runtime17value_interpreterINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEELb0EEC2INS_3nfp23named_parameter_combineINSA_15named_parameterIKNS_9unit_test13basic_cstringIKcEENS0_12_GLOBAL__N_16help_tERSH_EENSB_INSC_ISH_NSI_12value_hint_tESK_EENSB_INSC_IKS7_NSI_16optional_value_tERSO_EENSC_ISH_NSI_13description_tESK_EEEEEEEEEERKT_:
+        1:   68:    explicit    value_interpreter( Modifiers const& ) {}
+------------------
+_ZN5boost7runtime17value_interpreterINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEELb0EEC2INS_3nfp23named_parameter_combineINSA_15named_parameterIKNS_9unit_test13basic_cstringIKcEENS0_12_GLOBAL__N_16help_tERSH_EENSB_INSC_ISH_NSI_12value_hint_tESK_EENSB_INSC_IKS7_NSI_15default_value_tERSO_EENSB_INSC_ISH_NSI_9env_var_tESK_EENSC_ISH_NSI_13description_tESK_EEEEEEEEEEEERKT_:
+        1:   68:    explicit    value_interpreter( Modifiers const& ) {}
+------------------
+_ZN5boost7runtime17value_interpreterINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEELb0EEC2INS_3nfp23named_parameter_combineINSA_15named_parameterIKNS_9unit_test13basic_cstringIKcEENS0_12_GLOBAL__N_16help_tERSH_EENSB_INSC_ISH_NSI_12value_hint_tESK_EENSB_INSC_ISH_NSI_9env_var_tESK_EENSC_ISH_NSI_13description_tESK_EEEEEEEEEERKT_:
+        4:   68:    explicit    value_interpreter( Modifiers const& ) {}
+------------------
+_ZN5boost7runtime17value_interpreterINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEELb0EEC2INS_3nfp23named_parameter_combineINSA_15named_parameterIKZNS_9unit_test14runtime_config12_GLOBAL__N_119register_parametersERNS0_16parameters_storeEEUlNSD_13basic_cstringIKcEEE_NS0_12_GLOBAL__N_110callback_tERSM_EENSB_INSC_IKSK_NSN_9env_var_tERSR_EENSC_ISR_NSN_13description_tEST_EEEEEEEERKT_:
+        1:   68:    explicit    value_interpreter( Modifiers const& ) {}
+------------------
+        -:   69:
+        2:   70:    std::string interpret( cstring, cstring source ) const
+        -:   71:    {
+        2:   72:        return std::string( source.begin(), source.size() );
+        2:   72-block  0
+        2:   72-block  1
+        2:   72-block  2
+    $$$$$:   72-block  3
+        -:   73:    }
+        -:   74:};
+        -:   75:
+        -:   76://____________________________________________________________________________//
+        -:   77:
+        -:   78:template<>
+        -:   79:struct value_interpreter<cstring, false> {
+        -:   80:    template<typename Modifiers>
+        -:   81:    explicit    value_interpreter( Modifiers const& ) {}
+        -:   82:
+        -:   83:    cstring interpret( cstring, cstring source ) const
+        -:   84:    {
+        -:   85:        return source;
+        -:   86:    }
+        -:   87:};
+        -:   88:
+        -:   89://____________________________________________________________________________//
+        -:   90:
+        -:   91:template<>
+        -:   92:struct value_interpreter<bool, false> {
+        -:   93:    template<typename Modifiers>
+       13:   94:    explicit    value_interpreter( Modifiers const& ) {}
+------------------
+_ZN5boost7runtime17value_interpreterIbLb0EEC2INS_3nfp23named_parameter_combineINS4_15named_parameterIKbNS0_12_GLOBAL__N_115default_value_tERS7_EENS5_INS6_IS7_NS8_16optional_value_tESA_EENS6_IKNS_9unit_test13basic_cstringIKcEENS8_13description_tERSI_EEEEEEEERKT_:
+        2:   94:    explicit    value_interpreter( Modifiers const& ) {}
+------------------
+_ZN5boost7runtime17value_interpreterIbLb0EEC2INS_3nfp23named_parameter_combineINS4_15named_parameterIKbNS0_12_GLOBAL__N_116optional_value_tERS7_EENS5_INS6_IKNS_9unit_test13basic_cstringIKcEENS8_6help_tERSG_EENS5_INS6_IS7_NS8_15default_value_tESA_EENS5_INS6_ISG_NS8_9env_var_tESI_EENS6_ISG_NS8_13description_tESI_EEEEEEEEEEEERKT_:
+        4:   94:    explicit    value_interpreter( Modifiers const& ) {}
+------------------
+_ZN5boost7runtime17value_interpreterIbLb0EEC2INS_3nfp23named_parameter_combineINS4_15named_parameterIKbNS0_12_GLOBAL__N_115default_value_tERS7_EENS5_INS6_IS7_NS8_16optional_value_tESA_EENS5_INS6_IKNS_9unit_test13basic_cstringIKcEENS8_6help_tERSI_EENS5_INS6_ISI_NS8_9env_var_tESK_EENS6_ISI_NS8_13description_tESK_EEEEEEEEEEEERKT_:
+        7:   94:    explicit    value_interpreter( Modifiers const& ) {}
+------------------
+        -:   95:
+        2:   96:    bool    interpret( cstring param_name, cstring source ) const
+        -:   97:    {
+        2:   98:        static cstring const s_YES( "YES" );
+        2:   98-block  0
+        1:   98-block  1
+        1:   98-block  2
+        1:   98-block  3
+    $$$$$:   98-block  4
+    $$$$$:   98-block  5
+        2:   99:        static cstring const s_Y( "Y" );
+        2:   99-block  0
+        1:   99-block  1
+        1:   99-block  2
+        1:   99-block  3
+    $$$$$:   99-block  4
+    $$$$$:   99-block  5
+        2:  100:        static cstring const s_NO( "NO" );
+        2:  100-block  0
+        1:  100-block  1
+        1:  100-block  2
+        1:  100-block  3
+    $$$$$:  100-block  4
+    $$$$$:  100-block  5
+        2:  101:        static cstring const s_N( "N" );
+        2:  101-block  0
+        1:  101-block  1
+        1:  101-block  2
+        1:  101-block  3
+    $$$$$:  101-block  4
+    $$$$$:  101-block  5
+        2:  102:        static cstring const s_TRUE( "TRUE" );
+        2:  102-block  0
+        1:  102-block  1
+        1:  102-block  2
+        1:  102-block  3
+    $$$$$:  102-block  4
+    $$$$$:  102-block  5
+        2:  103:        static cstring const s_FALSE( "FALSE" );
+        2:  103-block  0
+        1:  103-block  1
+        1:  103-block  2
+        1:  103-block  3
+    $$$$$:  103-block  4
+    $$$$$:  103-block  5
+        2:  104:        static cstring const s_one( "1" );
+        2:  104-block  0
+        1:  104-block  1
+        1:  104-block  2
+        1:  104-block  3
+    $$$$$:  104-block  4
+    $$$$$:  104-block  5
+        2:  105:        static cstring const s_zero( "0" );
+        2:  105-block  0
+        1:  105-block  1
+        1:  105-block  2
+        1:  105-block  3
+    $$$$$:  105-block  4
+    $$$$$:  105-block  5
+        -:  106:
+        2:  107:        source.trim();
+        2:  107-block  0
+    $$$$$:  107-block  1
+        -:  108:
+        2:  109:        if( source.is_empty() ||
+        2:  109-block  0
+        2:  110:            case_ins_eq( source, s_YES ) ||
+        2:  110-block  0
+        2:  110-block  1
+    $$$$$:  110-block  2
+    $$$$$:  110-block  3
+        2:  111:            case_ins_eq( source, s_Y ) ||
+        2:  111-block  0
+        2:  111-block  1
+    $$$$$:  111-block  2
+    $$$$$:  111-block  3
+       6*:  112:            case_ins_eq( source, s_one ) ||
+        2:  112-block  0
+        2:  112-block  1
+    %%%%%:  112-block  2
+        2:  112-block  3
+    $$$$$:  112-block  4
+    $$$$$:  112-block  5
+        4:  113:            case_ins_eq( source, s_TRUE ) )
+        2:  113-block  0
+        2:  113-block  1
+        2:  113-block  2
+    $$$$$:  113-block  3
+    $$$$$:  113-block  4
+    #####:  114:            return true;
+    %%%%%:  114-block  0
+        -:  115:
+        2:  116:        if( case_ins_eq( source, s_NO ) ||
+        2:  116-block  0
+    $$$$$:  116-block  1
+    $$$$$:  116-block  2
+        1:  117:            case_ins_eq( source, s_N ) ||
+        1:  117-block  0
+        1:  117-block  1
+    $$$$$:  117-block  2
+    $$$$$:  117-block  3
+       4*:  118:            case_ins_eq( source, s_zero ) ||
+        2:  118-block  0
+        1:  118-block  1
+        1:  118-block  2
+        2:  118-block  3
+    %%%%%:  118-block  4
+    $$$$$:  118-block  5
+    $$$$$:  118-block  6
+        3:  119:            case_ins_eq( source, s_FALSE ) )
+        1:  119-block  0
+        1:  119-block  1
+        2:  119-block  2
+    $$$$$:  119-block  3
+    $$$$$:  119-block  4
+        2:  120:            return false;
+        2:  120-block  0
+        -:  121:
+    #####:  122:        BOOST_TEST_I_THROW( format_error( param_name ) << source << " can't be interpreted as bool value." );
+    %%%%%:  122-block  0
+    %%%%%:  122-block  1
+    %%%%%:  122-block  2
+    %%%%%:  122-block  3
+    $$$$$:  122-block  4
+    $$$$$:  122-block  5
+    $$$$$:  122-block  6
+    $$$$$:  122-block  7
+    $$$$$:  122-block  8
+    $$$$$:  122-block  9
+        -:  123:    }
+        -:  124:};
+        -:  125:
+        -:  126://____________________________________________________________________________//
+        -:  127:
+        -:  128:template<typename EnumType>
+        -:  129:struct value_interpreter<EnumType, true> {
+        -:  130:    template<typename Modifiers>
+        6:  131:    explicit        value_interpreter( Modifiers const& m )
+        -:  132:#if defined(BOOST_TEST_CLA_NEW_API)
+        6:  133:    : m_name_to_value( m[enum_values<EnumType>::value] )
+        -:  134:    {
+        6:  135:    }
+------------------
+_ZN5boost7runtime17value_interpreterINS_9unit_test12report_levelELb1EEC2INS_3nfp23named_parameter_combineINS6_15named_parameterIKNS2_13basic_cstringIKcEENS0_12_GLOBAL__N_16help_tERSC_EENS7_INS8_IKSt16initializer_listISt4pairISC_S3_EENSD_13enum_values_tERSL_EENS7_INS8_IKS3_NSD_15default_value_tERSP_EENS7_INS8_ISC_NSD_9env_var_tESF_EENS8_ISC_NSD_13description_tESF_EEEEEEEEEEEERKT_:
+        1:  131:    explicit        value_interpreter( Modifiers const& m )
+        -:  132:#if defined(BOOST_TEST_CLA_NEW_API)
+        1:  133:    : m_name_to_value( m[enum_values<EnumType>::value] )
+        1:  133-block  0
+        1:  133-block  1
+        1:  133-block  2
+    $$$$$:  133-block  3
+    $$$$$:  133-block  4
+        -:  134:    {
+        1:  135:    }
+------------------
+_ZN5boost7runtime17value_interpreterINS_9unit_test13output_formatELb1EEC2INS_3nfp23named_parameter_combineINS6_15named_parameterIKNS2_13basic_cstringIKcEENS0_12_GLOBAL__N_16help_tERSC_EENS7_INS8_IKSt16initializer_listISt4pairISC_S3_EENSD_13enum_values_tERSL_EENS7_INS8_ISC_NSD_9env_var_tESF_EENS8_ISC_NSD_13description_tESF_EEEEEEEEEERKT_:
+        1:  131:    explicit        value_interpreter( Modifiers const& m )
+        -:  132:#if defined(BOOST_TEST_CLA_NEW_API)
+        1:  133:    : m_name_to_value( m[enum_values<EnumType>::value] )
+        1:  133-block  0
+        1:  133-block  1
+        1:  133-block  2
+    $$$$$:  133-block  3
+    $$$$$:  133-block  4
+        -:  134:    {
+        1:  135:    }
+------------------
+_ZN5boost7runtime17value_interpreterINS_9unit_test9log_levelELb1EEC2INS_3nfp23named_parameter_combineINS6_15named_parameterIKNS2_13basic_cstringIKcEENS0_12_GLOBAL__N_16help_tERSC_EENS7_INS8_IKSt16initializer_listISt4pairISC_S3_EENSD_13enum_values_tERSL_EENS7_INS8_IKS3_NSD_15default_value_tERSP_EENS7_INS8_ISC_NSD_9env_var_tESF_EENS8_ISC_NSD_13description_tESF_EEEEEEEEEEEERKT_:
+        1:  131:    explicit        value_interpreter( Modifiers const& m )
+        -:  132:#if defined(BOOST_TEST_CLA_NEW_API)
+        1:  133:    : m_name_to_value( m[enum_values<EnumType>::value] )
+        1:  133-block  0
+        1:  133-block  1
+        1:  133-block  2
+    $$$$$:  133-block  3
+    $$$$$:  133-block  4
+        -:  134:    {
+        1:  135:    }
+------------------
+_ZN5boost7runtime17value_interpreterINS_9unit_test13output_formatELb1EEC2INS_3nfp23named_parameter_combineINS6_15named_parameterIKNS2_13basic_cstringIKcEENS0_12_GLOBAL__N_16help_tERSC_EENS7_INS8_IKSt16initializer_listISt4pairISC_S3_EENSD_13enum_values_tERSL_EENS7_INS8_IKS3_NSD_15default_value_tERSP_EENS7_INS8_ISC_NSD_9env_var_tESF_EENS8_ISC_NSD_13description_tESF_EEEEEEEEEEEERKT_:
+        2:  131:    explicit        value_interpreter( Modifiers const& m )
+        -:  132:#if defined(BOOST_TEST_CLA_NEW_API)
+        2:  133:    : m_name_to_value( m[enum_values<EnumType>::value] )
+        2:  133-block  0
+        2:  133-block  1
+        2:  133-block  2
+    $$$$$:  133-block  3
+    $$$$$:  133-block  4
+        -:  134:    {
+        2:  135:    }
+------------------
+_ZN5boost7runtime17value_interpreterINS_9unit_test13output_formatELb1EEC2INS_3nfp23named_parameter_combineINS6_15named_parameterIKNS2_13basic_cstringIKcEENS0_12_GLOBAL__N_16help_tERSC_EENS7_INS8_IKSt16initializer_listISt4pairISC_S3_EENSD_13enum_values_tERSL_EENS7_INS8_IKS3_NSD_16optional_value_tERSP_EENS7_INS8_ISP_NSD_15default_value_tESR_EENS7_INS8_ISC_NSD_9env_var_tESF_EENS8_ISC_NSD_13description_tESF_EEEEEEEEEEEEEERKT_:
+        1:  131:    explicit        value_interpreter( Modifiers const& m )
+        -:  132:#if defined(BOOST_TEST_CLA_NEW_API)
+        1:  133:    : m_name_to_value( m[enum_values<EnumType>::value] )
+        1:  133-block  0
+        1:  133-block  1
+        1:  133-block  2
+    $$$$$:  133-block  3
+    $$$$$:  133-block  4
+        -:  134:    {
+        1:  135:    }
+------------------
+        -:  136:#else
+        -:  137:    {
+        -:  138:        std::vector<std::pair<cstring,EnumType> > const& values = m[enum_values<EnumType>::value];
+        -:  139:
+        -:  140:        m_name_to_value.insert( values.begin(), values.end() );
+        -:  141:    }
+        -:  142:#endif
+        -:  143:
+       1*:  144:    EnumType        interpret( cstring param_name, cstring source ) const
+        -:  145:    {
+       1*:  146:        typename std::map<cstring,EnumType>::const_iterator found = m_name_to_value.find( source );
+        -:  147:
+       1*:  148:        BOOST_TEST_I_ASSRT( found != m_name_to_value.end(),
+        -:  149:                            format_error( param_name ) << source <<
+        -:  150:                            " is not a valid enumeration value name for parameter " << param_name << "." );
+        -:  151:
+       1*:  152:        return found->second;
+        -:  153:    }
+------------------
+_ZNK5boost7runtime17value_interpreterINS_9unit_test13output_formatELb1EE9interpretENS2_13basic_cstringIKcEES7_:
+        1:  144:    EnumType        interpret( cstring param_name, cstring source ) const
+        -:  145:    {
+        1:  146:        typename std::map<cstring,EnumType>::const_iterator found = m_name_to_value.find( source );
+        1:  146-block  0
+        -:  147:
+       1*:  148:        BOOST_TEST_I_ASSRT( found != m_name_to_value.end(),
+        1:  148-block  0
+    %%%%%:  148-block  1
+    %%%%%:  148-block  2
+    %%%%%:  148-block  3
+    %%%%%:  148-block  4
+    %%%%%:  148-block  5
+    %%%%%:  148-block  6
+    $$$$$:  148-block  7
+    $$$$$:  148-block  8
+    $$$$$:  148-block  9
+    $$$$$:  148-block 10
+    $$$$$:  148-block 11
+    $$$$$:  148-block 12
+    $$$$$:  148-block 13
+    $$$$$:  148-block 14
+    $$$$$:  148-block 15
+    $$$$$:  148-block 16
+    $$$$$:  148-block 17
+        -:  149:                            format_error( param_name ) << source <<
+        -:  150:                            " is not a valid enumeration value name for parameter " << param_name << "." );
+        -:  151:
+        1:  152:        return found->second;
+        1:  152-block  0
+        1:  152-block  1
+        -:  153:    }
+------------------
+_ZNK5boost7runtime17value_interpreterINS_9unit_test9log_levelELb1EE9interpretENS2_13basic_cstringIKcEES7_:
+    #####:  144:    EnumType        interpret( cstring param_name, cstring source ) const
+        -:  145:    {
+    #####:  146:        typename std::map<cstring,EnumType>::const_iterator found = m_name_to_value.find( source );
+    %%%%%:  146-block  0
+        -:  147:
+    #####:  148:        BOOST_TEST_I_ASSRT( found != m_name_to_value.end(),
+    %%%%%:  148-block  0
+    %%%%%:  148-block  1
+    %%%%%:  148-block  2
+    %%%%%:  148-block  3
+    %%%%%:  148-block  4
+    %%%%%:  148-block  5
+    %%%%%:  148-block  6
+    $$$$$:  148-block  7
+    $$$$$:  148-block  8
+    $$$$$:  148-block  9
+    $$$$$:  148-block 10
+    $$$$$:  148-block 11
+    $$$$$:  148-block 12
+    $$$$$:  148-block 13
+    $$$$$:  148-block 14
+    $$$$$:  148-block 15
+    $$$$$:  148-block 16
+    $$$$$:  148-block 17
+        -:  149:                            format_error( param_name ) << source <<
+        -:  150:                            " is not a valid enumeration value name for parameter " << param_name << "." );
+        -:  151:
+    #####:  152:        return found->second;
+    %%%%%:  152-block  0
+    %%%%%:  152-block  1
+        -:  153:    }
+------------------
+_ZNK5boost7runtime17value_interpreterINS_9unit_test12report_levelELb1EE9interpretENS2_13basic_cstringIKcEES7_:
+    #####:  144:    EnumType        interpret( cstring param_name, cstring source ) const
+        -:  145:    {
+    #####:  146:        typename std::map<cstring,EnumType>::const_iterator found = m_name_to_value.find( source );
+    %%%%%:  146-block  0
+        -:  147:
+    #####:  148:        BOOST_TEST_I_ASSRT( found != m_name_to_value.end(),
+    %%%%%:  148-block  0
+    %%%%%:  148-block  1
+    %%%%%:  148-block  2
+    %%%%%:  148-block  3
+    %%%%%:  148-block  4
+    %%%%%:  148-block  5
+    %%%%%:  148-block  6
+    $$$$$:  148-block  7
+    $$$$$:  148-block  8
+    $$$$$:  148-block  9
+    $$$$$:  148-block 10
+    $$$$$:  148-block 11
+    $$$$$:  148-block 12
+    $$$$$:  148-block 13
+    $$$$$:  148-block 14
+    $$$$$:  148-block 15
+    $$$$$:  148-block 16
+    $$$$$:  148-block 17
+        -:  149:                            format_error( param_name ) << source <<
+        -:  150:                            " is not a valid enumeration value name for parameter " << param_name << "." );
+        -:  151:
+    #####:  152:        return found->second;
+    %%%%%:  152-block  0
+    %%%%%:  152-block  1
+        -:  153:    }
+------------------
+        -:  154:
+        -:  155:private:
+        -:  156:    // Data members
+        -:  157:    std::map<cstring,EnumType>  m_name_to_value;
+        -:  158:};
+        -:  159:
+        -:  160://____________________________________________________________________________//
+        -:  161:
+        -:  162:// ************************************************************************** //
+        -:  163:// **************           runtime::argument_factory          ************** //
+        -:  164:// ************************************************************************** //
+        -:  165:
+        -:  166:template<typename ValueType, bool is_enum, bool repeatable>
+        -:  167:class argument_factory;
+        -:  168:
+        -:  169://____________________________________________________________________________//
+        -:  170:
+        -:  171:template<typename ValueType, bool is_enum>
+        -:  172:class argument_factory<ValueType, is_enum, false> {
+        -:  173:public:
+        -:  174:    template<typename Modifiers>
+       26:  175:    explicit    argument_factory( Modifiers const& m )
+        -:  176:    : m_interpreter( m )
+       21:  177:    , m_optional_value( nfp::opt_get( m, optional_value, ValueType() ) )
+       47:  178:    , m_default_value( nfp::opt_get( m, default_value, ValueType() ) )
+        -:  179:    {
+       26:  180:    }
+------------------
+_ZN5boost7runtime16argument_factoryINS_9unit_test12report_levelELb1ELb0EEC2INS_3nfp23named_parameter_combineINS6_15named_parameterIKNS2_13basic_cstringIKcEENS0_12_GLOBAL__N_16help_tERSC_EENS7_INS8_IKSt16initializer_listISt4pairISC_S3_EENSD_13enum_values_tERSL_EENS7_INS8_IKS3_NSD_15default_value_tERSP_EENS7_INS8_ISC_NSD_9env_var_tESF_EENS8_ISC_NSD_13description_tESF_EEEEEEEEEEEERKT_:
+        1:  175:    explicit    argument_factory( Modifiers const& m )
+        -:  176:    : m_interpreter( m )
+        1:  177:    , m_optional_value( nfp::opt_get( m, optional_value, ValueType() ) )
+        2:  178:    , m_default_value( nfp::opt_get( m, default_value, ValueType() ) )
+        1:  178-block  0
+        1:  178-block  1
+    $$$$$:  178-block  2
+        -:  179:    {
+        1:  180:    }
+        1:  180-block  0
+------------------
+_ZN5boost7runtime16argument_factoryINS_9unit_test13output_formatELb1ELb0EEC2INS_3nfp23named_parameter_combineINS6_15named_parameterIKNS2_13basic_cstringIKcEENS0_12_GLOBAL__N_16help_tERSC_EENS7_INS8_IKSt16initializer_listISt4pairISC_S3_EENSD_13enum_values_tERSL_EENS7_INS8_ISC_NSD_9env_var_tESF_EENS8_ISC_NSD_13description_tESF_EEEEEEEEEERKT_:
+        1:  175:    explicit    argument_factory( Modifiers const& m )
+        -:  176:    : m_interpreter( m )
+        1:  177:    , m_optional_value( nfp::opt_get( m, optional_value, ValueType() ) )
+        2:  178:    , m_default_value( nfp::opt_get( m, default_value, ValueType() ) )
+        1:  178-block  0
+        1:  178-block  1
+    $$$$$:  178-block  2
+        -:  179:    {
+        1:  180:    }
+        1:  180-block  0
+------------------
+_ZN5boost7runtime16argument_factoryINS_9unit_test9log_levelELb1ELb0EEC2INS_3nfp23named_parameter_combineINS6_15named_parameterIKNS2_13basic_cstringIKcEENS0_12_GLOBAL__N_16help_tERSC_EENS7_INS8_IKSt16initializer_listISt4pairISC_S3_EENSD_13enum_values_tERSL_EENS7_INS8_IKS3_NSD_15default_value_tERSP_EENS7_INS8_ISC_NSD_9env_var_tESF_EENS8_ISC_NSD_13description_tESF_EEEEEEEEEEEERKT_:
+        1:  175:    explicit    argument_factory( Modifiers const& m )
+        -:  176:    : m_interpreter( m )
+        1:  177:    , m_optional_value( nfp::opt_get( m, optional_value, ValueType() ) )
+        2:  178:    , m_default_value( nfp::opt_get( m, default_value, ValueType() ) )
+        1:  178-block  0
+        1:  178-block  1
+    $$$$$:  178-block  2
+        -:  179:    {
+        1:  180:    }
+        1:  180-block  0
+------------------
+_ZN5boost7runtime16argument_factoryINS_9unit_test13output_formatELb1ELb0EEC2INS_3nfp23named_parameter_combineINS6_15named_parameterIKNS2_13basic_cstringIKcEENS0_12_GLOBAL__N_16help_tERSC_EENS7_INS8_IKSt16initializer_listISt4pairISC_S3_EENSD_13enum_values_tERSL_EENS7_INS8_IKS3_NSD_15default_value_tERSP_EENS7_INS8_ISC_NSD_9env_var_tESF_EENS8_ISC_NSD_13description_tESF_EEEEEEEEEEEERKT_:
+        2:  175:    explicit    argument_factory( Modifiers const& m )
+        -:  176:    : m_interpreter( m )
+        2:  177:    , m_optional_value( nfp::opt_get( m, optional_value, ValueType() ) )
+        4:  178:    , m_default_value( nfp::opt_get( m, default_value, ValueType() ) )
+        2:  178-block  0
+        2:  178-block  1
+    $$$$$:  178-block  2
+        -:  179:    {
+        2:  180:    }
+        2:  180-block  0
+------------------
+_ZN5boost7runtime16argument_factoryINS_9unit_test13output_formatELb1ELb0EEC2INS_3nfp23named_parameter_combineINS6_15named_parameterIKNS2_13basic_cstringIKcEENS0_12_GLOBAL__N_16help_tERSC_EENS7_INS8_IKSt16initializer_listISt4pairISC_S3_EENSD_13enum_values_tERSL_EENS7_INS8_IKS3_NSD_16optional_value_tERSP_EENS7_INS8_ISP_NSD_15default_value_tESR_EENS7_INS8_ISC_NSD_9env_var_tESF_EENS8_ISC_NSD_13description_tESF_EEEEEEEEEEEEEERKT_:
+        1:  175:    explicit    argument_factory( Modifiers const& m )
+        -:  176:    : m_interpreter( m )
+        1:  177:    , m_optional_value( nfp::opt_get( m, optional_value, ValueType() ) )
+        2:  178:    , m_default_value( nfp::opt_get( m, default_value, ValueType() ) )
+        1:  178-block  0
+        1:  178-block  1
+    $$$$$:  178-block  2
+        -:  179:    {
+        1:  180:    }
+        1:  180-block  0
+------------------
+_ZN5boost7runtime16argument_factoryIbLb0ELb0EEC2INS_3nfp23named_parameter_combineINS4_15named_parameterIKbNS0_12_GLOBAL__N_115default_value_tERS7_EENS5_INS6_IS7_NS8_16optional_value_tESA_EENS6_IKNS_9unit_test13basic_cstringIKcEENS8_13description_tERSI_EEEEEEEERKT_:
+        2:  175:    explicit    argument_factory( Modifiers const& m )
+        -:  176:    : m_interpreter( m )
+        2:  177:    , m_optional_value( nfp::opt_get( m, optional_value, ValueType() ) )
+        4:  178:    , m_default_value( nfp::opt_get( m, default_value, ValueType() ) )
+        2:  178-block  0
+        -:  179:    {
+        2:  180:    }
+------------------
+_ZN5boost7runtime16argument_factoryINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEELb0ELb0EEC2INS_3nfp23named_parameter_combineINSA_15named_parameterIKNS_9unit_test13basic_cstringIKcEENS0_12_GLOBAL__N_16help_tERSH_EENSB_INSC_ISH_NSI_12value_hint_tESK_EENSB_INSC_IKS7_NSI_16optional_value_tERSO_EENSC_ISH_NSI_13description_tESK_EEEEEEEEEERKT_:
+        1:  175:    explicit    argument_factory( Modifiers const& m )
+        -:  176:    : m_interpreter( m )
+        -:  177:    , m_optional_value( nfp::opt_get( m, optional_value, ValueType() ) )
+        1:  178:    , m_default_value( nfp::opt_get( m, default_value, ValueType() ) )
+        1:  178-block  0
+        1:  178-block  1
+        1:  178-block  2
+    $$$$$:  178-block  3
+    $$$$$:  178-block  4
+    $$$$$:  178-block  5
+    $$$$$:  178-block  6
+    $$$$$:  178-block  7
+        -:  179:    {
+        1:  180:    }
+------------------
+_ZN5boost7runtime16argument_factoryINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEELb0ELb0EEC2INS_3nfp23named_parameter_combineINSA_15named_parameterIKNS_9unit_test13basic_cstringIKcEENS0_12_GLOBAL__N_16help_tERSH_EENSB_INSC_ISH_NSI_12value_hint_tESK_EENSB_INSC_IKS7_NSI_15default_value_tERSO_EENSB_INSC_ISH_NSI_9env_var_tESK_EENSC_ISH_NSI_13description_tESK_EEEEEEEEEEEERKT_:
+        1:  175:    explicit    argument_factory( Modifiers const& m )
+        -:  176:    : m_interpreter( m )
+        -:  177:    , m_optional_value( nfp::opt_get( m, optional_value, ValueType() ) )
+        1:  178:    , m_default_value( nfp::opt_get( m, default_value, ValueType() ) )
+        1:  178-block  0
+        1:  178-block  1
+        1:  178-block  2
+    $$$$$:  178-block  3
+    $$$$$:  178-block  4
+    $$$$$:  178-block  5
+    $$$$$:  178-block  6
+    $$$$$:  178-block  7
+        -:  179:    {
+        1:  180:    }
+------------------
+_ZN5boost7runtime16argument_factoryIjLb0ELb0EEC2INS_3nfp23named_parameter_combineINS4_15named_parameterIKNS_9unit_test13basic_cstringIKcEENS0_12_GLOBAL__N_16help_tERSB_EENS5_INS6_ISB_NSC_12value_hint_tESE_EENS5_INS6_IKjNSC_16optional_value_tERSI_EENS5_INS6_ISI_NSC_15default_value_tESK_EENS5_INS6_ISB_NSC_9env_var_tESE_EENS6_ISB_NSC_13description_tESE_EEEEEEEEEEEEEERKT_:
+        1:  175:    explicit    argument_factory( Modifiers const& m )
+        -:  176:    : m_interpreter( m )
+        1:  177:    , m_optional_value( nfp::opt_get( m, optional_value, ValueType() ) )
+        2:  178:    , m_default_value( nfp::opt_get( m, default_value, ValueType() ) )
+        1:  178-block  0
+        -:  179:    {
+        1:  180:    }
+------------------
+_ZN5boost7runtime16argument_factoryINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEELb0ELb0EEC2INS_3nfp23named_parameter_combineINSA_15named_parameterIKNS_9unit_test13basic_cstringIKcEENS0_12_GLOBAL__N_16help_tERSH_EENSB_INSC_ISH_NSI_12value_hint_tESK_EENSB_INSC_ISH_NSI_9env_var_tESK_EENSC_ISH_NSI_13description_tESK_EEEEEEEEEERKT_:
+        2:  175:    explicit    argument_factory( Modifiers const& m )
+        -:  176:    : m_interpreter( m )
+        -:  177:    , m_optional_value( nfp::opt_get( m, optional_value, ValueType() ) )
+        2:  178:    , m_default_value( nfp::opt_get( m, default_value, ValueType() ) )
+        2:  178-block  0
+        2:  178-block  1
+        2:  178-block  2
+    $$$$$:  178-block  3
+    $$$$$:  178-block  4
+    $$$$$:  178-block  5
+    $$$$$:  178-block  6
+    $$$$$:  178-block  7
+        -:  179:    {
+        2:  180:    }
+------------------
+_ZN5boost7runtime16argument_factoryImLb0ELb0EEC2INS_3nfp23named_parameter_combineINS4_15named_parameterIKNS_9unit_test13basic_cstringIKcEENS0_12_GLOBAL__N_16help_tERSB_EENS5_INS6_ISB_NSC_12value_hint_tESE_EENS5_INS6_IKlNSC_16optional_value_tERSI_EENS5_INS6_ISI_NSC_15default_value_tESK_EENS5_INS6_ISB_NSC_9env_var_tESE_EENS6_ISB_NSC_13description_tESE_EEEEEEEEEEEEEERKT_:
+        1:  175:    explicit    argument_factory( Modifiers const& m )
+        -:  176:    : m_interpreter( m )
+        1:  177:    , m_optional_value( nfp::opt_get( m, optional_value, ValueType() ) )
+        2:  178:    , m_default_value( nfp::opt_get( m, default_value, ValueType() ) )
+        1:  178-block  0
+        -:  179:    {
+        1:  180:    }
+------------------
+_ZN5boost7runtime16argument_factoryIbLb0ELb0EEC2INS_3nfp23named_parameter_combineINS4_15named_parameterIKbNS0_12_GLOBAL__N_116optional_value_tERS7_EENS5_INS6_IKNS_9unit_test13basic_cstringIKcEENS8_6help_tERSG_EENS5_INS6_IS7_NS8_15default_value_tESA_EENS5_INS6_ISG_NS8_9env_var_tESI_EENS6_ISG_NS8_13description_tESI_EEEEEEEEEEEERKT_:
+        4:  175:    explicit    argument_factory( Modifiers const& m )
+        -:  176:    : m_interpreter( m )
+        4:  177:    , m_optional_value( nfp::opt_get( m, optional_value, ValueType() ) )
+        8:  178:    , m_default_value( nfp::opt_get( m, default_value, ValueType() ) )
+        4:  178-block  0
+        -:  179:    {
+        4:  180:    }
+------------------
+_ZN5boost7runtime16argument_factoryINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEELb0ELb0EEC2INS_3nfp23named_parameter_combineINSA_15named_parameterIKZNS_9unit_test14runtime_config12_GLOBAL__N_119register_parametersERNS0_16parameters_storeEEUlNSD_13basic_cstringIKcEEE_NS0_12_GLOBAL__N_110callback_tERSM_EENSB_INSC_IKSK_NSN_9env_var_tERSR_EENSC_ISR_NSN_13description_tEST_EEEEEEEERKT_:
+        1:  175:    explicit    argument_factory( Modifiers const& m )
+        -:  176:    : m_interpreter( m )
+        -:  177:    , m_optional_value( nfp::opt_get( m, optional_value, ValueType() ) )
+        1:  178:    , m_default_value( nfp::opt_get( m, default_value, ValueType() ) )
+        1:  178-block  0
+        1:  178-block  1
+        1:  178-block  2
+    $$$$$:  178-block  3
+    $$$$$:  178-block  4
+    $$$$$:  178-block  5
+    $$$$$:  178-block  6
+    $$$$$:  178-block  7
+        -:  179:    {
+        1:  180:    }
+------------------
+_ZN5boost7runtime16argument_factoryIbLb0ELb0EEC2INS_3nfp23named_parameter_combineINS4_15named_parameterIKbNS0_12_GLOBAL__N_115default_value_tERS7_EENS5_INS6_IS7_NS8_16optional_value_tESA_EENS5_INS6_IKNS_9unit_test13basic_cstringIKcEENS8_6help_tERSI_EENS5_INS6_ISI_NS8_9env_var_tESK_EENS6_ISI_NS8_13description_tESK_EEEEEEEEEEEERKT_:
+        7:  175:    explicit    argument_factory( Modifiers const& m )
+        -:  176:    : m_interpreter( m )
+        7:  177:    , m_optional_value( nfp::opt_get( m, optional_value, ValueType() ) )
+       14:  178:    , m_default_value( nfp::opt_get( m, default_value, ValueType() ) )
+        7:  178-block  0
+        -:  179:    {
+        7:  180:    }
+------------------
+        -:  181:
+       3*:  182:    void        produce_argument( cstring source, cstring param_name, arguments_store& store ) const
+        -:  183:    {
+       3*:  184:        store.set( param_name, source.empty() ? m_optional_value : m_interpreter.interpret( param_name, source ) );
+       3*:  185:    }
+------------------
+_ZNK5boost7runtime16argument_factoryINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEELb0ELb0EE16produce_argumentENS_9unit_test13basic_cstringIKcEESC_RNS0_15arguments_storeE:
+    #####:  182:    void        produce_argument( cstring source, cstring param_name, arguments_store& store ) const
+        -:  183:    {
+    #####:  184:        store.set( param_name, source.empty() ? m_optional_value : m_interpreter.interpret( param_name, source ) );
+    %%%%%:  184-block  0
+    %%%%%:  184-block  1
+    %%%%%:  184-block  2
+    %%%%%:  184-block  3
+    %%%%%:  184-block  4
+    $$$$$:  184-block  5
+    $$$$$:  184-block  6
+    $$$$$:  184-block  7
+    $$$$$:  184-block  8
+    #####:  185:    }
+------------------
+_ZNK5boost7runtime16argument_factoryImLb0ELb0EE16produce_argumentENS_9unit_test13basic_cstringIKcEES6_RNS0_15arguments_storeE:
+    #####:  182:    void        produce_argument( cstring source, cstring param_name, arguments_store& store ) const
+        -:  183:    {
+    #####:  184:        store.set( param_name, source.empty() ? m_optional_value : m_interpreter.interpret( param_name, source ) );
+    %%%%%:  184-block  0
+    %%%%%:  184-block  1
+    %%%%%:  184-block  2
+    %%%%%:  184-block  3
+    %%%%%:  184-block  4
+    $$$$$:  184-block  5
+    $$$$$:  184-block  6
+    $$$$$:  184-block  7
+    #####:  185:    }
+    %%%%%:  185-block  0
+------------------
+_ZNK5boost7runtime16argument_factoryINS_9unit_test13output_formatELb1ELb0EE16produce_argumentENS2_13basic_cstringIKcEES7_RNS0_15arguments_storeE:
+        1:  182:    void        produce_argument( cstring source, cstring param_name, arguments_store& store ) const
+        -:  183:    {
+       1*:  184:        store.set( param_name, source.empty() ? m_optional_value : m_interpreter.interpret( param_name, source ) );
+        1:  184-block  0
+    %%%%%:  184-block  1
+        1:  184-block  2
+        1:  184-block  3
+        1:  184-block  4
+    $$$$$:  184-block  5
+    $$$$$:  184-block  6
+    $$$$$:  184-block  7
+        1:  185:    }
+        1:  185-block  0
+------------------
+_ZNK5boost7runtime16argument_factoryINS_9unit_test9log_levelELb1ELb0EE16produce_argumentENS2_13basic_cstringIKcEES7_RNS0_15arguments_storeE:
+    #####:  182:    void        produce_argument( cstring source, cstring param_name, arguments_store& store ) const
+        -:  183:    {
+    #####:  184:        store.set( param_name, source.empty() ? m_optional_value : m_interpreter.interpret( param_name, source ) );
+    %%%%%:  184-block  0
+    %%%%%:  184-block  1
+    %%%%%:  184-block  2
+    %%%%%:  184-block  3
+    %%%%%:  184-block  4
+    $$$$$:  184-block  5
+    $$$$$:  184-block  6
+    $$$$$:  184-block  7
+    #####:  185:    }
+    %%%%%:  185-block  0
+------------------
+_ZNK5boost7runtime16argument_factoryIjLb0ELb0EE16produce_argumentENS_9unit_test13basic_cstringIKcEES6_RNS0_15arguments_storeE:
+    #####:  182:    void        produce_argument( cstring source, cstring param_name, arguments_store& store ) const
+        -:  183:    {
+    #####:  184:        store.set( param_name, source.empty() ? m_optional_value : m_interpreter.interpret( param_name, source ) );
+    %%%%%:  184-block  0
+    %%%%%:  184-block  1
+    %%%%%:  184-block  2
+    %%%%%:  184-block  3
+    %%%%%:  184-block  4
+    $$$$$:  184-block  5
+    $$$$$:  184-block  6
+    $$$$$:  184-block  7
+    #####:  185:    }
+    %%%%%:  185-block  0
+------------------
+_ZNK5boost7runtime16argument_factoryINS_9unit_test12report_levelELb1ELb0EE16produce_argumentENS2_13basic_cstringIKcEES7_RNS0_15arguments_storeE:
+    #####:  182:    void        produce_argument( cstring source, cstring param_name, arguments_store& store ) const
+        -:  183:    {
+    #####:  184:        store.set( param_name, source.empty() ? m_optional_value : m_interpreter.interpret( param_name, source ) );
+    %%%%%:  184-block  0
+    %%%%%:  184-block  1
+    %%%%%:  184-block  2
+    %%%%%:  184-block  3
+    %%%%%:  184-block  4
+    $$$$$:  184-block  5
+    $$$$$:  184-block  6
+    $$$$$:  184-block  7
+    #####:  185:    }
+    %%%%%:  185-block  0
+------------------
+_ZNK5boost7runtime16argument_factoryIbLb0ELb0EE16produce_argumentENS_9unit_test13basic_cstringIKcEES6_RNS0_15arguments_storeE:
+        2:  182:    void        produce_argument( cstring source, cstring param_name, arguments_store& store ) const
+        -:  183:    {
+       2*:  184:        store.set( param_name, source.empty() ? m_optional_value : m_interpreter.interpret( param_name, source ) );
+        2:  184-block  0
+    %%%%%:  184-block  1
+        2:  184-block  2
+        2:  184-block  3
+        2:  184-block  4
+    $$$$$:  184-block  5
+    $$$$$:  184-block  6
+    $$$$$:  184-block  7
+        2:  185:    }
+        2:  185-block  0
+------------------
+        -:  186:
+       18:  187:    void        produce_default( cstring param_name, arguments_store& store ) const
+        -:  188:    {
+       18:  189:        store.set( param_name, m_default_value );
+       18:  190:    }
+------------------
+_ZNK5boost7runtime16argument_factoryINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEELb0ELb0EE15produce_defaultENS_9unit_test13basic_cstringIKcEERNS0_15arguments_storeE:
+        1:  187:    void        produce_default( cstring param_name, arguments_store& store ) const
+        -:  188:    {
+        1:  189:        store.set( param_name, m_default_value );
+        1:  189-block  0
+        1:  190:    }
+        1:  190-block  0
+------------------
+_ZNK5boost7runtime16argument_factoryImLb0ELb0EE15produce_defaultENS_9unit_test13basic_cstringIKcEERNS0_15arguments_storeE:
+        1:  187:    void        produce_default( cstring param_name, arguments_store& store ) const
+        -:  188:    {
+        1:  189:        store.set( param_name, m_default_value );
+        1:  189-block  0
+        1:  190:    }
+        1:  190-block  0
+------------------
+_ZNK5boost7runtime16argument_factoryINS_9unit_test13output_formatELb1ELb0EE15produce_defaultENS2_13basic_cstringIKcEERNS0_15arguments_storeE:
+        2:  187:    void        produce_default( cstring param_name, arguments_store& store ) const
+        -:  188:    {
+        2:  189:        store.set( param_name, m_default_value );
+        2:  189-block  0
+        2:  190:    }
+        2:  190-block  0
+------------------
+_ZNK5boost7runtime16argument_factoryINS_9unit_test9log_levelELb1ELb0EE15produce_defaultENS2_13basic_cstringIKcEERNS0_15arguments_storeE:
+        1:  187:    void        produce_default( cstring param_name, arguments_store& store ) const
+        -:  188:    {
+        1:  189:        store.set( param_name, m_default_value );
+        1:  189-block  0
+        1:  190:    }
+        1:  190-block  0
+------------------
+_ZNK5boost7runtime16argument_factoryIjLb0ELb0EE15produce_defaultENS_9unit_test13basic_cstringIKcEERNS0_15arguments_storeE:
+        1:  187:    void        produce_default( cstring param_name, arguments_store& store ) const
+        -:  188:    {
+        1:  189:        store.set( param_name, m_default_value );
+        1:  189-block  0
+        1:  190:    }
+        1:  190-block  0
+------------------
+_ZNK5boost7runtime16argument_factoryINS_9unit_test12report_levelELb1ELb0EE15produce_defaultENS2_13basic_cstringIKcEERNS0_15arguments_storeE:
+        1:  187:    void        produce_default( cstring param_name, arguments_store& store ) const
+        -:  188:    {
+        1:  189:        store.set( param_name, m_default_value );
+        1:  189-block  0
+        1:  190:    }
+        1:  190-block  0
+------------------
+_ZNK5boost7runtime16argument_factoryIbLb0ELb0EE15produce_defaultENS_9unit_test13basic_cstringIKcEERNS0_15arguments_storeE:
+       11:  187:    void        produce_default( cstring param_name, arguments_store& store ) const
+        -:  188:    {
+       11:  189:        store.set( param_name, m_default_value );
+       11:  189-block  0
+       11:  190:    }
+       11:  190-block  0
+------------------
+        -:  191:
+        -:  192:private:
+        -:  193:    // Data members
+        -:  194:    typedef value_interpreter<ValueType, is_enum> interp_t;
+        -:  195:    interp_t    m_interpreter;
+        -:  196:    ValueType   m_optional_value;
+        -:  197:    ValueType   m_default_value;
+        -:  198:};
+        -:  199:
+        -:  200://____________________________________________________________________________//
+        -:  201:
+        -:  202:template<typename ValueType, bool is_enum>
+        -:  203:class argument_factory<ValueType, is_enum, true> {
+        -:  204:public:
+        -:  205:    template<typename Modifiers>
+        2:  206:    explicit    argument_factory( Modifiers const& m )
+        2:  207:    : m_interpreter( m )
+        2:  207-block  0
+        -:  208:    {
+        2:  209:    }
+        -:  210:
+        2:  211:    void        produce_argument( cstring source, cstring param_name, arguments_store& store ) const
+        -:  212:    {
+        4:  213:        ValueType value = m_interpreter.interpret( param_name, source );
+        2:  213-block  0
+        2:  213-block  1
+    $$$$$:  213-block  2
+    $$$$$:  213-block  3
+    $$$$$:  213-block  4
+        -:  214:
+        2:  215:        if( store.has( param_name ) ) {
+        2:  215-block  0
+        2:  215-block  1
+    $$$$$:  215-block  2
+    #####:  216:            std::vector<ValueType>& values = store.get<std::vector<ValueType> >( param_name );
+    %%%%%:  216-block  0
+    $$$$$:  216-block  1
+    #####:  217:            values.push_back( value );
+    %%%%%:  217-block  0
+        -:  218:        }
+        -:  219:        else {
+        2:  220:            std::vector<ValueType> values( 1, value );
+        2:  220-block  0
+    $$$$$:  220-block  1
+    $$$$$:  220-block  2
+        -:  221:
+        2:  222:            store.set( param_name, values );
+        2:  222-block  0
+    $$$$$:  222-block  1
+        -:  223:        }
+        -:  224:
+        2:  225:    }
+    #####:  226:    void        produce_default( cstring param_name, arguments_store& store ) const
+        -:  227:    {
+    #####:  228:        store.set( param_name, std::vector<ValueType>() );
+    %%%%%:  228-block  0
+    %%%%%:  228-block  1
+    $$$$$:  228-block  2
+    $$$$$:  228-block  3
+    #####:  229:    }
+        -:  230:
+        -:  231:private:
+        -:  232:    // Data members
+        -:  233:    value_interpreter<ValueType, is_enum> m_interpreter;
+        -:  234:};
+        -:  235:
+        -:  236://____________________________________________________________________________//
+        -:  237:
+        -:  238:} // namespace runtime
+        -:  239:} // namespace boost
+        -:  240:
+        -:  241:#include <boost/test/detail/enable_warnings.hpp>
+        -:  242:
+        -:  243:#endif // BOOST_TEST_UTILS_RUNTIME_ARGUMENT_FACTORY_HPP

@@ -1,0 +1,2071 @@
+        -:    0:Source:F:/SoftwareProjects/CLionProjects/C++/My_String/test/MyStringTest.cpp
+        -:    0:Graph:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcno
+        -:    0:Data:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:#define BOOST_TEST_DYN_LINK
+        -:    2:#define BOOST_TEST_MAIN
+        -:    3:#define BOOST_TEST_MODULE MyString_Test_Suite
+        -:    4:
+        -:    5:#include <iostream>
+        -:    6:#include "MyString.h"
+        -:    7:#include "MyString.cpp"
+        -:    8:#include <boost/test/included/unit_test.hpp>
+        -:    9:
+        -:   10:using namespace Assignment06;
+        -:   11:
+        -:   12:struct Fixture {
+        -:   13:public:
+       10:   14:    Fixture() {
+       10:   14-block  0
+       10:   14-block  1
+       10:   14-block  2
+       10:   14-block  3
+       10:   14-block  4
+       10:   14-block  5
+       10:   14-block  6
+    $$$$$:   14-block  7
+    $$$$$:   14-block  8
+    $$$$$:   14-block  9
+    $$$$$:   14-block 10
+    $$$$$:   14-block 11
+    $$$$$:   14-block 12
+    $$$$$:   14-block 13
+    $$$$$:   14-block 14
+        -:   15:
+       10:   16:        myString1 = MyString();
+       10:   16-block  0
+       10:   16-block  1
+       10:   16-block  2
+    $$$$$:   16-block  3
+    $$$$$:   16-block  4
+       10:   17:        myString2 = MyString("Hello,,");
+       10:   17-block  0
+       10:   17-block  1
+    $$$$$:   17-block  2
+    $$$$$:   17-block  3
+       10:   18:        myString3 = MyString("Test In Progress...,,");
+       10:   18-block  0
+       10:   18-block  1
+    $$$$$:   18-block  2
+    $$$$$:   18-block  3
+       10:   19:        myString4 = MyString({'a', 'b', 'c', 'd', 'e', 'f', ' ', ' ', ' ', ' ', 'A', 'B', 'C', 'D', 'E', 'F', '\0'});
+       10:   19-block  0
+       10:   19-block  1
+       10:   19-block  2
+    $$$$$:   19-block  3
+    $$$$$:   19-block  4
+    $$$$$:   19-block  5
+    $$$$$:   19-block  6
+    $$$$$:   19-block  7
+    $$$$$:   19-block  8
+    $$$$$:   19-block  9
+       10:   20:        myString5 = MyString("World!");
+       10:   20-block  0
+       10:   20-block  1
+    $$$$$:   20-block  2
+    $$$$$:   20-block  3
+       10:   21:        myString6 = MyString("Test has been Successful");
+       10:   21-block  0
+       10:   21-block  1
+    $$$$$:   21-block  2
+    $$$$$:   21-block  3
+       10:   22:        myString7 = MyString({'\0'});
+       10:   22-block  0
+       10:   22-block  1
+       10:   22-block  2
+    $$$$$:   22-block  3
+    $$$$$:   22-block  4
+    $$$$$:   22-block  5
+    $$$$$:   22-block  6
+    $$$$$:   22-block  7
+    $$$$$:   22-block  8
+    $$$$$:   22-block  9
+       10:   23:        myString8 = MyString("");
+       10:   23-block  0
+       10:   23-block  1
+    $$$$$:   23-block  2
+    $$$$$:   23-block  3
+        -:   24:
+       10:   25:    }
+        -:   26:
+       10:   27:    ~Fixture() = default;
+       10:   27-block  0
+        -:   28:
+        -:   29:    MyString myString1;
+        -:   30:    MyString myString2;
+        -:   31:    MyString myString3;
+        -:   32:    MyString myString4;
+        -:   33:    MyString myString5;
+        -:   34:    MyString myString6;
+        -:   35:    MyString myString7;
+        -:   36:    MyString myString8;
+        -:   37:
+        -:   38:};
+        -:   39:
+        -:   40:BOOST_AUTO_TEST_SUITE(MyString_Test_Suite)
+        -:   41:
+        2:   42:    BOOST_FIXTURE_TEST_CASE(Cnstructors_test, Fixture) {
+        2:   43:        MyString temp(myString2);
+        -:   44:
+       1*:   45:        BOOST_CHECK_EQUAL(myString1.length(), 0);
+       1*:   46:        BOOST_CHECK_EQUAL(myString7.length(), 0);
+       1*:   47:        BOOST_CHECK_EQUAL(myString8.length(), 0);
+       1*:   48:        BOOST_CHECK_EQUAL(myString2.length(), 7);
+       1*:   49:        BOOST_CHECK_EQUAL(myString3.length(), 21);
+       1*:   50:        BOOST_CHECK_EQUAL(myString4.length(), 16);
+       1*:   51:        BOOST_CHECK_EQUAL(temp, myString2);
+        -:   52:
+        1:   53:    }
+------------------
+_ZN19MyString_Test_Suite16Cnstructors_test11test_methodEv:
+        1:   42:    BOOST_FIXTURE_TEST_CASE(Cnstructors_test, Fixture) {
+        2:   43:        MyString temp(myString2);
+        1:   43-block  0
+        1:   43-block  1
+    $$$$$:   43-block  2
+        -:   44:
+       1*:   45:        BOOST_CHECK_EQUAL(myString1.length(), 0);
+        1:   45-block  0
+        1:   45-block  1
+        1:   45-block  2
+        1:   45-block  3
+        1:   45-block  4
+    %%%%%:   45-block  5
+    $$$$$:   45-block  6
+    $$$$$:   45-block  7
+    $$$$$:   45-block  8
+    $$$$$:   45-block  9
+    $$$$$:   45-block 10
+    $$$$$:   45-block 11
+    $$$$$:   45-block 12
+       1*:   46:        BOOST_CHECK_EQUAL(myString7.length(), 0);
+        1:   46-block  0
+        1:   46-block  1
+        1:   46-block  2
+        1:   46-block  3
+        1:   46-block  4
+    %%%%%:   46-block  5
+    $$$$$:   46-block  6
+    $$$$$:   46-block  7
+    $$$$$:   46-block  8
+    $$$$$:   46-block  9
+    $$$$$:   46-block 10
+    $$$$$:   46-block 11
+    $$$$$:   46-block 12
+       1*:   47:        BOOST_CHECK_EQUAL(myString8.length(), 0);
+        1:   47-block  0
+        1:   47-block  1
+        1:   47-block  2
+        1:   47-block  3
+        1:   47-block  4
+    %%%%%:   47-block  5
+    $$$$$:   47-block  6
+    $$$$$:   47-block  7
+    $$$$$:   47-block  8
+    $$$$$:   47-block  9
+    $$$$$:   47-block 10
+    $$$$$:   47-block 11
+    $$$$$:   47-block 12
+       1*:   48:        BOOST_CHECK_EQUAL(myString2.length(), 7);
+        1:   48-block  0
+        1:   48-block  1
+        1:   48-block  2
+        1:   48-block  3
+        1:   48-block  4
+    %%%%%:   48-block  5
+    $$$$$:   48-block  6
+    $$$$$:   48-block  7
+    $$$$$:   48-block  8
+    $$$$$:   48-block  9
+    $$$$$:   48-block 10
+    $$$$$:   48-block 11
+    $$$$$:   48-block 12
+       1*:   49:        BOOST_CHECK_EQUAL(myString3.length(), 21);
+        1:   49-block  0
+        1:   49-block  1
+        1:   49-block  2
+        1:   49-block  3
+        1:   49-block  4
+    %%%%%:   49-block  5
+    $$$$$:   49-block  6
+    $$$$$:   49-block  7
+    $$$$$:   49-block  8
+    $$$$$:   49-block  9
+    $$$$$:   49-block 10
+    $$$$$:   49-block 11
+    $$$$$:   49-block 12
+       1*:   50:        BOOST_CHECK_EQUAL(myString4.length(), 16);
+        1:   50-block  0
+        1:   50-block  1
+        1:   50-block  2
+        1:   50-block  3
+        1:   50-block  4
+    %%%%%:   50-block  5
+    $$$$$:   50-block  6
+    $$$$$:   50-block  7
+    $$$$$:   50-block  8
+    $$$$$:   50-block  9
+    $$$$$:   50-block 10
+    $$$$$:   50-block 11
+    $$$$$:   50-block 12
+       1*:   51:        BOOST_CHECK_EQUAL(temp, myString2);
+        1:   51-block  0
+        1:   51-block  1
+        1:   51-block  2
+        1:   51-block  3
+        1:   51-block  4
+    %%%%%:   51-block  5
+    $$$$$:   51-block  6
+    $$$$$:   51-block  7
+    $$$$$:   51-block  8
+    $$$$$:   51-block  9
+    $$$$$:   51-block 10
+        -:   52:
+        1:   53:    }
+------------------
+_ZN19MyString_Test_SuiteL24Cnstructors_test_invokerEv:
+        1:   42:    BOOST_FIXTURE_TEST_CASE(Cnstructors_test, Fixture) {
+        1:   42-block  0
+        1:   42-block  1
+        1:   42-block  2
+        1:   42-block  3
+        1:   42-block  4
+        1:   42-block  5
+        1:   42-block  6
+        1:   42-block  7
+        1:   42-block  8
+        1:   42-block  9
+        1:   42-block 10
+        1:   42-block 11
+        1:   42-block 12
+        1:   42-block 13
+        1:   42-block 14
+        1:   42-block 15
+        1:   42-block 16
+        1:   42-block 17
+        1:   42-block 18
+        1:   42-block 19
+        1:   42-block 20
+        1:   42-block 21
+        1:   42-block 22
+        1:   42-block 23
+        1:   42-block 24
+        1:   42-block 25
+        1:   42-block 26
+        1:   42-block 27
+        1:   42-block 28
+        1:   42-block 29
+        1:   42-block 30
+        1:   42-block 31
+        1:   42-block 32
+        1:   42-block 33
+        1:   42-block 34
+    $$$$$:   42-block 35
+    $$$$$:   42-block 36
+    $$$$$:   42-block 37
+    $$$$$:   42-block 38
+    $$$$$:   42-block 39
+    $$$$$:   42-block 40
+    $$$$$:   42-block 41
+    $$$$$:   42-block 42
+    $$$$$:   42-block 43
+    $$$$$:   42-block 44
+    $$$$$:   42-block 45
+    $$$$$:   42-block 46
+    $$$$$:   42-block 47
+    $$$$$:   42-block 48
+    $$$$$:   42-block 49
+    $$$$$:   42-block 50
+    $$$$$:   42-block 51
+    $$$$$:   42-block 52
+    $$$$$:   42-block 53
+    $$$$$:   42-block 54
+    $$$$$:   42-block 55
+    $$$$$:   42-block 56
+    $$$$$:   42-block 57
+    $$$$$:   42-block 58
+    $$$$$:   42-block 59
+    $$$$$:   42-block 60
+------------------
+        -:   54:
+        2:   55:    BOOST_FIXTURE_TEST_CASE(IsEmpty_test, Fixture) {
+        -:   56:
+       1*:   57:        BOOST_CHECK_EQUAL(myString1.is_empty(), true);
+       1*:   58:        BOOST_CHECK_EQUAL(myString7.is_empty(), true);
+       1*:   59:        BOOST_CHECK_EQUAL(myString8.is_empty(), true);
+       1*:   60:        BOOST_CHECK_EQUAL(myString2.is_empty(), false);
+       1*:   61:        BOOST_CHECK_EQUAL(myString3.is_empty(), false);
+       1*:   62:        BOOST_CHECK_EQUAL(myString4.is_empty(), false);
+        -:   63:
+        1:   64:    }
+------------------
+_ZN19MyString_Test_Suite12IsEmpty_test11test_methodEv:
+        1:   55:    BOOST_FIXTURE_TEST_CASE(IsEmpty_test, Fixture) {
+        -:   56:
+       1*:   57:        BOOST_CHECK_EQUAL(myString1.is_empty(), true);
+        1:   57-block  0
+        1:   57-block  1
+        1:   57-block  2
+        1:   57-block  3
+    %%%%%:   57-block  4
+    $$$$$:   57-block  5
+    $$$$$:   57-block  6
+    $$$$$:   57-block  7
+    $$$$$:   57-block  8
+    $$$$$:   57-block  9
+    $$$$$:   57-block 10
+    $$$$$:   57-block 11
+       1*:   58:        BOOST_CHECK_EQUAL(myString7.is_empty(), true);
+        1:   58-block  0
+        1:   58-block  1
+        1:   58-block  2
+        1:   58-block  3
+    %%%%%:   58-block  4
+    $$$$$:   58-block  5
+    $$$$$:   58-block  6
+    $$$$$:   58-block  7
+    $$$$$:   58-block  8
+    $$$$$:   58-block  9
+    $$$$$:   58-block 10
+    $$$$$:   58-block 11
+       1*:   59:        BOOST_CHECK_EQUAL(myString8.is_empty(), true);
+        1:   59-block  0
+        1:   59-block  1
+        1:   59-block  2
+        1:   59-block  3
+    %%%%%:   59-block  4
+    $$$$$:   59-block  5
+    $$$$$:   59-block  6
+    $$$$$:   59-block  7
+    $$$$$:   59-block  8
+    $$$$$:   59-block  9
+    $$$$$:   59-block 10
+    $$$$$:   59-block 11
+       1*:   60:        BOOST_CHECK_EQUAL(myString2.is_empty(), false);
+        1:   60-block  0
+        1:   60-block  1
+        1:   60-block  2
+        1:   60-block  3
+    %%%%%:   60-block  4
+    $$$$$:   60-block  5
+    $$$$$:   60-block  6
+    $$$$$:   60-block  7
+    $$$$$:   60-block  8
+    $$$$$:   60-block  9
+    $$$$$:   60-block 10
+    $$$$$:   60-block 11
+       1*:   61:        BOOST_CHECK_EQUAL(myString3.is_empty(), false);
+        1:   61-block  0
+        1:   61-block  1
+        1:   61-block  2
+        1:   61-block  3
+    %%%%%:   61-block  4
+    $$$$$:   61-block  5
+    $$$$$:   61-block  6
+    $$$$$:   61-block  7
+    $$$$$:   61-block  8
+    $$$$$:   61-block  9
+    $$$$$:   61-block 10
+    $$$$$:   61-block 11
+       1*:   62:        BOOST_CHECK_EQUAL(myString4.is_empty(), false);
+        1:   62-block  0
+        1:   62-block  1
+        1:   62-block  2
+        1:   62-block  3
+    %%%%%:   62-block  4
+    $$$$$:   62-block  5
+    $$$$$:   62-block  6
+    $$$$$:   62-block  7
+    $$$$$:   62-block  8
+    $$$$$:   62-block  9
+    $$$$$:   62-block 10
+        -:   63:
+        1:   64:    }
+        1:   64-block  0
+------------------
+_ZN19MyString_Test_SuiteL20IsEmpty_test_invokerEv:
+        1:   55:    BOOST_FIXTURE_TEST_CASE(IsEmpty_test, Fixture) {
+        1:   55-block  0
+        1:   55-block  1
+        1:   55-block  2
+        1:   55-block  3
+        1:   55-block  4
+        1:   55-block  5
+        1:   55-block  6
+        1:   55-block  7
+        1:   55-block  8
+        1:   55-block  9
+        1:   55-block 10
+        1:   55-block 11
+        1:   55-block 12
+        1:   55-block 13
+        1:   55-block 14
+        1:   55-block 15
+        1:   55-block 16
+        1:   55-block 17
+        1:   55-block 18
+        1:   55-block 19
+        1:   55-block 20
+        1:   55-block 21
+        1:   55-block 22
+        1:   55-block 23
+        1:   55-block 24
+        1:   55-block 25
+        1:   55-block 26
+        1:   55-block 27
+        1:   55-block 28
+        1:   55-block 29
+        1:   55-block 30
+        1:   55-block 31
+        1:   55-block 32
+        1:   55-block 33
+        1:   55-block 34
+    $$$$$:   55-block 35
+    $$$$$:   55-block 36
+    $$$$$:   55-block 37
+    $$$$$:   55-block 38
+    $$$$$:   55-block 39
+    $$$$$:   55-block 40
+    $$$$$:   55-block 41
+    $$$$$:   55-block 42
+    $$$$$:   55-block 43
+    $$$$$:   55-block 44
+    $$$$$:   55-block 45
+    $$$$$:   55-block 46
+    $$$$$:   55-block 47
+    $$$$$:   55-block 48
+    $$$$$:   55-block 49
+    $$$$$:   55-block 50
+    $$$$$:   55-block 51
+    $$$$$:   55-block 52
+    $$$$$:   55-block 53
+    $$$$$:   55-block 54
+    $$$$$:   55-block 55
+    $$$$$:   55-block 56
+    $$$$$:   55-block 57
+    $$$$$:   55-block 58
+    $$$$$:   55-block 59
+    $$$$$:   55-block 60
+------------------
+        -:   65:
+        2:   66:    BOOST_FIXTURE_TEST_CASE(PlusEquals_Assignment_Operators_test, Fixture) {
+        -:   67:
+        1:   68:        char ch = '?';
+        1:   69:        char world[] = {'W', 'o', 'r', 'l', 'd', '!', '\0'};
+        2:   70:        MyString myString22 = MyString("Hello,,World!");
+        2:   71:        MyString myString33 = MyString("Test In Progress...,,Test has been Successful");
+        2:   72:        MyString myString55 = MyString("World!?");
+        2:   73:        MyString temp;
+        -:   74:
+        1:   75:        temp = myString5 += ch;
+       1*:   76:        BOOST_CHECK_EQUAL(temp, myString55);
+        -:   77:
+        1:   78:        temp = myString2 += world;
+       1*:   79:        BOOST_CHECK_EQUAL(temp, myString22);
+        -:   80:
+        1:   81:        temp = myString3 += myString6;
+       1*:   82:        BOOST_CHECK_EQUAL(temp, myString33);
+        1:   83:    }
+------------------
+_ZN19MyString_Test_Suite36PlusEquals_Assignment_Operators_test11test_methodEv:
+        1:   66:    BOOST_FIXTURE_TEST_CASE(PlusEquals_Assignment_Operators_test, Fixture) {
+        -:   67:
+        1:   68:        char ch = '?';
+        1:   69:        char world[] = {'W', 'o', 'r', 'l', 'd', '!', '\0'};
+        2:   70:        MyString myString22 = MyString("Hello,,World!");
+        1:   70-block  0
+    $$$$$:   70-block  1
+        2:   71:        MyString myString33 = MyString("Test In Progress...,,Test has been Successful");
+        1:   71-block  0
+    $$$$$:   71-block  1
+        2:   72:        MyString myString55 = MyString("World!?");
+        1:   72-block  0
+    $$$$$:   72-block  1
+        2:   73:        MyString temp;
+        1:   73-block  0
+        1:   73-block  1
+    $$$$$:   73-block  2
+        -:   74:
+        1:   75:        temp = myString5 += ch;
+        1:   75-block  0
+        1:   75-block  1
+       1*:   76:        BOOST_CHECK_EQUAL(temp, myString55);
+        1:   76-block  0
+        1:   76-block  1
+        1:   76-block  2
+        1:   76-block  3
+        1:   76-block  4
+    %%%%%:   76-block  5
+    $$$$$:   76-block  6
+    $$$$$:   76-block  7
+    $$$$$:   76-block  8
+    $$$$$:   76-block  9
+    $$$$$:   76-block 10
+        -:   77:
+        1:   78:        temp = myString2 += world;
+        1:   78-block  0
+        1:   78-block  1
+       1*:   79:        BOOST_CHECK_EQUAL(temp, myString22);
+        1:   79-block  0
+        1:   79-block  1
+        1:   79-block  2
+        1:   79-block  3
+        1:   79-block  4
+    %%%%%:   79-block  5
+    $$$$$:   79-block  6
+    $$$$$:   79-block  7
+    $$$$$:   79-block  8
+    $$$$$:   79-block  9
+    $$$$$:   79-block 10
+        -:   80:
+        1:   81:        temp = myString3 += myString6;
+        1:   81-block  0
+        1:   81-block  1
+       1*:   82:        BOOST_CHECK_EQUAL(temp, myString33);
+        1:   82-block  0
+        1:   82-block  1
+        1:   82-block  2
+        1:   82-block  3
+        1:   82-block  4
+    %%%%%:   82-block  5
+    $$$$$:   82-block  6
+    $$$$$:   82-block  7
+    $$$$$:   82-block  8
+    $$$$$:   82-block  9
+    $$$$$:   82-block 10
+        1:   83:    }
+------------------
+_ZN19MyString_Test_SuiteL44PlusEquals_Assignment_Operators_test_invokerEv:
+        1:   66:    BOOST_FIXTURE_TEST_CASE(PlusEquals_Assignment_Operators_test, Fixture) {
+        1:   66-block  0
+        1:   66-block  1
+        1:   66-block  2
+        1:   66-block  3
+        1:   66-block  4
+        1:   66-block  5
+        1:   66-block  6
+        1:   66-block  7
+        1:   66-block  8
+        1:   66-block  9
+        1:   66-block 10
+        1:   66-block 11
+        1:   66-block 12
+        1:   66-block 13
+        1:   66-block 14
+        1:   66-block 15
+        1:   66-block 16
+        1:   66-block 17
+        1:   66-block 18
+        1:   66-block 19
+        1:   66-block 20
+        1:   66-block 21
+        1:   66-block 22
+        1:   66-block 23
+        1:   66-block 24
+        1:   66-block 25
+        1:   66-block 26
+        1:   66-block 27
+        1:   66-block 28
+        1:   66-block 29
+        1:   66-block 30
+        1:   66-block 31
+        1:   66-block 32
+        1:   66-block 33
+        1:   66-block 34
+    $$$$$:   66-block 35
+    $$$$$:   66-block 36
+    $$$$$:   66-block 37
+    $$$$$:   66-block 38
+    $$$$$:   66-block 39
+    $$$$$:   66-block 40
+    $$$$$:   66-block 41
+    $$$$$:   66-block 42
+    $$$$$:   66-block 43
+    $$$$$:   66-block 44
+    $$$$$:   66-block 45
+    $$$$$:   66-block 46
+    $$$$$:   66-block 47
+    $$$$$:   66-block 48
+    $$$$$:   66-block 49
+    $$$$$:   66-block 50
+    $$$$$:   66-block 51
+    $$$$$:   66-block 52
+    $$$$$:   66-block 53
+    $$$$$:   66-block 54
+    $$$$$:   66-block 55
+    $$$$$:   66-block 56
+    $$$$$:   66-block 57
+    $$$$$:   66-block 58
+    $$$$$:   66-block 59
+    $$$$$:   66-block 60
+------------------
+        -:   84:
+        2:   85:    BOOST_FIXTURE_TEST_CASE(Plus_Assignment_Operators_test, Fixture) {
+        -:   86:
+        1:   87:        char *ptr_chars = new char[3]{'G', 'H', '\0'};
+        2:   88:        MyString myString11 = MyString("Test has been Successful");
+        -:   89:        MyString myString44 = MyString(
+        3:   90:                {'a', 'b', 'c', 'd', 'e', 'f', ' ', ' ', ' ', ' ', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', '\0'});
+        2:   91:        MyString myString111 = MyString("GH");
+        2:   92:        MyString temp;
+        -:   93:
+        1:   94:        temp = myString6 + myString1;
+       1*:   95:        BOOST_CHECK_EQUAL(temp, myString11);
+        -:   96:
+        1:   97:        temp = myString4 + ptr_chars;
+       1*:   98:        BOOST_CHECK_EQUAL(temp, myString44);
+        -:   99:
+        1:  100:        temp = ptr_chars + myString1;
+       1*:  101:        BOOST_CHECK_EQUAL(temp, myString111);
+        -:  102:
+        1:  103:        delete[] ptr_chars;
+        1:  104:    }
+------------------
+_ZN19MyString_Test_Suite30Plus_Assignment_Operators_test11test_methodEv:
+        1:   85:    BOOST_FIXTURE_TEST_CASE(Plus_Assignment_Operators_test, Fixture) {
+        -:   86:
+        1:   87:        char *ptr_chars = new char[3]{'G', 'H', '\0'};
+        1:   87-block  0
+        2:   88:        MyString myString11 = MyString("Test has been Successful");
+        1:   88-block  0
+    $$$$$:   88-block  1
+        -:   89:        MyString myString44 = MyString(
+        3:   90:                {'a', 'b', 'c', 'd', 'e', 'f', ' ', ' ', ' ', ' ', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', '\0'});
+        1:   90-block  0
+        1:   90-block  1
+    $$$$$:   90-block  2
+    $$$$$:   90-block  3
+    $$$$$:   90-block  4
+    $$$$$:   90-block  5
+        2:   91:        MyString myString111 = MyString("GH");
+    $$$$$:   91-block  0
+        2:   92:        MyString temp;
+        1:   92-block  0
+        1:   92-block  1
+    $$$$$:   92-block  2
+        -:   93:
+        1:   94:        temp = myString6 + myString1;
+        1:   94-block  0
+        1:   94-block  1
+        1:   94-block  2
+    $$$$$:   94-block  3
+    $$$$$:   94-block  4
+       1*:   95:        BOOST_CHECK_EQUAL(temp, myString11);
+        1:   95-block  0
+        1:   95-block  1
+        1:   95-block  2
+        1:   95-block  3
+        1:   95-block  4
+    %%%%%:   95-block  5
+    $$$$$:   95-block  6
+    $$$$$:   95-block  7
+    $$$$$:   95-block  8
+    $$$$$:   95-block  9
+    $$$$$:   95-block 10
+        -:   96:
+        1:   97:        temp = myString4 + ptr_chars;
+        1:   97-block  0
+        1:   97-block  1
+        1:   97-block  2
+    $$$$$:   97-block  3
+    $$$$$:   97-block  4
+       1*:   98:        BOOST_CHECK_EQUAL(temp, myString44);
+        1:   98-block  0
+        1:   98-block  1
+        1:   98-block  2
+        1:   98-block  3
+        1:   98-block  4
+    %%%%%:   98-block  5
+    $$$$$:   98-block  6
+    $$$$$:   98-block  7
+    $$$$$:   98-block  8
+    $$$$$:   98-block  9
+    $$$$$:   98-block 10
+        -:   99:
+        1:  100:        temp = ptr_chars + myString1;
+        1:  100-block  0
+        1:  100-block  1
+        1:  100-block  2
+    $$$$$:  100-block  3
+    $$$$$:  100-block  4
+       1*:  101:        BOOST_CHECK_EQUAL(temp, myString111);
+        1:  101-block  0
+        1:  101-block  1
+        1:  101-block  2
+        1:  101-block  3
+        1:  101-block  4
+    %%%%%:  101-block  5
+    $$$$$:  101-block  6
+    $$$$$:  101-block  7
+    $$$$$:  101-block  8
+    $$$$$:  101-block  9
+    $$$$$:  101-block 10
+        -:  102:
+        1:  103:        delete[] ptr_chars;
+        1:  103-block  0
+        1:  103-block  1
+        1:  104:    }
+------------------
+_ZN19MyString_Test_SuiteL38Plus_Assignment_Operators_test_invokerEv:
+        1:   85:    BOOST_FIXTURE_TEST_CASE(Plus_Assignment_Operators_test, Fixture) {
+        1:   85-block  0
+        1:   85-block  1
+        1:   85-block  2
+        1:   85-block  3
+        1:   85-block  4
+        1:   85-block  5
+        1:   85-block  6
+        1:   85-block  7
+        1:   85-block  8
+        1:   85-block  9
+        1:   85-block 10
+        1:   85-block 11
+        1:   85-block 12
+        1:   85-block 13
+        1:   85-block 14
+        1:   85-block 15
+        1:   85-block 16
+        1:   85-block 17
+        1:   85-block 18
+        1:   85-block 19
+        1:   85-block 20
+        1:   85-block 21
+        1:   85-block 22
+        1:   85-block 23
+        1:   85-block 24
+        1:   85-block 25
+        1:   85-block 26
+        1:   85-block 27
+        1:   85-block 28
+        1:   85-block 29
+        1:   85-block 30
+        1:   85-block 31
+        1:   85-block 32
+        1:   85-block 33
+        1:   85-block 34
+    $$$$$:   85-block 35
+    $$$$$:   85-block 36
+    $$$$$:   85-block 37
+    $$$$$:   85-block 38
+    $$$$$:   85-block 39
+    $$$$$:   85-block 40
+    $$$$$:   85-block 41
+    $$$$$:   85-block 42
+    $$$$$:   85-block 43
+    $$$$$:   85-block 44
+    $$$$$:   85-block 45
+    $$$$$:   85-block 46
+    $$$$$:   85-block 47
+    $$$$$:   85-block 48
+    $$$$$:   85-block 49
+    $$$$$:   85-block 50
+    $$$$$:   85-block 51
+    $$$$$:   85-block 52
+    $$$$$:   85-block 53
+    $$$$$:   85-block 54
+    $$$$$:   85-block 55
+    $$$$$:   85-block 56
+    $$$$$:   85-block 57
+    $$$$$:   85-block 58
+    $$$$$:   85-block 59
+    $$$$$:   85-block 60
+------------------
+        -:  105:
+        2:  106:    BOOST_FIXTURE_TEST_CASE(Indexing_Operator_test, Fixture) {
+        -:  107:
+        2:  108:        const MyString temp1 = myString2;
+        -:  109:
+       1*:  110:        BOOST_CHECK_EQUAL(temp1[0], 'H');
+       2*:  111:        BOOST_CHECK_THROW(temp1[-1], std::out_of_range);
+       2*:  112:        BOOST_CHECK_THROW(temp1[7], std::out_of_range);
+        -:  113:
+        2:  114:        MyString temp("Mello,,");
+        1:  115:        myString2[0] = 'M';
+       1*:  116:        BOOST_CHECK_EQUAL(myString2, temp);
+        -:  117:
+        -:  118:
+       2*:  119:        BOOST_CHECK_THROW(myString2[-1] = 'W', std::out_of_range);
+       2*:  120:        BOOST_CHECK_THROW(myString2[7] = '!', std::out_of_range);
+        1:  121:    }
+------------------
+_ZN19MyString_Test_Suite22Indexing_Operator_test11test_methodEv:
+        1:  106:    BOOST_FIXTURE_TEST_CASE(Indexing_Operator_test, Fixture) {
+        -:  107:
+        2:  108:        const MyString temp1 = myString2;
+        1:  108-block  0
+    $$$$$:  108-block  1
+        -:  109:
+       1*:  110:        BOOST_CHECK_EQUAL(temp1[0], 'H');
+        1:  110-block  0
+        1:  110-block  1
+        1:  110-block  2
+        1:  110-block  3
+        1:  110-block  4
+        1:  110-block  5
+    %%%%%:  110-block  6
+    $$$$$:  110-block  7
+    $$$$$:  110-block  8
+    $$$$$:  110-block  9
+    $$$$$:  110-block 10
+    $$$$$:  110-block 11
+    $$$$$:  110-block 12
+       2*:  111:        BOOST_CHECK_THROW(temp1[-1], std::out_of_range);
+        1:  111-block  0
+        1:  111-block  1
+        1:  111-block  2
+    %%%%%:  111-block  3
+    %%%%%:  111-block  4
+    %%%%%:  111-block  5
+    %%%%%:  111-block  6
+    %%%%%:  111-block  7
+    %%%%%:  111-block  8
+    %%%%%:  111-block  9
+        1:  111-block 10
+    %%%%%:  111-block 11
+    $$$$$:  111-block 12
+    $$$$$:  111-block 13
+    $$$$$:  111-block 14
+    $$$$$:  111-block 15
+    $$$$$:  111-block 16
+    $$$$$:  111-block 17
+    $$$$$:  111-block 18
+    $$$$$:  111-block 19
+    $$$$$:  111-block 20
+        1:  111-block 21
+        1:  111-block 22
+        1:  111-block 23
+        1:  111-block 24
+        1:  111-block 25
+        1:  111-block 26
+        1:  111-block 27
+    $$$$$:  111-block 28
+        1:  111-block 29
+    $$$$$:  111-block 30
+    $$$$$:  111-block 31
+    $$$$$:  111-block 32
+    $$$$$:  111-block 33
+    $$$$$:  111-block 34
+    $$$$$:  111-block 35
+    $$$$$:  111-block 36
+    $$$$$:  111-block 37
+       2*:  112:        BOOST_CHECK_THROW(temp1[7], std::out_of_range);
+        1:  112-block  0
+        1:  112-block  1
+        1:  112-block  2
+    %%%%%:  112-block  3
+    %%%%%:  112-block  4
+    %%%%%:  112-block  5
+    %%%%%:  112-block  6
+    %%%%%:  112-block  7
+    %%%%%:  112-block  8
+    %%%%%:  112-block  9
+        1:  112-block 10
+    %%%%%:  112-block 11
+    $$$$$:  112-block 12
+    $$$$$:  112-block 13
+    $$$$$:  112-block 14
+    $$$$$:  112-block 15
+    $$$$$:  112-block 16
+    $$$$$:  112-block 17
+    $$$$$:  112-block 18
+    $$$$$:  112-block 19
+    $$$$$:  112-block 20
+        1:  112-block 21
+        1:  112-block 22
+        1:  112-block 23
+        1:  112-block 24
+        1:  112-block 25
+        1:  112-block 26
+        1:  112-block 27
+    $$$$$:  112-block 28
+        1:  112-block 29
+    $$$$$:  112-block 30
+    $$$$$:  112-block 31
+    $$$$$:  112-block 32
+    $$$$$:  112-block 33
+    $$$$$:  112-block 34
+    $$$$$:  112-block 35
+    $$$$$:  112-block 36
+    $$$$$:  112-block 37
+        -:  113:
+        2:  114:        MyString temp("Mello,,");
+        1:  114-block  0
+        1:  114-block  1
+    $$$$$:  114-block  2
+        1:  115:        myString2[0] = 'M';
+        1:  115-block  0
+        1:  115-block  1
+       1*:  116:        BOOST_CHECK_EQUAL(myString2, temp);
+        1:  116-block  0
+        1:  116-block  1
+        1:  116-block  2
+        1:  116-block  3
+        1:  116-block  4
+    %%%%%:  116-block  5
+    $$$$$:  116-block  6
+    $$$$$:  116-block  7
+    $$$$$:  116-block  8
+    $$$$$:  116-block  9
+    $$$$$:  116-block 10
+        -:  117:
+        -:  118:
+       2*:  119:        BOOST_CHECK_THROW(myString2[-1] = 'W', std::out_of_range);
+        1:  119-block  0
+        1:  119-block  1
+        1:  119-block  2
+    %%%%%:  119-block  3
+    %%%%%:  119-block  4
+    %%%%%:  119-block  5
+    %%%%%:  119-block  6
+    %%%%%:  119-block  7
+    %%%%%:  119-block  8
+    %%%%%:  119-block  9
+    %%%%%:  119-block 10
+        1:  119-block 11
+    %%%%%:  119-block 12
+    $$$$$:  119-block 13
+    $$$$$:  119-block 14
+    $$$$$:  119-block 15
+    $$$$$:  119-block 16
+    $$$$$:  119-block 17
+    $$$$$:  119-block 18
+    $$$$$:  119-block 19
+    $$$$$:  119-block 20
+    $$$$$:  119-block 21
+        1:  119-block 22
+        1:  119-block 23
+        1:  119-block 24
+        1:  119-block 25
+        1:  119-block 26
+        1:  119-block 27
+        1:  119-block 28
+    $$$$$:  119-block 29
+        1:  119-block 30
+    $$$$$:  119-block 31
+    $$$$$:  119-block 32
+    $$$$$:  119-block 33
+    $$$$$:  119-block 34
+    $$$$$:  119-block 35
+    $$$$$:  119-block 36
+    $$$$$:  119-block 37
+    $$$$$:  119-block 38
+       2*:  120:        BOOST_CHECK_THROW(myString2[7] = '!', std::out_of_range);
+        1:  120-block  0
+        1:  120-block  1
+        1:  120-block  2
+    %%%%%:  120-block  3
+    %%%%%:  120-block  4
+    %%%%%:  120-block  5
+    %%%%%:  120-block  6
+    %%%%%:  120-block  7
+    %%%%%:  120-block  8
+    %%%%%:  120-block  9
+    %%%%%:  120-block 10
+        1:  120-block 11
+    %%%%%:  120-block 12
+    $$$$$:  120-block 13
+    $$$$$:  120-block 14
+    $$$$$:  120-block 15
+    $$$$$:  120-block 16
+    $$$$$:  120-block 17
+    $$$$$:  120-block 18
+    $$$$$:  120-block 19
+    $$$$$:  120-block 20
+    $$$$$:  120-block 21
+        1:  120-block 22
+        1:  120-block 23
+        1:  120-block 24
+        1:  120-block 25
+        1:  120-block 26
+        1:  120-block 27
+        1:  120-block 28
+    $$$$$:  120-block 29
+        1:  120-block 30
+    $$$$$:  120-block 31
+    $$$$$:  120-block 32
+    $$$$$:  120-block 33
+    $$$$$:  120-block 34
+    $$$$$:  120-block 35
+    $$$$$:  120-block 36
+    $$$$$:  120-block 37
+    $$$$$:  120-block 38
+        1:  121:    }
+------------------
+_ZN19MyString_Test_SuiteL30Indexing_Operator_test_invokerEv:
+        1:  106:    BOOST_FIXTURE_TEST_CASE(Indexing_Operator_test, Fixture) {
+        1:  106-block  0
+        1:  106-block  1
+        1:  106-block  2
+        1:  106-block  3
+        1:  106-block  4
+        1:  106-block  5
+        1:  106-block  6
+        1:  106-block  7
+        1:  106-block  8
+        1:  106-block  9
+        1:  106-block 10
+        1:  106-block 11
+        1:  106-block 12
+        1:  106-block 13
+        1:  106-block 14
+        1:  106-block 15
+        1:  106-block 16
+        1:  106-block 17
+        1:  106-block 18
+        1:  106-block 19
+        1:  106-block 20
+        1:  106-block 21
+        1:  106-block 22
+        1:  106-block 23
+        1:  106-block 24
+        1:  106-block 25
+        1:  106-block 26
+        1:  106-block 27
+        1:  106-block 28
+        1:  106-block 29
+        1:  106-block 30
+        1:  106-block 31
+        1:  106-block 32
+        1:  106-block 33
+        1:  106-block 34
+    $$$$$:  106-block 35
+    $$$$$:  106-block 36
+    $$$$$:  106-block 37
+    $$$$$:  106-block 38
+    $$$$$:  106-block 39
+    $$$$$:  106-block 40
+    $$$$$:  106-block 41
+    $$$$$:  106-block 42
+    $$$$$:  106-block 43
+    $$$$$:  106-block 44
+    $$$$$:  106-block 45
+    $$$$$:  106-block 46
+    $$$$$:  106-block 47
+    $$$$$:  106-block 48
+    $$$$$:  106-block 49
+    $$$$$:  106-block 50
+    $$$$$:  106-block 51
+    $$$$$:  106-block 52
+    $$$$$:  106-block 53
+    $$$$$:  106-block 54
+    $$$$$:  106-block 55
+    $$$$$:  106-block 56
+    $$$$$:  106-block 57
+    $$$$$:  106-block 58
+    $$$$$:  106-block 59
+    $$$$$:  106-block 60
+------------------
+        -:  122:
+        2:  123:    BOOST_FIXTURE_TEST_CASE(C_String_test, Fixture) {
+        -:  124:
+        -:  125:        char *ptr_char;
+        -:  126:
+        2:  127:        ptr_char = new char[1]{};
+       1*:  128:        BOOST_CHECK_EQUAL(myString1.c_str(), ptr_char);
+        1:  129:        delete[] ptr_char;
+        -:  130:
+        1:  131:        ptr_char = new char[7]{'H', 'e', 'l', 'l', 'o', ',', ','};
+       1*:  132:        BOOST_CHECK_EQUAL(myString2.c_str(), ptr_char);
+        1:  133:        delete[] ptr_char;
+        -:  134:
+        2:  135:        ptr_char = new char[17]{'a', 'b', 'c', 'd', 'e', 'f', ' ', ' ', ' ', ' ', 'A', 'B', 'C', 'D', 'E', 'F'};
+       1*:  136:        BOOST_CHECK_EQUAL(myString4.c_str(), ptr_char);
+        1:  137:        delete[] ptr_char;
+        -:  138:
+        1:  139:        ptr_char = new char[1]{'a'};
+       1*:  140:        BOOST_CHECK_EQUAL(myString1.c_str() != ptr_char, true);
+        1:  141:        delete[] ptr_char;
+        1:  142:    }
+------------------
+_ZN19MyString_Test_Suite13C_String_test11test_methodEv:
+        1:  123:    BOOST_FIXTURE_TEST_CASE(C_String_test, Fixture) {
+        -:  124:
+        -:  125:        char *ptr_char;
+        -:  126:
+        2:  127:        ptr_char = new char[1]{};
+        1:  127-block  0
+        1:  127-block  1
+        2:  127-block  2
+        1:  127-block  3
+        1:  127-block  4
+       1*:  128:        BOOST_CHECK_EQUAL(myString1.c_str(), ptr_char);
+        1:  128-block  0
+        1:  128-block  1
+        1:  128-block  2
+        1:  128-block  3
+        1:  128-block  4
+    %%%%%:  128-block  5
+    $$$$$:  128-block  6
+    $$$$$:  128-block  7
+    $$$$$:  128-block  8
+    $$$$$:  128-block  9
+    $$$$$:  128-block 10
+    $$$$$:  128-block 11
+        1:  129:        delete[] ptr_char;
+        1:  129-block  0
+        1:  129-block  1
+        -:  130:
+        1:  131:        ptr_char = new char[7]{'H', 'e', 'l', 'l', 'o', ',', ','};
+        1:  131-block  0
+        1:  131-block  1
+       1*:  132:        BOOST_CHECK_EQUAL(myString2.c_str(), ptr_char);
+        1:  132-block  0
+        1:  132-block  1
+        1:  132-block  2
+        1:  132-block  3
+        1:  132-block  4
+    %%%%%:  132-block  5
+    $$$$$:  132-block  6
+    $$$$$:  132-block  7
+    $$$$$:  132-block  8
+    $$$$$:  132-block  9
+    $$$$$:  132-block 10
+    $$$$$:  132-block 11
+        1:  133:        delete[] ptr_char;
+        1:  133-block  0
+        1:  133-block  1
+        -:  134:
+        2:  135:        ptr_char = new char[17]{'a', 'b', 'c', 'd', 'e', 'f', ' ', ' ', ' ', ' ', 'A', 'B', 'C', 'D', 'E', 'F'};
+        1:  135-block  0
+        1:  135-block  1
+        2:  135-block  2
+        1:  135-block  3
+        1:  135-block  4
+       1*:  136:        BOOST_CHECK_EQUAL(myString4.c_str(), ptr_char);
+        1:  136-block  0
+        1:  136-block  1
+        1:  136-block  2
+        1:  136-block  3
+        1:  136-block  4
+    %%%%%:  136-block  5
+    $$$$$:  136-block  6
+    $$$$$:  136-block  7
+    $$$$$:  136-block  8
+    $$$$$:  136-block  9
+    $$$$$:  136-block 10
+    $$$$$:  136-block 11
+        1:  137:        delete[] ptr_char;
+        1:  137-block  0
+        1:  137-block  1
+        -:  138:
+        1:  139:        ptr_char = new char[1]{'a'};
+        1:  139-block  0
+        1:  139-block  1
+       1*:  140:        BOOST_CHECK_EQUAL(myString1.c_str() != ptr_char, true);
+        1:  140-block  0
+        1:  140-block  1
+        1:  140-block  2
+        1:  140-block  3
+        1:  140-block  4
+    %%%%%:  140-block  5
+    $$$$$:  140-block  6
+    $$$$$:  140-block  7
+    $$$$$:  140-block  8
+    $$$$$:  140-block  9
+    $$$$$:  140-block 10
+    $$$$$:  140-block 11
+    $$$$$:  140-block 12
+        1:  141:        delete[] ptr_char;
+        1:  141-block  0
+        1:  141-block  1
+        1:  142:    }
+        1:  142-block  0
+------------------
+_ZN19MyString_Test_SuiteL21C_String_test_invokerEv:
+        1:  123:    BOOST_FIXTURE_TEST_CASE(C_String_test, Fixture) {
+        1:  123-block  0
+        1:  123-block  1
+        1:  123-block  2
+        1:  123-block  3
+        1:  123-block  4
+        1:  123-block  5
+        1:  123-block  6
+        1:  123-block  7
+        1:  123-block  8
+        1:  123-block  9
+        1:  123-block 10
+        1:  123-block 11
+        1:  123-block 12
+        1:  123-block 13
+        1:  123-block 14
+        1:  123-block 15
+        1:  123-block 16
+        1:  123-block 17
+        1:  123-block 18
+        1:  123-block 19
+        1:  123-block 20
+        1:  123-block 21
+        1:  123-block 22
+        1:  123-block 23
+        1:  123-block 24
+        1:  123-block 25
+        1:  123-block 26
+        1:  123-block 27
+        1:  123-block 28
+        1:  123-block 29
+        1:  123-block 30
+        1:  123-block 31
+        1:  123-block 32
+        1:  123-block 33
+        1:  123-block 34
+    $$$$$:  123-block 35
+    $$$$$:  123-block 36
+    $$$$$:  123-block 37
+    $$$$$:  123-block 38
+    $$$$$:  123-block 39
+    $$$$$:  123-block 40
+    $$$$$:  123-block 41
+    $$$$$:  123-block 42
+    $$$$$:  123-block 43
+    $$$$$:  123-block 44
+    $$$$$:  123-block 45
+    $$$$$:  123-block 46
+    $$$$$:  123-block 47
+    $$$$$:  123-block 48
+    $$$$$:  123-block 49
+    $$$$$:  123-block 50
+    $$$$$:  123-block 51
+    $$$$$:  123-block 52
+    $$$$$:  123-block 53
+    $$$$$:  123-block 54
+    $$$$$:  123-block 55
+    $$$$$:  123-block 56
+    $$$$$:  123-block 57
+    $$$$$:  123-block 58
+    $$$$$:  123-block 59
+    $$$$$:  123-block 60
+------------------
+        -:  143:
+        2:  144:    BOOST_FIXTURE_TEST_CASE(Swap_test, Fixture) {
+        -:  145:
+        2:  146:        MyString temp1;
+        2:  147:        MyString temp2;
+        -:  148:
+        1:  149:        temp1 = myString6;
+        1:  150:        temp2 = myString2;
+        -:  151:
+        1:  152:        myString6.swap(myString2);
+       1*:  153:        BOOST_CHECK_EQUAL(myString6, temp2);
+       1*:  154:        BOOST_CHECK_EQUAL(myString2, temp1);
+       1*:  155:        BOOST_CHECK_EQUAL(myString6 == temp1, false);
+       1*:  156:        BOOST_CHECK_EQUAL(myString2 == temp2, false);
+        -:  157:
+        1:  158:        temp1 = myString3;
+        1:  159:        temp2 = myString4;
+        -:  160:
+        1:  161:        myString3.swap(myString4);
+       1*:  162:        BOOST_CHECK_EQUAL(myString3, temp2);
+       1*:  163:        BOOST_CHECK_EQUAL(myString4, temp1);
+       1*:  164:        BOOST_CHECK_EQUAL(myString3 == temp1, false);
+       1*:  165:        BOOST_CHECK_EQUAL(myString4 == temp2, false);
+        1:  166:    }
+------------------
+_ZN19MyString_Test_Suite9Swap_test11test_methodEv:
+        1:  144:    BOOST_FIXTURE_TEST_CASE(Swap_test, Fixture) {
+        -:  145:
+        2:  146:        MyString temp1;
+        1:  146-block  0
+    $$$$$:  146-block  1
+        2:  147:        MyString temp2;
+        1:  147-block  0
+        1:  147-block  1
+    $$$$$:  147-block  2
+        -:  148:
+        1:  149:        temp1 = myString6;
+        1:  149-block  0
+        1:  150:        temp2 = myString2;
+        1:  150-block  0
+        -:  151:
+        1:  152:        myString6.swap(myString2);
+        1:  152-block  0
+       1*:  153:        BOOST_CHECK_EQUAL(myString6, temp2);
+        1:  153-block  0
+        1:  153-block  1
+        1:  153-block  2
+        1:  153-block  3
+        1:  153-block  4
+    %%%%%:  153-block  5
+    $$$$$:  153-block  6
+    $$$$$:  153-block  7
+    $$$$$:  153-block  8
+    $$$$$:  153-block  9
+    $$$$$:  153-block 10
+       1*:  154:        BOOST_CHECK_EQUAL(myString2, temp1);
+        1:  154-block  0
+        1:  154-block  1
+        1:  154-block  2
+        1:  154-block  3
+        1:  154-block  4
+    %%%%%:  154-block  5
+    $$$$$:  154-block  6
+    $$$$$:  154-block  7
+    $$$$$:  154-block  8
+    $$$$$:  154-block  9
+    $$$$$:  154-block 10
+       1*:  155:        BOOST_CHECK_EQUAL(myString6 == temp1, false);
+        1:  155-block  0
+        1:  155-block  1
+        1:  155-block  2
+        1:  155-block  3
+        1:  155-block  4
+    %%%%%:  155-block  5
+    $$$$$:  155-block  6
+    $$$$$:  155-block  7
+    $$$$$:  155-block  8
+    $$$$$:  155-block  9
+    $$$$$:  155-block 10
+    $$$$$:  155-block 11
+    $$$$$:  155-block 12
+       1*:  156:        BOOST_CHECK_EQUAL(myString2 == temp2, false);
+        1:  156-block  0
+        1:  156-block  1
+        1:  156-block  2
+        1:  156-block  3
+        1:  156-block  4
+    %%%%%:  156-block  5
+    $$$$$:  156-block  6
+    $$$$$:  156-block  7
+    $$$$$:  156-block  8
+    $$$$$:  156-block  9
+    $$$$$:  156-block 10
+    $$$$$:  156-block 11
+    $$$$$:  156-block 12
+        -:  157:
+        1:  158:        temp1 = myString3;
+        1:  158-block  0
+        1:  159:        temp2 = myString4;
+        1:  159-block  0
+        -:  160:
+        1:  161:        myString3.swap(myString4);
+        1:  161-block  0
+       1*:  162:        BOOST_CHECK_EQUAL(myString3, temp2);
+        1:  162-block  0
+        1:  162-block  1
+        1:  162-block  2
+        1:  162-block  3
+        1:  162-block  4
+    %%%%%:  162-block  5
+    $$$$$:  162-block  6
+    $$$$$:  162-block  7
+    $$$$$:  162-block  8
+    $$$$$:  162-block  9
+    $$$$$:  162-block 10
+       1*:  163:        BOOST_CHECK_EQUAL(myString4, temp1);
+        1:  163-block  0
+        1:  163-block  1
+        1:  163-block  2
+        1:  163-block  3
+        1:  163-block  4
+    %%%%%:  163-block  5
+    $$$$$:  163-block  6
+    $$$$$:  163-block  7
+    $$$$$:  163-block  8
+    $$$$$:  163-block  9
+    $$$$$:  163-block 10
+       1*:  164:        BOOST_CHECK_EQUAL(myString3 == temp1, false);
+        1:  164-block  0
+        1:  164-block  1
+        1:  164-block  2
+        1:  164-block  3
+        1:  164-block  4
+    %%%%%:  164-block  5
+    $$$$$:  164-block  6
+    $$$$$:  164-block  7
+    $$$$$:  164-block  8
+    $$$$$:  164-block  9
+    $$$$$:  164-block 10
+    $$$$$:  164-block 11
+    $$$$$:  164-block 12
+       1*:  165:        BOOST_CHECK_EQUAL(myString4 == temp2, false);
+        1:  165-block  0
+        1:  165-block  1
+        1:  165-block  2
+        1:  165-block  3
+        1:  165-block  4
+    %%%%%:  165-block  5
+    $$$$$:  165-block  6
+    $$$$$:  165-block  7
+    $$$$$:  165-block  8
+    $$$$$:  165-block  9
+    $$$$$:  165-block 10
+    $$$$$:  165-block 11
+    $$$$$:  165-block 12
+        1:  166:    }
+------------------
+_ZN19MyString_Test_SuiteL17Swap_test_invokerEv:
+        1:  144:    BOOST_FIXTURE_TEST_CASE(Swap_test, Fixture) {
+        1:  144-block  0
+        1:  144-block  1
+        1:  144-block  2
+        1:  144-block  3
+        1:  144-block  4
+        1:  144-block  5
+        1:  144-block  6
+        1:  144-block  7
+        1:  144-block  8
+        1:  144-block  9
+        1:  144-block 10
+        1:  144-block 11
+        1:  144-block 12
+        1:  144-block 13
+        1:  144-block 14
+        1:  144-block 15
+        1:  144-block 16
+        1:  144-block 17
+        1:  144-block 18
+        1:  144-block 19
+        1:  144-block 20
+        1:  144-block 21
+        1:  144-block 22
+        1:  144-block 23
+        1:  144-block 24
+        1:  144-block 25
+        1:  144-block 26
+        1:  144-block 27
+        1:  144-block 28
+        1:  144-block 29
+        1:  144-block 30
+        1:  144-block 31
+        1:  144-block 32
+        1:  144-block 33
+        1:  144-block 34
+    $$$$$:  144-block 35
+    $$$$$:  144-block 36
+    $$$$$:  144-block 37
+    $$$$$:  144-block 38
+    $$$$$:  144-block 39
+    $$$$$:  144-block 40
+    $$$$$:  144-block 41
+    $$$$$:  144-block 42
+    $$$$$:  144-block 43
+    $$$$$:  144-block 44
+    $$$$$:  144-block 45
+    $$$$$:  144-block 46
+    $$$$$:  144-block 47
+    $$$$$:  144-block 48
+    $$$$$:  144-block 49
+    $$$$$:  144-block 50
+    $$$$$:  144-block 51
+    $$$$$:  144-block 52
+    $$$$$:  144-block 53
+    $$$$$:  144-block 54
+    $$$$$:  144-block 55
+    $$$$$:  144-block 56
+    $$$$$:  144-block 57
+    $$$$$:  144-block 58
+    $$$$$:  144-block 59
+    $$$$$:  144-block 60
+------------------
+        -:  167:
+        2:  168:    BOOST_FIXTURE_TEST_CASE(Comparison_Operators_test, Fixture) {
+        -:  169:
+        2:  170:        MyString temp1;
+        2:  171:        MyString temp2;
+        -:  172:
+        1:  173:        temp1 = myString1;
+        1:  174:        temp2 = myString2;
+        -:  175:
+       1*:  176:        BOOST_CHECK_EQUAL(myString1 == temp1, true);
+       1*:  177:        BOOST_CHECK_EQUAL(myString2 == temp2, true);
+       1*:  178:        BOOST_CHECK_EQUAL(myString2 == myString1, false);
+        -:  179:
+       1*:  180:        BOOST_CHECK_EQUAL(myString1 != temp1, false);
+       1*:  181:        BOOST_CHECK_EQUAL(myString2 != temp2, false);
+       1*:  182:        BOOST_CHECK_EQUAL(myString2 != myString1, true);
+        -:  183:
+       1*:  184:        BOOST_CHECK_EQUAL(myString1 >= temp1, true);
+       1*:  185:        BOOST_CHECK_EQUAL(myString1 <= temp1, true);
+       1*:  186:        BOOST_CHECK_EQUAL(myString2 >= temp2, true);
+       1*:  187:        BOOST_CHECK_EQUAL(myString2 <= temp2, true);
+        -:  188:
+       1*:  189:        BOOST_CHECK_EQUAL(myString1 > temp1, false);
+       1*:  190:        BOOST_CHECK_EQUAL(myString1 < temp1, false);
+       1*:  191:        BOOST_CHECK_EQUAL(myString2 > temp2, false);
+       1*:  192:        BOOST_CHECK_EQUAL(myString2 < temp2, false);
+        1:  193:    }
+------------------
+_ZN19MyString_Test_Suite25Comparison_Operators_test11test_methodEv:
+        1:  168:    BOOST_FIXTURE_TEST_CASE(Comparison_Operators_test, Fixture) {
+        -:  169:
+        2:  170:        MyString temp1;
+        1:  170-block  0
+    $$$$$:  170-block  1
+        2:  171:        MyString temp2;
+        1:  171-block  0
+        1:  171-block  1
+    $$$$$:  171-block  2
+        -:  172:
+        1:  173:        temp1 = myString1;
+        1:  173-block  0
+        1:  174:        temp2 = myString2;
+        1:  174-block  0
+        -:  175:
+       1*:  176:        BOOST_CHECK_EQUAL(myString1 == temp1, true);
+        1:  176-block  0
+        1:  176-block  1
+        1:  176-block  2
+        1:  176-block  3
+        1:  176-block  4
+    %%%%%:  176-block  5
+    $$$$$:  176-block  6
+    $$$$$:  176-block  7
+    $$$$$:  176-block  8
+    $$$$$:  176-block  9
+    $$$$$:  176-block 10
+    $$$$$:  176-block 11
+    $$$$$:  176-block 12
+       1*:  177:        BOOST_CHECK_EQUAL(myString2 == temp2, true);
+        1:  177-block  0
+        1:  177-block  1
+        1:  177-block  2
+        1:  177-block  3
+        1:  177-block  4
+    %%%%%:  177-block  5
+    $$$$$:  177-block  6
+    $$$$$:  177-block  7
+    $$$$$:  177-block  8
+    $$$$$:  177-block  9
+    $$$$$:  177-block 10
+    $$$$$:  177-block 11
+    $$$$$:  177-block 12
+       1*:  178:        BOOST_CHECK_EQUAL(myString2 == myString1, false);
+        1:  178-block  0
+        1:  178-block  1
+        1:  178-block  2
+        1:  178-block  3
+        1:  178-block  4
+    %%%%%:  178-block  5
+    $$$$$:  178-block  6
+    $$$$$:  178-block  7
+    $$$$$:  178-block  8
+    $$$$$:  178-block  9
+    $$$$$:  178-block 10
+    $$$$$:  178-block 11
+    $$$$$:  178-block 12
+        -:  179:
+       1*:  180:        BOOST_CHECK_EQUAL(myString1 != temp1, false);
+        1:  180-block  0
+        1:  180-block  1
+        1:  180-block  2
+        1:  180-block  3
+        1:  180-block  4
+    %%%%%:  180-block  5
+    $$$$$:  180-block  6
+    $$$$$:  180-block  7
+    $$$$$:  180-block  8
+    $$$$$:  180-block  9
+    $$$$$:  180-block 10
+    $$$$$:  180-block 11
+    $$$$$:  180-block 12
+       1*:  181:        BOOST_CHECK_EQUAL(myString2 != temp2, false);
+        1:  181-block  0
+        1:  181-block  1
+        1:  181-block  2
+        1:  181-block  3
+        1:  181-block  4
+    %%%%%:  181-block  5
+    $$$$$:  181-block  6
+    $$$$$:  181-block  7
+    $$$$$:  181-block  8
+    $$$$$:  181-block  9
+    $$$$$:  181-block 10
+    $$$$$:  181-block 11
+    $$$$$:  181-block 12
+       1*:  182:        BOOST_CHECK_EQUAL(myString2 != myString1, true);
+        1:  182-block  0
+        1:  182-block  1
+        1:  182-block  2
+        1:  182-block  3
+        1:  182-block  4
+    %%%%%:  182-block  5
+    $$$$$:  182-block  6
+    $$$$$:  182-block  7
+    $$$$$:  182-block  8
+    $$$$$:  182-block  9
+    $$$$$:  182-block 10
+    $$$$$:  182-block 11
+    $$$$$:  182-block 12
+        -:  183:
+       1*:  184:        BOOST_CHECK_EQUAL(myString1 >= temp1, true);
+        1:  184-block  0
+        1:  184-block  1
+        1:  184-block  2
+        1:  184-block  3
+        1:  184-block  4
+    %%%%%:  184-block  5
+    $$$$$:  184-block  6
+    $$$$$:  184-block  7
+    $$$$$:  184-block  8
+    $$$$$:  184-block  9
+    $$$$$:  184-block 10
+    $$$$$:  184-block 11
+    $$$$$:  184-block 12
+       1*:  185:        BOOST_CHECK_EQUAL(myString1 <= temp1, true);
+        1:  185-block  0
+        1:  185-block  1
+        1:  185-block  2
+        1:  185-block  3
+        1:  185-block  4
+    %%%%%:  185-block  5
+    $$$$$:  185-block  6
+    $$$$$:  185-block  7
+    $$$$$:  185-block  8
+    $$$$$:  185-block  9
+    $$$$$:  185-block 10
+    $$$$$:  185-block 11
+    $$$$$:  185-block 12
+       1*:  186:        BOOST_CHECK_EQUAL(myString2 >= temp2, true);
+        1:  186-block  0
+        1:  186-block  1
+        1:  186-block  2
+        1:  186-block  3
+        1:  186-block  4
+    %%%%%:  186-block  5
+    $$$$$:  186-block  6
+    $$$$$:  186-block  7
+    $$$$$:  186-block  8
+    $$$$$:  186-block  9
+    $$$$$:  186-block 10
+    $$$$$:  186-block 11
+    $$$$$:  186-block 12
+       1*:  187:        BOOST_CHECK_EQUAL(myString2 <= temp2, true);
+        1:  187-block  0
+        1:  187-block  1
+        1:  187-block  2
+        1:  187-block  3
+        1:  187-block  4
+    %%%%%:  187-block  5
+    $$$$$:  187-block  6
+    $$$$$:  187-block  7
+    $$$$$:  187-block  8
+    $$$$$:  187-block  9
+    $$$$$:  187-block 10
+    $$$$$:  187-block 11
+    $$$$$:  187-block 12
+        -:  188:
+       1*:  189:        BOOST_CHECK_EQUAL(myString1 > temp1, false);
+        1:  189-block  0
+        1:  189-block  1
+        1:  189-block  2
+        1:  189-block  3
+        1:  189-block  4
+    %%%%%:  189-block  5
+    $$$$$:  189-block  6
+    $$$$$:  189-block  7
+    $$$$$:  189-block  8
+    $$$$$:  189-block  9
+    $$$$$:  189-block 10
+    $$$$$:  189-block 11
+    $$$$$:  189-block 12
+       1*:  190:        BOOST_CHECK_EQUAL(myString1 < temp1, false);
+        1:  190-block  0
+        1:  190-block  1
+        1:  190-block  2
+        1:  190-block  3
+        1:  190-block  4
+    %%%%%:  190-block  5
+    $$$$$:  190-block  6
+    $$$$$:  190-block  7
+    $$$$$:  190-block  8
+    $$$$$:  190-block  9
+    $$$$$:  190-block 10
+    $$$$$:  190-block 11
+    $$$$$:  190-block 12
+       1*:  191:        BOOST_CHECK_EQUAL(myString2 > temp2, false);
+        1:  191-block  0
+        1:  191-block  1
+        1:  191-block  2
+        1:  191-block  3
+        1:  191-block  4
+    %%%%%:  191-block  5
+    $$$$$:  191-block  6
+    $$$$$:  191-block  7
+    $$$$$:  191-block  8
+    $$$$$:  191-block  9
+    $$$$$:  191-block 10
+    $$$$$:  191-block 11
+    $$$$$:  191-block 12
+       1*:  192:        BOOST_CHECK_EQUAL(myString2 < temp2, false);
+        1:  192-block  0
+        1:  192-block  1
+        1:  192-block  2
+        1:  192-block  3
+        1:  192-block  4
+    %%%%%:  192-block  5
+    $$$$$:  192-block  6
+    $$$$$:  192-block  7
+    $$$$$:  192-block  8
+    $$$$$:  192-block  9
+    $$$$$:  192-block 10
+    $$$$$:  192-block 11
+    $$$$$:  192-block 12
+        1:  193:    }
+------------------
+_ZN19MyString_Test_SuiteL33Comparison_Operators_test_invokerEv:
+        1:  168:    BOOST_FIXTURE_TEST_CASE(Comparison_Operators_test, Fixture) {
+        1:  168-block  0
+        1:  168-block  1
+        1:  168-block  2
+        1:  168-block  3
+        1:  168-block  4
+        1:  168-block  5
+        1:  168-block  6
+        1:  168-block  7
+        1:  168-block  8
+        1:  168-block  9
+        1:  168-block 10
+        1:  168-block 11
+        1:  168-block 12
+        1:  168-block 13
+        1:  168-block 14
+        1:  168-block 15
+        1:  168-block 16
+        1:  168-block 17
+        1:  168-block 18
+        1:  168-block 19
+        1:  168-block 20
+        1:  168-block 21
+        1:  168-block 22
+        1:  168-block 23
+        1:  168-block 24
+        1:  168-block 25
+        1:  168-block 26
+        1:  168-block 27
+        1:  168-block 28
+        1:  168-block 29
+        1:  168-block 30
+        1:  168-block 31
+        1:  168-block 32
+        1:  168-block 33
+        1:  168-block 34
+    $$$$$:  168-block 35
+    $$$$$:  168-block 36
+    $$$$$:  168-block 37
+    $$$$$:  168-block 38
+    $$$$$:  168-block 39
+    $$$$$:  168-block 40
+    $$$$$:  168-block 41
+    $$$$$:  168-block 42
+    $$$$$:  168-block 43
+    $$$$$:  168-block 44
+    $$$$$:  168-block 45
+    $$$$$:  168-block 46
+    $$$$$:  168-block 47
+    $$$$$:  168-block 48
+    $$$$$:  168-block 49
+    $$$$$:  168-block 50
+    $$$$$:  168-block 51
+    $$$$$:  168-block 52
+    $$$$$:  168-block 53
+    $$$$$:  168-block 54
+    $$$$$:  168-block 55
+    $$$$$:  168-block 56
+    $$$$$:  168-block 57
+    $$$$$:  168-block 58
+    $$$$$:  168-block 59
+    $$$$$:  168-block 60
+------------------
+        -:  194:
+        2:  195:    BOOST_FIXTURE_TEST_CASE(Input_Operator_test, Fixture) {
+        -:  196:
+        2:  197:        MyString temp1;
+        2:  198:        MyString temp2("Hello");
+        -:  199:
+        2:  200:        std::istringstream iStr;
+        1:  201:        iStr.str("Hello");
+        1:  202:        iStr >> temp1;
+        -:  203:
+       1*:  204:        BOOST_CHECK_EQUAL(temp1, temp2);
+        -:  205:
+        1:  206:        temp2 = MyString("Hello,,,World!");
+        2:  207:        std::istringstream iStr1;
+        1:  208:        iStr1.str(",,,World!");
+        1:  209:        iStr1 >> temp1;
+        -:  210:
+       1*:  211:        BOOST_CHECK_EQUAL(temp1, temp2);
+        1:  212:    }
+------------------
+_ZN19MyString_Test_Suite19Input_Operator_test11test_methodEv:
+        1:  195:    BOOST_FIXTURE_TEST_CASE(Input_Operator_test, Fixture) {
+        -:  196:
+        2:  197:        MyString temp1;
+        1:  197-block  0
+    $$$$$:  197-block  1
+        2:  198:        MyString temp2("Hello");
+        1:  198-block  0
+    $$$$$:  198-block  1
+        -:  199:
+        2:  200:        std::istringstream iStr;
+        1:  200-block  0
+    $$$$$:  200-block  1
+        1:  201:        iStr.str("Hello");
+        1:  201-block  0
+        1:  201-block  1
+        1:  201-block  2
+    $$$$$:  201-block  3
+    $$$$$:  201-block  4
+    $$$$$:  201-block  5
+    $$$$$:  201-block  6
+        1:  202:        iStr >> temp1;
+        -:  203:
+       1*:  204:        BOOST_CHECK_EQUAL(temp1, temp2);
+        1:  204-block  0
+        1:  204-block  1
+        1:  204-block  2
+        1:  204-block  3
+        1:  204-block  4
+    %%%%%:  204-block  5
+    $$$$$:  204-block  6
+    $$$$$:  204-block  7
+    $$$$$:  204-block  8
+    $$$$$:  204-block  9
+    $$$$$:  204-block 10
+        -:  205:
+        1:  206:        temp2 = MyString("Hello,,,World!");
+        1:  206-block  0
+        1:  206-block  1
+        1:  206-block  2
+    $$$$$:  206-block  3
+    $$$$$:  206-block  4
+        2:  207:        std::istringstream iStr1;
+        1:  207-block  0
+    $$$$$:  207-block  1
+        1:  208:        iStr1.str(",,,World!");
+        1:  208-block  0
+        1:  208-block  1
+        1:  208-block  2
+    $$$$$:  208-block  3
+    $$$$$:  208-block  4
+    $$$$$:  208-block  5
+    $$$$$:  208-block  6
+        1:  209:        iStr1 >> temp1;
+        -:  210:
+       1*:  211:        BOOST_CHECK_EQUAL(temp1, temp2);
+        1:  211-block  0
+        1:  211-block  1
+        1:  211-block  2
+        1:  211-block  3
+        1:  211-block  4
+    %%%%%:  211-block  5
+    $$$$$:  211-block  6
+    $$$$$:  211-block  7
+    $$$$$:  211-block  8
+    $$$$$:  211-block  9
+    $$$$$:  211-block 10
+        1:  212:    }
+------------------
+_ZN19MyString_Test_SuiteL27Input_Operator_test_invokerEv:
+        1:  195:    BOOST_FIXTURE_TEST_CASE(Input_Operator_test, Fixture) {
+        1:  195-block  0
+        1:  195-block  1
+        1:  195-block  2
+        1:  195-block  3
+        1:  195-block  4
+        1:  195-block  5
+        1:  195-block  6
+        1:  195-block  7
+        1:  195-block  8
+        1:  195-block  9
+        1:  195-block 10
+        1:  195-block 11
+        1:  195-block 12
+        1:  195-block 13
+        1:  195-block 14
+        1:  195-block 15
+        1:  195-block 16
+        1:  195-block 17
+        1:  195-block 18
+        1:  195-block 19
+        1:  195-block 20
+        1:  195-block 21
+        1:  195-block 22
+        1:  195-block 23
+        1:  195-block 24
+        1:  195-block 25
+        1:  195-block 26
+        1:  195-block 27
+        1:  195-block 28
+        1:  195-block 29
+        1:  195-block 30
+        1:  195-block 31
+        1:  195-block 32
+        1:  195-block 33
+        1:  195-block 34
+    $$$$$:  195-block 35
+    $$$$$:  195-block 36
+    $$$$$:  195-block 37
+    $$$$$:  195-block 38
+    $$$$$:  195-block 39
+    $$$$$:  195-block 40
+    $$$$$:  195-block 41
+    $$$$$:  195-block 42
+    $$$$$:  195-block 43
+    $$$$$:  195-block 44
+    $$$$$:  195-block 45
+    $$$$$:  195-block 46
+    $$$$$:  195-block 47
+    $$$$$:  195-block 48
+    $$$$$:  195-block 49
+    $$$$$:  195-block 50
+    $$$$$:  195-block 51
+    $$$$$:  195-block 52
+    $$$$$:  195-block 53
+    $$$$$:  195-block 54
+    $$$$$:  195-block 55
+    $$$$$:  195-block 56
+    $$$$$:  195-block 57
+    $$$$$:  195-block 58
+    $$$$$:  195-block 59
+    $$$$$:  195-block 60
+------------------
+        -:  213:
+        2:  214:    BOOST_FIXTURE_TEST_CASE(Output_Operator_test, Fixture) {
+        -:  215:
+        2:  216:        std::ostringstream oStr;
+        1:  217:        oStr << myString2;
+       1*:  218:        BOOST_CHECK_EQUAL(oStr.str(), "Hello,,");
+        -:  219:
+        2:  220:        std::ostringstream oStr1;
+        1:  221:        oStr1 << myString3;
+       1*:  222:        BOOST_CHECK_EQUAL(oStr1.str(), "Test In Progress...,,");
+        -:  223:
+        2:  224:        std::ostringstream oStr2;
+        1:  225:        oStr2 << myString4;
+       1*:  226:        BOOST_CHECK_EQUAL(oStr2.str(), "abcdef    ABCDEF");
+        1:  227:    }
+------------------
+_ZN19MyString_Test_Suite20Output_Operator_test11test_methodEv:
+        1:  214:    BOOST_FIXTURE_TEST_CASE(Output_Operator_test, Fixture) {
+        -:  215:
+        2:  216:        std::ostringstream oStr;
+        1:  216-block  0
+    $$$$$:  216-block  1
+        1:  217:        oStr << myString2;
+        1:  217-block  0
+       1*:  218:        BOOST_CHECK_EQUAL(oStr.str(), "Hello,,");
+        1:  218-block  0
+        1:  218-block  1
+        1:  218-block  2
+        1:  218-block  3
+        1:  218-block  4
+        1:  218-block  5
+    %%%%%:  218-block  6
+    $$$$$:  218-block  7
+    $$$$$:  218-block  8
+    $$$$$:  218-block  9
+    $$$$$:  218-block 10
+    $$$$$:  218-block 11
+    $$$$$:  218-block 12
+    $$$$$:  218-block 13
+        -:  219:
+        2:  220:        std::ostringstream oStr1;
+        1:  220-block  0
+    $$$$$:  220-block  1
+        1:  221:        oStr1 << myString3;
+        1:  221-block  0
+       1*:  222:        BOOST_CHECK_EQUAL(oStr1.str(), "Test In Progress...,,");
+        1:  222-block  0
+        1:  222-block  1
+        1:  222-block  2
+        1:  222-block  3
+        1:  222-block  4
+        1:  222-block  5
+    %%%%%:  222-block  6
+    $$$$$:  222-block  7
+    $$$$$:  222-block  8
+    $$$$$:  222-block  9
+    $$$$$:  222-block 10
+    $$$$$:  222-block 11
+    $$$$$:  222-block 12
+    $$$$$:  222-block 13
+        -:  223:
+        2:  224:        std::ostringstream oStr2;
+        1:  224-block  0
+        1:  224-block  1
+    $$$$$:  224-block  2
+        1:  225:        oStr2 << myString4;
+        1:  225-block  0
+       1*:  226:        BOOST_CHECK_EQUAL(oStr2.str(), "abcdef    ABCDEF");
+        1:  226-block  0
+        1:  226-block  1
+        1:  226-block  2
+        1:  226-block  3
+        1:  226-block  4
+        1:  226-block  5
+    %%%%%:  226-block  6
+    $$$$$:  226-block  7
+    $$$$$:  226-block  8
+    $$$$$:  226-block  9
+    $$$$$:  226-block 10
+    $$$$$:  226-block 11
+    $$$$$:  226-block 12
+    $$$$$:  226-block 13
+        1:  227:    }
+------------------
+_ZN19MyString_Test_SuiteL28Output_Operator_test_invokerEv:
+        1:  214:    BOOST_FIXTURE_TEST_CASE(Output_Operator_test, Fixture) {
+        1:  214-block  0
+        1:  214-block  1
+        1:  214-block  2
+        1:  214-block  3
+        1:  214-block  4
+        1:  214-block  5
+        1:  214-block  6
+        1:  214-block  7
+        1:  214-block  8
+        1:  214-block  9
+        1:  214-block 10
+        1:  214-block 11
+        1:  214-block 12
+        1:  214-block 13
+        1:  214-block 14
+        1:  214-block 15
+        1:  214-block 16
+        1:  214-block 17
+        1:  214-block 18
+        1:  214-block 19
+        1:  214-block 20
+        1:  214-block 21
+        1:  214-block 22
+        1:  214-block 23
+        1:  214-block 24
+        1:  214-block 25
+        1:  214-block 26
+        1:  214-block 27
+        1:  214-block 28
+        1:  214-block 29
+        1:  214-block 30
+        1:  214-block 31
+        1:  214-block 32
+        1:  214-block 33
+        1:  214-block 34
+    $$$$$:  214-block 35
+    $$$$$:  214-block 36
+    $$$$$:  214-block 37
+    $$$$$:  214-block 38
+    $$$$$:  214-block 39
+    $$$$$:  214-block 40
+    $$$$$:  214-block 41
+    $$$$$:  214-block 42
+    $$$$$:  214-block 43
+    $$$$$:  214-block 44
+    $$$$$:  214-block 45
+    $$$$$:  214-block 46
+    $$$$$:  214-block 47
+    $$$$$:  214-block 48
+    $$$$$:  214-block 49
+    $$$$$:  214-block 50
+    $$$$$:  214-block 51
+    $$$$$:  214-block 52
+    $$$$$:  214-block 53
+    $$$$$:  214-block 54
+    $$$$$:  214-block 55
+    $$$$$:  214-block 56
+    $$$$$:  214-block 57
+    $$$$$:  214-block 58
+    $$$$$:  214-block 59
+    $$$$$:  214-block 60
+------------------
+        -:  228:
+        -:  229:BOOST_AUTO_TEST_SUITE_END()

@@ -1,0 +1,313 @@
+        -:    0:Source:F:/Files/vcpkg/installed/x86-windows/include/boost/core/ref.hpp
+        -:    0:Graph:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcno
+        -:    0:Data:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:#ifndef BOOST_CORE_REF_HPP
+        -:    2:#define BOOST_CORE_REF_HPP
+        -:    3:
+        -:    4:// MS compatible compilers support #pragma once
+        -:    5:
+        -:    6:#if defined(_MSC_VER) && (_MSC_VER >= 1020)
+        -:    7:# pragma once
+        -:    8:#endif
+        -:    9:
+        -:   10:#include <boost/config.hpp>
+        -:   11:#include <boost/config/workaround.hpp>
+        -:   12:#include <boost/core/addressof.hpp>
+        -:   13:
+        -:   14://
+        -:   15://  ref.hpp - ref/cref, useful helper functions
+        -:   16://
+        -:   17://  Copyright (C) 1999, 2000 Jaakko Jarvi (jaakko.jarvi@cs.utu.fi)
+        -:   18://  Copyright (C) 2001, 2002 Peter Dimov
+        -:   19://  Copyright (C) 2002 David Abrahams
+        -:   20://
+        -:   21://  Copyright (C) 2014 Glen Joseph Fernandes
+        -:   22://  (glenjofe@gmail.com)
+        -:   23://
+        -:   24://  Copyright (C) 2014 Agustin Berge
+        -:   25://
+        -:   26:// Distributed under the Boost Software License, Version 1.0. (See
+        -:   27:// accompanying file LICENSE_1_0.txt or copy at
+        -:   28:// http://www.boost.org/LICENSE_1_0.txt)
+        -:   29://
+        -:   30://  See http://www.boost.org/libs/core/doc/html/core/ref.html for documentation.
+        -:   31://
+        -:   32:
+        -:   33:/**
+        -:   34: @file
+        -:   35:*/
+        -:   36:
+        -:   37:/**
+        -:   38: Boost namespace.
+        -:   39:*/
+        -:   40:namespace boost
+        -:   41:{
+        -:   42:
+        -:   43:#if defined( BOOST_MSVC ) && BOOST_WORKAROUND( BOOST_MSVC, == 1600 )
+        -:   44:
+        -:   45:    struct ref_workaround_tag {};
+        -:   46:
+        -:   47:#endif
+        -:   48:
+        -:   49:// reference_wrapper
+        -:   50:
+        -:   51:/**
+        -:   52: @brief Contains a reference to an object of type `T`.
+        -:   53:
+        -:   54: `reference_wrapper` is primarily used to "feed" references to
+        -:   55: function templates (algorithms) that take their parameter by
+        -:   56: value. It provides an implicit conversion to `T&`, which
+        -:   57: usually allows the function templates to work on references
+        -:   58: unmodified.
+        -:   59:*/
+        -:   60:template<class T> class reference_wrapper
+        -:   61:{
+        -:   62:public:
+        -:   63:    /**
+        -:   64:     Type `T`.
+        -:   65:    */
+        -:   66:    typedef T type;
+        -:   67:
+        -:   68:    /**
+        -:   69:     Constructs a `reference_wrapper` object that stores a
+        -:   70:     reference to `t`.
+        -:   71:
+        -:   72:     @remark Does not throw.
+        -:   73:    */
+     677*:   74:    BOOST_FORCEINLINE explicit reference_wrapper(T& t): t_(boost::addressof(t)) {}
+      675:   74-block  0
+    %%%%%:   74-block  1
+    %%%%%:   74-block  2
+        1:   74-block  3
+        -:   75:
+        -:   76:#if defined( BOOST_MSVC ) && BOOST_WORKAROUND( BOOST_MSVC, == 1600 )
+        -:   77:
+        -:   78:    BOOST_FORCEINLINE explicit reference_wrapper( T & t, ref_workaround_tag ): t_( boost::addressof( t ) ) {}
+        -:   79:
+        -:   80:#endif
+        -:   81:
+        -:   82:#if !defined(BOOST_NO_CXX11_RVALUE_REFERENCES)
+        -:   83:    /**
+        -:   84:     @remark Construction from a temporary object is disabled.
+        -:   85:    */
+        -:   86:    BOOST_DELETED_FUNCTION(reference_wrapper(T&& t))
+        -:   87:public:
+        -:   88:#endif
+        -:   89:
+        -:   90:    /**
+        -:   91:     @return The stored reference.
+        -:   92:     @remark Does not throw.
+        -:   93:    */
+    #####:   94:    BOOST_FORCEINLINE operator T& () const { return *t_; }
+        -:   95:
+        -:   96:    /**
+        -:   97:     @return The stored reference.
+        -:   98:     @remark Does not throw.
+        -:   99:    */
+       7*:  100:    BOOST_FORCEINLINE T& get() const { return *t_; }
+        1:  100-block  0
+        1:  100-block  1
+        -:  101:
+        -:  102:    /**
+        -:  103:     @return A pointer to the object referenced by the stored
+        -:  104:       reference.
+        -:  105:     @remark Does not throw.
+        -:  106:    */
+        -:  107:    BOOST_FORCEINLINE T* get_pointer() const { return t_; }
+        -:  108:
+        -:  109:private:
+        -:  110:
+        -:  111:    T* t_;
+        -:  112:};
+        -:  113:
+        -:  114:// ref
+        -:  115:
+        -:  116:/**
+        -:  117: @cond
+        -:  118:*/
+        -:  119:#if defined( __BORLANDC__ ) && BOOST_WORKAROUND( __BORLANDC__, BOOST_TESTED_AT(0x581) )
+        -:  120:#  define BOOST_REF_CONST
+        -:  121:#else
+        -:  122:#  define BOOST_REF_CONST const
+        -:  123:#endif
+        -:  124:/**
+        -:  125: @endcond
+        -:  126:*/
+        -:  127:
+        -:  128:/**
+        -:  129: @return `reference_wrapper<T>(t)`
+        -:  130: @remark Does not throw.
+        -:  131:*/
+        -:  132:template<class T> BOOST_FORCEINLINE reference_wrapper<T> BOOST_REF_CONST ref( T & t )
+        -:  133:{
+        -:  134:#if defined( BOOST_MSVC ) && BOOST_WORKAROUND( BOOST_MSVC, == 1600 )
+        -:  135:
+        -:  136:    return reference_wrapper<T>( t, ref_workaround_tag() );
+        -:  137:
+        -:  138:#else
+        -:  139:
+     677*:  140:    return reference_wrapper<T>( t );
+        -:  141:
+        -:  142:#endif
+        -:  143:}
+        -:  144:
+        -:  145:// cref
+        -:  146:
+        -:  147:/**
+        -:  148: @return `reference_wrapper<T const>(t)`
+        -:  149: @remark Does not throw.
+        -:  150:*/
+        -:  151:template<class T> BOOST_FORCEINLINE reference_wrapper<T const> BOOST_REF_CONST cref( T const & t )
+        -:  152:{
+        -:  153:    return reference_wrapper<T const>(t);
+        -:  154:}
+        -:  155:
+        -:  156:#undef BOOST_REF_CONST
+        -:  157:
+        -:  158:#if !defined(BOOST_NO_CXX11_RVALUE_REFERENCES)
+        -:  159:
+        -:  160:/**
+        -:  161: @cond
+        -:  162:*/
+        -:  163:#if defined(BOOST_NO_CXX11_DELETED_FUNCTIONS)
+        -:  164:#  define BOOST_REF_DELETE
+        -:  165:#else
+        -:  166:#  define BOOST_REF_DELETE = delete
+        -:  167:#endif
+        -:  168:/**
+        -:  169: @endcond
+        -:  170:*/
+        -:  171:
+        -:  172:/**
+        -:  173: @remark Construction from a temporary object is disabled.
+        -:  174:*/
+        -:  175:template<class T> void ref(T const&&) BOOST_REF_DELETE;
+        -:  176:
+        -:  177:/**
+        -:  178: @remark Construction from a temporary object is disabled.
+        -:  179:*/
+        -:  180:template<class T> void cref(T const&&) BOOST_REF_DELETE;
+        -:  181:
+        -:  182:#undef BOOST_REF_DELETE
+        -:  183:
+        -:  184:#endif
+        -:  185:
+        -:  186:// is_reference_wrapper
+        -:  187:
+        -:  188:/**
+        -:  189: @brief Determine if a type `T` is an instantiation of
+        -:  190: `reference_wrapper`.
+        -:  191:
+        -:  192: The value static constant will be true if the type `T` is a
+        -:  193: specialization of `reference_wrapper`.
+        -:  194:*/
+        -:  195:template<typename T> struct is_reference_wrapper
+        -:  196:{
+        -:  197:    BOOST_STATIC_CONSTANT( bool, value = false );
+        -:  198:};
+        -:  199:
+        -:  200:/**
+        -:  201: @cond
+        -:  202:*/
+        -:  203:template<typename T> struct is_reference_wrapper< reference_wrapper<T> >
+        -:  204:{
+        -:  205:    BOOST_STATIC_CONSTANT( bool, value = true );
+        -:  206:};
+        -:  207:
+        -:  208:#if !defined(BOOST_NO_CV_SPECIALIZATIONS)
+        -:  209:
+        -:  210:template<typename T> struct is_reference_wrapper< reference_wrapper<T> const >
+        -:  211:{
+        -:  212:    BOOST_STATIC_CONSTANT( bool, value = true );
+        -:  213:};
+        -:  214:
+        -:  215:template<typename T> struct is_reference_wrapper< reference_wrapper<T> volatile >
+        -:  216:{
+        -:  217:    BOOST_STATIC_CONSTANT( bool, value = true );
+        -:  218:};
+        -:  219:
+        -:  220:template<typename T> struct is_reference_wrapper< reference_wrapper<T> const volatile >
+        -:  221:{
+        -:  222:    BOOST_STATIC_CONSTANT( bool, value = true );
+        -:  223:};
+        -:  224:
+        -:  225:#endif // !defined(BOOST_NO_CV_SPECIALIZATIONS)
+        -:  226:
+        -:  227:/**
+        -:  228: @endcond
+        -:  229:*/
+        -:  230:
+        -:  231:
+        -:  232:// unwrap_reference
+        -:  233:
+        -:  234:/**
+        -:  235: @brief Find the type in a `reference_wrapper`.
+        -:  236:
+        -:  237: The `typedef` type is `T::type` if `T` is a
+        -:  238: `reference_wrapper`, `T` otherwise.
+        -:  239:*/
+        -:  240:template<typename T> struct unwrap_reference
+        -:  241:{
+        -:  242:    typedef T type;
+        -:  243:};
+        -:  244:
+        -:  245:/**
+        -:  246: @cond
+        -:  247:*/
+        -:  248:template<typename T> struct unwrap_reference< reference_wrapper<T> >
+        -:  249:{
+        -:  250:    typedef T type;
+        -:  251:};
+        -:  252:
+        -:  253:#if !defined(BOOST_NO_CV_SPECIALIZATIONS)
+        -:  254:
+        -:  255:template<typename T> struct unwrap_reference< reference_wrapper<T> const >
+        -:  256:{
+        -:  257:    typedef T type;
+        -:  258:};
+        -:  259:
+        -:  260:template<typename T> struct unwrap_reference< reference_wrapper<T> volatile >
+        -:  261:{
+        -:  262:    typedef T type;
+        -:  263:};
+        -:  264:
+        -:  265:template<typename T> struct unwrap_reference< reference_wrapper<T> const volatile >
+        -:  266:{
+        -:  267:    typedef T type;
+        -:  268:};
+        -:  269:
+        -:  270:#endif // !defined(BOOST_NO_CV_SPECIALIZATIONS)
+        -:  271:
+        -:  272:/**
+        -:  273: @endcond
+        -:  274:*/
+        -:  275:
+        -:  276:// unwrap_ref
+        -:  277:
+        -:  278:/**
+        -:  279: @return `unwrap_reference<T>::type&(t)`
+        -:  280: @remark Does not throw.
+        -:  281:*/
+        -:  282:template<class T> BOOST_FORCEINLINE typename unwrap_reference<T>::type& unwrap_ref( T & t )
+        -:  283:{
+        -:  284:    return t;
+        -:  285:}
+        -:  286:
+        -:  287:// get_pointer
+        -:  288:
+        -:  289:/**
+        -:  290: @cond
+        -:  291:*/
+        -:  292:template<class T> BOOST_FORCEINLINE T* get_pointer( reference_wrapper<T> const & r )
+        -:  293:{
+        -:  294:    return r.get_pointer();
+        -:  295:}
+        -:  296:/**
+        -:  297: @endcond
+        -:  298:*/
+        -:  299:
+        -:  300:} // namespace boost
+        -:  301:
+        -:  302:#endif // #ifndef BOOST_CORE_REF_HPP

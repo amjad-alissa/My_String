@@ -1,0 +1,771 @@
+        -:    0:Source:F:/Files/vcpkg/installed/x86-windows/include/boost/test/utils/runtime/argument.hpp
+        -:    0:Graph:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcno
+        -:    0:Data:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1://  (C) Copyright Gennadiy Rozental 2001.
+        -:    2://  Distributed under the Boost Software License, Version 1.0.
+        -:    3://  (See accompanying file LICENSE_1_0.txt or copy at
+        -:    4://  http://www.boost.org/LICENSE_1_0.txt)
+        -:    5:
+        -:    6://  See http://www.boost.org/libs/test for the library home page.
+        -:    7://
+        -:    8://  File        : $RCSfile$
+        -:    9://
+        -:   10://  Version     : $Revision$
+        -:   11://
+        -:   12://  Description : model of actual argument (both typed and abstract interface)
+        -:   13:// ***************************************************************************
+        -:   14:
+        -:   15:#ifndef BOOST_TEST_UTILS_RUNTIME_ARGUMENT_HPP
+        -:   16:#define BOOST_TEST_UTILS_RUNTIME_ARGUMENT_HPP
+        -:   17:
+        -:   18:// Boost.Test Runtime parameters
+        -:   19:#include <boost/test/utils/runtime/fwd.hpp>
+        -:   20:#include <boost/test/utils/runtime/errors.hpp>
+        -:   21:
+        -:   22:// Boost.Test
+        -:   23:#include <boost/test/utils/class_properties.hpp>
+        -:   24:#include <boost/test/utils/rtti.hpp>
+        -:   25:#include <boost/test/utils/basic_cstring/compare.hpp>
+        -:   26:#include <boost/test/detail/throw_exception.hpp>
+        -:   27:
+        -:   28:// STL
+        -:   29:#include <cassert>
+        -:   30:
+        -:   31:#include <boost/test/detail/suppress_warnings.hpp>
+        -:   32:
+        -:   33:namespace boost {
+        -:   34:namespace runtime {
+        -:   35:
+        -:   36:// ************************************************************************** //
+        -:   37:// **************              runtime::argument               ************** //
+        -:   38:// ************************************************************************** //
+        -:   39:
+        -:   40:class argument {
+        -:   41:public:
+        -:   42:    // Constructor
+       23:   43:    argument( rtti::id_t value_type )
+       23:   44:    : p_value_type( value_type )
+       23:   45:    {}
+        -:   46:
+        -:   47:    // Destructor
+    #####:   48:    virtual     ~argument()  {}
+------------------
+_ZN5boost7runtime8argumentD0Ev:
+    #####:   48:    virtual     ~argument()  {}
+    %%%%%:   48-block  0
+------------------
+_ZN5boost7runtime8argumentD1Ev:
+    #####:   48:    virtual     ~argument()  {}
+------------------
+_ZN5boost7runtime8argumentD2Ev:
+    #####:   48:    virtual     ~argument()  {}
+------------------
+        -:   49:
+        -:   50:    // Public properties
+        -:   51:    rtti::id_t const    p_value_type;
+        -:   52:};
+        -:   53:
+        -:   54:// ************************************************************************** //
+        -:   55:// **************             runtime::typed_argument          ************** //
+        -:   56:// ************************************************************************** //
+        -:   57:
+        -:   58:template<typename T>
+        -:   59:class typed_argument : public argument {
+        -:   60:public:
+        -:   61:    // Constructor
+       23:   62:    explicit typed_argument( T const& v )
+        -:   63:    : argument( rtti::type_id<T>() )
+       23:   64:    , p_value( v )
+       23:   65:    {}
+------------------
+_ZN5boost7runtime14typed_argumentINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEC1ERKS7_:
+        1:   62:    explicit typed_argument( T const& v )
+        -:   63:    : argument( rtti::type_id<T>() )
+        1:   64:    , p_value( v )
+        1:   64-block  0
+    $$$$$:   64-block  1
+        1:   65:    {}
+        1:   65-block  0
+------------------
+_ZN5boost7runtime14typed_argumentImEC1ERKm:
+        1:   62:    explicit typed_argument( T const& v )
+        -:   63:    : argument( rtti::type_id<T>() )
+        1:   64:    , p_value( v )
+        1:   64-block  0
+    $$$$$:   64-block  1
+        1:   65:    {}
+        1:   65-block  0
+------------------
+_ZN5boost7runtime14typed_argumentINS_9unit_test9log_levelEEC1ERKS3_:
+        1:   62:    explicit typed_argument( T const& v )
+        -:   63:    : argument( rtti::type_id<T>() )
+        1:   64:    , p_value( v )
+        1:   64-block  0
+    $$$$$:   64-block  1
+        1:   65:    {}
+        1:   65-block  0
+------------------
+_ZN5boost7runtime14typed_argumentISt6vectorINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESaIS8_EEEC1ERKSA_:
+        2:   62:    explicit typed_argument( T const& v )
+        -:   63:    : argument( rtti::type_id<T>() )
+        2:   64:    , p_value( v )
+        2:   64-block  0
+    $$$$$:   64-block  1
+        2:   65:    {}
+        2:   65-block  0
+------------------
+_ZN5boost7runtime14typed_argumentIjEC1ERKj:
+        1:   62:    explicit typed_argument( T const& v )
+        -:   63:    : argument( rtti::type_id<T>() )
+        1:   64:    , p_value( v )
+        1:   64-block  0
+    $$$$$:   64-block  1
+        1:   65:    {}
+        1:   65-block  0
+------------------
+_ZN5boost7runtime14typed_argumentINS_9unit_test12report_levelEEC1ERKS3_:
+        1:   62:    explicit typed_argument( T const& v )
+        -:   63:    : argument( rtti::type_id<T>() )
+        1:   64:    , p_value( v )
+        1:   64-block  0
+    $$$$$:   64-block  1
+        1:   65:    {}
+        1:   65-block  0
+------------------
+_ZN5boost7runtime14typed_argumentINS_9unit_test13output_formatEEC1ERKS3_:
+        3:   62:    explicit typed_argument( T const& v )
+        -:   63:    : argument( rtti::type_id<T>() )
+        3:   64:    , p_value( v )
+        3:   64-block  0
+    $$$$$:   64-block  1
+        3:   65:    {}
+        3:   65-block  0
+------------------
+_ZN5boost7runtime14typed_argumentIbEC1ERKb:
+       13:   62:    explicit typed_argument( T const& v )
+        -:   63:    : argument( rtti::type_id<T>() )
+       13:   64:    , p_value( v )
+       13:   64-block  0
+    $$$$$:   64-block  1
+       13:   65:    {}
+       13:   65-block  0
+------------------
+        -:   66:
+        -:   67:    unit_test::readwrite_property<T>    p_value;
+        -:   68:};
+        -:   69:
+        -:   70:// ************************************************************************** //
+        -:   71:// **************           runtime::arguments_store          ************** //
+        -:   72:// ************************************************************************** //
+        -:   73:
+        -:   74:class arguments_store {
+        -:   75:public:
+        -:   76:    typedef std::map<cstring, argument_ptr> storage_type;
+        -:   77:
+        -:   78:    /// Returns number of arguments in the store; mostly used for testing
+        -:   79:    std::size_t size() const        { return m_arguments.size(); }
+        -:   80:
+        -:   81:    /// Clears the store for reuse
+        1:   82:    void        clear()             { m_arguments.clear(); }
+        1:   82-block  0
+        -:   83:
+        -:   84:    /// Returns true if there is an argument corresponding to the specified parameter name
+      119:   85:    bool        has( cstring parameter_name ) const
+        -:   86:    {
+      119:   87:        return m_arguments.find( parameter_name ) != m_arguments.end();
+      119:   87-block  0
+      119:   87-block  1
+      119:   87-block  2
+        -:   88:    }
+        -:   89:
+        -:   90:    /// Provides types access to argument value by parameter name
+        -:   91:    template<typename T>
+      74*:   92:    T const&    get( cstring parameter_name ) const {
+      74*:   93:        return const_cast<arguments_store*>(this)->get<T>( parameter_name );
+        -:   94:    }
+------------------
+_ZNK5boost7runtime15arguments_store3getImEERKT_NS_9unit_test13basic_cstringIKcEE:
+        1:   92:    T const&    get( cstring parameter_name ) const {
+        1:   93:        return const_cast<arguments_store*>(this)->get<T>( parameter_name );
+        1:   93-block  0
+        1:   93-block  1
+        1:   93-block  2
+        -:   94:    }
+------------------
+_ZNK5boost7runtime15arguments_store3getINS_9unit_test12report_levelEEERKT_NS3_13basic_cstringIKcEE:
+        1:   92:    T const&    get( cstring parameter_name ) const {
+        1:   93:        return const_cast<arguments_store*>(this)->get<T>( parameter_name );
+        1:   93-block  0
+        1:   93-block  1
+        1:   93-block  2
+        -:   94:    }
+------------------
+_ZNK5boost7runtime15arguments_store3getINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEERKT_NS_9unit_test13basic_cstringIKcEE:
+        1:   92:    T const&    get( cstring parameter_name ) const {
+        1:   93:        return const_cast<arguments_store*>(this)->get<T>( parameter_name );
+        1:   93-block  0
+        1:   93-block  1
+        1:   93-block  2
+        -:   94:    }
+------------------
+_ZNK5boost7runtime15arguments_store3getINS_9unit_test13output_formatEEERKT_NS3_13basic_cstringIKcEE:
+        2:   92:    T const&    get( cstring parameter_name ) const {
+        2:   93:        return const_cast<arguments_store*>(this)->get<T>( parameter_name );
+        2:   93-block  0
+        2:   93-block  1
+        2:   93-block  2
+        -:   94:    }
+------------------
+_ZNK5boost7runtime15arguments_store3getINS_9unit_test9log_levelEEERKT_NS3_13basic_cstringIKcEE:
+    #####:   92:    T const&    get( cstring parameter_name ) const {
+    #####:   93:        return const_cast<arguments_store*>(this)->get<T>( parameter_name );
+    %%%%%:   93-block  0
+    %%%%%:   93-block  1
+    %%%%%:   93-block  2
+        -:   94:    }
+------------------
+_ZNK5boost7runtime15arguments_store3getIjEERKT_NS_9unit_test13basic_cstringIKcEE:
+        3:   92:    T const&    get( cstring parameter_name ) const {
+        3:   93:        return const_cast<arguments_store*>(this)->get<T>( parameter_name );
+        3:   93-block  0
+        3:   93-block  1
+        3:   93-block  2
+        -:   94:    }
+------------------
+_ZNK5boost7runtime15arguments_store3getISt6vectorINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESaIS9_EEEERKT_NS_9unit_test13basic_cstringIKcEE:
+        4:   92:    T const&    get( cstring parameter_name ) const {
+        4:   93:        return const_cast<arguments_store*>(this)->get<T>( parameter_name );
+        4:   93-block  0
+        4:   93-block  1
+        4:   93-block  2
+        -:   94:    }
+------------------
+_ZNK5boost7runtime15arguments_store3getIbEERKT_NS_9unit_test13basic_cstringIKcEE:
+       62:   92:    T const&    get( cstring parameter_name ) const {
+       62:   93:        return const_cast<arguments_store*>(this)->get<T>( parameter_name );
+       62:   93-block  0
+       62:   93-block  1
+       62:   93-block  2
+        -:   94:    }
+------------------
+        -:   95:
+        -:   96:    template<typename T>
+      74*:   97:    T&          get( cstring parameter_name ) {
+      74*:   98:        storage_type::const_iterator found = m_arguments.find( parameter_name );
+      74*:   99:        BOOST_TEST_I_ASSRT( found != m_arguments.end(),
+        -:  100:                            access_to_missing_argument() 
+        -:  101:                                << "There is no argument provided for parameter "
+        -:  102:                                << parameter_name );
+        -:  103:
+      74*:  104:        argument_ptr arg = found->second;
+        -:  105:
+      74*:  106:        BOOST_TEST_I_ASSRT( arg->p_value_type == rtti::type_id<T>(),
+        -:  107:                            arg_type_mismatch()
+        -:  108:                                << "Access with invalid type for argument corresponding to parameter "
+        -:  109:                                << parameter_name );
+        -:  110:
+     148*:  111:        return static_cast<typed_argument<T>&>( *arg ).p_value.value;
+        -:  112:    }
+------------------
+_ZN5boost7runtime15arguments_store3getImEERT_NS_9unit_test13basic_cstringIKcEE:
+        1:   97:    T&          get( cstring parameter_name ) {
+        1:   98:        storage_type::const_iterator found = m_arguments.find( parameter_name );
+        1:   98-block  0
+        1:   98-block  1
+       1*:   99:        BOOST_TEST_I_ASSRT( found != m_arguments.end(),
+    %%%%%:   99-block  0
+    %%%%%:   99-block  1
+    %%%%%:   99-block  2
+    %%%%%:   99-block  3
+    %%%%%:   99-block  4
+    $$$$$:   99-block  5
+    $$$$$:   99-block  6
+    $$$$$:   99-block  7
+    $$$$$:   99-block  8
+    $$$$$:   99-block  9
+    $$$$$:   99-block 10
+    $$$$$:   99-block 11
+        -:  100:                            access_to_missing_argument() 
+        -:  101:                                << "There is no argument provided for parameter "
+        -:  102:                                << parameter_name );
+        -:  103:
+        1:  104:        argument_ptr arg = found->second;
+        1:  104-block  0
+    $$$$$:  104-block  1
+        -:  105:
+       1*:  106:        BOOST_TEST_I_ASSRT( arg->p_value_type == rtti::type_id<T>(),
+        1:  106-block  0
+    %%%%%:  106-block  1
+    %%%%%:  106-block  2
+    %%%%%:  106-block  3
+    %%%%%:  106-block  4
+    %%%%%:  106-block  5
+    $$$$$:  106-block  6
+    $$$$$:  106-block  7
+    $$$$$:  106-block  8
+    $$$$$:  106-block  9
+    $$$$$:  106-block 10
+    $$$$$:  106-block 11
+    $$$$$:  106-block 12
+        -:  107:                            arg_type_mismatch()
+        -:  108:                                << "Access with invalid type for argument corresponding to parameter "
+        -:  109:                                << parameter_name );
+        -:  110:
+        2:  111:        return static_cast<typed_argument<T>&>( *arg ).p_value.value;
+        1:  111-block  0
+        1:  111-block  1
+        -:  112:    }
+------------------
+_ZN5boost7runtime15arguments_store3getINS_9unit_test12report_levelEEERT_NS3_13basic_cstringIKcEE:
+        1:   97:    T&          get( cstring parameter_name ) {
+        1:   98:        storage_type::const_iterator found = m_arguments.find( parameter_name );
+        1:   98-block  0
+        1:   98-block  1
+       1*:   99:        BOOST_TEST_I_ASSRT( found != m_arguments.end(),
+    %%%%%:   99-block  0
+    %%%%%:   99-block  1
+    %%%%%:   99-block  2
+    %%%%%:   99-block  3
+    %%%%%:   99-block  4
+    $$$$$:   99-block  5
+    $$$$$:   99-block  6
+    $$$$$:   99-block  7
+    $$$$$:   99-block  8
+    $$$$$:   99-block  9
+    $$$$$:   99-block 10
+    $$$$$:   99-block 11
+        -:  100:                            access_to_missing_argument() 
+        -:  101:                                << "There is no argument provided for parameter "
+        -:  102:                                << parameter_name );
+        -:  103:
+        1:  104:        argument_ptr arg = found->second;
+        1:  104-block  0
+    $$$$$:  104-block  1
+        -:  105:
+       1*:  106:        BOOST_TEST_I_ASSRT( arg->p_value_type == rtti::type_id<T>(),
+        1:  106-block  0
+    %%%%%:  106-block  1
+    %%%%%:  106-block  2
+    %%%%%:  106-block  3
+    %%%%%:  106-block  4
+    %%%%%:  106-block  5
+    $$$$$:  106-block  6
+    $$$$$:  106-block  7
+    $$$$$:  106-block  8
+    $$$$$:  106-block  9
+    $$$$$:  106-block 10
+    $$$$$:  106-block 11
+    $$$$$:  106-block 12
+        -:  107:                            arg_type_mismatch()
+        -:  108:                                << "Access with invalid type for argument corresponding to parameter "
+        -:  109:                                << parameter_name );
+        -:  110:
+        2:  111:        return static_cast<typed_argument<T>&>( *arg ).p_value.value;
+        1:  111-block  0
+        1:  111-block  1
+        -:  112:    }
+------------------
+_ZN5boost7runtime15arguments_store3getINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEERT_NS_9unit_test13basic_cstringIKcEE:
+        1:   97:    T&          get( cstring parameter_name ) {
+        1:   98:        storage_type::const_iterator found = m_arguments.find( parameter_name );
+        1:   98-block  0
+        1:   98-block  1
+       1*:   99:        BOOST_TEST_I_ASSRT( found != m_arguments.end(),
+    %%%%%:   99-block  0
+    %%%%%:   99-block  1
+    %%%%%:   99-block  2
+    %%%%%:   99-block  3
+    %%%%%:   99-block  4
+    $$$$$:   99-block  5
+    $$$$$:   99-block  6
+    $$$$$:   99-block  7
+    $$$$$:   99-block  8
+    $$$$$:   99-block  9
+    $$$$$:   99-block 10
+    $$$$$:   99-block 11
+        -:  100:                            access_to_missing_argument() 
+        -:  101:                                << "There is no argument provided for parameter "
+        -:  102:                                << parameter_name );
+        -:  103:
+        1:  104:        argument_ptr arg = found->second;
+        1:  104-block  0
+    $$$$$:  104-block  1
+        -:  105:
+       1*:  106:        BOOST_TEST_I_ASSRT( arg->p_value_type == rtti::type_id<T>(),
+        1:  106-block  0
+    %%%%%:  106-block  1
+    %%%%%:  106-block  2
+    %%%%%:  106-block  3
+    %%%%%:  106-block  4
+    %%%%%:  106-block  5
+    $$$$$:  106-block  6
+    $$$$$:  106-block  7
+    $$$$$:  106-block  8
+    $$$$$:  106-block  9
+    $$$$$:  106-block 10
+    $$$$$:  106-block 11
+    $$$$$:  106-block 12
+        -:  107:                            arg_type_mismatch()
+        -:  108:                                << "Access with invalid type for argument corresponding to parameter "
+        -:  109:                                << parameter_name );
+        -:  110:
+        2:  111:        return static_cast<typed_argument<T>&>( *arg ).p_value.value;
+        1:  111-block  0
+        1:  111-block  1
+        -:  112:    }
+------------------
+_ZN5boost7runtime15arguments_store3getINS_9unit_test9log_levelEEERT_NS3_13basic_cstringIKcEE:
+    #####:   97:    T&          get( cstring parameter_name ) {
+    #####:   98:        storage_type::const_iterator found = m_arguments.find( parameter_name );
+    %%%%%:   98-block  0
+    %%%%%:   98-block  1
+    #####:   99:        BOOST_TEST_I_ASSRT( found != m_arguments.end(),
+    %%%%%:   99-block  0
+    %%%%%:   99-block  1
+    %%%%%:   99-block  2
+    %%%%%:   99-block  3
+    %%%%%:   99-block  4
+    $$$$$:   99-block  5
+    $$$$$:   99-block  6
+    $$$$$:   99-block  7
+    $$$$$:   99-block  8
+    $$$$$:   99-block  9
+    $$$$$:   99-block 10
+    $$$$$:   99-block 11
+        -:  100:                            access_to_missing_argument() 
+        -:  101:                                << "There is no argument provided for parameter "
+        -:  102:                                << parameter_name );
+        -:  103:
+    #####:  104:        argument_ptr arg = found->second;
+    %%%%%:  104-block  0
+    $$$$$:  104-block  1
+        -:  105:
+    #####:  106:        BOOST_TEST_I_ASSRT( arg->p_value_type == rtti::type_id<T>(),
+    %%%%%:  106-block  0
+    %%%%%:  106-block  1
+    %%%%%:  106-block  2
+    %%%%%:  106-block  3
+    %%%%%:  106-block  4
+    %%%%%:  106-block  5
+    $$$$$:  106-block  6
+    $$$$$:  106-block  7
+    $$$$$:  106-block  8
+    $$$$$:  106-block  9
+    $$$$$:  106-block 10
+    $$$$$:  106-block 11
+    $$$$$:  106-block 12
+        -:  107:                            arg_type_mismatch()
+        -:  108:                                << "Access with invalid type for argument corresponding to parameter "
+        -:  109:                                << parameter_name );
+        -:  110:
+    #####:  111:        return static_cast<typed_argument<T>&>( *arg ).p_value.value;
+    %%%%%:  111-block  0
+    %%%%%:  111-block  1
+        -:  112:    }
+------------------
+_ZN5boost7runtime15arguments_store3getIjEERT_NS_9unit_test13basic_cstringIKcEE:
+        3:   97:    T&          get( cstring parameter_name ) {
+        3:   98:        storage_type::const_iterator found = m_arguments.find( parameter_name );
+        3:   98-block  0
+        3:   98-block  1
+       3*:   99:        BOOST_TEST_I_ASSRT( found != m_arguments.end(),
+    %%%%%:   99-block  0
+    %%%%%:   99-block  1
+    %%%%%:   99-block  2
+    %%%%%:   99-block  3
+    %%%%%:   99-block  4
+    $$$$$:   99-block  5
+    $$$$$:   99-block  6
+    $$$$$:   99-block  7
+    $$$$$:   99-block  8
+    $$$$$:   99-block  9
+    $$$$$:   99-block 10
+    $$$$$:   99-block 11
+        -:  100:                            access_to_missing_argument() 
+        -:  101:                                << "There is no argument provided for parameter "
+        -:  102:                                << parameter_name );
+        -:  103:
+        3:  104:        argument_ptr arg = found->second;
+        3:  104-block  0
+    $$$$$:  104-block  1
+        -:  105:
+       3*:  106:        BOOST_TEST_I_ASSRT( arg->p_value_type == rtti::type_id<T>(),
+        3:  106-block  0
+    %%%%%:  106-block  1
+    %%%%%:  106-block  2
+    %%%%%:  106-block  3
+    %%%%%:  106-block  4
+    %%%%%:  106-block  5
+    $$$$$:  106-block  6
+    $$$$$:  106-block  7
+    $$$$$:  106-block  8
+    $$$$$:  106-block  9
+    $$$$$:  106-block 10
+    $$$$$:  106-block 11
+    $$$$$:  106-block 12
+        -:  107:                            arg_type_mismatch()
+        -:  108:                                << "Access with invalid type for argument corresponding to parameter "
+        -:  109:                                << parameter_name );
+        -:  110:
+        6:  111:        return static_cast<typed_argument<T>&>( *arg ).p_value.value;
+        3:  111-block  0
+        3:  111-block  1
+        -:  112:    }
+------------------
+_ZN5boost7runtime15arguments_store3getISt6vectorINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESaIS9_EEEERT_NS_9unit_test13basic_cstringIKcEE:
+        4:   97:    T&          get( cstring parameter_name ) {
+        4:   98:        storage_type::const_iterator found = m_arguments.find( parameter_name );
+        4:   98-block  0
+        4:   98-block  1
+       4*:   99:        BOOST_TEST_I_ASSRT( found != m_arguments.end(),
+    %%%%%:   99-block  0
+    %%%%%:   99-block  1
+    %%%%%:   99-block  2
+    %%%%%:   99-block  3
+    %%%%%:   99-block  4
+    $$$$$:   99-block  5
+    $$$$$:   99-block  6
+    $$$$$:   99-block  7
+    $$$$$:   99-block  8
+    $$$$$:   99-block  9
+    $$$$$:   99-block 10
+    $$$$$:   99-block 11
+        -:  100:                            access_to_missing_argument() 
+        -:  101:                                << "There is no argument provided for parameter "
+        -:  102:                                << parameter_name );
+        -:  103:
+        4:  104:        argument_ptr arg = found->second;
+        4:  104-block  0
+    $$$$$:  104-block  1
+        -:  105:
+       4*:  106:        BOOST_TEST_I_ASSRT( arg->p_value_type == rtti::type_id<T>(),
+        4:  106-block  0
+    %%%%%:  106-block  1
+    %%%%%:  106-block  2
+    %%%%%:  106-block  3
+    %%%%%:  106-block  4
+    %%%%%:  106-block  5
+    $$$$$:  106-block  6
+    $$$$$:  106-block  7
+    $$$$$:  106-block  8
+    $$$$$:  106-block  9
+    $$$$$:  106-block 10
+    $$$$$:  106-block 11
+    $$$$$:  106-block 12
+        -:  107:                            arg_type_mismatch()
+        -:  108:                                << "Access with invalid type for argument corresponding to parameter "
+        -:  109:                                << parameter_name );
+        -:  110:
+        8:  111:        return static_cast<typed_argument<T>&>( *arg ).p_value.value;
+        4:  111-block  0
+        4:  111-block  1
+        -:  112:    }
+------------------
+_ZN5boost7runtime15arguments_store3getIbEERT_NS_9unit_test13basic_cstringIKcEE:
+       62:   97:    T&          get( cstring parameter_name ) {
+       62:   98:        storage_type::const_iterator found = m_arguments.find( parameter_name );
+       62:   98-block  0
+       62:   98-block  1
+      62*:   99:        BOOST_TEST_I_ASSRT( found != m_arguments.end(),
+    %%%%%:   99-block  0
+    %%%%%:   99-block  1
+    %%%%%:   99-block  2
+    %%%%%:   99-block  3
+    %%%%%:   99-block  4
+    $$$$$:   99-block  5
+    $$$$$:   99-block  6
+    $$$$$:   99-block  7
+    $$$$$:   99-block  8
+    $$$$$:   99-block  9
+    $$$$$:   99-block 10
+    $$$$$:   99-block 11
+        -:  100:                            access_to_missing_argument() 
+        -:  101:                                << "There is no argument provided for parameter "
+        -:  102:                                << parameter_name );
+        -:  103:
+       62:  104:        argument_ptr arg = found->second;
+       62:  104-block  0
+    $$$$$:  104-block  1
+        -:  105:
+      62*:  106:        BOOST_TEST_I_ASSRT( arg->p_value_type == rtti::type_id<T>(),
+       62:  106-block  0
+    %%%%%:  106-block  1
+    %%%%%:  106-block  2
+    %%%%%:  106-block  3
+    %%%%%:  106-block  4
+    %%%%%:  106-block  5
+    $$$$$:  106-block  6
+    $$$$$:  106-block  7
+    $$$$$:  106-block  8
+    $$$$$:  106-block  9
+    $$$$$:  106-block 10
+    $$$$$:  106-block 11
+    $$$$$:  106-block 12
+        -:  107:                            arg_type_mismatch()
+        -:  108:                                << "Access with invalid type for argument corresponding to parameter "
+        -:  109:                                << parameter_name );
+        -:  110:
+      124:  111:        return static_cast<typed_argument<T>&>( *arg ).p_value.value;
+       62:  111-block  0
+       62:  111-block  1
+        -:  112:    }
+------------------
+_ZN5boost7runtime15arguments_store3getINS_9unit_test13output_formatEEERT_NS3_13basic_cstringIKcEE:
+        2:   97:    T&          get( cstring parameter_name ) {
+        2:   98:        storage_type::const_iterator found = m_arguments.find( parameter_name );
+        2:   98-block  0
+        2:   98-block  1
+       2*:   99:        BOOST_TEST_I_ASSRT( found != m_arguments.end(),
+    %%%%%:   99-block  0
+    %%%%%:   99-block  1
+    %%%%%:   99-block  2
+    %%%%%:   99-block  3
+    %%%%%:   99-block  4
+    $$$$$:   99-block  5
+    $$$$$:   99-block  6
+    $$$$$:   99-block  7
+    $$$$$:   99-block  8
+    $$$$$:   99-block  9
+    $$$$$:   99-block 10
+    $$$$$:   99-block 11
+        -:  100:                            access_to_missing_argument() 
+        -:  101:                                << "There is no argument provided for parameter "
+        -:  102:                                << parameter_name );
+        -:  103:
+        2:  104:        argument_ptr arg = found->second;
+        2:  104-block  0
+    $$$$$:  104-block  1
+        -:  105:
+       2*:  106:        BOOST_TEST_I_ASSRT( arg->p_value_type == rtti::type_id<T>(),
+        2:  106-block  0
+    %%%%%:  106-block  1
+    %%%%%:  106-block  2
+    %%%%%:  106-block  3
+    %%%%%:  106-block  4
+    %%%%%:  106-block  5
+    $$$$$:  106-block  6
+    $$$$$:  106-block  7
+    $$$$$:  106-block  8
+    $$$$$:  106-block  9
+    $$$$$:  106-block 10
+    $$$$$:  106-block 11
+    $$$$$:  106-block 12
+        -:  107:                            arg_type_mismatch()
+        -:  108:                                << "Access with invalid type for argument corresponding to parameter "
+        -:  109:                                << parameter_name );
+        -:  110:
+        4:  111:        return static_cast<typed_argument<T>&>( *arg ).p_value.value;
+        2:  111-block  0
+        2:  111-block  1
+        -:  112:    }
+------------------
+        -:  113:
+        -:  114:    /// Set's the argument value for specified parameter name
+        -:  115:    template<typename T>
+       23:  116:    void        set( cstring parameter_name, T const& value )
+        -:  117:    {
+       23:  118:        m_arguments[parameter_name] = argument_ptr( new typed_argument<T>( value ) );
+       23:  119:    }
+------------------
+_ZN5boost7runtime15arguments_store3setINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEEvNS_9unit_test13basic_cstringIKcEERKT_:
+        1:  116:    void        set( cstring parameter_name, T const& value )
+        -:  117:    {
+        1:  118:        m_arguments[parameter_name] = argument_ptr( new typed_argument<T>( value ) );
+        1:  118-block  0
+        1:  118-block  1
+        1:  118-block  2
+    $$$$$:  118-block  3
+    $$$$$:  118-block  4
+        1:  119:    }
+------------------
+_ZN5boost7runtime15arguments_store3setImEEvNS_9unit_test13basic_cstringIKcEERKT_:
+        1:  116:    void        set( cstring parameter_name, T const& value )
+        -:  117:    {
+        1:  118:        m_arguments[parameter_name] = argument_ptr( new typed_argument<T>( value ) );
+        1:  118-block  0
+        1:  118-block  1
+        1:  118-block  2
+    $$$$$:  118-block  3
+    $$$$$:  118-block  4
+        1:  119:    }
+------------------
+_ZN5boost7runtime15arguments_store3setINS_9unit_test9log_levelEEEvNS3_13basic_cstringIKcEERKT_:
+        1:  116:    void        set( cstring parameter_name, T const& value )
+        -:  117:    {
+        1:  118:        m_arguments[parameter_name] = argument_ptr( new typed_argument<T>( value ) );
+        1:  118-block  0
+        1:  118-block  1
+        1:  118-block  2
+    $$$$$:  118-block  3
+    $$$$$:  118-block  4
+        1:  119:    }
+------------------
+_ZN5boost7runtime15arguments_store3setISt6vectorINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESaIS9_EEEEvNS_9unit_test13basic_cstringIKcEERKT_:
+        2:  116:    void        set( cstring parameter_name, T const& value )
+        -:  117:    {
+        2:  118:        m_arguments[parameter_name] = argument_ptr( new typed_argument<T>( value ) );
+        2:  118-block  0
+        2:  118-block  1
+        2:  118-block  2
+    $$$$$:  118-block  3
+    $$$$$:  118-block  4
+        2:  119:    }
+------------------
+_ZN5boost7runtime15arguments_store3setIjEEvNS_9unit_test13basic_cstringIKcEERKT_:
+        1:  116:    void        set( cstring parameter_name, T const& value )
+        -:  117:    {
+        1:  118:        m_arguments[parameter_name] = argument_ptr( new typed_argument<T>( value ) );
+        1:  118-block  0
+        1:  118-block  1
+        1:  118-block  2
+    $$$$$:  118-block  3
+    $$$$$:  118-block  4
+        1:  119:    }
+------------------
+_ZN5boost7runtime15arguments_store3setINS_9unit_test12report_levelEEEvNS3_13basic_cstringIKcEERKT_:
+        1:  116:    void        set( cstring parameter_name, T const& value )
+        -:  117:    {
+        1:  118:        m_arguments[parameter_name] = argument_ptr( new typed_argument<T>( value ) );
+        1:  118-block  0
+        1:  118-block  1
+        1:  118-block  2
+    $$$$$:  118-block  3
+    $$$$$:  118-block  4
+        1:  119:    }
+------------------
+_ZN5boost7runtime15arguments_store3setINS_9unit_test13output_formatEEEvNS3_13basic_cstringIKcEERKT_:
+        3:  116:    void        set( cstring parameter_name, T const& value )
+        -:  117:    {
+        3:  118:        m_arguments[parameter_name] = argument_ptr( new typed_argument<T>( value ) );
+        3:  118-block  0
+        3:  118-block  1
+        3:  118-block  2
+    $$$$$:  118-block  3
+    $$$$$:  118-block  4
+        3:  119:    }
+------------------
+_ZN5boost7runtime15arguments_store3setIbEEvNS_9unit_test13basic_cstringIKcEERKT_:
+       13:  116:    void        set( cstring parameter_name, T const& value )
+        -:  117:    {
+       13:  118:        m_arguments[parameter_name] = argument_ptr( new typed_argument<T>( value ) );
+       13:  118-block  0
+       13:  118-block  1
+       13:  118-block  2
+    $$$$$:  118-block  3
+    $$$$$:  118-block  4
+       13:  119:    }
+------------------
+        -:  120:
+        -:  121:private:
+        -:  122:    // Data members
+        -:  123:    storage_type            m_arguments;
+        -:  124:};
+        -:  125:
+        -:  126:} // namespace runtime
+        -:  127:} // namespace boost
+        -:  128:
+        -:  129:#include <boost/test/detail/enable_warnings.hpp>
+        -:  130:
+        -:  131:#endif // BOOST_TEST_UTILS_RUNTIME_ARGUMENT_HPP

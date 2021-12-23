@@ -1,0 +1,447 @@
+        -:    0:Source:F:/Files/vcpkg/installed/x86-windows/include/boost/io/ios_state.hpp
+        -:    0:Graph:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcno
+        -:    0:Data:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1://  Boost io/ios_state.hpp header file  --------------------------------------//
+        -:    2:
+        -:    3://  Copyright 2002, 2005 Daryle Walker.  Use, modification, and distribution
+        -:    4://  are subject to the Boost Software License, Version 1.0.  (See accompanying
+        -:    5://  file LICENSE_1_0.txt or a copy at <http://www.boost.org/LICENSE_1_0.txt>.)
+        -:    6:
+        -:    7://  See <http://www.boost.org/libs/io/> for the library's home page.
+        -:    8:
+        -:    9:#ifndef BOOST_IO_IOS_STATE_HPP
+        -:   10:#define BOOST_IO_IOS_STATE_HPP
+        -:   11:
+        -:   12:#include <boost/io_fwd.hpp>  // self include
+        -:   13:#include <boost/detail/workaround.hpp>
+        -:   14:
+        -:   15:#include <ios>        // for std::ios_base, std::basic_ios, etc.
+        -:   16:#ifndef BOOST_NO_STD_LOCALE
+        -:   17:#include <locale>     // for std::locale
+        -:   18:#endif
+        -:   19:#include <ostream>    // for std::basic_ostream
+        -:   20:#include <streambuf>  // for std::basic_streambuf
+        -:   21:#include <string>     // for std::char_traits
+        -:   22:
+        -:   23:
+        -:   24:namespace boost
+        -:   25:{
+        -:   26:namespace io
+        -:   27:{
+        -:   28:
+        -:   29:
+        -:   30://  Basic stream state saver class declarations  -----------------------------//
+        -:   31:
+        -:   32:class ios_flags_saver
+        -:   33:{
+        -:   34:public:
+        -:   35:    typedef ::std::ios_base            state_type;
+        -:   36:    typedef ::std::ios_base::fmtflags  aspect_type;
+        -:   37:
+        -:   38:    explicit  ios_flags_saver( state_type &s )
+        -:   39:        : s_save_( s ), a_save_( s.flags() )
+        -:   40:        {}
+        -:   41:    ios_flags_saver( state_type &s, aspect_type const &a )
+        -:   42:        : s_save_( s ), a_save_( s.flags(a) )
+        -:   43:        {}
+        -:   44:    ~ios_flags_saver()
+        -:   45:        { this->restore(); }
+        -:   46:
+        -:   47:    void  restore()
+        -:   48:        { s_save_.flags( a_save_ ); }
+        -:   49:
+        -:   50:private:
+        -:   51:    state_type &       s_save_;
+        -:   52:    aspect_type const  a_save_;
+        -:   53:
+        -:   54:    ios_flags_saver& operator=(const ios_flags_saver&);
+        -:   55:};
+        -:   56:
+        -:   57:class ios_precision_saver
+        -:   58:{
+        -:   59:public:
+        -:   60:    typedef ::std::ios_base    state_type;
+        -:   61:    typedef ::std::streamsize  aspect_type;
+        -:   62:
+        -:   63:    explicit  ios_precision_saver( state_type &s )
+        -:   64:        : s_save_( s ), a_save_( s.precision() )
+        -:   65:        {}
+        -:   66:    ios_precision_saver( state_type &s, aspect_type const &a )
+        -:   67:        : s_save_( s ), a_save_( s.precision(a) )
+        -:   68:        {}
+        -:   69:    ~ios_precision_saver()
+        -:   70:        { this->restore(); }
+        -:   71:
+        -:   72:    void  restore()
+        -:   73:        { s_save_.precision( a_save_ ); }
+        -:   74:
+        -:   75:private:
+        -:   76:    state_type &       s_save_;
+        -:   77:    aspect_type const  a_save_;
+        -:   78:
+        -:   79:    ios_precision_saver& operator=(const ios_precision_saver&);
+        -:   80:};
+        -:   81:
+        -:   82:class ios_width_saver
+        -:   83:{
+        -:   84:public:
+        -:   85:    typedef ::std::ios_base    state_type;
+        -:   86:    typedef ::std::streamsize  aspect_type;
+        -:   87:
+        -:   88:    explicit  ios_width_saver( state_type &s )
+        -:   89:        : s_save_( s ), a_save_( s.width() )
+        -:   90:        {}
+        -:   91:    ios_width_saver( state_type &s, aspect_type const &a )
+        -:   92:        : s_save_( s ), a_save_( s.width(a) )
+        -:   93:        {}
+        -:   94:    ~ios_width_saver()
+        -:   95:        { this->restore(); }
+        -:   96:
+        -:   97:    void  restore()
+        -:   98:        { s_save_.width( a_save_ ); }
+        -:   99:
+        -:  100:private:
+        -:  101:    state_type &       s_save_;
+        -:  102:    aspect_type const  a_save_;
+        -:  103:    ios_width_saver& operator=(const ios_width_saver&);
+        -:  104:};
+        -:  105:
+        -:  106:
+        -:  107://  Advanced stream state saver class template declarations  -----------------//
+        -:  108:
+        -:  109:template < typename Ch, class Tr >
+        -:  110:class basic_ios_iostate_saver
+        -:  111:{
+        -:  112:public:
+        -:  113:    typedef ::std::basic_ios<Ch, Tr>  state_type;
+        -:  114:    typedef ::std::ios_base::iostate  aspect_type;
+        -:  115:
+        -:  116:    explicit  basic_ios_iostate_saver( state_type &s )
+        -:  117:        : s_save_( s ), a_save_( s.rdstate() )
+        -:  118:        {}
+        -:  119:    basic_ios_iostate_saver( state_type &s, aspect_type const &a )
+        -:  120:        : s_save_( s ), a_save_( s.rdstate() )
+        -:  121:        { s.clear(a); }
+        -:  122:    ~basic_ios_iostate_saver()
+        -:  123:        { this->restore(); }
+        -:  124:
+        -:  125:    void  restore()
+        -:  126:        { s_save_.clear( a_save_ ); }
+        -:  127:
+        -:  128:private:
+        -:  129:    state_type &       s_save_;
+        -:  130:    aspect_type const  a_save_;
+        -:  131:    basic_ios_iostate_saver& operator=(const basic_ios_iostate_saver&);
+        -:  132:};
+        -:  133:
+        -:  134:template < typename Ch, class Tr >
+        -:  135:class basic_ios_exception_saver
+        -:  136:{
+        -:  137:public:
+        -:  138:    typedef ::std::basic_ios<Ch, Tr>  state_type;
+        -:  139:    typedef ::std::ios_base::iostate  aspect_type;
+        -:  140:
+        -:  141:    explicit  basic_ios_exception_saver( state_type &s )
+        -:  142:        : s_save_( s ), a_save_( s.exceptions() )
+        -:  143:        {}
+        -:  144:#if BOOST_WORKAROUND(__BORLANDC__, BOOST_TESTED_AT(0x582))
+        -:  145:    basic_ios_exception_saver( state_type &s, aspect_type a )
+        -:  146:#else
+        -:  147:    basic_ios_exception_saver( state_type &s, aspect_type const &a )
+        -:  148:#endif
+        -:  149:        : s_save_( s ), a_save_( s.exceptions() )
+        -:  150:        { s.exceptions(a); }
+        -:  151:    ~basic_ios_exception_saver()
+        -:  152:        { this->restore(); }
+        -:  153:
+        -:  154:    void  restore()
+        -:  155:        { s_save_.exceptions( a_save_ ); }
+        -:  156:
+        -:  157:private:
+        -:  158:    state_type &       s_save_;
+        -:  159:    aspect_type const  a_save_;
+        -:  160:    basic_ios_exception_saver& operator=(const basic_ios_exception_saver&);
+        -:  161:};
+        -:  162:
+        -:  163:template < typename Ch, class Tr >
+        -:  164:class basic_ios_tie_saver
+        -:  165:{
+        -:  166:public:
+        -:  167:    typedef ::std::basic_ios<Ch, Tr>        state_type;
+        -:  168:    typedef ::std::basic_ostream<Ch, Tr> *  aspect_type;
+        -:  169:
+        -:  170:    explicit  basic_ios_tie_saver( state_type &s )
+        -:  171:        : s_save_( s ), a_save_( s.tie() )
+        -:  172:        {}
+        -:  173:    basic_ios_tie_saver( state_type &s, aspect_type const &a )
+        -:  174:        : s_save_( s ), a_save_( s.tie(a) )
+        -:  175:        {}
+        -:  176:    ~basic_ios_tie_saver()
+        -:  177:        { this->restore(); }
+        -:  178:
+        -:  179:    void  restore()
+        -:  180:        { s_save_.tie( a_save_ ); }
+        -:  181:
+        -:  182:private:
+        -:  183:    state_type &       s_save_;
+        -:  184:    aspect_type const  a_save_;
+        -:  185:    basic_ios_tie_saver& operator=(const basic_ios_tie_saver&);
+        -:  186:};
+        -:  187:
+        -:  188:template < typename Ch, class Tr >
+        -:  189:class basic_ios_rdbuf_saver
+        -:  190:{
+        -:  191:public:
+        -:  192:    typedef ::std::basic_ios<Ch, Tr>          state_type;
+        -:  193:    typedef ::std::basic_streambuf<Ch, Tr> *  aspect_type;
+        -:  194:
+        -:  195:    explicit  basic_ios_rdbuf_saver( state_type &s )
+        -:  196:        : s_save_( s ), a_save_( s.rdbuf() )
+        -:  197:        {}
+        -:  198:    basic_ios_rdbuf_saver( state_type &s, aspect_type const &a )
+        -:  199:        : s_save_( s ), a_save_( s.rdbuf(a) )
+        -:  200:        {}
+        -:  201:    ~basic_ios_rdbuf_saver()
+        -:  202:        { this->restore(); }
+        -:  203:
+        -:  204:    void  restore()
+        -:  205:        { s_save_.rdbuf( a_save_ ); }
+        -:  206:
+        -:  207:private:
+        -:  208:    state_type &       s_save_;
+        -:  209:    aspect_type const  a_save_;
+        -:  210:    basic_ios_rdbuf_saver& operator=(const basic_ios_rdbuf_saver&);
+        -:  211:};
+        -:  212:
+        -:  213:template < typename Ch, class Tr >
+        -:  214:class basic_ios_fill_saver
+        -:  215:{
+        -:  216:public:
+        -:  217:    typedef ::std::basic_ios<Ch, Tr>        state_type;
+        -:  218:    typedef typename state_type::char_type  aspect_type;
+        -:  219:
+        -:  220:    explicit  basic_ios_fill_saver( state_type &s )
+        -:  221:        : s_save_( s ), a_save_( s.fill() )
+        -:  222:        {}
+        -:  223:    basic_ios_fill_saver( state_type &s, aspect_type const &a )
+        -:  224:        : s_save_( s ), a_save_( s.fill(a) )
+        -:  225:        {}
+        -:  226:    ~basic_ios_fill_saver()
+        -:  227:        { this->restore(); }
+        -:  228:
+        -:  229:    void  restore()
+        -:  230:        { s_save_.fill( a_save_ ); }
+        -:  231:
+        -:  232:private:
+        -:  233:    state_type &       s_save_;
+        -:  234:    aspect_type const  a_save_;
+        -:  235:    basic_ios_fill_saver& operator=(const basic_ios_fill_saver&);
+        -:  236:};
+        -:  237:
+        -:  238:#ifndef BOOST_NO_STD_LOCALE
+        -:  239:template < typename Ch, class Tr >
+        -:  240:class basic_ios_locale_saver
+        -:  241:{
+        -:  242:public:
+        -:  243:    typedef ::std::basic_ios<Ch, Tr> state_type;
+        -:  244:    typedef ::std::locale aspect_type;
+        -:  245:
+        -:  246:    explicit basic_ios_locale_saver( state_type &s )
+        -:  247:        : s_save_( s ), a_save_( s.getloc() )
+        -:  248:        {}
+        -:  249:    basic_ios_locale_saver( state_type &s, aspect_type const &a )
+        -:  250:        : s_save_( s ), a_save_( s.imbue(a) )
+        -:  251:        {}
+        -:  252:    ~basic_ios_locale_saver()
+        -:  253:        { this->restore(); }
+        -:  254:
+        -:  255:    void  restore()
+        -:  256:        { s_save_.imbue( a_save_ ); }
+        -:  257:
+        -:  258:private:
+        -:  259:    state_type &       s_save_;
+        -:  260:    aspect_type const  a_save_;
+        -:  261:    basic_ios_locale_saver& operator=(const basic_ios_locale_saver&);
+        -:  262:};
+        -:  263:#endif
+        -:  264:
+        -:  265:
+        -:  266://  User-defined stream state saver class declarations  ----------------------//
+        -:  267:
+        -:  268:class ios_iword_saver
+        -:  269:{
+        -:  270:public:
+        -:  271:    typedef ::std::ios_base  state_type;
+        -:  272:    typedef int              index_type;
+        -:  273:    typedef long             aspect_type;
+        -:  274:
+        -:  275:    explicit ios_iword_saver( state_type &s, index_type i )
+        -:  276:        : s_save_( s ), a_save_( s.iword(i) ), i_save_( i )
+        -:  277:        {}
+        -:  278:    ios_iword_saver( state_type &s, index_type i, aspect_type const &a )
+        -:  279:        : s_save_( s ), a_save_( s.iword(i) ), i_save_( i )
+        -:  280:        { s.iword(i) = a; }
+        -:  281:    ~ios_iword_saver()
+        -:  282:        { this->restore(); }
+        -:  283:
+        -:  284:    void  restore()
+        -:  285:        { s_save_.iword( i_save_ ) = a_save_; }
+        -:  286:
+        -:  287:private:
+        -:  288:    state_type &       s_save_;
+        -:  289:    aspect_type const  a_save_;
+        -:  290:    index_type const   i_save_;
+        -:  291:
+        -:  292:    ios_iword_saver& operator=(const ios_iword_saver&);
+        -:  293:};
+        -:  294:
+        -:  295:class ios_pword_saver
+        -:  296:{
+        -:  297:public:
+        -:  298:    typedef ::std::ios_base  state_type;
+        -:  299:    typedef int              index_type;
+        -:  300:    typedef void *           aspect_type;
+        -:  301:
+        -:  302:    explicit  ios_pword_saver( state_type &s, index_type i )
+        -:  303:        : s_save_( s ), a_save_( s.pword(i) ), i_save_( i )
+        -:  304:        {}
+        -:  305:    ios_pword_saver( state_type &s, index_type i, aspect_type const &a )
+        -:  306:        : s_save_( s ), a_save_( s.pword(i) ), i_save_( i )
+        -:  307:        { s.pword(i) = a; }
+        -:  308:    ~ios_pword_saver()
+        -:  309:        { this->restore(); }
+        -:  310:
+        -:  311:    void  restore()
+        -:  312:        { s_save_.pword( i_save_ ) = a_save_; }
+        -:  313:
+        -:  314:private:
+        -:  315:    state_type &       s_save_;
+        -:  316:    aspect_type const  a_save_;
+        -:  317:    index_type const   i_save_;
+        -:  318:
+        -:  319:    ios_pword_saver operator=(const ios_pword_saver&);
+        -:  320:};
+        -:  321:
+        -:  322:
+        -:  323://  Combined stream state saver class (template) declarations  ---------------//
+        -:  324:
+        -:  325:class ios_base_all_saver
+        -:  326:{
+        -:  327:public:
+        -:  328:    typedef ::std::ios_base  state_type;
+        -:  329:
+        7:  330:    explicit  ios_base_all_saver( state_type &s )
+       21:  331:        : s_save_( s ), a1_save_( s.flags() ), a2_save_( s.precision() )
+        7:  332:        , a3_save_( s.width() )
+        7:  332-block  0
+        7:  333:        {}
+        -:  334:
+        7:  335:    ~ios_base_all_saver()
+        7:  336:        { this->restore(); }
+        7:  336-block  0
+        -:  337:
+       64:  338:    void  restore()
+        -:  339:    {
+       64:  340:        s_save_.width( a3_save_ );
+       64:  340-block  0
+       64:  341:        s_save_.precision( a2_save_ );
+       64:  342:        s_save_.flags( a1_save_ );
+       64:  343:    }
+        -:  344:
+        -:  345:private:
+        -:  346:    state_type &                s_save_;
+        -:  347:    state_type::fmtflags const  a1_save_;
+        -:  348:    ::std::streamsize const     a2_save_;
+        -:  349:    ::std::streamsize const     a3_save_;
+        -:  350:
+        -:  351:    ios_base_all_saver& operator=(const ios_base_all_saver&);
+        -:  352:};
+        -:  353:
+        -:  354:template < typename Ch, class Tr >
+        -:  355:class basic_ios_all_saver
+        -:  356:{
+        -:  357:public:
+        -:  358:    typedef ::std::basic_ios<Ch, Tr>  state_type;
+        -:  359:
+        -:  360:    explicit  basic_ios_all_saver( state_type &s )
+        -:  361:        : s_save_( s ), a1_save_( s.flags() ), a2_save_( s.precision() )
+        -:  362:        , a3_save_( s.width() ), a4_save_( s.rdstate() )
+        -:  363:        , a5_save_( s.exceptions() ), a6_save_( s.tie() )
+        -:  364:        , a7_save_( s.rdbuf() ), a8_save_( s.fill() )
+        -:  365:        #ifndef BOOST_NO_STD_LOCALE
+        -:  366:        , a9_save_( s.getloc() )
+        -:  367:        #endif
+        -:  368:        {}
+        -:  369:
+        -:  370:    ~basic_ios_all_saver()
+        -:  371:        { this->restore(); }
+        -:  372:
+        -:  373:    void  restore()
+        -:  374:    {
+        -:  375:        #ifndef BOOST_NO_STD_LOCALE
+        -:  376:        s_save_.imbue( a9_save_ );
+        -:  377:        #endif
+        -:  378:        s_save_.fill( a8_save_ );
+        -:  379:        s_save_.rdbuf( a7_save_ );
+        -:  380:        s_save_.tie( a6_save_ );
+        -:  381:        s_save_.exceptions( a5_save_ );
+        -:  382:        s_save_.clear( a4_save_ );
+        -:  383:        s_save_.width( a3_save_ );
+        -:  384:        s_save_.precision( a2_save_ );
+        -:  385:        s_save_.flags( a1_save_ );
+        -:  386:    }
+        -:  387:
+        -:  388:private:
+        -:  389:    state_type &                            s_save_;
+        -:  390:    typename state_type::fmtflags const     a1_save_;
+        -:  391:    ::std::streamsize const                 a2_save_;
+        -:  392:    ::std::streamsize const                 a3_save_;
+        -:  393:    typename state_type::iostate const      a4_save_;
+        -:  394:    typename state_type::iostate const      a5_save_;
+        -:  395:    ::std::basic_ostream<Ch, Tr> * const    a6_save_;
+        -:  396:    ::std::basic_streambuf<Ch, Tr> * const  a7_save_;
+        -:  397:    typename state_type::char_type const    a8_save_;
+        -:  398:    #ifndef BOOST_NO_STD_LOCALE
+        -:  399:    ::std::locale const                     a9_save_;
+        -:  400:    #endif
+        -:  401:
+        -:  402:    basic_ios_all_saver& operator=(const basic_ios_all_saver&);
+        -:  403:};
+        -:  404:
+        -:  405:class ios_all_word_saver
+        -:  406:{
+        -:  407:public:
+        -:  408:    typedef ::std::ios_base  state_type;
+        -:  409:    typedef int              index_type;
+        -:  410:
+        -:  411:    ios_all_word_saver( state_type &s, index_type i )
+        -:  412:        : s_save_( s ), i_save_( i ), a1_save_( s.iword(i) )
+        -:  413:        , a2_save_( s.pword(i) )
+        -:  414:        {}
+        -:  415:
+        -:  416:    ~ios_all_word_saver()
+        -:  417:        { this->restore(); }
+        -:  418:
+        -:  419:    void  restore()
+        -:  420:    {
+        -:  421:        s_save_.pword( i_save_ ) = a2_save_;
+        -:  422:        s_save_.iword( i_save_ ) = a1_save_;
+        -:  423:    }
+        -:  424:
+        -:  425:private:
+        -:  426:    state_type &      s_save_;
+        -:  427:    index_type const  i_save_;
+        -:  428:    long const        a1_save_;
+        -:  429:    void * const      a2_save_;
+        -:  430:
+        -:  431:    ios_all_word_saver& operator=(const ios_all_word_saver&);
+        -:  432:};
+        -:  433:
+        -:  434:
+        -:  435:}  // namespace io
+        -:  436:}  // namespace boost
+        -:  437:
+        -:  438:
+        -:  439:#endif  // BOOST_IO_IOS_STATE_HPP

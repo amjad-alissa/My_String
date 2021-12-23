@@ -1,0 +1,265 @@
+        -:    0:Source:F:/SoftwareProjects/CLionProjects/C++/My_String/test/MyString.h
+        -:    0:Graph:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcno
+        -:    0:Data:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:#ifndef STRING_MYSTRING_H
+        -:    2:#define STRING_MYSTRING_H
+        -:    3:
+        -:    4:#include <iostream>
+        -:    5:#include <cstdlib>
+        -:    6:
+        -:    7:namespace Assignment06 {
+        -:    8:    class MyString {
+        -:    9:    private:
+        -:   10:
+        -:   11:        /**
+        -:   12:         * Attributes.
+        -:   13:         * @var occupied Current number of characters
+        -:   14:         * @var capacity Maximum number of characters
+        -:   15:         * @var sequence Pointer to the beginning of the string array
+        -:   16:         */
+        -:   17:        size_t occupied;
+        -:   18:        size_t capacity;
+        -:   19:        char *sequence{};
+        -:   20:
+        -:   21:        /**
+        -:   22:         * Initialize occupied = 0, capacity = 1, sequence = new char[capacity]
+        -:   23:         */
+        -:   24:        void initialize_Empty();
+        -:   25:
+        -:   26:    public:
+        -:   27:
+        -:   28:        /**
+        -:   29:         * Default Constructor.
+        -:   30:         * Initialize occupied = 0, capacity = 1, sequence = new char[capacity]
+        -:   31:         */
+        -:   32:        MyString();
+        -:   33:
+        -:   34:        /**
+        -:   35:         * Constructor.
+        -:   36:         * Initialize occupied = sizeOf(str), capacity = occupied + 1, sequence = str (deep copy)
+        -:   37:         * @param str c-string
+        -:   38:         */
+        -:   39:        explicit MyString(const char str[]);
+        -:   40:
+        -:   41:        /**
+        -:   42:         * Constructor.
+        -:   43:         * Initialize occupied = sizeOf(str), capacity = occupied + 1, sequence = str (deep copy)
+        -:   44:         * @param str (cpp-string)
+        -:   45:         */
+        -:   46:        explicit MyString(const std::string str);
+        -:   47:
+        -:   48:        /**
+        -:   49:         * Copy Constructor.
+        -:   50:         * Make a full copy of the passed object
+        -:   51:         * @param source MyString Object to be copied
+        -:   52:         */
+        -:   53:        MyString(const MyString &source);
+        -:   54:
+        -:   55:        /**
+        -:   56:         * Destructor.
+        -:   57:         * Free the dynamically allocated memory for the attribute sequence
+        -:   58:         */
+        -:   59:        virtual  ~MyString();
+        -:   60:
+        -:   61:        /**
+        -:   62:         * Overloading the operator+= with MyString object.
+        -:   63:         * Setting the attributes: occupied += addend.occupied, capacity += addend.capacity, sequence += addend.sequence
+        -:   64:         * @param addend Reference to MyString object to be concatenated with the calling object
+        -:   65:         * @return Reference to the calling object after concatenation
+        -:   66:         */
+        -:   67:        MyString &operator+=(const MyString &addend);
+        -:   68:
+        -:   69:        /**
+        -:   70:         * Overloading the operator+= with c-string.
+        -:   71:         * Setting the attributes: occupied += addend.occupied, capacity += addend.capacity, sequence += addend.sequence
+        -:   72:         * @param addend c-string to be concatenated with the calling object
+        -:   73:         * @return Reference to the calling object after concatenation
+        -:   74:         */
+        -:   75:        MyString &operator+=(const char addend[]);
+        -:   76:
+        -:   77:        /**
+        -:   78:         * Overloading the operator+= with single character.
+        -:   79:         * Setting the attributes: occupied += addend.occupied, capacity += addend.capacity, sequence += addend.sequence
+        -:   80:         * @param addend character to be concatenated with the calling object
+        -:   81:         * @return Reference to the calling object after concatenation
+        -:   82:         */
+        -:   83:        MyString &operator+=(const char addend);
+        -:   84:
+        -:   85:        /**
+        -:   86:         * Overloading the operator= .
+        -:   87:         * Setting the attributes: occupied = addend.occupied, capacity = addend.capacity, sequence = addend.sequence
+        -:   88:         * @param source Reference to MyString object to be assigned to the calling object
+        -:   89:         * @return Reference to the calling object after assignment
+        -:   90:         */
+        -:   91:        MyString &operator=(const MyString &source);
+        -:   92:
+        -:   93:        /**
+        -:   94:         * Overloading the operator[] .
+        -:   95:         * @param position Index of the character to be returned
+        -:   96:         * @return const Reference to the character at the specified index
+        -:   97:         */
+        -:   98:        const char &operator[](size_t position) const;
+        -:   99:
+        -:  100:        /**
+        -:  101:         * Overloading the operator[] .
+        -:  102:         * Throws std::out_of_range exception if @param position > occupied or position < 0
+        -:  103:         * @param position Index of the character to be accessed
+        -:  104:         * @return Reference to the character at the specified index
+        -:  105:         */
+        -:  106:        char &operator[](size_t position);
+        -:  107:
+        -:  108:        /**
+        -:  109:         * Swapping two MyString objects.
+        -:  110:         */
+        -:  111:        void swap(MyString &);
+        -:  112:
+        -:  113:        /**
+        -:  114:         * Length of the string stored in @var sequence.
+        -:  115:         * @return @var occupied
+        -:  116:         */
+        6:  117:        [[nodiscard]] std::size_t length() const {
+        6:  118:            return occupied;
+        6:  118-block  0
+        -:  119:        }
+        -:  120:
+        -:  121:        /**
+        -:  122:         * C-string representation of the object.
+        -:  123:         * @return const @var sequence
+        -:  124:         */
+        4:  125:        [[nodiscard]] const char *c_str() const {
+        4:  126:            return sequence;
+        4:  126-block  0
+        -:  127:        }
+        -:  128:
+        -:  129:        /**
+        -:  130:         * Check if the object is empty.
+        -:  131:         * @return TRUE if @var occupied == 0, Otherwise, FALSE.
+        -:  132:         */
+        6:  133:        bool is_empty() {
+        6:  134:            return (occupied == 0);
+        6:  134-block  0
+        -:  135:        }
+        -:  136:
+        -:  137:        /**
+        -:  138:         * Friend Functions of the Class.
+        -:  139:         * @function operator<<
+        -:  140:         * @function operator>>
+        -:  141:         * @function operator==
+        -:  142:         * @function operator!=
+        -:  143:         * @function operator>=
+        -:  144:         * @function operator<=
+        -:  145:         * @function operator>
+        -:  146:         * @function operator<
+        -:  147:         */
+        -:  148:        friend std::ostream &operator<<(std::ostream &outs, const MyString &source);
+        -:  149:
+        -:  150:
+        -:  151:        friend bool operator==(const MyString &s1, const MyString &s2);
+        -:  152:
+        -:  153:        friend bool operator!=(const MyString &s1, const MyString &s2);
+        -:  154:
+        -:  155:        friend bool operator>=(const MyString &s1, const MyString &s2);
+        -:  156:
+        -:  157:        friend bool operator<=(const MyString &s1, const MyString &s2);
+        -:  158:
+        -:  159:        friend bool operator>(const MyString &s1, const MyString &s2);
+        -:  160:
+        -:  161:        friend bool operator<(const MyString &s1, const MyString &s2);
+        -:  162:    };
+        -:  163:
+        -:  164:    /**
+        -:  165:     * Global Function, Overloading the operator+ for two MyString objects.
+        -:  166:     * @param s1 MyString Object (First Operand)
+        -:  167:     * @param s2 MyString Object (Second Operand)
+        -:  168:     * @return MyString Object as a result of concatenating @param s1 with @param s2
+        -:  169:     */
+        -:  170:    MyString operator+(const MyString &s1, const MyString &s2);
+        -:  171:
+        -:  172:    /**
+        -:  173:     * Global Function, Overloading the operator+ for MyString object with C-string.
+        -:  174:     * @param s1 MyString Object (First Operand)
+        -:  175:     * @param s2 C-string (Second Operand)
+        -:  176:     * @return MyString Object as a result of concatenating @param s1 with @param s2
+        -:  177:     */
+        -:  178:    MyString operator+(const MyString &s1, const char *s2);
+        -:  179:
+        -:  180:    /**
+        -:  181:     * Global Function, Overloading the operator+ for C-string with MyString object.
+        -:  182:     * @param s1 C-string (First Operand)
+        -:  183:     * @param s2 MyString Object (Second Operand)
+        -:  184:     * @return MyString Object as a result of concatenating @param s1 with @param s2
+        -:  185:     */
+        -:  186:    MyString operator+(const char *s1, const MyString &s2);
+        -:  187:
+        -:  188:    /**
+        -:  189:     * Global Function, Overloading the operator== .
+        -:  190:     * @param s1 MyString object (First Operand)
+        -:  191:     * @param s2 MYString object (Second Operand)
+        -:  192:     * @return True if (s1.occupied == s2.occupied && s1.capacity == s2.capacity && *s1.sequence == *s2.sequence),
+        -:  193:     * False Otherwise
+        -:  194:     */
+        -:  195:    bool operator==(const MyString &s1, const MyString &s2);
+        -:  196:
+        -:  197:    /**
+        -:  198:     * Global Function, Overloading the operator!= .
+        -:  199:     * @param s1 MyString object (First Operand)
+        -:  200:     * @param s2 MYString object (Second Operand)
+        -:  201:     * @return True if !(s1.occupied == s2.occupied && s1.capacity == s2.capacity && *s1.sequence == *s2.sequence),
+        -:  202:     * False otherwise
+        -:  203:     */
+        -:  204:    bool operator!=(const MyString &s1, const MyString &s2);
+        -:  205:
+        -:  206:    /**
+        -:  207:     * Global Function, Overloading the operator>= .
+        -:  208:     * @param s1 MyString object (First Operand)
+        -:  209:     * @param s2 MYString object (Second Operand)
+        -:  210:     * @return True if strcmp(s1,s2) >= 0, False Otherwise
+        -:  211:     */
+        -:  212:    bool operator>=(const MyString &s1, const MyString &s2);
+        -:  213:
+        -:  214:    /**
+        -:  215:     * Global Function, Overloading the operator<= .
+        -:  216:     * @param s1 MyString object (First Operand)
+        -:  217:     * @param s2 MYString object (Second Operand)
+        -:  218:     * @return True if strcmp(s1,s2) <= 0, False Otherwise
+        -:  219:     */
+        -:  220:    bool operator<=(const MyString &s1, const MyString &s2);
+        -:  221:
+        -:  222:    /**
+        -:  223:     * Global Function, Overloading the operator> .
+        -:  224:     * @param s1 MyString object (First Operand)
+        -:  225:     * @param s2 MYString object (Second Operand)
+        -:  226:     * @return True if strcmp(s1,s2) > 0, False Otherwise
+        -:  227:     */
+        -:  228:    bool operator>(const MyString &s1, const MyString &s2);
+        -:  229:
+        -:  230:    /**
+        -:  231:     * Global Function, Overloading the operator< .
+        -:  232:     * @param s1 s1 MyString object (First Operand)
+        -:  233:     * @param s2 s2 MYString object (Second Operand)
+        -:  234:     * @return True if strcmp(s1,s2) < 0, False Otherwise
+        -:  235:     */
+        -:  236:    bool operator<(const MyString &s1, const MyString &s2);
+        -:  237:
+        -:  238:    /**
+        -:  239:     * Global Function, Overloading the operator<< .
+        -:  240:     * Puts the characters stored at @var sequence into @param outs
+        -:  241:     * @param outs Reference to output stream object
+        -:  242:     * @param source Reference to MyString object
+        -:  243:     * @return Reference to the passed output stream
+        -:  244:     */
+        -:  245:    std::ostream &operator<<(std::ostream &outs, const MyString &source);
+        -:  246:
+        -:  247:    /**
+        -:  248:     * Global Function, Overloading the operator>> .
+        -:  249:     * Puts characters from @param ins into @var sequence (From the beginning of @param ins until the first white space character)
+        -:  250:     * @param ins Reference to output stream object
+        -:  251:     * @param target Reference to MyString object
+        -:  252:     * @return Reference to the passed input stream
+        -:  253:     */
+        -:  254:    std::istream &operator>>(std::istream &ins, MyString &target);
+        -:  255:}
+        -:  256:
+        -:  257:#endif //STRING_MYSTRING_H

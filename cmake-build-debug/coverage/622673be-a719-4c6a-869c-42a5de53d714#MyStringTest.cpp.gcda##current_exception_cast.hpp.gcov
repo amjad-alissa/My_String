@@ -1,0 +1,51 @@
+        -:    0:Source:F:/Files/vcpkg/installed/x86-windows/include/boost/exception/current_exception_cast.hpp
+        -:    0:Graph:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcno
+        -:    0:Data:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1://Copyright (c) 2006-2009 Emil Dotchevski and Reverge Studios, Inc.
+        -:    2:
+        -:    3://Distributed under the Boost Software License, Version 1.0. (See accompanying
+        -:    4://file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+        -:    5:
+        -:    6:#ifndef UUID_7E83C166200811DE885E826156D89593
+        -:    7:#define UUID_7E83C166200811DE885E826156D89593
+        -:    8:#if (__GNUC__*100+__GNUC_MINOR__>301) && !defined(BOOST_EXCEPTION_ENABLE_WARNINGS)
+        -:    9:#pragma GCC system_header
+        -:   10:#endif
+        -:   11:#if defined(_MSC_VER) && !defined(BOOST_EXCEPTION_ENABLE_WARNINGS)
+        -:   12:#pragma warning(push,1)
+        -:   13:#endif
+        -:   14:
+        -:   15:namespace
+        -:   16:boost
+        -:   17:    {
+        -:   18:    template <class E>
+        -:   19:    inline
+        -:   20:    E *
+    #####:   21:    current_exception_cast()
+        -:   22:        {
+        -:   23:        try
+        -:   24:            {
+    #####:   25:            throw;
+    %%%%%:   25-block  0
+        -:   26:            }
+    =====:   27:        catch(
+    $$$$$:   27-block  0
+    =====:   28:        E & e )
+        -:   29:            {
+    =====:   30:            return &e;
+        -:   31:            }
+    =====:   32:        catch(
+    $$$$$:   32-block  0
+        -:   33:        ...)
+        -:   34:            {
+    =====:   35:            return 0;
+        -:   36:            }
+        -:   37:        }
+        -:   38:    }
+        -:   39:
+        -:   40:#if defined(_MSC_VER) && !defined(BOOST_EXCEPTION_ENABLE_WARNINGS)
+        -:   41:#pragma warning(pop)
+        -:   42:#endif
+        -:   43:#endif

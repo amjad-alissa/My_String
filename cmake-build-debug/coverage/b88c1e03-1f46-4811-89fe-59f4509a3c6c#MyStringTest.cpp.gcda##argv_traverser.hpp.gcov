@@ -1,0 +1,124 @@
+        -:    0:Source:F:/Files/vcpkg/installed/x86-windows/include/boost/test/utils/runtime/cla/argv_traverser.hpp
+        -:    0:Graph:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcno
+        -:    0:Data:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1://  (C) Copyright Gennadiy Rozental 2001.
+        -:    2://  Use, modification, and distribution are subject to the
+        -:    3://  Boost Software License, Version 1.0. (See accompanying file
+        -:    4://  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+        -:    5:
+        -:    6://  See http://www.boost.org/libs/test for the library home page.
+        -:    7://
+        -:    8://  File        : $RCSfile$
+        -:    9://
+        -:   10://  Version     : $Revision$
+        -:   11://
+        -:   12://  Description : defines facility to hide input traversing details
+        -:   13:// ***************************************************************************
+        -:   14:
+        -:   15:#ifndef BOOST_TEST_UTILS_RUNTIME_CLA_ARGV_TRAVERSER_HPP
+        -:   16:#define BOOST_TEST_UTILS_RUNTIME_CLA_ARGV_TRAVERSER_HPP
+        -:   17:
+        -:   18:// Boost.Test Runtime parameters
+        -:   19:#include <boost/test/utils/runtime/fwd.hpp>
+        -:   20:#include <cstring>
+        -:   21:
+        -:   22:#include <boost/test/detail/suppress_warnings.hpp>
+        -:   23:
+        -:   24:namespace boost {
+        -:   25:namespace runtime {
+        -:   26:namespace cla {
+        -:   27:
+        -:   28:// ************************************************************************** //
+        -:   29:// **************          runtime::cla::argv_traverser        ************** //
+        -:   30:// ************************************************************************** //
+        -:   31:
+        -:   32:class argv_traverser {
+        -:   33:    typedef char const** argv_type;
+        -:   34:public:
+        -:   35:    /// Constructs traverser based on argc/argv pair
+        -:   36:    /// argv is taken "by reference" and later can be
+        -:   37:    /// updated in remainder method
+        1:   38:    argv_traverser( int argc, argv_type argv )
+        1:   39:    : m_argc( argc )
+        -:   40:    , m_curr_token( 0 )
+        -:   41:    , m_token_size( 0 )
+        1:   42:    , m_argv( argv )
+        -:   43:    {
+        -:   44:        // save program name
+        1:   45:        save_token();
+        1:   45-block  0
+        1:   46:    }
+        -:   47:
+        -:   48:    /// Returns new argc
+        1:   49:    int         remainder()
+        -:   50:    {
+        1:   51:        return m_argc;
+        1:   51-block  0
+        -:   52:    }
+        -:   53:
+        -:   54:    /// Returns true, if we reached end on input
+       17:   55:    bool        eoi() const
+        -:   56:    {
+       17:   57:        return m_curr_token == m_argc;
+       17:   57-block  0
+        -:   58:    }
+        -:   59:
+        -:   60:    /// Returns current token in the input
+        5:   61:    cstring     current_token()
+        -:   62:    {
+        5:   63:        if( eoi() )
+        5:   63-block  0
+    #####:   64:            return cstring();
+    %%%%%:   64-block  0
+        -:   65:
+        5:   66:        return cstring( m_argv[m_curr_token], m_token_size );
+        5:   66-block  0
+        -:   67:    }
+        -:   68:
+        -:   69:    /// Saves current token for remainder
+        1:   70:    void        save_token()
+        -:   71:    {
+        1:   72:        ++m_curr_token;
+        -:   73:
+        1:   74:        if( !eoi() )
+        1:   74-block  0
+        1:   75:            m_token_size = ::strlen( m_argv[m_curr_token] );
+        1:   75-block  0
+        1:   76:    }
+        -:   77:
+        -:   78:    /// Commit current token and iterate to next one
+        5:   79:    void        next_token()
+        -:   80:    {
+        5:   81:        if( !eoi() ) {
+        5:   81-block  0
+       15:   82:            for( std::size_t i = m_curr_token; i < m_argc-1; ++i )
+        5:   82-block  0
+       15:   82-block  1
+       10:   83:                m_argv[i] = m_argv[i + 1];
+       10:   83-block  0
+        -:   84:
+        5:   85:            --m_argc;
+        -:   86:
+        5:   87:            m_token_size = ::strlen( m_argv[m_curr_token] );
+        5:   87-block  0
+        -:   88:        }
+        5:   89:    }
+        -:   90:
+        -:   91:private:
+        -:   92:
+        -:   93:    // Data members
+        -:   94:    std::size_t m_argc;         // total number of arguments
+        -:   95:    std::size_t m_curr_token;   // current token index in argv
+        -:   96:    std::size_t m_token_size;   // current token size
+        -:   97:    argv_type   m_argv;         // all arguments
+        -:   98:};
+        -:   99:
+        -:  100:} // namespace cla
+        -:  101:} // namespace runtime
+        -:  102:} // namespace boost
+        -:  103:
+        -:  104:#include <boost/test/detail/enable_warnings.hpp>
+        -:  105:
+        -:  106:#endif // BOOST_TEST_UTILS_RUNTIME_CLA_ARGV_TRAVERSER_HPP

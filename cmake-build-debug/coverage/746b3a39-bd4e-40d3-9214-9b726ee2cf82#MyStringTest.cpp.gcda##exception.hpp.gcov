@@ -1,0 +1,635 @@
+        -:    0:Source:F:/Files/vcpkg/installed/x86-windows/include/boost/exception/exception.hpp
+        -:    0:Graph:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcno
+        -:    0:Data:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1://Copyright (c) 2006-2009 Emil Dotchevski and Reverge Studios, Inc.
+        -:    2:
+        -:    3://Distributed under the Boost Software License, Version 1.0. (See accompanying
+        -:    4://file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+        -:    5:
+        -:    6:#ifndef UUID_274DA366004E11DCB1DDFE2E56D89593
+        -:    7:#define UUID_274DA366004E11DCB1DDFE2E56D89593
+        -:    8:
+        -:    9:#include <boost/config.hpp>
+        -:   10:
+        -:   11:#ifdef BOOST_EXCEPTION_MINI_BOOST
+        -:   12:#include  <memory>
+        -:   13:namespace boost { namespace exception_detail { using std::shared_ptr; } }
+        -:   14:#else
+        -:   15:namespace boost { template <class T> class shared_ptr; }
+        -:   16:namespace boost { namespace exception_detail { using boost::shared_ptr; } }
+        -:   17:#endif
+        -:   18:
+        -:   19:#if defined(__GNUC__) && (__GNUC__*100+__GNUC_MINOR__>301) && !defined(BOOST_EXCEPTION_ENABLE_WARNINGS)
+        -:   20:#pragma GCC system_header
+        -:   21:#endif
+        -:   22:#if defined(_MSC_VER) && !defined(BOOST_EXCEPTION_ENABLE_WARNINGS)
+        -:   23:#pragma warning(push,1)
+        -:   24:#endif
+        -:   25:
+        -:   26:namespace
+        -:   27:boost
+        -:   28:    {
+        -:   29:    namespace
+        -:   30:    exception_detail
+        -:   31:        {
+        -:   32:        template <class T>
+        -:   33:        class
+        -:   34:        refcount_ptr
+        -:   35:            {
+        -:   36:            public:
+        -:   37:
+    #####:   38:            refcount_ptr():
+    #####:   39:                px_(0)
+        -:   40:                {
+    #####:   41:                }
+        -:   42:
+    #####:   43:            ~refcount_ptr()
+        -:   44:                {
+    #####:   45:                release();
+    %%%%%:   45-block  0
+    #####:   46:                }
+        -:   47:
+    #####:   48:            refcount_ptr( refcount_ptr const & x ):
+    #####:   49:                px_(x.px_)
+        -:   50:                {
+    #####:   51:                add_ref();
+    %%%%%:   51-block  0
+    #####:   52:                }
+        -:   53:
+        -:   54:            refcount_ptr &
+    #####:   55:            operator=( refcount_ptr const & x )
+        -:   56:                {
+    #####:   57:                adopt(x.px_);
+    %%%%%:   57-block  0
+    #####:   58:                return *this;
+        -:   59:                }
+        -:   60:
+        -:   61:            void
+    #####:   62:            adopt( T * px )
+        -:   63:                {
+    #####:   64:                release();
+    %%%%%:   64-block  0
+    #####:   65:                px_=px;
+    #####:   66:                add_ref();
+    #####:   67:                }
+        -:   68:
+        -:   69:            T *
+    #####:   70:            get() const
+        -:   71:                {
+    #####:   72:                return px_;
+    %%%%%:   72-block  0
+        -:   73:                }
+        -:   74:
+        -:   75:            private:
+        -:   76:
+        -:   77:            T * px_;
+        -:   78:
+        -:   79:            void
+    #####:   80:            add_ref()
+        -:   81:                {
+    #####:   82:                if( px_ )
+    %%%%%:   82-block  0
+    #####:   83:                    px_->add_ref();
+    %%%%%:   83-block  0
+    #####:   84:                }
+        -:   85:
+        -:   86:            void
+    #####:   87:            release()
+        -:   88:                {
+    #####:   89:                if( px_ && px_->release() )
+    %%%%%:   89-block  0
+    %%%%%:   89-block  1
+    %%%%%:   89-block  2
+    %%%%%:   89-block  3
+    %%%%%:   89-block  4
+    #####:   90:                    px_=0;
+    %%%%%:   90-block  0
+    #####:   91:                }
+        -:   92:            };
+        -:   93:        }
+        -:   94:
+        -:   95:    ////////////////////////////////////////////////////////////////////////
+        -:   96:
+        -:   97:    template <class Tag,class T>
+        -:   98:    class error_info;
+        -:   99:
+        -:  100:    typedef error_info<struct throw_function_,char const *> throw_function;
+        -:  101:    typedef error_info<struct throw_file_,char const *> throw_file;
+        -:  102:    typedef error_info<struct throw_line_,int> throw_line;
+        -:  103:
+        -:  104:    template <>
+        -:  105:    class
+        -:  106:    error_info<throw_function_,char const *>
+        -:  107:        {
+        -:  108:        public:
+        -:  109:        typedef char const * value_type;
+        -:  110:        value_type v_;
+        -:  111:        explicit
+        -:  112:        error_info( value_type v ):
+        -:  113:            v_(v)
+        -:  114:            {
+        -:  115:            }
+        -:  116:        };
+        -:  117:
+        -:  118:    template <>
+        -:  119:    class
+        -:  120:    error_info<throw_file_,char const *>
+        -:  121:        {
+        -:  122:        public:
+        -:  123:        typedef char const * value_type;
+        -:  124:        value_type v_;
+        -:  125:        explicit
+        -:  126:        error_info( value_type v ):
+        -:  127:            v_(v)
+        -:  128:            {
+        -:  129:            }
+        -:  130:        };
+        -:  131:
+        -:  132:    template <>
+        -:  133:    class
+        -:  134:    error_info<throw_line_,int>
+        -:  135:        {
+        -:  136:        public:
+        -:  137:        typedef int value_type;
+        -:  138:        value_type v_;
+        -:  139:        explicit
+        -:  140:        error_info( value_type v ):
+        -:  141:            v_(v)
+        -:  142:            {
+        -:  143:            }
+        -:  144:        };
+        -:  145:
+        -:  146:    class
+        -:  147:    BOOST_SYMBOL_VISIBLE
+        -:  148:    exception;
+        -:  149:
+        -:  150:    namespace
+        -:  151:    exception_detail
+        -:  152:        {
+        -:  153:        class error_info_base;
+        -:  154:        struct type_info_;
+        -:  155:
+        -:  156:        struct
+        -:  157:        error_info_container
+        -:  158:            {
+        -:  159:            virtual char const * diagnostic_information( char const * ) const = 0;
+        -:  160:            virtual shared_ptr<error_info_base> get( type_info_ const & ) const = 0;
+        -:  161:            virtual void set( shared_ptr<error_info_base> const &, type_info_ const & ) = 0;
+        -:  162:            virtual void add_ref() const = 0;
+        -:  163:            virtual bool release() const = 0;
+        -:  164:            virtual refcount_ptr<exception_detail::error_info_container> clone() const = 0;
+        -:  165:
+        -:  166:            protected:
+        -:  167:
+    #####:  168:            ~error_info_container() BOOST_NOEXCEPT_OR_NOTHROW
+    #####:  169:                {
+    #####:  170:                }
+        -:  171:            };
+        -:  172:
+        -:  173:        template <class>
+        -:  174:        struct get_info;
+        -:  175:
+        -:  176:        template <>
+        -:  177:        struct get_info<throw_function>;
+        -:  178:
+        -:  179:        template <>
+        -:  180:        struct get_info<throw_file>;
+        -:  181:
+        -:  182:        template <>
+        -:  183:        struct get_info<throw_line>;
+        -:  184:
+        -:  185:        template <class>
+        -:  186:        struct set_info_rv;
+        -:  187:
+        -:  188:        template <>
+        -:  189:        struct set_info_rv<throw_function>;
+        -:  190:
+        -:  191:        template <>
+        -:  192:        struct set_info_rv<throw_file>;
+        -:  193:
+        -:  194:        template <>
+        -:  195:        struct set_info_rv<throw_line>;
+        -:  196:
+        -:  197:        char const * get_diagnostic_information( exception const &, char const * );
+        -:  198:
+        -:  199:        void copy_boost_exception( exception *, exception const * );
+        -:  200:
+        -:  201:        template <class E,class Tag,class T>
+        -:  202:        E const & set_info( E const &, error_info<Tag,T> const & );
+        -:  203:
+        -:  204:        template <class E>
+        -:  205:        E const & set_info( E const &, throw_function const & );
+        -:  206:
+        -:  207:        template <class E>
+        -:  208:        E const & set_info( E const &, throw_file const & );
+        -:  209:
+        -:  210:        template <class E>
+        -:  211:        E const & set_info( E const &, throw_line const & );
+        -:  212:        }
+        -:  213:
+        -:  214:    class
+        -:  215:    BOOST_SYMBOL_VISIBLE
+        -:  216:    exception
+        -:  217:        {
+        -:  218:        //<N3757>
+        -:  219:        public:
+        -:  220:        template <class Tag> void set( typename Tag::type const & );
+        -:  221:        template <class Tag> typename Tag::type const * get() const;
+        -:  222:        //</N3757>
+        -:  223:
+        -:  224:        protected:
+        -:  225:
+    #####:  226:        exception():
+        -:  227:            throw_function_(0),
+        -:  228:            throw_file_(0),
+    #####:  229:            throw_line_(-1)
+    %%%%%:  229-block  0
+        -:  230:            {
+    #####:  231:            }
+        -:  232:
+        -:  233:#ifdef __HP_aCC
+        -:  234:        //On HP aCC, this protected copy constructor prevents throwing boost::exception.
+        -:  235:        //On all other platforms, the same effect is achieved by the pure virtual destructor.
+        -:  236:        exception( exception const & x ) BOOST_NOEXCEPT_OR_NOTHROW:
+        -:  237:            data_(x.data_),
+        -:  238:            throw_function_(x.throw_function_),
+        -:  239:            throw_file_(x.throw_file_),
+        -:  240:            throw_line_(x.throw_line_)
+        -:  241:            {
+        -:  242:            }
+        -:  243:#endif
+        -:  244:
+        -:  245:        virtual ~exception() BOOST_NOEXCEPT_OR_NOTHROW
+        -:  246:#ifndef __HP_aCC
+        -:  247:            = 0 //Workaround for HP aCC, =0 incorrectly leads to link errors.
+        -:  248:#endif
+        -:  249:            ;
+        -:  250:
+        -:  251:#if (defined(__MWERKS__) && __MWERKS__<=0x3207) || (defined(_MSC_VER) && _MSC_VER<=1310)
+        -:  252:        public:
+        -:  253:#else
+        -:  254:        private:
+        -:  255:
+        -:  256:        template <class E>
+        -:  257:        friend E const & exception_detail::set_info( E const &, throw_function const & );
+        -:  258:
+        -:  259:        template <class E>
+        -:  260:        friend E const & exception_detail::set_info( E const &, throw_file const & );
+        -:  261:
+        -:  262:        template <class E>
+        -:  263:        friend E const & exception_detail::set_info( E const &, throw_line const & );
+        -:  264:
+        -:  265:        template <class E,class Tag,class T>
+        -:  266:        friend E const & exception_detail::set_info( E const &, error_info<Tag,T> const & );
+        -:  267:
+        -:  268:        friend char const * exception_detail::get_diagnostic_information( exception const &, char const * );
+        -:  269:
+        -:  270:        template <class>
+        -:  271:        friend struct exception_detail::get_info;
+        -:  272:        friend struct exception_detail::get_info<throw_function>;
+        -:  273:        friend struct exception_detail::get_info<throw_file>;
+        -:  274:        friend struct exception_detail::get_info<throw_line>;
+        -:  275:        template <class>
+        -:  276:        friend struct exception_detail::set_info_rv;
+        -:  277:        friend struct exception_detail::set_info_rv<throw_function>;
+        -:  278:        friend struct exception_detail::set_info_rv<throw_file>;
+        -:  279:        friend struct exception_detail::set_info_rv<throw_line>;
+        -:  280:        friend void exception_detail::copy_boost_exception( exception *, exception const * );
+        -:  281:#endif
+        -:  282:        mutable exception_detail::refcount_ptr<exception_detail::error_info_container> data_;
+        -:  283:        mutable char const * throw_function_;
+        -:  284:        mutable char const * throw_file_;
+        -:  285:        mutable int throw_line_;
+        -:  286:        };
+        -:  287:
+        -:  288:    inline
+    #####:  289:    exception::
+    #####:  290:    ~exception() BOOST_NOEXCEPT_OR_NOTHROW
+    %%%%%:  290-block  0
+        -:  291:        {
+    #####:  292:        }
+        -:  293:
+        -:  294:    namespace
+        -:  295:    exception_detail
+        -:  296:        {
+        -:  297:        template <class E>
+        -:  298:        E const &
+        -:  299:        set_info( E const & x, throw_function const & y )
+        -:  300:            {
+        -:  301:            x.throw_function_=y.v_;
+        -:  302:            return x;
+        -:  303:            }
+        -:  304:
+        -:  305:        template <class E>
+        -:  306:        E const &
+        -:  307:        set_info( E const & x, throw_file const & y )
+        -:  308:            {
+        -:  309:            x.throw_file_=y.v_;
+        -:  310:            return x;
+        -:  311:            }
+        -:  312:
+        -:  313:        template <class E>
+        -:  314:        E const &
+        -:  315:        set_info( E const & x, throw_line const & y )
+        -:  316:            {
+        -:  317:            x.throw_line_=y.v_;
+        -:  318:            return x;
+        -:  319:            }
+        -:  320:        }
+        -:  321:
+        -:  322:    ////////////////////////////////////////////////////////////////////////
+        -:  323:
+        -:  324:    namespace
+        -:  325:    exception_detail
+        -:  326:        {
+        -:  327:        template <class T>
+        -:  328:        struct
+        -:  329:        BOOST_SYMBOL_VISIBLE
+        -:  330:        error_info_injector:
+        -:  331:            public T,
+        -:  332:            public exception
+        -:  333:            {
+        -:  334:            explicit
+    #####:  335:            error_info_injector( T const & x ):
+    #####:  336:                T(x)
+    %%%%%:  336-block  0
+    $$$$$:  336-block  1
+        -:  337:                {
+    #####:  338:                }
+    %%%%%:  338-block  0
+        -:  339:
+    #####:  340:            ~error_info_injector() BOOST_NOEXCEPT_OR_NOTHROW
+        -:  341:                {
+    #####:  342:                }
+------------------
+_ZN5boost16exception_detail19error_info_injectorINS_17bad_function_callEED0Ev:
+    #####:  340:            ~error_info_injector() BOOST_NOEXCEPT_OR_NOTHROW
+        -:  341:                {
+    #####:  342:                }
+    %%%%%:  342-block  0
+------------------
+_ZN5boost16exception_detail19error_info_injectorINS_17bad_function_callEED1Ev:
+    #####:  340:            ~error_info_injector() BOOST_NOEXCEPT_OR_NOTHROW
+        -:  341:                {
+    #####:  342:                }
+    %%%%%:  342-block  0
+------------------
+_ZN5boost16exception_detail19error_info_injectorINS_17bad_function_callEED2Ev:
+    #####:  340:            ~error_info_injector() BOOST_NOEXCEPT_OR_NOTHROW
+        -:  341:                {
+    #####:  342:                }
+    %%%%%:  342-block  0
+------------------
+        -:  343:            };
+        -:  344:
+        -:  345:        struct large_size { char c[256]; };
+        -:  346:        large_size dispatch_boost_exception( exception const * );
+        -:  347:
+        -:  348:        struct small_size { };
+        -:  349:        small_size dispatch_boost_exception( void const * );
+        -:  350:
+        -:  351:        template <class,int>
+        -:  352:        struct enable_error_info_helper;
+        -:  353:
+        -:  354:        template <class T>
+        -:  355:        struct
+        -:  356:        enable_error_info_helper<T,sizeof(large_size)>
+        -:  357:            {
+        -:  358:            typedef T type;
+        -:  359:            };
+        -:  360:
+        -:  361:        template <class T>
+        -:  362:        struct
+        -:  363:        enable_error_info_helper<T,sizeof(small_size)>
+        -:  364:            {
+        -:  365:            typedef error_info_injector<T> type;
+        -:  366:            };
+        -:  367:
+        -:  368:        template <class T>
+        -:  369:        struct
+        -:  370:        enable_error_info_return_type
+        -:  371:            {
+        -:  372:            typedef typename enable_error_info_helper<T,sizeof(exception_detail::dispatch_boost_exception(static_cast<T *>(0)))>::type type;
+        -:  373:            };
+        -:  374:        }
+        -:  375:
+        -:  376:    template <class T>
+        -:  377:    inline
+        -:  378:    typename
+        -:  379:    exception_detail::enable_error_info_return_type<T>::type
+    #####:  380:    enable_error_info( T const & x )
+        -:  381:        {
+        -:  382:        typedef typename exception_detail::enable_error_info_return_type<T>::type rt;
+    #####:  383:        return rt(x);
+    %%%%%:  383-block  0
+        -:  384:        }
+        -:  385:
+        -:  386:    ////////////////////////////////////////////////////////////////////////
+        -:  387:
+        -:  388:    namespace
+        -:  389:    exception_detail
+        -:  390:        {
+        -:  391:        class
+        -:  392:        BOOST_SYMBOL_VISIBLE
+        -:  393:        clone_base
+        -:  394:            {
+        -:  395:            public:
+        -:  396:
+        -:  397:            virtual clone_base const * clone() const = 0;
+        -:  398:            virtual void rethrow() const = 0;
+        -:  399:
+        -:  400:            virtual
+    #####:  401:            ~clone_base() BOOST_NOEXCEPT_OR_NOTHROW
+    #####:  402:                {
+    #####:  403:                }
+        -:  404:            };
+        -:  405:
+        -:  406:        inline
+        -:  407:        void
+    #####:  408:        copy_boost_exception( exception * a, exception const * b )
+        -:  409:            {
+    #####:  410:            refcount_ptr<error_info_container> data;
+    %%%%%:  410-block  0
+    %%%%%:  410-block  1
+    $$$$$:  410-block  2
+    #####:  411:            if( error_info_container * d=b->data_.get() )
+    #####:  412:                data = d->clone();
+    %%%%%:  412-block  0
+    %%%%%:  412-block  1
+    %%%%%:  412-block  2
+    $$$$$:  412-block  3
+    $$$$$:  412-block  4
+    #####:  413:            a->throw_file_ = b->throw_file_;
+    #####:  414:            a->throw_line_ = b->throw_line_;
+    #####:  415:            a->throw_function_ = b->throw_function_;
+    #####:  416:            a->data_ = data;
+    %%%%%:  416-block  0
+    #####:  417:            }
+        -:  418:
+        -:  419:        inline
+        -:  420:        void
+        -:  421:        copy_boost_exception( void *, void const * )
+        -:  422:            {
+        -:  423:            }
+        -:  424:
+        -:  425:        template <class T>
+        -:  426:        class
+        -:  427:        BOOST_SYMBOL_VISIBLE
+        -:  428:        clone_impl:
+        -:  429:            public T,
+        -:  430:            public virtual clone_base
+        -:  431:            {
+        -:  432:            struct clone_tag { };
+    #####:  433:            clone_impl( clone_impl const & x, clone_tag ):
+    #####:  434:                T(x)
+    %%%%%:  434-block  0
+    $$$$$:  434-block  1
+    $$$$$:  434-block  2
+        -:  435:                {
+    #####:  436:                copy_boost_exception(this,&x);
+    %%%%%:  436-block  0
+    #####:  437:                }
+    %%%%%:  437-block  0
+        -:  438:
+        -:  439:            public:
+        -:  440:
+        -:  441:            explicit
+    #####:  442:            clone_impl( T const & x ):
+    #####:  443:                T(x)
+    %%%%%:  443-block  0
+    $$$$$:  443-block  1
+        -:  444:                {
+    #####:  445:                copy_boost_exception(this,&x);
+    #####:  446:                }
+    %%%%%:  446-block  0
+        -:  447:
+    #####:  448:            ~clone_impl() BOOST_NOEXCEPT_OR_NOTHROW
+        -:  449:                {
+    #####:  450:                }
+------------------
+_ZN5boost16exception_detail10clone_implINS0_19error_info_injectorINS_17bad_function_callEEEED0Ev:
+    #####:  448:            ~clone_impl() BOOST_NOEXCEPT_OR_NOTHROW
+        -:  449:                {
+    #####:  450:                }
+    %%%%%:  450-block  0
+------------------
+_ZN5boost16exception_detail10clone_implINS0_19error_info_injectorINS_17bad_function_callEEEED1Ev:
+    #####:  448:            ~clone_impl() BOOST_NOEXCEPT_OR_NOTHROW
+        -:  449:                {
+    #####:  450:                }
+    %%%%%:  450-block  0
+------------------
+_ZN5boost16exception_detail10clone_implINS0_19error_info_injectorINS_17bad_function_callEEEED2Ev:
+    #####:  448:            ~clone_impl() BOOST_NOEXCEPT_OR_NOTHROW
+        -:  449:                {
+    #####:  450:                }
+    %%%%%:  450-block  0
+------------------
+        -:  451:
+        -:  452:            private:
+        -:  453:
+        -:  454:            clone_base const *
+    #####:  455:            clone() const
+        -:  456:                {
+    #####:  457:                return new clone_impl(*this,clone_tag());
+    %%%%%:  457-block  0
+    %%%%%:  457-block  1
+    %%%%%:  457-block  2
+    %%%%%:  457-block  3
+    %%%%%:  457-block  4
+    %%%%%:  457-block  5
+    %%%%%:  457-block  6
+    $$$$$:  457-block  7
+        -:  458:                }
+        -:  459:
+        -:  460:            void
+    #####:  461:            rethrow() const
+        -:  462:                {
+    #####:  463:                throw*this;
+    %%%%%:  463-block  0
+    %%%%%:  463-block  1
+    $$$$$:  463-block  2
+        -:  464:                }
+        -:  465:            };
+        -:  466:        }
+        -:  467:
+        -:  468:    template <class T>
+        -:  469:    inline
+        -:  470:    exception_detail::clone_impl<T>
+        -:  471:    enable_current_exception( T const & x )
+        -:  472:        {
+        -:  473:        return exception_detail::clone_impl<T>(x);
+        -:  474:        }
+        -:  475:
+        -:  476:    template <class T>
+        -:  477:    struct
+        -:  478:    BOOST_SYMBOL_VISIBLE
+        -:  479:    wrapexcept:
+        -:  480:        public exception_detail::clone_impl<typename exception_detail::enable_error_info_return_type<T>::type>
+        -:  481:        {
+        -:  482:        typedef exception_detail::clone_impl<typename exception_detail::enable_error_info_return_type<T>::type> base_type;
+        -:  483:        public:
+        -:  484:        explicit
+    #####:  485:        wrapexcept( typename exception_detail::enable_error_info_return_type<T>::type const & x ):
+    #####:  486:            base_type( x )
+    %%%%%:  486-block  0
+    $$$$$:  486-block  1
+        -:  487:            {
+    #####:  488:            }
+    %%%%%:  488-block  0
+        -:  489:
+    #####:  490:        ~wrapexcept() BOOST_NOEXCEPT_OR_NOTHROW
+        -:  491:            {
+    #####:  492:            }
+------------------
+_ZN5boost10wrapexceptINS_17bad_function_callEED0Ev:
+    #####:  490:        ~wrapexcept() BOOST_NOEXCEPT_OR_NOTHROW
+        -:  491:            {
+    #####:  492:            }
+    %%%%%:  492-block  0
+------------------
+_ZN5boost10wrapexceptINS_17bad_function_callEED1Ev:
+    #####:  490:        ~wrapexcept() BOOST_NOEXCEPT_OR_NOTHROW
+        -:  491:            {
+    #####:  492:            }
+    %%%%%:  492-block  0
+------------------
+        -:  493:        };
+        -:  494:
+        -:  495:    namespace
+        -:  496:    exception_detail
+        -:  497:        {
+        -:  498:        template <class T>
+        -:  499:        struct
+        -:  500:        remove_error_info_injector
+        -:  501:            {
+        -:  502:            typedef T type;
+        -:  503:            };
+        -:  504:
+        -:  505:        template <class T>
+        -:  506:        struct
+        -:  507:        remove_error_info_injector< error_info_injector<T> >
+        -:  508:            {
+        -:  509:            typedef T type;
+        -:  510:            };
+        -:  511:
+        -:  512:        template <class T>
+        -:  513:        inline
+        -:  514:        wrapexcept<typename remove_error_info_injector<T>::type>
+    #####:  515:        enable_both( T const & x )
+        -:  516:            {
+    #####:  517:            return wrapexcept<typename remove_error_info_injector<T>::type>( enable_error_info( x ) );
+    %%%%%:  517-block  0
+    %%%%%:  517-block  1
+    %%%%%:  517-block  2
+    $$$$$:  517-block  3
+        -:  518:            }
+        -:  519:        }
+        -:  520:    }
+        -:  521:
+        -:  522:#if defined(_MSC_VER) && !defined(BOOST_EXCEPTION_ENABLE_WARNINGS)
+        -:  523:#pragma warning(pop)
+        -:  524:#endif
+        -:  525:#endif

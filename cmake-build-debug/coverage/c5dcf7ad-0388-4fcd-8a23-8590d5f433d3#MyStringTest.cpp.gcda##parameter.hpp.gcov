@@ -1,0 +1,3002 @@
+        -:    0:Source:F:/Files/vcpkg/installed/x86-windows/include/boost/test/utils/runtime/parameter.hpp
+        -:    0:Graph:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcno
+        -:    0:Data:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1://  (C) Copyright Gennadiy Rozental 2001.
+        -:    2://  Distributed under the Boost Software License, Version 1.0.
+        -:    3://  (See accompanying file LICENSE_1_0.txt or copy at
+        -:    4://  http://www.boost.org/LICENSE_1_0.txt)
+        -:    5:
+        -:    6://  See http://www.boost.org/libs/test for the library home page.
+        -:    7://
+        -:    8://  File        : $RCSfile$
+        -:    9://
+        -:   10://  Version     : $Revision$
+        -:   11://
+        -:   12://  Description : formal parameter definition
+        -:   13:// ***************************************************************************
+        -:   14:
+        -:   15:#ifndef BOOST_TEST_UTILS_RUNTIME_PARAMETER_HPP
+        -:   16:#define BOOST_TEST_UTILS_RUNTIME_PARAMETER_HPP
+        -:   17:
+        -:   18:// Boost.Test Runtime parameters
+        -:   19:#include <boost/test/utils/runtime/fwd.hpp>
+        -:   20:#include <boost/test/utils/runtime/modifier.hpp>
+        -:   21:#include <boost/test/utils/runtime/argument.hpp>
+        -:   22:#include <boost/test/utils/runtime/argument_factory.hpp>
+        -:   23:
+        -:   24:// Boost.Test
+        -:   25:#include <boost/test/utils/class_properties.hpp>
+        -:   26:#include <boost/test/utils/foreach.hpp>
+        -:   27:#include <boost/test/utils/setcolor.hpp>
+        -:   28:
+        -:   29:// Boost
+        -:   30:#include <boost/function.hpp>
+        -:   31:#include <boost/algorithm/cxx11/all_of.hpp>
+        -:   32:
+        -:   33:// STL
+        -:   34:#include <algorithm>
+        -:   35:
+        -:   36:#include <boost/test/detail/suppress_warnings.hpp>
+        -:   37:
+        -:   38:namespace boost {
+        -:   39:namespace runtime {
+        -:   40:
+        -:   41:inline
+    #####:   42:std::ostream& commandline_pretty_print(
+        -:   43:    std::ostream& ostr, 
+        -:   44:    std::string const& prefix, 
+        -:   45:    std::string const& to_print) {
+        -:   46:    
+    #####:   47:    const int split_at = 80;
+        -:   48:
+    #####:   49:    std::string::size_type current = 0;
+    %%%%%:   49-block  0
+        -:   50:
+    #####:   51:    while(current < to_print.size()) {
+    %%%%%:   51-block  0
+    %%%%%:   51-block  1
+        -:   52:
+        -:   53:        // discards spaces at the beginning
+    #####:   54:        std::string::size_type startpos = to_print.find_first_not_of(" \t\n", current);
+    %%%%%:   54-block  0
+    #####:   55:        current += startpos - current;
+        -:   56:
+    #####:   57:        bool has_more_lines = (current + split_at) < to_print.size();
+        -:   58:
+    #####:   59:        if(has_more_lines) {
+    #####:   60:          std::string::size_type endpos = to_print.find_last_of(" \t\n", current + split_at);
+    %%%%%:   60-block  0
+    #####:   61:          std::string sub(to_print.substr(current, endpos - current));
+    $$$$$:   61-block  0
+    #####:   62:          ostr << prefix << sub;
+    %%%%%:   62-block  0
+    %%%%%:   62-block  1
+    #####:   63:          ostr << "\n";
+    %%%%%:   63-block  0
+    #####:   64:          current += endpos - current;
+    %%%%%:   64-block  0
+        -:   65:        }
+        -:   66:        else 
+        -:   67:        {
+    #####:   68:          ostr << prefix << to_print.substr(current, split_at);
+    %%%%%:   68-block  0
+    %%%%%:   68-block  1
+    $$$$$:   68-block  2
+    #####:   69:          current += split_at;
+        -:   70:        }
+        -:   71:    }
+    #####:   72:    return ostr;
+    %%%%%:   72-block  0
+    %%%%%:   72-block  1
+        -:   73:}
+        -:   74:
+        -:   75:// ************************************************************************** //
+        -:   76:// **************           runtime::parameter_cla_id          ************** //
+        -:   77:// ************************************************************************** //
+        -:   78:// set of attributes identifying the parameter in the command line
+        -:   79:
+        -:   80:struct parameter_cla_id {
+       71:   81:    parameter_cla_id( cstring prefix, cstring tag, cstring value_separator, bool negatable )
+       71:   82:    : m_prefix( prefix.begin(), prefix.size() )
+        -:   83:    , m_tag( tag.begin(), tag.size() )
+        -:   84:    , m_value_separator( value_separator.begin(), value_separator.size() )
+       71:   85:    , m_negatable( negatable )
+       71:   85-block  0
+       71:   85-block  1
+       71:   85-block  2
+       71:   85-block  3
+    $$$$$:   85-block  4
+    $$$$$:   85-block  5
+    $$$$$:   85-block  6
+    $$$$$:   85-block  7
+    $$$$$:   85-block  8
+    $$$$$:   85-block  9
+    $$$$$:   85-block 10
+    $$$$$:   85-block 11
+    $$$$$:   85-block 12
+        -:   86:    {
+        -:   87:
+      71*:   88:        BOOST_TEST_I_ASSRT( algorithm::all_of( m_prefix.begin(), m_prefix.end(), valid_prefix_char ),
+       71:   88-block  0
+    %%%%%:   88-block  1
+    %%%%%:   88-block  2
+    %%%%%:   88-block  3
+    %%%%%:   88-block  4
+    %%%%%:   88-block  5
+    %%%%%:   88-block  6
+    $$$$$:   88-block  7
+    $$$$$:   88-block  8
+    $$$$$:   88-block  9
+    $$$$$:   88-block 10
+    $$$$$:   88-block 11
+    $$$$$:   88-block 12
+    $$$$$:   88-block 13
+    $$$$$:   88-block 14
+    $$$$$:   88-block 15
+        -:   89:                            invalid_cla_id() << "Parameter " << m_tag
+        -:   90:                                             << " has invalid characters in prefix." );
+        -:   91:
+      71*:   92:        BOOST_TEST_I_ASSRT( algorithm::all_of( m_tag.begin(), m_tag.end(), valid_name_char ),
+       71:   92-block  0
+       71:   92-block  1
+    %%%%%:   92-block  2
+    %%%%%:   92-block  3
+    %%%%%:   92-block  4
+    %%%%%:   92-block  5
+    %%%%%:   92-block  6
+    %%%%%:   92-block  7
+    $$$$$:   92-block  8
+    $$$$$:   92-block  9
+    $$$$$:   92-block 10
+    $$$$$:   92-block 11
+    $$$$$:   92-block 12
+    $$$$$:   92-block 13
+    $$$$$:   92-block 14
+    $$$$$:   92-block 15
+    $$$$$:   92-block 16
+        -:   93:                            invalid_cla_id() << "Parameter " << m_tag
+        -:   94:                                             << " has invalid characters in name." );
+        -:   95:
+      71*:   96:        BOOST_TEST_I_ASSRT( algorithm::all_of( m_value_separator.begin(), m_value_separator.end(), valid_separator_char ),
+       71:   96-block  0
+       71:   96-block  1
+    %%%%%:   96-block  2
+    %%%%%:   96-block  3
+    %%%%%:   96-block  4
+    %%%%%:   96-block  5
+    %%%%%:   96-block  6
+    %%%%%:   96-block  7
+    $$$$$:   96-block  8
+    $$$$$:   96-block  9
+    $$$$$:   96-block 10
+    $$$$$:   96-block 11
+    $$$$$:   96-block 12
+    $$$$$:   96-block 13
+    $$$$$:   96-block 14
+    $$$$$:   96-block 15
+    $$$$$:   96-block 16
+        -:   97:                            invalid_cla_id() << "Parameter " << m_tag
+        -:   98:                                             << " has invalid characters in value separator." );
+       71:   99:    }
+       71:   99-block  0
+        -:  100:
+      199:  101:    static bool             valid_prefix_char( char c )
+        -:  102:    {
+      199:  103:        return c == '-' || c == '/' ;
+      199:  103-block  0
+      117:  103-block  1
+      194:  103-block  2
+        5:  103-block  3
+      199:  103-block  4
+        -:  104:    }
+       64:  105:    static bool             valid_separator_char( char c )
+        -:  106:    {
+       64:  107:        return c == '=' || c == ':' || c == ' ' || c == '\0';
+       64:  107-block  0
+       33:  107-block  1
+        5:  107-block  2
+        5:  107-block  3
+       59:  107-block  4
+        5:  107-block  5
+       64:  107-block  6
+        -:  108:    }
+      735:  109:    static bool             valid_name_char( char c )
+        -:  110:    {
+      735:  111:        return std::isalnum( c ) || c == '+' || c == '_' || c == '?';
+      735:  111-block  0
+       75:  111-block  1
+       75:  111-block  2
+        6:  111-block  3
+      730:  111-block  4
+        5:  111-block  5
+      735:  111-block  6
+        -:  112:    }
+        -:  113:
+        -:  114:    std::string             m_prefix;
+        -:  115:    std::string             m_tag;
+        -:  116:    std::string             m_value_separator;
+        -:  117:    bool                    m_negatable;
+        -:  118:};
+        -:  119:
+        -:  120:typedef std::vector<parameter_cla_id> param_cla_ids;
+        -:  121:
+        -:  122:// ************************************************************************** //
+        -:  123:// **************             runtime::basic_param             ************** //
+        -:  124:// ************************************************************************** //
+        -:  125:
+        -:  126:cstring const help_prefix("////");
+        -:  127:
+        -:  128:class basic_param {
+        -:  129:    typedef function<void (cstring)>            callback_type;
+        -:  130:    typedef unit_test::readwrite_property<bool> bool_property;
+        -:  131:
+        -:  132:protected:
+        -:  133:    /// Constructor with modifiers
+        -:  134:    template<typename Modifiers>
+       28:  135:    basic_param( cstring name, bool is_optional, bool is_repeatable, Modifiers const& m )
+        -:  136:    : p_name( name.begin(), name.end() )
+        -:  137:    , p_description( nfp::opt_get( m, description, std::string() ) )
+        -:  138:    , p_help( nfp::opt_get( m, runtime::help, std::string() ) )
+        -:  139:    , p_env_var( nfp::opt_get( m, env_var, std::string() ) )
+        -:  140:    , p_value_hint( nfp::opt_get( m, value_hint, std::string() ) )
+        -:  141:    , p_optional( is_optional )
+        -:  142:    , p_repeatable( is_repeatable )
+        -:  143:    , p_has_optional_value( m.has( optional_value ) )
+      28*:  144:    , p_has_default_value( m.has( default_value ) || is_repeatable )
+       56:  145:    , p_callback( nfp::opt_get( m, callback, callback_type() ) )
+        -:  146:    {
+       28:  147:        add_cla_id( help_prefix, name, ":" );
+       28:  148:    }
+------------------
+_ZN5boost7runtime11basic_paramC2INS_3nfp23named_parameter_combineINS3_15named_parameterIKNS_9unit_test13basic_cstringIKcEENS0_12_GLOBAL__N_16help_tERSA_EENS4_INS5_IKSt16initializer_listISt4pairISA_NS6_12report_levelEEENSB_13enum_values_tERSK_EENS4_INS5_IKSH_NSB_15default_value_tERSO_EENS4_INS5_ISA_NSB_9env_var_tESD_EENS5_ISA_NSB_13description_tESD_EEEEEEEEEEEES9_bbRKT_:
+        1:  135:    basic_param( cstring name, bool is_optional, bool is_repeatable, Modifiers const& m )
+        -:  136:    : p_name( name.begin(), name.end() )
+        -:  137:    , p_description( nfp::opt_get( m, description, std::string() ) )
+        -:  138:    , p_help( nfp::opt_get( m, runtime::help, std::string() ) )
+        -:  139:    , p_env_var( nfp::opt_get( m, env_var, std::string() ) )
+        -:  140:    , p_value_hint( nfp::opt_get( m, value_hint, std::string() ) )
+        -:  141:    , p_optional( is_optional )
+        -:  142:    , p_repeatable( is_repeatable )
+        -:  143:    , p_has_optional_value( m.has( optional_value ) )
+       1*:  144:    , p_has_default_value( m.has( default_value ) || is_repeatable )
+        1:  144-block  0
+    %%%%%:  144-block  1
+        1:  144-block  2
+    %%%%%:  144-block  3
+        2:  145:    , p_callback( nfp::opt_get( m, callback, callback_type() ) )
+        1:  145-block  0
+        1:  145-block  1
+        1:  145-block  2
+        1:  145-block  3
+        1:  145-block  4
+        1:  145-block  5
+        1:  145-block  6
+        1:  145-block  7
+        1:  145-block  8
+        1:  145-block  9
+    $$$$$:  145-block 10
+    $$$$$:  145-block 11
+    $$$$$:  145-block 12
+    $$$$$:  145-block 13
+    $$$$$:  145-block 14
+    $$$$$:  145-block 15
+    $$$$$:  145-block 16
+    $$$$$:  145-block 17
+    $$$$$:  145-block 18
+    $$$$$:  145-block 19
+    $$$$$:  145-block 20
+    $$$$$:  145-block 21
+    $$$$$:  145-block 22
+    $$$$$:  145-block 23
+    $$$$$:  145-block 24
+    $$$$$:  145-block 25
+    $$$$$:  145-block 26
+    $$$$$:  145-block 27
+    $$$$$:  145-block 28
+        -:  146:    {
+        1:  147:        add_cla_id( help_prefix, name, ":" );
+        1:  147-block  0
+    $$$$$:  147-block  1
+    $$$$$:  147-block  2
+    $$$$$:  147-block  3
+        1:  148:    }
+        1:  148-block  0
+------------------
+_ZN5boost7runtime11basic_paramC2INS_3nfp23named_parameter_combineINS3_15named_parameterIKNS_9unit_test13basic_cstringIKcEENS0_12_GLOBAL__N_16help_tERSA_EENS4_INS5_IKSt16initializer_listISt4pairISA_NS6_13output_formatEEENSB_13enum_values_tERSK_EENS4_INS5_ISA_NSB_9env_var_tESD_EENS5_ISA_NSB_13description_tESD_EEEEEEEEEES9_bbRKT_:
+        1:  135:    basic_param( cstring name, bool is_optional, bool is_repeatable, Modifiers const& m )
+        -:  136:    : p_name( name.begin(), name.end() )
+        -:  137:    , p_description( nfp::opt_get( m, description, std::string() ) )
+        -:  138:    , p_help( nfp::opt_get( m, runtime::help, std::string() ) )
+        -:  139:    , p_env_var( nfp::opt_get( m, env_var, std::string() ) )
+        -:  140:    , p_value_hint( nfp::opt_get( m, value_hint, std::string() ) )
+        -:  141:    , p_optional( is_optional )
+        -:  142:    , p_repeatable( is_repeatable )
+        -:  143:    , p_has_optional_value( m.has( optional_value ) )
+       1*:  144:    , p_has_default_value( m.has( default_value ) || is_repeatable )
+        1:  144-block  0
+    %%%%%:  144-block  1
+        1:  144-block  2
+        2:  145:    , p_callback( nfp::opt_get( m, callback, callback_type() ) )
+        1:  145-block  0
+        1:  145-block  1
+        1:  145-block  2
+        1:  145-block  3
+        1:  145-block  4
+        1:  145-block  5
+        1:  145-block  6
+        1:  145-block  7
+        1:  145-block  8
+        1:  145-block  9
+    $$$$$:  145-block 10
+    $$$$$:  145-block 11
+    $$$$$:  145-block 12
+    $$$$$:  145-block 13
+    $$$$$:  145-block 14
+    $$$$$:  145-block 15
+    $$$$$:  145-block 16
+    $$$$$:  145-block 17
+    $$$$$:  145-block 18
+    $$$$$:  145-block 19
+    $$$$$:  145-block 20
+    $$$$$:  145-block 21
+    $$$$$:  145-block 22
+    $$$$$:  145-block 23
+    $$$$$:  145-block 24
+    $$$$$:  145-block 25
+    $$$$$:  145-block 26
+    $$$$$:  145-block 27
+    $$$$$:  145-block 28
+        -:  146:    {
+        1:  147:        add_cla_id( help_prefix, name, ":" );
+        1:  147-block  0
+    $$$$$:  147-block  1
+    $$$$$:  147-block  2
+    $$$$$:  147-block  3
+        1:  148:    }
+        1:  148-block  0
+------------------
+_ZN5boost7runtime11basic_paramC2INS_3nfp23named_parameter_combineINS3_15named_parameterIKNS_9unit_test13basic_cstringIKcEENS0_12_GLOBAL__N_16help_tERSA_EENS4_INS5_IKSt16initializer_listISt4pairISA_NS6_9log_levelEEENSB_13enum_values_tERSK_EENS4_INS5_IKSH_NSB_15default_value_tERSO_EENS4_INS5_ISA_NSB_9env_var_tESD_EENS5_ISA_NSB_13description_tESD_EEEEEEEEEEEES9_bbRKT_:
+        1:  135:    basic_param( cstring name, bool is_optional, bool is_repeatable, Modifiers const& m )
+        -:  136:    : p_name( name.begin(), name.end() )
+        -:  137:    , p_description( nfp::opt_get( m, description, std::string() ) )
+        -:  138:    , p_help( nfp::opt_get( m, runtime::help, std::string() ) )
+        -:  139:    , p_env_var( nfp::opt_get( m, env_var, std::string() ) )
+        -:  140:    , p_value_hint( nfp::opt_get( m, value_hint, std::string() ) )
+        -:  141:    , p_optional( is_optional )
+        -:  142:    , p_repeatable( is_repeatable )
+        -:  143:    , p_has_optional_value( m.has( optional_value ) )
+       1*:  144:    , p_has_default_value( m.has( default_value ) || is_repeatable )
+        1:  144-block  0
+    %%%%%:  144-block  1
+        1:  144-block  2
+    %%%%%:  144-block  3
+        2:  145:    , p_callback( nfp::opt_get( m, callback, callback_type() ) )
+        1:  145-block  0
+        1:  145-block  1
+        1:  145-block  2
+        1:  145-block  3
+        1:  145-block  4
+        1:  145-block  5
+        1:  145-block  6
+        1:  145-block  7
+        1:  145-block  8
+        1:  145-block  9
+    $$$$$:  145-block 10
+    $$$$$:  145-block 11
+    $$$$$:  145-block 12
+    $$$$$:  145-block 13
+    $$$$$:  145-block 14
+    $$$$$:  145-block 15
+    $$$$$:  145-block 16
+    $$$$$:  145-block 17
+    $$$$$:  145-block 18
+    $$$$$:  145-block 19
+    $$$$$:  145-block 20
+    $$$$$:  145-block 21
+    $$$$$:  145-block 22
+    $$$$$:  145-block 23
+    $$$$$:  145-block 24
+    $$$$$:  145-block 25
+    $$$$$:  145-block 26
+    $$$$$:  145-block 27
+    $$$$$:  145-block 28
+        -:  146:    {
+        1:  147:        add_cla_id( help_prefix, name, ":" );
+        1:  147-block  0
+    $$$$$:  147-block  1
+    $$$$$:  147-block  2
+    $$$$$:  147-block  3
+        1:  148:    }
+        1:  148-block  0
+------------------
+_ZN5boost7runtime11basic_paramC2INS_3nfp23named_parameter_combineINS3_15named_parameterIKNS_9unit_test13basic_cstringIKcEENS0_12_GLOBAL__N_16help_tERSA_EENS4_INS5_IKSt16initializer_listISt4pairISA_NS6_13output_formatEEENSB_13enum_values_tERSK_EENS4_INS5_IKSH_NSB_15default_value_tERSO_EENS4_INS5_ISA_NSB_9env_var_tESD_EENS5_ISA_NSB_13description_tESD_EEEEEEEEEEEES9_bbRKT_:
+        2:  135:    basic_param( cstring name, bool is_optional, bool is_repeatable, Modifiers const& m )
+        -:  136:    : p_name( name.begin(), name.end() )
+        -:  137:    , p_description( nfp::opt_get( m, description, std::string() ) )
+        -:  138:    , p_help( nfp::opt_get( m, runtime::help, std::string() ) )
+        -:  139:    , p_env_var( nfp::opt_get( m, env_var, std::string() ) )
+        -:  140:    , p_value_hint( nfp::opt_get( m, value_hint, std::string() ) )
+        -:  141:    , p_optional( is_optional )
+        -:  142:    , p_repeatable( is_repeatable )
+        -:  143:    , p_has_optional_value( m.has( optional_value ) )
+       2*:  144:    , p_has_default_value( m.has( default_value ) || is_repeatable )
+        2:  144-block  0
+    %%%%%:  144-block  1
+        2:  144-block  2
+    %%%%%:  144-block  3
+        4:  145:    , p_callback( nfp::opt_get( m, callback, callback_type() ) )
+        2:  145-block  0
+        2:  145-block  1
+        2:  145-block  2
+        2:  145-block  3
+        2:  145-block  4
+        2:  145-block  5
+        2:  145-block  6
+        2:  145-block  7
+        2:  145-block  8
+        2:  145-block  9
+    $$$$$:  145-block 10
+    $$$$$:  145-block 11
+    $$$$$:  145-block 12
+    $$$$$:  145-block 13
+    $$$$$:  145-block 14
+    $$$$$:  145-block 15
+    $$$$$:  145-block 16
+    $$$$$:  145-block 17
+    $$$$$:  145-block 18
+    $$$$$:  145-block 19
+    $$$$$:  145-block 20
+    $$$$$:  145-block 21
+    $$$$$:  145-block 22
+    $$$$$:  145-block 23
+    $$$$$:  145-block 24
+    $$$$$:  145-block 25
+    $$$$$:  145-block 26
+    $$$$$:  145-block 27
+    $$$$$:  145-block 28
+        -:  146:    {
+        2:  147:        add_cla_id( help_prefix, name, ":" );
+        2:  147-block  0
+    $$$$$:  147-block  1
+    $$$$$:  147-block  2
+    $$$$$:  147-block  3
+        2:  148:    }
+        2:  148-block  0
+------------------
+_ZN5boost7runtime11basic_paramC2INS_3nfp23named_parameter_combineINS3_15named_parameterIKNS_9unit_test13basic_cstringIKcEENS0_12_GLOBAL__N_16help_tERSA_EENS4_INS5_IKSt16initializer_listISt4pairISA_NS6_13output_formatEEENSB_13enum_values_tERSK_EENS4_INS5_IKSH_NSB_16optional_value_tERSO_EENS4_INS5_ISO_NSB_15default_value_tESQ_EENS4_INS5_ISA_NSB_9env_var_tESD_EENS5_ISA_NSB_13description_tESD_EEEEEEEEEEEEEES9_bbRKT_:
+        1:  135:    basic_param( cstring name, bool is_optional, bool is_repeatable, Modifiers const& m )
+        -:  136:    : p_name( name.begin(), name.end() )
+        -:  137:    , p_description( nfp::opt_get( m, description, std::string() ) )
+        -:  138:    , p_help( nfp::opt_get( m, runtime::help, std::string() ) )
+        -:  139:    , p_env_var( nfp::opt_get( m, env_var, std::string() ) )
+        -:  140:    , p_value_hint( nfp::opt_get( m, value_hint, std::string() ) )
+        -:  141:    , p_optional( is_optional )
+        -:  142:    , p_repeatable( is_repeatable )
+        -:  143:    , p_has_optional_value( m.has( optional_value ) )
+       1*:  144:    , p_has_default_value( m.has( default_value ) || is_repeatable )
+        1:  144-block  0
+    %%%%%:  144-block  1
+        1:  144-block  2
+    %%%%%:  144-block  3
+        2:  145:    , p_callback( nfp::opt_get( m, callback, callback_type() ) )
+        1:  145-block  0
+        1:  145-block  1
+        1:  145-block  2
+        1:  145-block  3
+        1:  145-block  4
+        1:  145-block  5
+        1:  145-block  6
+        1:  145-block  7
+        1:  145-block  8
+        1:  145-block  9
+        1:  145-block 10
+    $$$$$:  145-block 11
+    $$$$$:  145-block 12
+    $$$$$:  145-block 13
+    $$$$$:  145-block 14
+    $$$$$:  145-block 15
+    $$$$$:  145-block 16
+    $$$$$:  145-block 17
+    $$$$$:  145-block 18
+    $$$$$:  145-block 19
+    $$$$$:  145-block 20
+    $$$$$:  145-block 21
+    $$$$$:  145-block 22
+    $$$$$:  145-block 23
+    $$$$$:  145-block 24
+    $$$$$:  145-block 25
+    $$$$$:  145-block 26
+    $$$$$:  145-block 27
+    $$$$$:  145-block 28
+    $$$$$:  145-block 29
+        -:  146:    {
+        1:  147:        add_cla_id( help_prefix, name, ":" );
+        1:  147-block  0
+    $$$$$:  147-block  1
+    $$$$$:  147-block  2
+    $$$$$:  147-block  3
+        1:  148:    }
+        1:  148-block  0
+------------------
+_ZN5boost7runtime11basic_paramC2INS_3nfp23named_parameter_combineINS3_15named_parameterIKbNS0_12_GLOBAL__N_115default_value_tERS6_EENS4_INS5_IS6_NS7_16optional_value_tES9_EENS5_IKNS_9unit_test13basic_cstringIKcEENS7_13description_tERSH_EEEEEEEESG_bbRKT_:
+        2:  135:    basic_param( cstring name, bool is_optional, bool is_repeatable, Modifiers const& m )
+        -:  136:    : p_name( name.begin(), name.end() )
+        -:  137:    , p_description( nfp::opt_get( m, description, std::string() ) )
+        -:  138:    , p_help( nfp::opt_get( m, runtime::help, std::string() ) )
+        -:  139:    , p_env_var( nfp::opt_get( m, env_var, std::string() ) )
+        -:  140:    , p_value_hint( nfp::opt_get( m, value_hint, std::string() ) )
+        -:  141:    , p_optional( is_optional )
+        -:  142:    , p_repeatable( is_repeatable )
+        -:  143:    , p_has_optional_value( m.has( optional_value ) )
+       2*:  144:    , p_has_default_value( m.has( default_value ) || is_repeatable )
+        2:  144-block  0
+    %%%%%:  144-block  1
+        2:  144-block  2
+    %%%%%:  144-block  3
+        4:  145:    , p_callback( nfp::opt_get( m, callback, callback_type() ) )
+        2:  145-block  0
+        2:  145-block  1
+        2:  145-block  2
+        2:  145-block  3
+        2:  145-block  4
+        2:  145-block  5
+        2:  145-block  6
+        2:  145-block  7
+        2:  145-block  8
+        2:  145-block  9
+        2:  145-block 10
+    $$$$$:  145-block 11
+    $$$$$:  145-block 12
+    $$$$$:  145-block 13
+    $$$$$:  145-block 14
+    $$$$$:  145-block 15
+    $$$$$:  145-block 16
+    $$$$$:  145-block 17
+    $$$$$:  145-block 18
+    $$$$$:  145-block 19
+    $$$$$:  145-block 20
+    $$$$$:  145-block 21
+    $$$$$:  145-block 22
+    $$$$$:  145-block 23
+    $$$$$:  145-block 24
+    $$$$$:  145-block 25
+    $$$$$:  145-block 26
+    $$$$$:  145-block 27
+    $$$$$:  145-block 28
+    $$$$$:  145-block 29
+        -:  146:    {
+        2:  147:        add_cla_id( help_prefix, name, ":" );
+        2:  147-block  0
+    $$$$$:  147-block  1
+    $$$$$:  147-block  2
+    $$$$$:  147-block  3
+        2:  148:    }
+        2:  148-block  0
+------------------
+_ZN5boost7runtime11basic_paramC2INS_3nfp23named_parameter_combineINS3_15named_parameterIKNS_9unit_test13basic_cstringIKcEENS0_12_GLOBAL__N_16help_tERSA_EENS4_INS5_ISA_NSB_12value_hint_tESD_EENS4_INS5_IKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEENSB_16optional_value_tERSN_EENS5_ISA_NSB_13description_tESD_EEEEEEEEEES9_bbRKT_:
+        1:  135:    basic_param( cstring name, bool is_optional, bool is_repeatable, Modifiers const& m )
+        -:  136:    : p_name( name.begin(), name.end() )
+        -:  137:    , p_description( nfp::opt_get( m, description, std::string() ) )
+        -:  138:    , p_help( nfp::opt_get( m, runtime::help, std::string() ) )
+        -:  139:    , p_env_var( nfp::opt_get( m, env_var, std::string() ) )
+        -:  140:    , p_value_hint( nfp::opt_get( m, value_hint, std::string() ) )
+        -:  141:    , p_optional( is_optional )
+        -:  142:    , p_repeatable( is_repeatable )
+        -:  143:    , p_has_optional_value( m.has( optional_value ) )
+       1*:  144:    , p_has_default_value( m.has( default_value ) || is_repeatable )
+        1:  144-block  0
+    %%%%%:  144-block  1
+        1:  144-block  2
+        2:  145:    , p_callback( nfp::opt_get( m, callback, callback_type() ) )
+        1:  145-block  0
+        1:  145-block  1
+        1:  145-block  2
+        1:  145-block  3
+        1:  145-block  4
+        1:  145-block  5
+        1:  145-block  6
+        1:  145-block  7
+        1:  145-block  8
+        1:  145-block  9
+        1:  145-block 10
+    $$$$$:  145-block 11
+    $$$$$:  145-block 12
+    $$$$$:  145-block 13
+    $$$$$:  145-block 14
+    $$$$$:  145-block 15
+    $$$$$:  145-block 16
+    $$$$$:  145-block 17
+    $$$$$:  145-block 18
+    $$$$$:  145-block 19
+    $$$$$:  145-block 20
+    $$$$$:  145-block 21
+    $$$$$:  145-block 22
+    $$$$$:  145-block 23
+    $$$$$:  145-block 24
+    $$$$$:  145-block 25
+    $$$$$:  145-block 26
+    $$$$$:  145-block 27
+    $$$$$:  145-block 28
+    $$$$$:  145-block 29
+        -:  146:    {
+        1:  147:        add_cla_id( help_prefix, name, ":" );
+        1:  147-block  0
+    $$$$$:  147-block  1
+    $$$$$:  147-block  2
+    $$$$$:  147-block  3
+        1:  148:    }
+        1:  148-block  0
+------------------
+_ZN5boost7runtime11basic_paramC2INS_3nfp23named_parameter_combineINS3_15named_parameterIKNS_9unit_test13basic_cstringIKcEENS0_12_GLOBAL__N_16help_tERSA_EENS4_INS5_ISA_NSB_12value_hint_tESD_EENS4_INS5_IKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEENSB_15default_value_tERSN_EENS4_INS5_ISA_NSB_9env_var_tESD_EENS5_ISA_NSB_13description_tESD_EEEEEEEEEEEES9_bbRKT_:
+        1:  135:    basic_param( cstring name, bool is_optional, bool is_repeatable, Modifiers const& m )
+        -:  136:    : p_name( name.begin(), name.end() )
+        -:  137:    , p_description( nfp::opt_get( m, description, std::string() ) )
+        -:  138:    , p_help( nfp::opt_get( m, runtime::help, std::string() ) )
+        -:  139:    , p_env_var( nfp::opt_get( m, env_var, std::string() ) )
+        -:  140:    , p_value_hint( nfp::opt_get( m, value_hint, std::string() ) )
+        -:  141:    , p_optional( is_optional )
+        -:  142:    , p_repeatable( is_repeatable )
+        -:  143:    , p_has_optional_value( m.has( optional_value ) )
+       1*:  144:    , p_has_default_value( m.has( default_value ) || is_repeatable )
+        1:  144-block  0
+    %%%%%:  144-block  1
+        1:  144-block  2
+    %%%%%:  144-block  3
+        2:  145:    , p_callback( nfp::opt_get( m, callback, callback_type() ) )
+        1:  145-block  0
+        1:  145-block  1
+        1:  145-block  2
+        1:  145-block  3
+        1:  145-block  4
+        1:  145-block  5
+        1:  145-block  6
+        1:  145-block  7
+        1:  145-block  8
+        1:  145-block  9
+    $$$$$:  145-block 10
+    $$$$$:  145-block 11
+    $$$$$:  145-block 12
+    $$$$$:  145-block 13
+    $$$$$:  145-block 14
+    $$$$$:  145-block 15
+    $$$$$:  145-block 16
+    $$$$$:  145-block 17
+    $$$$$:  145-block 18
+    $$$$$:  145-block 19
+    $$$$$:  145-block 20
+    $$$$$:  145-block 21
+    $$$$$:  145-block 22
+    $$$$$:  145-block 23
+    $$$$$:  145-block 24
+    $$$$$:  145-block 25
+    $$$$$:  145-block 26
+    $$$$$:  145-block 27
+    $$$$$:  145-block 28
+        -:  146:    {
+        1:  147:        add_cla_id( help_prefix, name, ":" );
+        1:  147-block  0
+    $$$$$:  147-block  1
+    $$$$$:  147-block  2
+    $$$$$:  147-block  3
+        1:  148:    }
+        1:  148-block  0
+------------------
+_ZN5boost7runtime11basic_paramC2INS_3nfp23named_parameter_combineINS3_15named_parameterIKNS_9unit_test13basic_cstringIKcEENS0_12_GLOBAL__N_16help_tERSA_EENS4_INS5_ISA_NSB_12value_hint_tESD_EENS4_INS5_IKjNSB_16optional_value_tERSH_EENS4_INS5_ISH_NSB_15default_value_tESJ_EENS4_INS5_ISA_NSB_9env_var_tESD_EENS5_ISA_NSB_13description_tESD_EEEEEEEEEEEEEES9_bbRKT_:
+        1:  135:    basic_param( cstring name, bool is_optional, bool is_repeatable, Modifiers const& m )
+        -:  136:    : p_name( name.begin(), name.end() )
+        -:  137:    , p_description( nfp::opt_get( m, description, std::string() ) )
+        -:  138:    , p_help( nfp::opt_get( m, runtime::help, std::string() ) )
+        -:  139:    , p_env_var( nfp::opt_get( m, env_var, std::string() ) )
+        -:  140:    , p_value_hint( nfp::opt_get( m, value_hint, std::string() ) )
+        -:  141:    , p_optional( is_optional )
+        -:  142:    , p_repeatable( is_repeatable )
+        -:  143:    , p_has_optional_value( m.has( optional_value ) )
+       1*:  144:    , p_has_default_value( m.has( default_value ) || is_repeatable )
+        1:  144-block  0
+    %%%%%:  144-block  1
+        1:  144-block  2
+    %%%%%:  144-block  3
+        2:  145:    , p_callback( nfp::opt_get( m, callback, callback_type() ) )
+        1:  145-block  0
+        1:  145-block  1
+        1:  145-block  2
+        1:  145-block  3
+        1:  145-block  4
+        1:  145-block  5
+        1:  145-block  6
+        1:  145-block  7
+        1:  145-block  8
+        1:  145-block  9
+        1:  145-block 10
+    $$$$$:  145-block 11
+    $$$$$:  145-block 12
+    $$$$$:  145-block 13
+    $$$$$:  145-block 14
+    $$$$$:  145-block 15
+    $$$$$:  145-block 16
+    $$$$$:  145-block 17
+    $$$$$:  145-block 18
+    $$$$$:  145-block 19
+    $$$$$:  145-block 20
+    $$$$$:  145-block 21
+    $$$$$:  145-block 22
+    $$$$$:  145-block 23
+    $$$$$:  145-block 24
+    $$$$$:  145-block 25
+    $$$$$:  145-block 26
+    $$$$$:  145-block 27
+    $$$$$:  145-block 28
+    $$$$$:  145-block 29
+        -:  146:    {
+        1:  147:        add_cla_id( help_prefix, name, ":" );
+        1:  147-block  0
+    $$$$$:  147-block  1
+    $$$$$:  147-block  2
+    $$$$$:  147-block  3
+        1:  148:    }
+        1:  148-block  0
+------------------
+_ZN5boost7runtime11basic_paramC2INS_3nfp23named_parameter_combineINS3_15named_parameterIKNS_9unit_test13basic_cstringIKcEENS0_12_GLOBAL__N_16help_tERSA_EENS4_INS5_ISA_NSB_12value_hint_tESD_EENS4_INS5_ISA_NSB_9env_var_tESD_EENS5_ISA_NSB_13description_tESD_EEEEEEEEEES9_bbRKT_:
+        4:  135:    basic_param( cstring name, bool is_optional, bool is_repeatable, Modifiers const& m )
+        -:  136:    : p_name( name.begin(), name.end() )
+        -:  137:    , p_description( nfp::opt_get( m, description, std::string() ) )
+        -:  138:    , p_help( nfp::opt_get( m, runtime::help, std::string() ) )
+        -:  139:    , p_env_var( nfp::opt_get( m, env_var, std::string() ) )
+        -:  140:    , p_value_hint( nfp::opt_get( m, value_hint, std::string() ) )
+        -:  141:    , p_optional( is_optional )
+        -:  142:    , p_repeatable( is_repeatable )
+        -:  143:    , p_has_optional_value( m.has( optional_value ) )
+        4:  144:    , p_has_default_value( m.has( default_value ) || is_repeatable )
+        4:  144-block  0
+        2:  144-block  1
+        2:  144-block  2
+        8:  145:    , p_callback( nfp::opt_get( m, callback, callback_type() ) )
+        4:  145-block  0
+        4:  145-block  1
+        4:  145-block  2
+        4:  145-block  3
+        4:  145-block  4
+        4:  145-block  5
+        4:  145-block  6
+        4:  145-block  7
+        4:  145-block  8
+        4:  145-block  9
+    $$$$$:  145-block 10
+    $$$$$:  145-block 11
+    $$$$$:  145-block 12
+    $$$$$:  145-block 13
+    $$$$$:  145-block 14
+    $$$$$:  145-block 15
+    $$$$$:  145-block 16
+    $$$$$:  145-block 17
+    $$$$$:  145-block 18
+    $$$$$:  145-block 19
+    $$$$$:  145-block 20
+    $$$$$:  145-block 21
+    $$$$$:  145-block 22
+    $$$$$:  145-block 23
+    $$$$$:  145-block 24
+    $$$$$:  145-block 25
+    $$$$$:  145-block 26
+    $$$$$:  145-block 27
+    $$$$$:  145-block 28
+        -:  146:    {
+        4:  147:        add_cla_id( help_prefix, name, ":" );
+        4:  147-block  0
+    $$$$$:  147-block  1
+    $$$$$:  147-block  2
+    $$$$$:  147-block  3
+        4:  148:    }
+        4:  148-block  0
+------------------
+_ZN5boost7runtime11basic_paramC2INS_3nfp23named_parameter_combineINS3_15named_parameterIKNS_9unit_test13basic_cstringIKcEENS0_12_GLOBAL__N_16help_tERSA_EENS4_INS5_ISA_NSB_12value_hint_tESD_EENS4_INS5_IKlNSB_16optional_value_tERSH_EENS4_INS5_ISH_NSB_15default_value_tESJ_EENS4_INS5_ISA_NSB_9env_var_tESD_EENS5_ISA_NSB_13description_tESD_EEEEEEEEEEEEEES9_bbRKT_:
+        1:  135:    basic_param( cstring name, bool is_optional, bool is_repeatable, Modifiers const& m )
+        -:  136:    : p_name( name.begin(), name.end() )
+        -:  137:    , p_description( nfp::opt_get( m, description, std::string() ) )
+        -:  138:    , p_help( nfp::opt_get( m, runtime::help, std::string() ) )
+        -:  139:    , p_env_var( nfp::opt_get( m, env_var, std::string() ) )
+        -:  140:    , p_value_hint( nfp::opt_get( m, value_hint, std::string() ) )
+        -:  141:    , p_optional( is_optional )
+        -:  142:    , p_repeatable( is_repeatable )
+        -:  143:    , p_has_optional_value( m.has( optional_value ) )
+       1*:  144:    , p_has_default_value( m.has( default_value ) || is_repeatable )
+        1:  144-block  0
+    %%%%%:  144-block  1
+        1:  144-block  2
+    %%%%%:  144-block  3
+        2:  145:    , p_callback( nfp::opt_get( m, callback, callback_type() ) )
+        1:  145-block  0
+        1:  145-block  1
+        1:  145-block  2
+        1:  145-block  3
+        1:  145-block  4
+        1:  145-block  5
+        1:  145-block  6
+        1:  145-block  7
+        1:  145-block  8
+        1:  145-block  9
+        1:  145-block 10
+    $$$$$:  145-block 11
+    $$$$$:  145-block 12
+    $$$$$:  145-block 13
+    $$$$$:  145-block 14
+    $$$$$:  145-block 15
+    $$$$$:  145-block 16
+    $$$$$:  145-block 17
+    $$$$$:  145-block 18
+    $$$$$:  145-block 19
+    $$$$$:  145-block 20
+    $$$$$:  145-block 21
+    $$$$$:  145-block 22
+    $$$$$:  145-block 23
+    $$$$$:  145-block 24
+    $$$$$:  145-block 25
+    $$$$$:  145-block 26
+    $$$$$:  145-block 27
+    $$$$$:  145-block 28
+    $$$$$:  145-block 29
+        -:  146:    {
+        1:  147:        add_cla_id( help_prefix, name, ":" );
+        1:  147-block  0
+    $$$$$:  147-block  1
+    $$$$$:  147-block  2
+    $$$$$:  147-block  3
+        1:  148:    }
+        1:  148-block  0
+------------------
+_ZN5boost7runtime11basic_paramC2INS_3nfp23named_parameter_combineINS3_15named_parameterIKbNS0_12_GLOBAL__N_116optional_value_tERS6_EENS4_INS5_IKNS_9unit_test13basic_cstringIKcEENS7_6help_tERSF_EENS4_INS5_IS6_NS7_15default_value_tES9_EENS4_INS5_ISF_NS7_9env_var_tESH_EENS5_ISF_NS7_13description_tESH_EEEEEEEEEEEESE_bbRKT_:
+        4:  135:    basic_param( cstring name, bool is_optional, bool is_repeatable, Modifiers const& m )
+        -:  136:    : p_name( name.begin(), name.end() )
+        -:  137:    , p_description( nfp::opt_get( m, description, std::string() ) )
+        -:  138:    , p_help( nfp::opt_get( m, runtime::help, std::string() ) )
+        -:  139:    , p_env_var( nfp::opt_get( m, env_var, std::string() ) )
+        -:  140:    , p_value_hint( nfp::opt_get( m, value_hint, std::string() ) )
+        -:  141:    , p_optional( is_optional )
+        -:  142:    , p_repeatable( is_repeatable )
+        -:  143:    , p_has_optional_value( m.has( optional_value ) )
+       4*:  144:    , p_has_default_value( m.has( default_value ) || is_repeatable )
+        4:  144-block  0
+    %%%%%:  144-block  1
+        4:  144-block  2
+    %%%%%:  144-block  3
+        8:  145:    , p_callback( nfp::opt_get( m, callback, callback_type() ) )
+        4:  145-block  0
+        4:  145-block  1
+        4:  145-block  2
+        4:  145-block  3
+        4:  145-block  4
+        4:  145-block  5
+        4:  145-block  6
+        4:  145-block  7
+        4:  145-block  8
+        4:  145-block  9
+        4:  145-block 10
+    $$$$$:  145-block 11
+    $$$$$:  145-block 12
+    $$$$$:  145-block 13
+    $$$$$:  145-block 14
+    $$$$$:  145-block 15
+    $$$$$:  145-block 16
+    $$$$$:  145-block 17
+    $$$$$:  145-block 18
+    $$$$$:  145-block 19
+    $$$$$:  145-block 20
+    $$$$$:  145-block 21
+    $$$$$:  145-block 22
+    $$$$$:  145-block 23
+    $$$$$:  145-block 24
+    $$$$$:  145-block 25
+    $$$$$:  145-block 26
+    $$$$$:  145-block 27
+    $$$$$:  145-block 28
+    $$$$$:  145-block 29
+        -:  146:    {
+        4:  147:        add_cla_id( help_prefix, name, ":" );
+        4:  147-block  0
+    $$$$$:  147-block  1
+    $$$$$:  147-block  2
+    $$$$$:  147-block  3
+        4:  148:    }
+        4:  148-block  0
+------------------
+_ZN5boost7runtime11basic_paramC2INS_3nfp23named_parameter_combineINS3_15named_parameterIKZNS_9unit_test14runtime_config12_GLOBAL__N_119register_parametersERNS0_16parameters_storeEEUlNS6_13basic_cstringIKcEEE_NS0_12_GLOBAL__N_110callback_tERSF_EENS4_INS5_IKSD_NSG_9env_var_tERSK_EENS5_ISK_NSG_13description_tESM_EEEEEEEESD_bbRKT_:
+        1:  135:    basic_param( cstring name, bool is_optional, bool is_repeatable, Modifiers const& m )
+        -:  136:    : p_name( name.begin(), name.end() )
+        -:  137:    , p_description( nfp::opt_get( m, description, std::string() ) )
+        -:  138:    , p_help( nfp::opt_get( m, runtime::help, std::string() ) )
+        -:  139:    , p_env_var( nfp::opt_get( m, env_var, std::string() ) )
+        -:  140:    , p_value_hint( nfp::opt_get( m, value_hint, std::string() ) )
+        -:  141:    , p_optional( is_optional )
+        -:  142:    , p_repeatable( is_repeatable )
+        -:  143:    , p_has_optional_value( m.has( optional_value ) )
+       1*:  144:    , p_has_default_value( m.has( default_value ) || is_repeatable )
+        1:  144-block  0
+    %%%%%:  144-block  1
+        1:  144-block  2
+        2:  145:    , p_callback( nfp::opt_get( m, callback, callback_type() ) )
+        1:  145-block  0
+        1:  145-block  1
+        1:  145-block  2
+        1:  145-block  3
+        1:  145-block  4
+        1:  145-block  5
+        1:  145-block  6
+        1:  145-block  7
+        1:  145-block  8
+        1:  145-block  9
+    $$$$$:  145-block 10
+    $$$$$:  145-block 11
+    $$$$$:  145-block 12
+    $$$$$:  145-block 13
+    $$$$$:  145-block 14
+    $$$$$:  145-block 15
+    $$$$$:  145-block 16
+    $$$$$:  145-block 17
+    $$$$$:  145-block 18
+    $$$$$:  145-block 19
+    $$$$$:  145-block 20
+    $$$$$:  145-block 21
+    $$$$$:  145-block 22
+    $$$$$:  145-block 23
+    $$$$$:  145-block 24
+    $$$$$:  145-block 25
+    $$$$$:  145-block 26
+    $$$$$:  145-block 27
+    $$$$$:  145-block 28
+        -:  146:    {
+        1:  147:        add_cla_id( help_prefix, name, ":" );
+        1:  147-block  0
+    $$$$$:  147-block  1
+    $$$$$:  147-block  2
+    $$$$$:  147-block  3
+        1:  148:    }
+        1:  148-block  0
+------------------
+_ZN5boost7runtime11basic_paramC2INS_3nfp23named_parameter_combineINS3_15named_parameterIKbNS0_12_GLOBAL__N_115default_value_tERS6_EENS4_INS5_IS6_NS7_16optional_value_tES9_EENS4_INS5_IKNS_9unit_test13basic_cstringIKcEENS7_6help_tERSH_EENS4_INS5_ISH_NS7_9env_var_tESJ_EENS5_ISH_NS7_13description_tESJ_EEEEEEEEEEEESG_bbRKT_:
+        7:  135:    basic_param( cstring name, bool is_optional, bool is_repeatable, Modifiers const& m )
+        -:  136:    : p_name( name.begin(), name.end() )
+        -:  137:    , p_description( nfp::opt_get( m, description, std::string() ) )
+        -:  138:    , p_help( nfp::opt_get( m, runtime::help, std::string() ) )
+        -:  139:    , p_env_var( nfp::opt_get( m, env_var, std::string() ) )
+        -:  140:    , p_value_hint( nfp::opt_get( m, value_hint, std::string() ) )
+        -:  141:    , p_optional( is_optional )
+        -:  142:    , p_repeatable( is_repeatable )
+        -:  143:    , p_has_optional_value( m.has( optional_value ) )
+       7*:  144:    , p_has_default_value( m.has( default_value ) || is_repeatable )
+        7:  144-block  0
+    %%%%%:  144-block  1
+        7:  144-block  2
+    %%%%%:  144-block  3
+       14:  145:    , p_callback( nfp::opt_get( m, callback, callback_type() ) )
+        7:  145-block  0
+        7:  145-block  1
+        7:  145-block  2
+        7:  145-block  3
+        7:  145-block  4
+        7:  145-block  5
+        7:  145-block  6
+        7:  145-block  7
+        7:  145-block  8
+        7:  145-block  9
+        7:  145-block 10
+    $$$$$:  145-block 11
+    $$$$$:  145-block 12
+    $$$$$:  145-block 13
+    $$$$$:  145-block 14
+    $$$$$:  145-block 15
+    $$$$$:  145-block 16
+    $$$$$:  145-block 17
+    $$$$$:  145-block 18
+    $$$$$:  145-block 19
+    $$$$$:  145-block 20
+    $$$$$:  145-block 21
+    $$$$$:  145-block 22
+    $$$$$:  145-block 23
+    $$$$$:  145-block 24
+    $$$$$:  145-block 25
+    $$$$$:  145-block 26
+    $$$$$:  145-block 27
+    $$$$$:  145-block 28
+    $$$$$:  145-block 29
+        -:  146:    {
+        7:  147:        add_cla_id( help_prefix, name, ":" );
+        7:  147-block  0
+    $$$$$:  147-block  1
+    $$$$$:  147-block  2
+    $$$$$:  147-block  3
+        7:  148:    }
+        7:  148-block  0
+------------------
+        -:  149:
+        -:  150:public:
+       28:  151:    virtual                 ~basic_param() {}
+       28:  151-block  0
+        -:  152:
+        -:  153:    // Pubic properties
+        -:  154:    std::string const       p_name;
+        -:  155:    std::string const       p_description;
+        -:  156:    std::string const       p_help;
+        -:  157:    std::string const       p_env_var;
+        -:  158:    std::string const       p_value_hint;
+        -:  159:    bool const              p_optional;
+        -:  160:    bool const              p_repeatable;
+        -:  161:    bool_property           p_has_optional_value;
+        -:  162:    bool_property           p_has_default_value;
+        -:  163:    callback_type const     p_callback;
+        -:  164:
+        -:  165:    /// interface for cloning typed parameters
+        -:  166:    virtual basic_param_ptr clone() const = 0;
+        -:  167:
+        -:  168:    /// Access methods
+      594:  169:    param_cla_ids const&    cla_ids() const { return m_cla_ids; }
+      594:  169-block  0
+       51:  170:    void                    add_cla_id( cstring prefix, cstring tag, cstring value_separator )
+        -:  171:    {
+       51:  172:        add_cla_id_impl( prefix, tag, value_separator, false, true );
+       51:  172-block  0
+    $$$$$:  172-block  1
+    $$$$$:  172-block  2
+       51:  173:    }
+       51:  173-block  0
+        -:  174:
+        -:  175:    /// interface for producing argument values for this parameter
+        -:  176:    virtual void            produce_argument( cstring token, bool negative_form, arguments_store& store ) const = 0;
+        -:  177:    virtual void            produce_default( arguments_store& store ) const = 0;
+        -:  178:
+        -:  179:    /// interfaces for help message reporting
+    #####:  180:    virtual void            usage( std::ostream& ostr, cstring negation_prefix_, bool use_color = true )
+        -:  181:    {
+        -:  182:        namespace utils = unit_test::utils;
+        -:  183:        namespace ut_detail = unit_test::ut_detail;
+        -:  184:
+        -:  185:        // 
+    #####:  186:        ostr  << "  ";
+    %%%%%:  186-block  0
+        -:  187:        {
+        -:  188:
+    #####:  189:          BOOST_TEST_SCOPE_SETCOLOR( use_color, ostr, term_attr::BRIGHT, term_color::GREEN );
+    %%%%%:  189-block  0
+    $$$$$:  189-block  1
+    #####:  190:          ostr << p_name;
+    %%%%%:  190-block  0
+        -:  191:        }
+        -:  192:
+    #####:  193:        ostr << '\n';
+        -:  194:
+    #####:  195:        if( !p_description.empty() ) {
+    #####:  196:          commandline_pretty_print(ostr, "    ", p_description) << '\n';
+    %%%%%:  196-block  0
+    %%%%%:  196-block  1
+    %%%%%:  196-block  2
+    %%%%%:  196-block  3
+    $$$$$:  196-block  4
+    $$$$$:  196-block  5
+    $$$$$:  196-block  6
+    $$$$$:  196-block  7
+        -:  197:        }
+        -:  198:
+    #####:  199:        BOOST_TEST_FOREACH( parameter_cla_id const&, id, cla_ids() ) {
+    %%%%%:  199-block  0
+    %%%%%:  199-block  1
+    %%%%%:  199-block  2
+    %%%%%:  199-block  3
+    %%%%%:  199-block  4
+    %%%%%:  199-block  5
+    %%%%%:  199-block  6
+    %%%%%:  199-block  7
+    %%%%%:  199-block  8
+    %%%%%:  199-block  9
+    %%%%%:  199-block 10
+    %%%%%:  199-block 11
+    %%%%%:  199-block 12
+    %%%%%:  199-block 13
+    %%%%%:  199-block 14
+    %%%%%:  199-block 15
+    %%%%%:  199-block 16
+    %%%%%:  199-block 17
+    %%%%%:  199-block 18
+    %%%%%:  199-block 19
+    $$$$$:  199-block 20
+    $$$$$:  199-block 21
+    $$$$$:  199-block 22
+    $$$$$:  199-block 23
+    #####:  200:            if( id.m_prefix == help_prefix )
+    %%%%%:  200-block  0
+    %%%%%:  200-block  1
+    #####:  201:                continue;
+    %%%%%:  201-block  0
+        -:  202:
+    #####:  203:            ostr << "    " << id.m_prefix;
+    %%%%%:  203-block  0
+    %%%%%:  203-block  1
+        -:  204:
+    #####:  205:            if( id.m_negatable )
+    %%%%%:  205-block  0
+    #####:  206:                cla_name_help( ostr, id.m_tag, negation_prefix_, use_color );
+    %%%%%:  206-block  0
+    %%%%%:  206-block  1
+    $$$$$:  206-block  2
+    $$$$$:  206-block  3
+        -:  207:            else
+    #####:  208:                cla_name_help( ostr, id.m_tag, "", use_color );
+    %%%%%:  208-block  0
+    %%%%%:  208-block  1
+    %%%%%:  208-block  2
+    $$$$$:  208-block  3
+    $$$$$:  208-block  4
+        -:  209:
+    #####:  210:            BOOST_TEST_SCOPE_SETCOLOR( use_color, ostr, term_attr::BRIGHT, term_color::YELLOW );
+    %%%%%:  210-block  0
+    %%%%%:  210-block  1
+    $$$$$:  210-block  2
+    #####:  211:            bool optional_value_ = false;
+        -:  212:
+    #####:  213:            if( p_has_optional_value ) {
+    %%%%%:  213-block  0
+    #####:  214:                optional_value_ = true;
+    #####:  215:                ostr << '[';
+    %%%%%:  215-block  0
+        -:  216:            }
+        -:  217:
+        -:  218:
+    #####:  219:            if( id.m_value_separator.empty() )
+    %%%%%:  219-block  0
+    #####:  220:                ostr << ' ';
+    %%%%%:  220-block  0
+        -:  221:            else {
+    #####:  222:                ostr << id.m_value_separator;
+    %%%%%:  222-block  0
+        -:  223:            }
+        -:  224:
+    #####:  225:            value_help( ostr );
+    %%%%%:  225-block  0
+        -:  226:
+    #####:  227:            if( optional_value_ )
+    %%%%%:  227-block  0
+    #####:  228:                ostr << ']';
+    %%%%%:  228-block  0
+        -:  229:
+    #####:  230:            ostr << '\n';
+    %%%%%:  230-block  0
+        -:  231:        }
+    #####:  232:    }
+    %%%%%:  232-block  0
+        -:  233:
+    #####:  234:    virtual void            help( std::ostream& ostr, cstring negation_prefix_, bool use_color = true )
+        -:  235:    {
+    #####:  236:        usage( ostr, negation_prefix_, use_color );
+    %%%%%:  236-block  0
+    $$$$$:  236-block  1
+        -:  237:
+    #####:  238:        if( !p_help.empty() ) {
+    %%%%%:  238-block  0
+    #####:  239:            ostr << '\n';
+    %%%%%:  239-block  0
+    #####:  240:            commandline_pretty_print(ostr, "  ", p_help);
+    %%%%%:  240-block  0
+    %%%%%:  240-block  1
+    $$$$$:  240-block  2
+    $$$$$:  240-block  3
+    $$$$$:  240-block  4
+        -:  241:        }
+    #####:  242:    }
+    %%%%%:  242-block  0
+        -:  243:
+        -:  244:protected:
+       71:  245:    void                    add_cla_id_impl( cstring prefix,
+        -:  246:                                             cstring tag,
+        -:  247:                                             cstring value_separator,
+        -:  248:                                             bool negatable,
+        -:  249:                                             bool validate_value_separator )
+        -:  250:    {
+      71*:  251:        BOOST_TEST_I_ASSRT( !tag.is_empty(),
+       71:  251-block  0
+    %%%%%:  251-block  1
+    %%%%%:  251-block  2
+    %%%%%:  251-block  3
+    $$$$$:  251-block  4
+    $$$$$:  251-block  5
+    $$$$$:  251-block  6
+    $$$$$:  251-block  7
+    $$$$$:  251-block  8
+        -:  252:                            invalid_cla_id() << "Parameter can't have an empty name." );
+        -:  253:
+      71*:  254:        BOOST_TEST_I_ASSRT( !prefix.is_empty(),
+       71:  254-block  0
+    %%%%%:  254-block  1
+    %%%%%:  254-block  2
+    %%%%%:  254-block  3
+    %%%%%:  254-block  4
+    %%%%%:  254-block  5
+    $$$$$:  254-block  6
+    $$$$$:  254-block  7
+    $$$$$:  254-block  8
+    $$$$$:  254-block  9
+    $$$$$:  254-block 10
+    $$$$$:  254-block 11
+    $$$$$:  254-block 12
+    $$$$$:  254-block 13
+    $$$$$:  254-block 14
+        -:  255:                            invalid_cla_id() << "Parameter " << tag
+        -:  256:                                             << " can't have an empty prefix." );
+        -:  257:
+      71*:  258:        BOOST_TEST_I_ASSRT( !value_separator.is_empty(),
+       71:  258-block  0
+    %%%%%:  258-block  1
+    %%%%%:  258-block  2
+    %%%%%:  258-block  3
+    %%%%%:  258-block  4
+    %%%%%:  258-block  5
+    $$$$$:  258-block  6
+    $$$$$:  258-block  7
+    $$$$$:  258-block  8
+    $$$$$:  258-block  9
+    $$$$$:  258-block 10
+    $$$$$:  258-block 11
+    $$$$$:  258-block 12
+    $$$$$:  258-block 13
+    $$$$$:  258-block 14
+        -:  259:                            invalid_cla_id() << "Parameter " << tag
+        -:  260:                                             << " can't have an empty value separator." );
+        -:  261:
+        -:  262:        // We trim value separator from all the spaces, so token end will indicate separator
+       71:  263:        value_separator.trim();
+       71:  263-block  0
+    $$$$$:  263-block  1
+      71*:  264:        BOOST_TEST_I_ASSRT( !validate_value_separator || !value_separator.is_empty() || !p_has_optional_value,
+       71:  264-block  0
+       51:  264-block  1
+        8:  264-block  2
+       71:  264-block  3
+    %%%%%:  264-block  4
+       71:  264-block  5
+    %%%%%:  264-block  6
+    %%%%%:  264-block  7
+    %%%%%:  264-block  8
+    %%%%%:  264-block  9
+    %%%%%:  264-block 10
+    $$$$$:  264-block 11
+    $$$$$:  264-block 12
+    $$$$$:  264-block 13
+    $$$$$:  264-block 14
+    $$$$$:  264-block 15
+    $$$$$:  264-block 16
+    $$$$$:  264-block 17
+    $$$$$:  264-block 18
+    $$$$$:  264-block 19
+        -:  265:                            invalid_cla_id() << "Parameter " << tag
+        -:  266:                                             << " with optional value attribute can't use space as value separator." );
+        -:  267:
+       71:  268:        m_cla_ids.push_back( parameter_cla_id( prefix, tag, value_separator, negatable ) );
+       71:  268-block  0
+       71:  268-block  1
+       71:  268-block  2
+    $$$$$:  268-block  3
+    $$$$$:  268-block  4
+    $$$$$:  268-block  5
+    $$$$$:  268-block  6
+       71:  269:    }
+        -:  270:
+        -:  271:private:
+        -:  272:    /// interface for usage/help customization
+    #####:  273:    virtual void            cla_name_help( std::ostream& ostr, cstring cla_tag, cstring /*negation_prefix_*/, bool /*use_color*/ = true) const
+        -:  274:    {
+    #####:  275:        ostr << cla_tag;
+    %%%%%:  275-block  0
+    #####:  276:    }
+    #####:  277:    virtual void            value_help( std::ostream& ostr ) const
+        -:  278:    {
+    #####:  279:        if( p_value_hint.empty() )
+    %%%%%:  279-block  0
+    #####:  280:            ostr << "<value>";
+    %%%%%:  280-block  0
+        -:  281:        else
+    #####:  282:            ostr << p_value_hint;
+    %%%%%:  282-block  0
+    #####:  283:    }
+        -:  284:
+        -:  285:    // Data members
+        -:  286:    param_cla_ids       m_cla_ids;
+        -:  287:};
+        -:  288:
+        -:  289:// ************************************************************************** //
+        -:  290:// **************              runtime::parameter              ************** //
+        -:  291:// ************************************************************************** //
+        -:  292:
+        -:  293:enum args_amount {
+        -:  294:    OPTIONAL_PARAM,   // 0-1
+        -:  295:    REQUIRED_PARAM,   // exactly 1
+        -:  296:    REPEATABLE_PARAM  // 0-N
+        -:  297:};
+        -:  298:
+        -:  299://____________________________________________________________________________//
+        -:  300:
+        -:  301:template<typename ValueType, args_amount a = runtime::OPTIONAL_PARAM, bool is_enum = false>
+        -:  302:class parameter : public basic_param {
+        -:  303:public:
+        -:  304:    /// Constructor with modifiers
+        -:  305:#ifndef BOOST_NO_CXX11_FUNCTION_TEMPLATE_DEFAULT_ARGS
+        -:  306:    template<typename Modifiers=nfp::no_params_type>
+       15:  307:    parameter( cstring name, Modifiers const& m = nfp::no_params )
+        -:  308:#else
+        -:  309:    template<typename Modifiers>
+        -:  310:    parameter( cstring name, Modifiers const& m )
+        -:  311:#endif
+        -:  312:    : basic_param( name, a != runtime::REQUIRED_PARAM, a == runtime::REPEATABLE_PARAM, m )
+       15:  313:    , m_arg_factory( m )
+        -:  314:    {
+      15*:  315:        BOOST_TEST_I_ASSRT( !m.has( default_value ) || a == runtime::OPTIONAL_PARAM,
+        -:  316:                            invalid_param_spec() << "Parameter " << name
+        -:  317:                                                 << " is not optional and can't have default_value." );
+        -:  318:
+      15*:  319:        BOOST_TEST_I_ASSRT( !m.has( optional_value ) || !this->p_repeatable,
+        -:  320:                            invalid_param_spec() << "Parameter " << name
+        -:  321:                                                 << " is repeatable and can't have optional_value." );
+       15:  322:    }
+------------------
+_ZN5boost7runtime9parameterINS_9unit_test12report_levelELNS0_11args_amountE0ELb1EEC2INS_3nfp23named_parameter_combineINS7_15named_parameterIKNS2_13basic_cstringIKcEENS0_12_GLOBAL__N_16help_tERSD_EENS8_INS9_IKSt16initializer_listISt4pairISD_S3_EENSE_13enum_values_tERSM_EENS8_INS9_IKS3_NSE_15default_value_tERSQ_EENS8_INS9_ISD_NSE_9env_var_tESG_EENS9_ISD_NSE_13description_tESG_EEEEEEEEEEEESC_RKT_:
+        1:  307:    parameter( cstring name, Modifiers const& m = nfp::no_params )
+        -:  308:#else
+        -:  309:    template<typename Modifiers>
+        -:  310:    parameter( cstring name, Modifiers const& m )
+        -:  311:#endif
+        -:  312:    : basic_param( name, a != runtime::REQUIRED_PARAM, a == runtime::REPEATABLE_PARAM, m )
+        1:  313:    , m_arg_factory( m )
+        1:  313-block  0
+        1:  313-block  1
+    $$$$$:  313-block  2
+    $$$$$:  313-block  3
+    $$$$$:  313-block  4
+        -:  314:    {
+       1*:  315:        BOOST_TEST_I_ASSRT( !m.has( default_value ) || a == runtime::OPTIONAL_PARAM,
+        1:  315-block  0
+        1:  315-block  1
+    %%%%%:  315-block  2
+    %%%%%:  315-block  3
+    %%%%%:  315-block  4
+    %%%%%:  315-block  5
+    %%%%%:  315-block  6
+    %%%%%:  315-block  7
+    $$$$$:  315-block  8
+    $$$$$:  315-block  9
+    $$$$$:  315-block 10
+    $$$$$:  315-block 11
+    $$$$$:  315-block 12
+    $$$$$:  315-block 13
+    $$$$$:  315-block 14
+    $$$$$:  315-block 15
+    $$$$$:  315-block 16
+        -:  316:                            invalid_param_spec() << "Parameter " << name
+        -:  317:                                                 << " is not optional and can't have default_value." );
+        -:  318:
+       1*:  319:        BOOST_TEST_I_ASSRT( !m.has( optional_value ) || !this->p_repeatable,
+        1:  319-block  0
+    %%%%%:  319-block  1
+        1:  319-block  2
+    %%%%%:  319-block  3
+        1:  319-block  4
+    %%%%%:  319-block  5
+    %%%%%:  319-block  6
+    %%%%%:  319-block  7
+    %%%%%:  319-block  8
+    %%%%%:  319-block  9
+    %%%%%:  319-block 10
+    $$$$$:  319-block 11
+    $$$$$:  319-block 12
+    $$$$$:  319-block 13
+    $$$$$:  319-block 14
+    $$$$$:  319-block 15
+    $$$$$:  319-block 16
+    $$$$$:  319-block 17
+    $$$$$:  319-block 18
+    $$$$$:  319-block 19
+        -:  320:                            invalid_param_spec() << "Parameter " << name
+        -:  321:                                                 << " is repeatable and can't have optional_value." );
+        1:  322:    }
+        1:  322-block  0
+------------------
+_ZN5boost7runtime9parameterINS_9unit_test13output_formatELNS0_11args_amountE0ELb1EEC2INS_3nfp23named_parameter_combineINS7_15named_parameterIKNS2_13basic_cstringIKcEENS0_12_GLOBAL__N_16help_tERSD_EENS8_INS9_IKSt16initializer_listISt4pairISD_S3_EENSE_13enum_values_tERSM_EENS8_INS9_ISD_NSE_9env_var_tESG_EENS9_ISD_NSE_13description_tESG_EEEEEEEEEESC_RKT_:
+        1:  307:    parameter( cstring name, Modifiers const& m = nfp::no_params )
+        -:  308:#else
+        -:  309:    template<typename Modifiers>
+        -:  310:    parameter( cstring name, Modifiers const& m )
+        -:  311:#endif
+        -:  312:    : basic_param( name, a != runtime::REQUIRED_PARAM, a == runtime::REPEATABLE_PARAM, m )
+        1:  313:    , m_arg_factory( m )
+        1:  313-block  0
+        1:  313-block  1
+    $$$$$:  313-block  2
+    $$$$$:  313-block  3
+    $$$$$:  313-block  4
+        -:  314:    {
+       1*:  315:        BOOST_TEST_I_ASSRT( !m.has( default_value ) || a == runtime::OPTIONAL_PARAM,
+        1:  315-block  0
+    %%%%%:  315-block  1
+    %%%%%:  315-block  2
+    %%%%%:  315-block  3
+    %%%%%:  315-block  4
+    %%%%%:  315-block  5
+    %%%%%:  315-block  6
+    $$$$$:  315-block  7
+    $$$$$:  315-block  8
+    $$$$$:  315-block  9
+    $$$$$:  315-block 10
+    $$$$$:  315-block 11
+    $$$$$:  315-block 12
+    $$$$$:  315-block 13
+    $$$$$:  315-block 14
+    $$$$$:  315-block 15
+        -:  316:                            invalid_param_spec() << "Parameter " << name
+        -:  317:                                                 << " is not optional and can't have default_value." );
+        -:  318:
+       1*:  319:        BOOST_TEST_I_ASSRT( !m.has( optional_value ) || !this->p_repeatable,
+        1:  319-block  0
+    %%%%%:  319-block  1
+        1:  319-block  2
+    %%%%%:  319-block  3
+        1:  319-block  4
+    %%%%%:  319-block  5
+    %%%%%:  319-block  6
+    %%%%%:  319-block  7
+    %%%%%:  319-block  8
+    %%%%%:  319-block  9
+    %%%%%:  319-block 10
+    $$$$$:  319-block 11
+    $$$$$:  319-block 12
+    $$$$$:  319-block 13
+    $$$$$:  319-block 14
+    $$$$$:  319-block 15
+    $$$$$:  319-block 16
+    $$$$$:  319-block 17
+    $$$$$:  319-block 18
+    $$$$$:  319-block 19
+        -:  320:                            invalid_param_spec() << "Parameter " << name
+        -:  321:                                                 << " is repeatable and can't have optional_value." );
+        1:  322:    }
+        1:  322-block  0
+------------------
+_ZN5boost7runtime9parameterINS_9unit_test9log_levelELNS0_11args_amountE0ELb1EEC2INS_3nfp23named_parameter_combineINS7_15named_parameterIKNS2_13basic_cstringIKcEENS0_12_GLOBAL__N_16help_tERSD_EENS8_INS9_IKSt16initializer_listISt4pairISD_S3_EENSE_13enum_values_tERSM_EENS8_INS9_IKS3_NSE_15default_value_tERSQ_EENS8_INS9_ISD_NSE_9env_var_tESG_EENS9_ISD_NSE_13description_tESG_EEEEEEEEEEEESC_RKT_:
+        1:  307:    parameter( cstring name, Modifiers const& m = nfp::no_params )
+        -:  308:#else
+        -:  309:    template<typename Modifiers>
+        -:  310:    parameter( cstring name, Modifiers const& m )
+        -:  311:#endif
+        -:  312:    : basic_param( name, a != runtime::REQUIRED_PARAM, a == runtime::REPEATABLE_PARAM, m )
+        1:  313:    , m_arg_factory( m )
+        1:  313-block  0
+        1:  313-block  1
+    $$$$$:  313-block  2
+    $$$$$:  313-block  3
+    $$$$$:  313-block  4
+        -:  314:    {
+       1*:  315:        BOOST_TEST_I_ASSRT( !m.has( default_value ) || a == runtime::OPTIONAL_PARAM,
+        1:  315-block  0
+        1:  315-block  1
+    %%%%%:  315-block  2
+    %%%%%:  315-block  3
+    %%%%%:  315-block  4
+    %%%%%:  315-block  5
+    %%%%%:  315-block  6
+    %%%%%:  315-block  7
+    $$$$$:  315-block  8
+    $$$$$:  315-block  9
+    $$$$$:  315-block 10
+    $$$$$:  315-block 11
+    $$$$$:  315-block 12
+    $$$$$:  315-block 13
+    $$$$$:  315-block 14
+    $$$$$:  315-block 15
+    $$$$$:  315-block 16
+        -:  316:                            invalid_param_spec() << "Parameter " << name
+        -:  317:                                                 << " is not optional and can't have default_value." );
+        -:  318:
+       1*:  319:        BOOST_TEST_I_ASSRT( !m.has( optional_value ) || !this->p_repeatable,
+        1:  319-block  0
+    %%%%%:  319-block  1
+        1:  319-block  2
+    %%%%%:  319-block  3
+        1:  319-block  4
+    %%%%%:  319-block  5
+    %%%%%:  319-block  6
+    %%%%%:  319-block  7
+    %%%%%:  319-block  8
+    %%%%%:  319-block  9
+    %%%%%:  319-block 10
+    $$$$$:  319-block 11
+    $$$$$:  319-block 12
+    $$$$$:  319-block 13
+    $$$$$:  319-block 14
+    $$$$$:  319-block 15
+    $$$$$:  319-block 16
+    $$$$$:  319-block 17
+    $$$$$:  319-block 18
+    $$$$$:  319-block 19
+        -:  320:                            invalid_param_spec() << "Parameter " << name
+        -:  321:                                                 << " is repeatable and can't have optional_value." );
+        1:  322:    }
+        1:  322-block  0
+------------------
+_ZN5boost7runtime9parameterINS_9unit_test13output_formatELNS0_11args_amountE0ELb1EEC2INS_3nfp23named_parameter_combineINS7_15named_parameterIKNS2_13basic_cstringIKcEENS0_12_GLOBAL__N_16help_tERSD_EENS8_INS9_IKSt16initializer_listISt4pairISD_S3_EENSE_13enum_values_tERSM_EENS8_INS9_IKS3_NSE_15default_value_tERSQ_EENS8_INS9_ISD_NSE_9env_var_tESG_EENS9_ISD_NSE_13description_tESG_EEEEEEEEEEEESC_RKT_:
+        2:  307:    parameter( cstring name, Modifiers const& m = nfp::no_params )
+        -:  308:#else
+        -:  309:    template<typename Modifiers>
+        -:  310:    parameter( cstring name, Modifiers const& m )
+        -:  311:#endif
+        -:  312:    : basic_param( name, a != runtime::REQUIRED_PARAM, a == runtime::REPEATABLE_PARAM, m )
+        2:  313:    , m_arg_factory( m )
+        2:  313-block  0
+        2:  313-block  1
+    $$$$$:  313-block  2
+    $$$$$:  313-block  3
+    $$$$$:  313-block  4
+        -:  314:    {
+       2*:  315:        BOOST_TEST_I_ASSRT( !m.has( default_value ) || a == runtime::OPTIONAL_PARAM,
+        2:  315-block  0
+        2:  315-block  1
+    %%%%%:  315-block  2
+    %%%%%:  315-block  3
+    %%%%%:  315-block  4
+    %%%%%:  315-block  5
+    %%%%%:  315-block  6
+    %%%%%:  315-block  7
+    $$$$$:  315-block  8
+    $$$$$:  315-block  9
+    $$$$$:  315-block 10
+    $$$$$:  315-block 11
+    $$$$$:  315-block 12
+    $$$$$:  315-block 13
+    $$$$$:  315-block 14
+    $$$$$:  315-block 15
+    $$$$$:  315-block 16
+        -:  316:                            invalid_param_spec() << "Parameter " << name
+        -:  317:                                                 << " is not optional and can't have default_value." );
+        -:  318:
+       2*:  319:        BOOST_TEST_I_ASSRT( !m.has( optional_value ) || !this->p_repeatable,
+        2:  319-block  0
+    %%%%%:  319-block  1
+        2:  319-block  2
+    %%%%%:  319-block  3
+        2:  319-block  4
+    %%%%%:  319-block  5
+    %%%%%:  319-block  6
+    %%%%%:  319-block  7
+    %%%%%:  319-block  8
+    %%%%%:  319-block  9
+    %%%%%:  319-block 10
+    $$$$$:  319-block 11
+    $$$$$:  319-block 12
+    $$$$$:  319-block 13
+    $$$$$:  319-block 14
+    $$$$$:  319-block 15
+    $$$$$:  319-block 16
+    $$$$$:  319-block 17
+    $$$$$:  319-block 18
+    $$$$$:  319-block 19
+        -:  320:                            invalid_param_spec() << "Parameter " << name
+        -:  321:                                                 << " is repeatable and can't have optional_value." );
+        2:  322:    }
+        2:  322-block  0
+------------------
+_ZN5boost7runtime9parameterINS_9unit_test13output_formatELNS0_11args_amountE0ELb1EEC2INS_3nfp23named_parameter_combineINS7_15named_parameterIKNS2_13basic_cstringIKcEENS0_12_GLOBAL__N_16help_tERSD_EENS8_INS9_IKSt16initializer_listISt4pairISD_S3_EENSE_13enum_values_tERSM_EENS8_INS9_IKS3_NSE_16optional_value_tERSQ_EENS8_INS9_ISQ_NSE_15default_value_tESS_EENS8_INS9_ISD_NSE_9env_var_tESG_EENS9_ISD_NSE_13description_tESG_EEEEEEEEEEEEEESC_RKT_:
+        1:  307:    parameter( cstring name, Modifiers const& m = nfp::no_params )
+        -:  308:#else
+        -:  309:    template<typename Modifiers>
+        -:  310:    parameter( cstring name, Modifiers const& m )
+        -:  311:#endif
+        -:  312:    : basic_param( name, a != runtime::REQUIRED_PARAM, a == runtime::REPEATABLE_PARAM, m )
+        1:  313:    , m_arg_factory( m )
+        1:  313-block  0
+        1:  313-block  1
+    $$$$$:  313-block  2
+    $$$$$:  313-block  3
+    $$$$$:  313-block  4
+        -:  314:    {
+       1*:  315:        BOOST_TEST_I_ASSRT( !m.has( default_value ) || a == runtime::OPTIONAL_PARAM,
+        1:  315-block  0
+        1:  315-block  1
+    %%%%%:  315-block  2
+    %%%%%:  315-block  3
+    %%%%%:  315-block  4
+    %%%%%:  315-block  5
+    %%%%%:  315-block  6
+    %%%%%:  315-block  7
+    $$$$$:  315-block  8
+    $$$$$:  315-block  9
+    $$$$$:  315-block 10
+    $$$$$:  315-block 11
+    $$$$$:  315-block 12
+    $$$$$:  315-block 13
+    $$$$$:  315-block 14
+    $$$$$:  315-block 15
+    $$$$$:  315-block 16
+        -:  316:                            invalid_param_spec() << "Parameter " << name
+        -:  317:                                                 << " is not optional and can't have default_value." );
+        -:  318:
+       1*:  319:        BOOST_TEST_I_ASSRT( !m.has( optional_value ) || !this->p_repeatable,
+        1:  319-block  0
+        1:  319-block  1
+        1:  319-block  2
+        1:  319-block  3
+    %%%%%:  319-block  4
+        1:  319-block  5
+    %%%%%:  319-block  6
+    %%%%%:  319-block  7
+    %%%%%:  319-block  8
+    %%%%%:  319-block  9
+    %%%%%:  319-block 10
+    %%%%%:  319-block 11
+    $$$$$:  319-block 12
+    $$$$$:  319-block 13
+    $$$$$:  319-block 14
+    $$$$$:  319-block 15
+    $$$$$:  319-block 16
+    $$$$$:  319-block 17
+    $$$$$:  319-block 18
+    $$$$$:  319-block 19
+    $$$$$:  319-block 20
+        -:  320:                            invalid_param_spec() << "Parameter " << name
+        -:  321:                                                 << " is repeatable and can't have optional_value." );
+        1:  322:    }
+        1:  322-block  0
+------------------
+_ZN5boost7runtime9parameterINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEELNS0_11args_amountE0ELb0EEC2INS_3nfp23named_parameter_combineINSB_15named_parameterIKNS_9unit_test13basic_cstringIKcEENS0_12_GLOBAL__N_16help_tERSI_EENSC_INSD_ISI_NSJ_12value_hint_tESL_EENSC_INSD_IKS7_NSJ_16optional_value_tERSP_EENSD_ISI_NSJ_13description_tESL_EEEEEEEEEESH_RKT_:
+        1:  307:    parameter( cstring name, Modifiers const& m = nfp::no_params )
+        -:  308:#else
+        -:  309:    template<typename Modifiers>
+        -:  310:    parameter( cstring name, Modifiers const& m )
+        -:  311:#endif
+        -:  312:    : basic_param( name, a != runtime::REQUIRED_PARAM, a == runtime::REPEATABLE_PARAM, m )
+        1:  313:    , m_arg_factory( m )
+        1:  313-block  0
+        1:  313-block  1
+    $$$$$:  313-block  2
+    $$$$$:  313-block  3
+    $$$$$:  313-block  4
+        -:  314:    {
+       1*:  315:        BOOST_TEST_I_ASSRT( !m.has( default_value ) || a == runtime::OPTIONAL_PARAM,
+        1:  315-block  0
+    %%%%%:  315-block  1
+    %%%%%:  315-block  2
+    %%%%%:  315-block  3
+    %%%%%:  315-block  4
+    %%%%%:  315-block  5
+    %%%%%:  315-block  6
+    $$$$$:  315-block  7
+    $$$$$:  315-block  8
+    $$$$$:  315-block  9
+    $$$$$:  315-block 10
+    $$$$$:  315-block 11
+    $$$$$:  315-block 12
+    $$$$$:  315-block 13
+    $$$$$:  315-block 14
+    $$$$$:  315-block 15
+        -:  316:                            invalid_param_spec() << "Parameter " << name
+        -:  317:                                                 << " is not optional and can't have default_value." );
+        -:  318:
+       1*:  319:        BOOST_TEST_I_ASSRT( !m.has( optional_value ) || !this->p_repeatable,
+        1:  319-block  0
+        1:  319-block  1
+        1:  319-block  2
+        1:  319-block  3
+    %%%%%:  319-block  4
+        1:  319-block  5
+    %%%%%:  319-block  6
+    %%%%%:  319-block  7
+    %%%%%:  319-block  8
+    %%%%%:  319-block  9
+    %%%%%:  319-block 10
+    %%%%%:  319-block 11
+    $$$$$:  319-block 12
+    $$$$$:  319-block 13
+    $$$$$:  319-block 14
+    $$$$$:  319-block 15
+    $$$$$:  319-block 16
+    $$$$$:  319-block 17
+    $$$$$:  319-block 18
+    $$$$$:  319-block 19
+    $$$$$:  319-block 20
+        -:  320:                            invalid_param_spec() << "Parameter " << name
+        -:  321:                                                 << " is repeatable and can't have optional_value." );
+        1:  322:    }
+        1:  322-block  0
+------------------
+_ZN5boost7runtime9parameterINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEELNS0_11args_amountE0ELb0EEC2INS_3nfp23named_parameter_combineINSB_15named_parameterIKNS_9unit_test13basic_cstringIKcEENS0_12_GLOBAL__N_16help_tERSI_EENSC_INSD_ISI_NSJ_12value_hint_tESL_EENSC_INSD_IKS7_NSJ_15default_value_tERSP_EENSC_INSD_ISI_NSJ_9env_var_tESL_EENSD_ISI_NSJ_13description_tESL_EEEEEEEEEEEESH_RKT_:
+        1:  307:    parameter( cstring name, Modifiers const& m = nfp::no_params )
+        -:  308:#else
+        -:  309:    template<typename Modifiers>
+        -:  310:    parameter( cstring name, Modifiers const& m )
+        -:  311:#endif
+        -:  312:    : basic_param( name, a != runtime::REQUIRED_PARAM, a == runtime::REPEATABLE_PARAM, m )
+        1:  313:    , m_arg_factory( m )
+        1:  313-block  0
+        1:  313-block  1
+    $$$$$:  313-block  2
+    $$$$$:  313-block  3
+    $$$$$:  313-block  4
+        -:  314:    {
+       1*:  315:        BOOST_TEST_I_ASSRT( !m.has( default_value ) || a == runtime::OPTIONAL_PARAM,
+        1:  315-block  0
+        1:  315-block  1
+    %%%%%:  315-block  2
+    %%%%%:  315-block  3
+    %%%%%:  315-block  4
+    %%%%%:  315-block  5
+    %%%%%:  315-block  6
+    %%%%%:  315-block  7
+    $$$$$:  315-block  8
+    $$$$$:  315-block  9
+    $$$$$:  315-block 10
+    $$$$$:  315-block 11
+    $$$$$:  315-block 12
+    $$$$$:  315-block 13
+    $$$$$:  315-block 14
+    $$$$$:  315-block 15
+    $$$$$:  315-block 16
+        -:  316:                            invalid_param_spec() << "Parameter " << name
+        -:  317:                                                 << " is not optional and can't have default_value." );
+        -:  318:
+       1*:  319:        BOOST_TEST_I_ASSRT( !m.has( optional_value ) || !this->p_repeatable,
+        1:  319-block  0
+    %%%%%:  319-block  1
+        1:  319-block  2
+    %%%%%:  319-block  3
+        1:  319-block  4
+    %%%%%:  319-block  5
+    %%%%%:  319-block  6
+    %%%%%:  319-block  7
+    %%%%%:  319-block  8
+    %%%%%:  319-block  9
+    %%%%%:  319-block 10
+    $$$$$:  319-block 11
+    $$$$$:  319-block 12
+    $$$$$:  319-block 13
+    $$$$$:  319-block 14
+    $$$$$:  319-block 15
+    $$$$$:  319-block 16
+    $$$$$:  319-block 17
+    $$$$$:  319-block 18
+    $$$$$:  319-block 19
+        -:  320:                            invalid_param_spec() << "Parameter " << name
+        -:  321:                                                 << " is repeatable and can't have optional_value." );
+        1:  322:    }
+        1:  322-block  0
+------------------
+_ZN5boost7runtime9parameterIjLNS0_11args_amountE0ELb0EEC2INS_3nfp23named_parameter_combineINS5_15named_parameterIKNS_9unit_test13basic_cstringIKcEENS0_12_GLOBAL__N_16help_tERSC_EENS6_INS7_ISC_NSD_12value_hint_tESF_EENS6_INS7_IKjNSD_16optional_value_tERSJ_EENS6_INS7_ISJ_NSD_15default_value_tESL_EENS6_INS7_ISC_NSD_9env_var_tESF_EENS7_ISC_NSD_13description_tESF_EEEEEEEEEEEEEESB_RKT_:
+        1:  307:    parameter( cstring name, Modifiers const& m = nfp::no_params )
+        -:  308:#else
+        -:  309:    template<typename Modifiers>
+        -:  310:    parameter( cstring name, Modifiers const& m )
+        -:  311:#endif
+        -:  312:    : basic_param( name, a != runtime::REQUIRED_PARAM, a == runtime::REPEATABLE_PARAM, m )
+        1:  313:    , m_arg_factory( m )
+        1:  313-block  0
+        1:  313-block  1
+    $$$$$:  313-block  2
+    $$$$$:  313-block  3
+        -:  314:    {
+       1*:  315:        BOOST_TEST_I_ASSRT( !m.has( default_value ) || a == runtime::OPTIONAL_PARAM,
+        1:  315-block  0
+        1:  315-block  1
+    %%%%%:  315-block  2
+    %%%%%:  315-block  3
+    %%%%%:  315-block  4
+    %%%%%:  315-block  5
+    %%%%%:  315-block  6
+    %%%%%:  315-block  7
+    $$$$$:  315-block  8
+    $$$$$:  315-block  9
+    $$$$$:  315-block 10
+    $$$$$:  315-block 11
+    $$$$$:  315-block 12
+    $$$$$:  315-block 13
+    $$$$$:  315-block 14
+    $$$$$:  315-block 15
+    $$$$$:  315-block 16
+        -:  316:                            invalid_param_spec() << "Parameter " << name
+        -:  317:                                                 << " is not optional and can't have default_value." );
+        -:  318:
+       1*:  319:        BOOST_TEST_I_ASSRT( !m.has( optional_value ) || !this->p_repeatable,
+        1:  319-block  0
+        1:  319-block  1
+        1:  319-block  2
+        1:  319-block  3
+    %%%%%:  319-block  4
+        1:  319-block  5
+    %%%%%:  319-block  6
+    %%%%%:  319-block  7
+    %%%%%:  319-block  8
+    %%%%%:  319-block  9
+    %%%%%:  319-block 10
+    %%%%%:  319-block 11
+    $$$$$:  319-block 12
+    $$$$$:  319-block 13
+    $$$$$:  319-block 14
+    $$$$$:  319-block 15
+    $$$$$:  319-block 16
+    $$$$$:  319-block 17
+    $$$$$:  319-block 18
+    $$$$$:  319-block 19
+    $$$$$:  319-block 20
+        -:  320:                            invalid_param_spec() << "Parameter " << name
+        -:  321:                                                 << " is repeatable and can't have optional_value." );
+        1:  322:    }
+        1:  322-block  0
+------------------
+_ZN5boost7runtime9parameterINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEELNS0_11args_amountE2ELb0EEC2INS_3nfp23named_parameter_combineINSB_15named_parameterIKNS_9unit_test13basic_cstringIKcEENS0_12_GLOBAL__N_16help_tERSI_EENSC_INSD_ISI_NSJ_12value_hint_tESL_EENSC_INSD_ISI_NSJ_9env_var_tESL_EENSD_ISI_NSJ_13description_tESL_EEEEEEEEEESH_RKT_:
+        2:  307:    parameter( cstring name, Modifiers const& m = nfp::no_params )
+        -:  308:#else
+        -:  309:    template<typename Modifiers>
+        -:  310:    parameter( cstring name, Modifiers const& m )
+        -:  311:#endif
+        -:  312:    : basic_param( name, a != runtime::REQUIRED_PARAM, a == runtime::REPEATABLE_PARAM, m )
+        2:  313:    , m_arg_factory( m )
+        2:  313-block  0
+        2:  313-block  1
+    $$$$$:  313-block  2
+    $$$$$:  313-block  3
+        -:  314:    {
+       2*:  315:        BOOST_TEST_I_ASSRT( !m.has( default_value ) || a == runtime::OPTIONAL_PARAM,
+        2:  315-block  0
+        2:  315-block  1
+    %%%%%:  315-block  2
+        2:  315-block  3
+    %%%%%:  315-block  4
+    %%%%%:  315-block  5
+    %%%%%:  315-block  6
+    %%%%%:  315-block  7
+    %%%%%:  315-block  8
+    %%%%%:  315-block  9
+    $$$$$:  315-block 10
+    $$$$$:  315-block 11
+    $$$$$:  315-block 12
+    $$$$$:  315-block 13
+    $$$$$:  315-block 14
+    $$$$$:  315-block 15
+    $$$$$:  315-block 16
+    $$$$$:  315-block 17
+    $$$$$:  315-block 18
+        -:  316:                            invalid_param_spec() << "Parameter " << name
+        -:  317:                                                 << " is not optional and can't have default_value." );
+        -:  318:
+       2*:  319:        BOOST_TEST_I_ASSRT( !m.has( optional_value ) || !this->p_repeatable,
+        2:  319-block  0
+    %%%%%:  319-block  1
+        2:  319-block  2
+    %%%%%:  319-block  3
+        2:  319-block  4
+    %%%%%:  319-block  5
+    %%%%%:  319-block  6
+    %%%%%:  319-block  7
+    %%%%%:  319-block  8
+    %%%%%:  319-block  9
+    %%%%%:  319-block 10
+    $$$$$:  319-block 11
+    $$$$$:  319-block 12
+    $$$$$:  319-block 13
+    $$$$$:  319-block 14
+    $$$$$:  319-block 15
+    $$$$$:  319-block 16
+    $$$$$:  319-block 17
+    $$$$$:  319-block 18
+    $$$$$:  319-block 19
+        -:  320:                            invalid_param_spec() << "Parameter " << name
+        -:  321:                                                 << " is repeatable and can't have optional_value." );
+        2:  322:    }
+        2:  322-block  0
+------------------
+_ZN5boost7runtime9parameterINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEELNS0_11args_amountE0ELb0EEC2INS_3nfp23named_parameter_combineINSB_15named_parameterIKNS_9unit_test13basic_cstringIKcEENS0_12_GLOBAL__N_16help_tERSI_EENSC_INSD_ISI_NSJ_12value_hint_tESL_EENSC_INSD_ISI_NSJ_9env_var_tESL_EENSD_ISI_NSJ_13description_tESL_EEEEEEEEEESH_RKT_:
+        2:  307:    parameter( cstring name, Modifiers const& m = nfp::no_params )
+        -:  308:#else
+        -:  309:    template<typename Modifiers>
+        -:  310:    parameter( cstring name, Modifiers const& m )
+        -:  311:#endif
+        -:  312:    : basic_param( name, a != runtime::REQUIRED_PARAM, a == runtime::REPEATABLE_PARAM, m )
+        2:  313:    , m_arg_factory( m )
+        2:  313-block  0
+        2:  313-block  1
+    $$$$$:  313-block  2
+    $$$$$:  313-block  3
+    $$$$$:  313-block  4
+        -:  314:    {
+       2*:  315:        BOOST_TEST_I_ASSRT( !m.has( default_value ) || a == runtime::OPTIONAL_PARAM,
+        2:  315-block  0
+    %%%%%:  315-block  1
+    %%%%%:  315-block  2
+    %%%%%:  315-block  3
+    %%%%%:  315-block  4
+    %%%%%:  315-block  5
+    %%%%%:  315-block  6
+    $$$$$:  315-block  7
+    $$$$$:  315-block  8
+    $$$$$:  315-block  9
+    $$$$$:  315-block 10
+    $$$$$:  315-block 11
+    $$$$$:  315-block 12
+    $$$$$:  315-block 13
+    $$$$$:  315-block 14
+    $$$$$:  315-block 15
+        -:  316:                            invalid_param_spec() << "Parameter " << name
+        -:  317:                                                 << " is not optional and can't have default_value." );
+        -:  318:
+       2*:  319:        BOOST_TEST_I_ASSRT( !m.has( optional_value ) || !this->p_repeatable,
+        2:  319-block  0
+    %%%%%:  319-block  1
+        2:  319-block  2
+    %%%%%:  319-block  3
+        2:  319-block  4
+    %%%%%:  319-block  5
+    %%%%%:  319-block  6
+    %%%%%:  319-block  7
+    %%%%%:  319-block  8
+    %%%%%:  319-block  9
+    %%%%%:  319-block 10
+    $$$$$:  319-block 11
+    $$$$$:  319-block 12
+    $$$$$:  319-block 13
+    $$$$$:  319-block 14
+    $$$$$:  319-block 15
+    $$$$$:  319-block 16
+    $$$$$:  319-block 17
+    $$$$$:  319-block 18
+    $$$$$:  319-block 19
+        -:  320:                            invalid_param_spec() << "Parameter " << name
+        -:  321:                                                 << " is repeatable and can't have optional_value." );
+        2:  322:    }
+        2:  322-block  0
+------------------
+_ZN5boost7runtime9parameterImLNS0_11args_amountE0ELb0EEC2INS_3nfp23named_parameter_combineINS5_15named_parameterIKNS_9unit_test13basic_cstringIKcEENS0_12_GLOBAL__N_16help_tERSC_EENS6_INS7_ISC_NSD_12value_hint_tESF_EENS6_INS7_IKlNSD_16optional_value_tERSJ_EENS6_INS7_ISJ_NSD_15default_value_tESL_EENS6_INS7_ISC_NSD_9env_var_tESF_EENS7_ISC_NSD_13description_tESF_EEEEEEEEEEEEEESB_RKT_:
+        1:  307:    parameter( cstring name, Modifiers const& m = nfp::no_params )
+        -:  308:#else
+        -:  309:    template<typename Modifiers>
+        -:  310:    parameter( cstring name, Modifiers const& m )
+        -:  311:#endif
+        -:  312:    : basic_param( name, a != runtime::REQUIRED_PARAM, a == runtime::REPEATABLE_PARAM, m )
+        1:  313:    , m_arg_factory( m )
+        1:  313-block  0
+        1:  313-block  1
+    $$$$$:  313-block  2
+    $$$$$:  313-block  3
+        -:  314:    {
+       1*:  315:        BOOST_TEST_I_ASSRT( !m.has( default_value ) || a == runtime::OPTIONAL_PARAM,
+        1:  315-block  0
+        1:  315-block  1
+    %%%%%:  315-block  2
+    %%%%%:  315-block  3
+    %%%%%:  315-block  4
+    %%%%%:  315-block  5
+    %%%%%:  315-block  6
+    %%%%%:  315-block  7
+    $$$$$:  315-block  8
+    $$$$$:  315-block  9
+    $$$$$:  315-block 10
+    $$$$$:  315-block 11
+    $$$$$:  315-block 12
+    $$$$$:  315-block 13
+    $$$$$:  315-block 14
+    $$$$$:  315-block 15
+    $$$$$:  315-block 16
+        -:  316:                            invalid_param_spec() << "Parameter " << name
+        -:  317:                                                 << " is not optional and can't have default_value." );
+        -:  318:
+       1*:  319:        BOOST_TEST_I_ASSRT( !m.has( optional_value ) || !this->p_repeatable,
+        1:  319-block  0
+        1:  319-block  1
+        1:  319-block  2
+        1:  319-block  3
+    %%%%%:  319-block  4
+        1:  319-block  5
+    %%%%%:  319-block  6
+    %%%%%:  319-block  7
+    %%%%%:  319-block  8
+    %%%%%:  319-block  9
+    %%%%%:  319-block 10
+    %%%%%:  319-block 11
+    $$$$$:  319-block 12
+    $$$$$:  319-block 13
+    $$$$$:  319-block 14
+    $$$$$:  319-block 15
+    $$$$$:  319-block 16
+    $$$$$:  319-block 17
+    $$$$$:  319-block 18
+    $$$$$:  319-block 19
+    $$$$$:  319-block 20
+        -:  320:                            invalid_param_spec() << "Parameter " << name
+        -:  321:                                                 << " is repeatable and can't have optional_value." );
+        1:  322:    }
+        1:  322-block  0
+------------------
+_ZN5boost7runtime9parameterINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEELNS0_11args_amountE0ELb0EEC2INS_3nfp23named_parameter_combineINSB_15named_parameterIKZNS_9unit_test14runtime_config12_GLOBAL__N_119register_parametersERNS0_16parameters_storeEEUlNSE_13basic_cstringIKcEEE_NS0_12_GLOBAL__N_110callback_tERSN_EENSC_INSD_IKSL_NSO_9env_var_tERSS_EENSD_ISS_NSO_13description_tESU_EEEEEEEESL_RKT_:
+        1:  307:    parameter( cstring name, Modifiers const& m = nfp::no_params )
+        -:  308:#else
+        -:  309:    template<typename Modifiers>
+        -:  310:    parameter( cstring name, Modifiers const& m )
+        -:  311:#endif
+        -:  312:    : basic_param( name, a != runtime::REQUIRED_PARAM, a == runtime::REPEATABLE_PARAM, m )
+        1:  313:    , m_arg_factory( m )
+        1:  313-block  0
+        1:  313-block  1
+    $$$$$:  313-block  2
+    $$$$$:  313-block  3
+    $$$$$:  313-block  4
+        -:  314:    {
+       1*:  315:        BOOST_TEST_I_ASSRT( !m.has( default_value ) || a == runtime::OPTIONAL_PARAM,
+        1:  315-block  0
+    %%%%%:  315-block  1
+    %%%%%:  315-block  2
+    %%%%%:  315-block  3
+    %%%%%:  315-block  4
+    %%%%%:  315-block  5
+    %%%%%:  315-block  6
+    $$$$$:  315-block  7
+    $$$$$:  315-block  8
+    $$$$$:  315-block  9
+    $$$$$:  315-block 10
+    $$$$$:  315-block 11
+    $$$$$:  315-block 12
+    $$$$$:  315-block 13
+    $$$$$:  315-block 14
+    $$$$$:  315-block 15
+        -:  316:                            invalid_param_spec() << "Parameter " << name
+        -:  317:                                                 << " is not optional and can't have default_value." );
+        -:  318:
+       1*:  319:        BOOST_TEST_I_ASSRT( !m.has( optional_value ) || !this->p_repeatable,
+        1:  319-block  0
+    %%%%%:  319-block  1
+        1:  319-block  2
+    %%%%%:  319-block  3
+        1:  319-block  4
+    %%%%%:  319-block  5
+    %%%%%:  319-block  6
+    %%%%%:  319-block  7
+    %%%%%:  319-block  8
+    %%%%%:  319-block  9
+    %%%%%:  319-block 10
+    $$$$$:  319-block 11
+    $$$$$:  319-block 12
+    $$$$$:  319-block 13
+    $$$$$:  319-block 14
+    $$$$$:  319-block 15
+    $$$$$:  319-block 16
+    $$$$$:  319-block 17
+    $$$$$:  319-block 18
+    $$$$$:  319-block 19
+        -:  320:                            invalid_param_spec() << "Parameter " << name
+        -:  321:                                                 << " is repeatable and can't have optional_value." );
+        1:  322:    }
+        1:  322-block  0
+------------------
+        -:  323:
+        -:  324:private:
+       9*:  325:    virtual basic_param_ptr clone() const
+        -:  326:    {
+       9*:  327:        return basic_param_ptr( new parameter( *this ) );
+        -:  328:    }
+------------------
+_ZNK5boost7runtime9parameterINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEELNS0_11args_amountE0ELb0EE5cloneEv:
+        5:  325:    virtual basic_param_ptr clone() const
+        -:  326:    {
+        5:  327:        return basic_param_ptr( new parameter( *this ) );
+        5:  327-block  0
+        5:  327-block  1
+    $$$$$:  327-block  2
+        -:  328:    }
+------------------
+_ZNK5boost7runtime9parameterImLNS0_11args_amountE0ELb0EE5cloneEv:
+        1:  325:    virtual basic_param_ptr clone() const
+        -:  326:    {
+        1:  327:        return basic_param_ptr( new parameter( *this ) );
+        1:  327-block  0
+        1:  327-block  1
+    $$$$$:  327-block  2
+        -:  328:    }
+------------------
+_ZNK5boost7runtime9parameterINS_9unit_test13output_formatELNS0_11args_amountE0ELb1EE5cloneEv:
+    #####:  325:    virtual basic_param_ptr clone() const
+        -:  326:    {
+    #####:  327:        return basic_param_ptr( new parameter( *this ) );
+    %%%%%:  327-block  0
+    %%%%%:  327-block  1
+    $$$$$:  327-block  2
+        -:  328:    }
+------------------
+_ZNK5boost7runtime9parameterINS_9unit_test9log_levelELNS0_11args_amountE0ELb1EE5cloneEv:
+    #####:  325:    virtual basic_param_ptr clone() const
+        -:  326:    {
+    #####:  327:        return basic_param_ptr( new parameter( *this ) );
+    %%%%%:  327-block  0
+    %%%%%:  327-block  1
+    $$$$$:  327-block  2
+        -:  328:    }
+------------------
+_ZNK5boost7runtime9parameterINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEELNS0_11args_amountE2ELb0EE5cloneEv:
+        2:  325:    virtual basic_param_ptr clone() const
+        -:  326:    {
+        2:  327:        return basic_param_ptr( new parameter( *this ) );
+        2:  327-block  0
+        2:  327-block  1
+    $$$$$:  327-block  2
+        -:  328:    }
+------------------
+_ZNK5boost7runtime9parameterIjLNS0_11args_amountE0ELb0EE5cloneEv:
+        1:  325:    virtual basic_param_ptr clone() const
+        -:  326:    {
+        1:  327:        return basic_param_ptr( new parameter( *this ) );
+        1:  327-block  0
+        1:  327-block  1
+    $$$$$:  327-block  2
+        -:  328:    }
+------------------
+_ZNK5boost7runtime9parameterINS_9unit_test12report_levelELNS0_11args_amountE0ELb1EE5cloneEv:
+    #####:  325:    virtual basic_param_ptr clone() const
+        -:  326:    {
+    #####:  327:        return basic_param_ptr( new parameter( *this ) );
+    %%%%%:  327-block  0
+    %%%%%:  327-block  1
+    $$$$$:  327-block  2
+        -:  328:    }
+------------------
+       3*:  329:    virtual void    produce_argument( cstring token, bool , arguments_store& store ) const
+        -:  330:    {
+       3*:  331:        m_arg_factory.produce_argument( token, this->p_name, store );
+       3*:  332:    }
+------------------
+_ZNK5boost7runtime9parameterINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEELNS0_11args_amountE0ELb0EE16produce_argumentENS_9unit_test13basic_cstringIKcEEbRNS0_15arguments_storeE:
+    #####:  329:    virtual void    produce_argument( cstring token, bool , arguments_store& store ) const
+        -:  330:    {
+    #####:  331:        m_arg_factory.produce_argument( token, this->p_name, store );
+    %%%%%:  331-block  0
+    $$$$$:  331-block  1
+    #####:  332:    }
+    %%%%%:  332-block  0
+------------------
+_ZNK5boost7runtime9parameterImLNS0_11args_amountE0ELb0EE16produce_argumentENS_9unit_test13basic_cstringIKcEEbRNS0_15arguments_storeE:
+    #####:  329:    virtual void    produce_argument( cstring token, bool , arguments_store& store ) const
+        -:  330:    {
+    #####:  331:        m_arg_factory.produce_argument( token, this->p_name, store );
+    %%%%%:  331-block  0
+    $$$$$:  331-block  1
+    #####:  332:    }
+    %%%%%:  332-block  0
+------------------
+_ZNK5boost7runtime9parameterINS_9unit_test13output_formatELNS0_11args_amountE0ELb1EE16produce_argumentENS2_13basic_cstringIKcEEbRNS0_15arguments_storeE:
+        1:  329:    virtual void    produce_argument( cstring token, bool , arguments_store& store ) const
+        -:  330:    {
+        1:  331:        m_arg_factory.produce_argument( token, this->p_name, store );
+        1:  331-block  0
+    $$$$$:  331-block  1
+        1:  332:    }
+        1:  332-block  0
+------------------
+_ZNK5boost7runtime9parameterINS_9unit_test9log_levelELNS0_11args_amountE0ELb1EE16produce_argumentENS2_13basic_cstringIKcEEbRNS0_15arguments_storeE:
+    #####:  329:    virtual void    produce_argument( cstring token, bool , arguments_store& store ) const
+        -:  330:    {
+    #####:  331:        m_arg_factory.produce_argument( token, this->p_name, store );
+    %%%%%:  331-block  0
+    $$$$$:  331-block  1
+    #####:  332:    }
+    %%%%%:  332-block  0
+------------------
+_ZNK5boost7runtime9parameterINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEELNS0_11args_amountE2ELb0EE16produce_argumentENS_9unit_test13basic_cstringIKcEEbRNS0_15arguments_storeE:
+        2:  329:    virtual void    produce_argument( cstring token, bool , arguments_store& store ) const
+        -:  330:    {
+        2:  331:        m_arg_factory.produce_argument( token, this->p_name, store );
+        2:  331-block  0
+    $$$$$:  331-block  1
+        2:  332:    }
+        2:  332-block  0
+------------------
+_ZNK5boost7runtime9parameterIjLNS0_11args_amountE0ELb0EE16produce_argumentENS_9unit_test13basic_cstringIKcEEbRNS0_15arguments_storeE:
+    #####:  329:    virtual void    produce_argument( cstring token, bool , arguments_store& store ) const
+        -:  330:    {
+    #####:  331:        m_arg_factory.produce_argument( token, this->p_name, store );
+    %%%%%:  331-block  0
+    $$$$$:  331-block  1
+    #####:  332:    }
+    %%%%%:  332-block  0
+------------------
+_ZNK5boost7runtime9parameterINS_9unit_test12report_levelELNS0_11args_amountE0ELb1EE16produce_argumentENS2_13basic_cstringIKcEEbRNS0_15arguments_storeE:
+    #####:  329:    virtual void    produce_argument( cstring token, bool , arguments_store& store ) const
+        -:  330:    {
+    #####:  331:        m_arg_factory.produce_argument( token, this->p_name, store );
+    %%%%%:  331-block  0
+    $$$$$:  331-block  1
+    #####:  332:    }
+    %%%%%:  332-block  0
+------------------
+       7*:  333:    virtual void    produce_default( arguments_store& store ) const
+        -:  334:    {
+       7*:  335:        if( !this->p_has_default_value )
+    #####:  336:            return;
+        -:  337:
+       7*:  338:        m_arg_factory.produce_default( this->p_name, store );
+        -:  339:    }
+------------------
+_ZNK5boost7runtime9parameterINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEELNS0_11args_amountE0ELb0EE15produce_defaultERNS0_15arguments_storeE:
+        1:  333:    virtual void    produce_default( arguments_store& store ) const
+        -:  334:    {
+        1:  335:        if( !this->p_has_default_value )
+        1:  335-block  0
+    #####:  336:            return;
+    %%%%%:  336-block  0
+        -:  337:
+        1:  338:        m_arg_factory.produce_default( this->p_name, store );
+        1:  338-block  0
+        1:  338-block  1
+        -:  339:    }
+------------------
+_ZNK5boost7runtime9parameterImLNS0_11args_amountE0ELb0EE15produce_defaultERNS0_15arguments_storeE:
+        1:  333:    virtual void    produce_default( arguments_store& store ) const
+        -:  334:    {
+        1:  335:        if( !this->p_has_default_value )
+        1:  335-block  0
+    #####:  336:            return;
+    %%%%%:  336-block  0
+        -:  337:
+        1:  338:        m_arg_factory.produce_default( this->p_name, store );
+        1:  338-block  0
+        1:  338-block  1
+        -:  339:    }
+------------------
+_ZNK5boost7runtime9parameterINS_9unit_test13output_formatELNS0_11args_amountE0ELb1EE15produce_defaultERNS0_15arguments_storeE:
+        2:  333:    virtual void    produce_default( arguments_store& store ) const
+        -:  334:    {
+        2:  335:        if( !this->p_has_default_value )
+        2:  335-block  0
+    #####:  336:            return;
+    %%%%%:  336-block  0
+        -:  337:
+        2:  338:        m_arg_factory.produce_default( this->p_name, store );
+        2:  338-block  0
+        2:  338-block  1
+        -:  339:    }
+------------------
+_ZNK5boost7runtime9parameterINS_9unit_test9log_levelELNS0_11args_amountE0ELb1EE15produce_defaultERNS0_15arguments_storeE:
+        1:  333:    virtual void    produce_default( arguments_store& store ) const
+        -:  334:    {
+        1:  335:        if( !this->p_has_default_value )
+        1:  335-block  0
+    #####:  336:            return;
+    %%%%%:  336-block  0
+        -:  337:
+        1:  338:        m_arg_factory.produce_default( this->p_name, store );
+        1:  338-block  0
+        1:  338-block  1
+        -:  339:    }
+------------------
+_ZNK5boost7runtime9parameterINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEELNS0_11args_amountE2ELb0EE15produce_defaultERNS0_15arguments_storeE:
+    #####:  333:    virtual void    produce_default( arguments_store& store ) const
+        -:  334:    {
+    #####:  335:        if( !this->p_has_default_value )
+    %%%%%:  335-block  0
+    #####:  336:            return;
+    %%%%%:  336-block  0
+        -:  337:
+    #####:  338:        m_arg_factory.produce_default( this->p_name, store );
+    %%%%%:  338-block  0
+    %%%%%:  338-block  1
+        -:  339:    }
+------------------
+_ZNK5boost7runtime9parameterIjLNS0_11args_amountE0ELb0EE15produce_defaultERNS0_15arguments_storeE:
+        1:  333:    virtual void    produce_default( arguments_store& store ) const
+        -:  334:    {
+        1:  335:        if( !this->p_has_default_value )
+        1:  335-block  0
+    #####:  336:            return;
+    %%%%%:  336-block  0
+        -:  337:
+        1:  338:        m_arg_factory.produce_default( this->p_name, store );
+        1:  338-block  0
+        1:  338-block  1
+        -:  339:    }
+------------------
+_ZNK5boost7runtime9parameterINS_9unit_test12report_levelELNS0_11args_amountE0ELb1EE15produce_defaultERNS0_15arguments_storeE:
+        1:  333:    virtual void    produce_default( arguments_store& store ) const
+        -:  334:    {
+        1:  335:        if( !this->p_has_default_value )
+        1:  335-block  0
+    #####:  336:            return;
+    %%%%%:  336-block  0
+        -:  337:
+        1:  338:        m_arg_factory.produce_default( this->p_name, store );
+        1:  338-block  0
+        1:  338-block  1
+        -:  339:    }
+------------------
+        -:  340:
+        -:  341:    // Data members
+        -:  342:    typedef argument_factory<ValueType, is_enum, a == runtime::REPEATABLE_PARAM> factory_t;
+        -:  343:    factory_t       m_arg_factory;
+        -:  344:};
+        -:  345:
+        -:  346://____________________________________________________________________________//
+        -:  347:
+        -:  348:class option : public basic_param {
+        -:  349:public:
+        -:  350:    /// Constructor with modifiers
+        -:  351:#ifndef BOOST_NO_CXX11_FUNCTION_TEMPLATE_DEFAULT_ARGS
+        -:  352:    template<typename Modifiers=nfp::no_params_type>
+       13:  353:    option( cstring name, Modifiers const& m = nfp::no_params )
+        -:  354:#else
+        -:  355:    template<typename Modifiers>
+        -:  356:    option( cstring name, Modifiers const& m )
+        -:  357:#endif
+        -:  358:    : basic_param( name, true, false, nfp::opt_append( nfp::opt_append( m, optional_value = true), default_value = false) )
+       13:  359:    , m_arg_factory( nfp::opt_append( nfp::opt_append( m, optional_value = true), default_value = false) )
+        -:  360:    {
+       13:  361:    }
+------------------
+_ZN5boost7runtime6optionC2INS_3nfp15named_parameterIKNS_9unit_test13basic_cstringIKcEENS0_12_GLOBAL__N_113description_tERS9_EEEES8_RKT_:
+        2:  353:    option( cstring name, Modifiers const& m = nfp::no_params )
+        -:  354:#else
+        -:  355:    template<typename Modifiers>
+        -:  356:    option( cstring name, Modifiers const& m )
+        -:  357:#endif
+        -:  358:    : basic_param( name, true, false, nfp::opt_append( nfp::opt_append( m, optional_value = true), default_value = false) )
+        2:  359:    , m_arg_factory( nfp::opt_append( nfp::opt_append( m, optional_value = true), default_value = false) )
+        2:  359-block  0
+        2:  359-block  1
+        2:  359-block  2
+        2:  359-block  3
+        2:  359-block  4
+        2:  359-block  5
+        2:  359-block  6
+        2:  359-block  7
+        2:  359-block  8
+        2:  359-block  9
+    $$$$$:  359-block 10
+    $$$$$:  359-block 11
+    $$$$$:  359-block 12
+    $$$$$:  359-block 13
+    $$$$$:  359-block 14
+    $$$$$:  359-block 15
+    $$$$$:  359-block 16
+    $$$$$:  359-block 17
+    $$$$$:  359-block 18
+    $$$$$:  359-block 19
+    $$$$$:  359-block 20
+    $$$$$:  359-block 21
+    $$$$$:  359-block 22
+    $$$$$:  359-block 23
+        -:  360:    {
+        2:  361:    }
+        2:  361-block  0
+------------------
+_ZN5boost7runtime6optionC2INS_3nfp23named_parameter_combineINS3_15named_parameterIKNS_9unit_test13basic_cstringIKcEENS0_12_GLOBAL__N_16help_tERSA_EENS4_INS5_IKbNSB_15default_value_tERSF_EENS4_INS5_ISA_NSB_9env_var_tESD_EENS5_ISA_NSB_13description_tESD_EEEEEEEEEES9_RKT_:
+        4:  353:    option( cstring name, Modifiers const& m = nfp::no_params )
+        -:  354:#else
+        -:  355:    template<typename Modifiers>
+        -:  356:    option( cstring name, Modifiers const& m )
+        -:  357:#endif
+        -:  358:    : basic_param( name, true, false, nfp::opt_append( nfp::opt_append( m, optional_value = true), default_value = false) )
+        4:  359:    , m_arg_factory( nfp::opt_append( nfp::opt_append( m, optional_value = true), default_value = false) )
+        4:  359-block  0
+        4:  359-block  1
+        4:  359-block  2
+        4:  359-block  3
+        4:  359-block  4
+        4:  359-block  5
+        4:  359-block  6
+        4:  359-block  7
+        4:  359-block  8
+        4:  359-block  9
+    $$$$$:  359-block 10
+    $$$$$:  359-block 11
+    $$$$$:  359-block 12
+    $$$$$:  359-block 13
+    $$$$$:  359-block 14
+    $$$$$:  359-block 15
+    $$$$$:  359-block 16
+    $$$$$:  359-block 17
+    $$$$$:  359-block 18
+    $$$$$:  359-block 19
+    $$$$$:  359-block 20
+    $$$$$:  359-block 21
+    $$$$$:  359-block 22
+    $$$$$:  359-block 23
+        -:  360:    {
+        4:  361:    }
+        4:  361-block  0
+------------------
+_ZN5boost7runtime6optionC2INS_3nfp23named_parameter_combineINS3_15named_parameterIKNS_9unit_test13basic_cstringIKcEENS0_12_GLOBAL__N_16help_tERSA_EENS4_INS5_ISA_NSB_9env_var_tESD_EENS5_ISA_NSB_13description_tESD_EEEEEEEES9_RKT_:
+        7:  353:    option( cstring name, Modifiers const& m = nfp::no_params )
+        -:  354:#else
+        -:  355:    template<typename Modifiers>
+        -:  356:    option( cstring name, Modifiers const& m )
+        -:  357:#endif
+        -:  358:    : basic_param( name, true, false, nfp::opt_append( nfp::opt_append( m, optional_value = true), default_value = false) )
+        7:  359:    , m_arg_factory( nfp::opt_append( nfp::opt_append( m, optional_value = true), default_value = false) )
+        7:  359-block  0
+        7:  359-block  1
+        7:  359-block  2
+        7:  359-block  3
+        7:  359-block  4
+        7:  359-block  5
+        7:  359-block  6
+        7:  359-block  7
+        7:  359-block  8
+        7:  359-block  9
+    $$$$$:  359-block 10
+    $$$$$:  359-block 11
+    $$$$$:  359-block 12
+    $$$$$:  359-block 13
+    $$$$$:  359-block 14
+    $$$$$:  359-block 15
+    $$$$$:  359-block 16
+    $$$$$:  359-block 17
+    $$$$$:  359-block 18
+    $$$$$:  359-block 19
+    $$$$$:  359-block 20
+    $$$$$:  359-block 21
+    $$$$$:  359-block 22
+    $$$$$:  359-block 23
+        -:  360:    {
+        7:  361:    }
+        7:  361-block  0
+------------------
+        -:  362:
+       20:  363:    void            add_cla_id( cstring prefix, cstring tag, cstring value_separator, bool negatable = false )
+        -:  364:    {
+       20:  365:        add_cla_id_impl( prefix, tag, value_separator, negatable, false );
+       20:  365-block  0
+    $$$$$:  365-block  1
+    $$$$$:  365-block  2
+       20:  366:    }
+       20:  366-block  0
+        -:  367:
+        -:  368:private:
+       13:  369:    virtual basic_param_ptr clone() const
+        -:  370:    {
+       13:  371:        return basic_param_ptr( new option( *this ) );
+       13:  371-block  0
+       13:  371-block  1
+    $$$$$:  371-block  2
+        -:  372:    }
+        -:  373:
+        2:  374:    virtual void    produce_argument( cstring token, bool negative_form, arguments_store& store ) const
+        -:  375:    {
+        2:  376:        if( token.empty() )
+        2:  376-block  0
+    #####:  377:            store.set( p_name, !negative_form );
+    %%%%%:  377-block  0
+    %%%%%:  377-block  1
+    $$$$$:  377-block  2
+    $$$$$:  377-block  3
+        -:  378:        else {
+       2*:  379:            BOOST_TEST_I_ASSRT( !negative_form,
+        2:  379-block  0
+    %%%%%:  379-block  1
+    %%%%%:  379-block  2
+    %%%%%:  379-block  3
+    $$$$$:  379-block  4
+    $$$$$:  379-block  5
+    $$$$$:  379-block  6
+    $$$$$:  379-block  7
+    $$$$$:  379-block  8
+        -:  380:                                format_error( p_name ) << "Can't set value to negative form of the argument." );
+        -:  381:
+        2:  382:            m_arg_factory.produce_argument( token, p_name, store );
+        2:  382-block  0
+        2:  382-block  1
+    $$$$$:  382-block  2
+        -:  383:        }
+        2:  384:    }
+        2:  384-block  0
+        -:  385:
+       11:  386:    virtual void    produce_default( arguments_store& store ) const
+        -:  387:    {
+       11:  388:        m_arg_factory.produce_default( p_name, store );
+       11:  388-block  0
+       11:  389:    }
+       11:  389-block  0
+    #####:  390:    virtual void    cla_name_help( std::ostream& ostr, cstring cla_tag, cstring negation_prefix_, bool use_color = true ) const
+        -:  391:    {
+        -:  392:        namespace utils = unit_test::utils;
+        -:  393:        namespace ut_detail = unit_test::ut_detail;
+        -:  394:
+    #####:  395:        if( !negation_prefix_.is_empty() ) {
+    %%%%%:  395-block  0
+    #####:  396:            BOOST_TEST_SCOPE_SETCOLOR( use_color, ostr, term_attr::BRIGHT, term_color::YELLOW );
+    %%%%%:  396-block  0
+    %%%%%:  396-block  1
+    $$$$$:  396-block  2
+    #####:  397:            ostr << '[' << negation_prefix_ << ']';
+    %%%%%:  397-block  0
+    %%%%%:  397-block  1
+    %%%%%:  397-block  2
+        -:  398:        }
+    #####:  399:        ostr << cla_tag;
+    %%%%%:  399-block  0
+    #####:  400:    }
+    #####:  401:    virtual void    value_help( std::ostream& ostr ) const
+        -:  402:    {
+    #####:  403:        if( p_value_hint.empty() )
+    %%%%%:  403-block  0
+    #####:  404:            ostr << "<boolean value>";
+    %%%%%:  404-block  0
+        -:  405:        else
+    #####:  406:            ostr << p_value_hint;
+    %%%%%:  406-block  0
+    #####:  407:    }
+        -:  408:
+        -:  409:    // Data members
+        -:  410:    typedef argument_factory<bool, false, false> factory_t;
+        -:  411:    factory_t       m_arg_factory;
+        -:  412:};
+        -:  413:
+        -:  414://____________________________________________________________________________//
+        -:  415:
+        -:  416:template<typename EnumType, args_amount a = runtime::OPTIONAL_PARAM>
+        -:  417:class enum_parameter : public parameter<EnumType, a, true> {
+        -:  418:    typedef parameter<EnumType, a, true> base;
+        -:  419:public:
+        -:  420:    /// Constructor with modifiers
+        -:  421:#ifndef BOOST_NO_CXX11_FUNCTION_TEMPLATE_DEFAULT_ARGS
+        -:  422:    template<typename Modifiers=nfp::no_params_type>
+        6:  423:    enum_parameter( cstring name, Modifiers const& m = nfp::no_params )
+        -:  424:#else
+        -:  425:    template<typename Modifiers>
+        -:  426:    enum_parameter( cstring name, Modifiers const& m )
+        -:  427:#endif
+        6:  428:    : base( name, m )
+        -:  429:    {
+        -:  430:#ifdef BOOST_TEST_CLA_NEW_API
+        6:  431:        auto const& values = m[enum_values<EnumType>::value];
+        6:  432:        auto it = values.begin();
+        -:  433:#else
+        -:  434:        std::vector<std::pair<cstring, EnumType> > const& values = m[enum_values<EnumType>::value];
+        -:  435:        typename std::vector<std::pair<cstring, EnumType> >::const_iterator it = values.begin();
+        -:  436:#endif
+       33:  437:        while( it != values.end() ) {
+       27:  438:            m_valid_names.push_back( it->first );
+       27:  439:            ++it;
+        -:  440:        }
+        6:  441:    }
+------------------
+_ZN5boost7runtime14enum_parameterINS_9unit_test12report_levelELNS0_11args_amountE0EEC2INS_3nfp23named_parameter_combineINS7_15named_parameterIKNS2_13basic_cstringIKcEENS0_12_GLOBAL__N_16help_tERSD_EENS8_INS9_IKSt16initializer_listISt4pairISD_S3_EENSE_13enum_values_tERSM_EENS8_INS9_IKS3_NSE_15default_value_tERSQ_EENS8_INS9_ISD_NSE_9env_var_tESG_EENS9_ISD_NSE_13description_tESG_EEEEEEEEEEEESC_RKT_:
+        1:  423:    enum_parameter( cstring name, Modifiers const& m = nfp::no_params )
+        -:  424:#else
+        -:  425:    template<typename Modifiers>
+        -:  426:    enum_parameter( cstring name, Modifiers const& m )
+        -:  427:#endif
+        1:  428:    : base( name, m )
+        1:  428-block  0
+        1:  428-block  1
+    $$$$$:  428-block  2
+    $$$$$:  428-block  3
+    $$$$$:  428-block  4
+        -:  429:    {
+        -:  430:#ifdef BOOST_TEST_CLA_NEW_API
+        1:  431:        auto const& values = m[enum_values<EnumType>::value];
+        1:  432:        auto it = values.begin();
+        1:  432-block  0
+        -:  433:#else
+        -:  434:        std::vector<std::pair<cstring, EnumType> > const& values = m[enum_values<EnumType>::value];
+        -:  435:        typename std::vector<std::pair<cstring, EnumType> >::const_iterator it = values.begin();
+        -:  436:#endif
+        5:  437:        while( it != values.end() ) {
+        5:  437-block  0
+        4:  438:            m_valid_names.push_back( it->first );
+        4:  438-block  0
+        4:  439:            ++it;
+        4:  439-block  0
+        -:  440:        }
+        1:  441:    }
+        1:  441-block  0
+------------------
+_ZN5boost7runtime14enum_parameterINS_9unit_test13output_formatELNS0_11args_amountE0EEC2INS_3nfp23named_parameter_combineINS7_15named_parameterIKNS2_13basic_cstringIKcEENS0_12_GLOBAL__N_16help_tERSD_EENS8_INS9_IKSt16initializer_listISt4pairISD_S3_EENSE_13enum_values_tERSM_EENS8_INS9_ISD_NSE_9env_var_tESG_EENS9_ISD_NSE_13description_tESG_EEEEEEEEEESC_RKT_:
+        1:  423:    enum_parameter( cstring name, Modifiers const& m = nfp::no_params )
+        -:  424:#else
+        -:  425:    template<typename Modifiers>
+        -:  426:    enum_parameter( cstring name, Modifiers const& m )
+        -:  427:#endif
+        1:  428:    : base( name, m )
+        1:  428-block  0
+        1:  428-block  1
+    $$$$$:  428-block  2
+    $$$$$:  428-block  3
+    $$$$$:  428-block  4
+        -:  429:    {
+        -:  430:#ifdef BOOST_TEST_CLA_NEW_API
+        1:  431:        auto const& values = m[enum_values<EnumType>::value];
+        1:  432:        auto it = values.begin();
+        1:  432-block  0
+        -:  433:#else
+        -:  434:        std::vector<std::pair<cstring, EnumType> > const& values = m[enum_values<EnumType>::value];
+        -:  435:        typename std::vector<std::pair<cstring, EnumType> >::const_iterator it = values.begin();
+        -:  436:#endif
+        4:  437:        while( it != values.end() ) {
+        4:  437-block  0
+        3:  438:            m_valid_names.push_back( it->first );
+        3:  438-block  0
+        3:  439:            ++it;
+        3:  439-block  0
+        -:  440:        }
+        1:  441:    }
+        1:  441-block  0
+------------------
+_ZN5boost7runtime14enum_parameterINS_9unit_test9log_levelELNS0_11args_amountE0EEC2INS_3nfp23named_parameter_combineINS7_15named_parameterIKNS2_13basic_cstringIKcEENS0_12_GLOBAL__N_16help_tERSD_EENS8_INS9_IKSt16initializer_listISt4pairISD_S3_EENSE_13enum_values_tERSM_EENS8_INS9_IKS3_NSE_15default_value_tERSQ_EENS8_INS9_ISD_NSE_9env_var_tESG_EENS9_ISD_NSE_13description_tESG_EEEEEEEEEEEESC_RKT_:
+        1:  423:    enum_parameter( cstring name, Modifiers const& m = nfp::no_params )
+        -:  424:#else
+        -:  425:    template<typename Modifiers>
+        -:  426:    enum_parameter( cstring name, Modifiers const& m )
+        -:  427:#endif
+        1:  428:    : base( name, m )
+        1:  428-block  0
+        1:  428-block  1
+    $$$$$:  428-block  2
+    $$$$$:  428-block  3
+    $$$$$:  428-block  4
+        -:  429:    {
+        -:  430:#ifdef BOOST_TEST_CLA_NEW_API
+        1:  431:        auto const& values = m[enum_values<EnumType>::value];
+        1:  432:        auto it = values.begin();
+        1:  432-block  0
+        -:  433:#else
+        -:  434:        std::vector<std::pair<cstring, EnumType> > const& values = m[enum_values<EnumType>::value];
+        -:  435:        typename std::vector<std::pair<cstring, EnumType> >::const_iterator it = values.begin();
+        -:  436:#endif
+       12:  437:        while( it != values.end() ) {
+       12:  437-block  0
+       11:  438:            m_valid_names.push_back( it->first );
+       11:  438-block  0
+       11:  439:            ++it;
+       11:  439-block  0
+        -:  440:        }
+        1:  441:    }
+        1:  441-block  0
+------------------
+_ZN5boost7runtime14enum_parameterINS_9unit_test13output_formatELNS0_11args_amountE0EEC2INS_3nfp23named_parameter_combineINS7_15named_parameterIKNS2_13basic_cstringIKcEENS0_12_GLOBAL__N_16help_tERSD_EENS8_INS9_IKSt16initializer_listISt4pairISD_S3_EENSE_13enum_values_tERSM_EENS8_INS9_IKS3_NSE_15default_value_tERSQ_EENS8_INS9_ISD_NSE_9env_var_tESG_EENS9_ISD_NSE_13description_tESG_EEEEEEEEEEEESC_RKT_:
+        2:  423:    enum_parameter( cstring name, Modifiers const& m = nfp::no_params )
+        -:  424:#else
+        -:  425:    template<typename Modifiers>
+        -:  426:    enum_parameter( cstring name, Modifiers const& m )
+        -:  427:#endif
+        2:  428:    : base( name, m )
+        2:  428-block  0
+        2:  428-block  1
+    $$$$$:  428-block  2
+    $$$$$:  428-block  3
+    $$$$$:  428-block  4
+        -:  429:    {
+        -:  430:#ifdef BOOST_TEST_CLA_NEW_API
+        2:  431:        auto const& values = m[enum_values<EnumType>::value];
+        2:  432:        auto it = values.begin();
+        2:  432-block  0
+        -:  433:#else
+        -:  434:        std::vector<std::pair<cstring, EnumType> > const& values = m[enum_values<EnumType>::value];
+        -:  435:        typename std::vector<std::pair<cstring, EnumType> >::const_iterator it = values.begin();
+        -:  436:#endif
+        9:  437:        while( it != values.end() ) {
+        9:  437-block  0
+        7:  438:            m_valid_names.push_back( it->first );
+        7:  438-block  0
+        7:  439:            ++it;
+        7:  439-block  0
+        -:  440:        }
+        2:  441:    }
+        2:  441-block  0
+------------------
+_ZN5boost7runtime14enum_parameterINS_9unit_test13output_formatELNS0_11args_amountE0EEC2INS_3nfp23named_parameter_combineINS7_15named_parameterIKNS2_13basic_cstringIKcEENS0_12_GLOBAL__N_16help_tERSD_EENS8_INS9_IKSt16initializer_listISt4pairISD_S3_EENSE_13enum_values_tERSM_EENS8_INS9_IKS3_NSE_16optional_value_tERSQ_EENS8_INS9_ISQ_NSE_15default_value_tESS_EENS8_INS9_ISD_NSE_9env_var_tESG_EENS9_ISD_NSE_13description_tESG_EEEEEEEEEEEEEESC_RKT_:
+        1:  423:    enum_parameter( cstring name, Modifiers const& m = nfp::no_params )
+        -:  424:#else
+        -:  425:    template<typename Modifiers>
+        -:  426:    enum_parameter( cstring name, Modifiers const& m )
+        -:  427:#endif
+        1:  428:    : base( name, m )
+        1:  428-block  0
+        1:  428-block  1
+    $$$$$:  428-block  2
+    $$$$$:  428-block  3
+    $$$$$:  428-block  4
+        -:  429:    {
+        -:  430:#ifdef BOOST_TEST_CLA_NEW_API
+        1:  431:        auto const& values = m[enum_values<EnumType>::value];
+        1:  432:        auto it = values.begin();
+        1:  432-block  0
+        -:  433:#else
+        -:  434:        std::vector<std::pair<cstring, EnumType> > const& values = m[enum_values<EnumType>::value];
+        -:  435:        typename std::vector<std::pair<cstring, EnumType> >::const_iterator it = values.begin();
+        -:  436:#endif
+        3:  437:        while( it != values.end() ) {
+        3:  437-block  0
+        2:  438:            m_valid_names.push_back( it->first );
+        2:  438-block  0
+        2:  439:            ++it;
+        2:  439-block  0
+        -:  440:        }
+        1:  441:    }
+        1:  441-block  0
+------------------
+        -:  442:
+        -:  443:private:
+        6:  444:    virtual basic_param_ptr clone() const
+        -:  445:    {
+        6:  446:        return basic_param_ptr( new enum_parameter( *this ) );
+        -:  447:    }
+------------------
+_ZNK5boost7runtime14enum_parameterINS_9unit_test13output_formatELNS0_11args_amountE0EE5cloneEv:
+        4:  444:    virtual basic_param_ptr clone() const
+        -:  445:    {
+        4:  446:        return basic_param_ptr( new enum_parameter( *this ) );
+        4:  446-block  0
+        4:  446-block  1
+    $$$$$:  446-block  2
+        -:  447:    }
+------------------
+_ZNK5boost7runtime14enum_parameterINS_9unit_test9log_levelELNS0_11args_amountE0EE5cloneEv:
+        1:  444:    virtual basic_param_ptr clone() const
+        -:  445:    {
+        1:  446:        return basic_param_ptr( new enum_parameter( *this ) );
+        1:  446-block  0
+        1:  446-block  1
+    $$$$$:  446-block  2
+        -:  447:    }
+------------------
+_ZNK5boost7runtime14enum_parameterINS_9unit_test12report_levelELNS0_11args_amountE0EE5cloneEv:
+        1:  444:    virtual basic_param_ptr clone() const
+        -:  445:    {
+        1:  446:        return basic_param_ptr( new enum_parameter( *this ) );
+        1:  446-block  0
+        1:  446-block  1
+    $$$$$:  446-block  2
+        -:  447:    }
+------------------
+        -:  448:
+    #####:  449:    virtual void    value_help( std::ostream& ostr ) const
+        -:  450:    {
+    #####:  451:        if( this->p_value_hint.empty() ) {
+    #####:  452:            ostr << "<";
+    #####:  453:            bool first = true;
+    #####:  454:            BOOST_TEST_FOREACH( cstring, name, m_valid_names ) {
+    #####:  455:                if( first )
+    #####:  456:                    first = false;
+        -:  457:                else
+    #####:  458:                    ostr << '|';
+    #####:  459:                ostr << name;
+        -:  460:            }
+    #####:  461:            ostr << ">";
+        -:  462:        }
+        -:  463:        else
+    #####:  464:            ostr << this->p_value_hint;
+    #####:  465:    }
+------------------
+_ZNK5boost7runtime14enum_parameterINS_9unit_test13output_formatELNS0_11args_amountE0EE10value_helpERSo:
+    #####:  449:    virtual void    value_help( std::ostream& ostr ) const
+        -:  450:    {
+    #####:  451:        if( this->p_value_hint.empty() ) {
+    %%%%%:  451-block  0
+    #####:  452:            ostr << "<";
+    %%%%%:  452-block  0
+    #####:  453:            bool first = true;
+    #####:  454:            BOOST_TEST_FOREACH( cstring, name, m_valid_names ) {
+    %%%%%:  454-block  0
+    %%%%%:  454-block  1
+    %%%%%:  454-block  2
+    %%%%%:  454-block  3
+    %%%%%:  454-block  4
+    %%%%%:  454-block  5
+    %%%%%:  454-block  6
+    %%%%%:  454-block  7
+    %%%%%:  454-block  8
+    %%%%%:  454-block  9
+    %%%%%:  454-block 10
+    %%%%%:  454-block 11
+    %%%%%:  454-block 12
+    %%%%%:  454-block 13
+    %%%%%:  454-block 14
+    %%%%%:  454-block 15
+    %%%%%:  454-block 16
+    %%%%%:  454-block 17
+    $$$$$:  454-block 18
+    $$$$$:  454-block 19
+    $$$$$:  454-block 20
+    $$$$$:  454-block 21
+    #####:  455:                if( first )
+    %%%%%:  455-block  0
+    #####:  456:                    first = false;
+    %%%%%:  456-block  0
+        -:  457:                else
+    #####:  458:                    ostr << '|';
+    %%%%%:  458-block  0
+    #####:  459:                ostr << name;
+    %%%%%:  459-block  0
+        -:  460:            }
+    #####:  461:            ostr << ">";
+    %%%%%:  461-block  0
+        -:  462:        }
+        -:  463:        else
+    #####:  464:            ostr << this->p_value_hint;
+    %%%%%:  464-block  0
+    #####:  465:    }
+    %%%%%:  465-block  0
+------------------
+_ZNK5boost7runtime14enum_parameterINS_9unit_test9log_levelELNS0_11args_amountE0EE10value_helpERSo:
+    #####:  449:    virtual void    value_help( std::ostream& ostr ) const
+        -:  450:    {
+    #####:  451:        if( this->p_value_hint.empty() ) {
+    %%%%%:  451-block  0
+    #####:  452:            ostr << "<";
+    %%%%%:  452-block  0
+    #####:  453:            bool first = true;
+    #####:  454:            BOOST_TEST_FOREACH( cstring, name, m_valid_names ) {
+    %%%%%:  454-block  0
+    %%%%%:  454-block  1
+    %%%%%:  454-block  2
+    %%%%%:  454-block  3
+    %%%%%:  454-block  4
+    %%%%%:  454-block  5
+    %%%%%:  454-block  6
+    %%%%%:  454-block  7
+    %%%%%:  454-block  8
+    %%%%%:  454-block  9
+    %%%%%:  454-block 10
+    %%%%%:  454-block 11
+    %%%%%:  454-block 12
+    %%%%%:  454-block 13
+    %%%%%:  454-block 14
+    %%%%%:  454-block 15
+    %%%%%:  454-block 16
+    %%%%%:  454-block 17
+    $$$$$:  454-block 18
+    $$$$$:  454-block 19
+    $$$$$:  454-block 20
+    $$$$$:  454-block 21
+    #####:  455:                if( first )
+    %%%%%:  455-block  0
+    #####:  456:                    first = false;
+    %%%%%:  456-block  0
+        -:  457:                else
+    #####:  458:                    ostr << '|';
+    %%%%%:  458-block  0
+    #####:  459:                ostr << name;
+    %%%%%:  459-block  0
+        -:  460:            }
+    #####:  461:            ostr << ">";
+    %%%%%:  461-block  0
+        -:  462:        }
+        -:  463:        else
+    #####:  464:            ostr << this->p_value_hint;
+    %%%%%:  464-block  0
+    #####:  465:    }
+    %%%%%:  465-block  0
+------------------
+_ZNK5boost7runtime14enum_parameterINS_9unit_test12report_levelELNS0_11args_amountE0EE10value_helpERSo:
+    #####:  449:    virtual void    value_help( std::ostream& ostr ) const
+        -:  450:    {
+    #####:  451:        if( this->p_value_hint.empty() ) {
+    %%%%%:  451-block  0
+    #####:  452:            ostr << "<";
+    %%%%%:  452-block  0
+    #####:  453:            bool first = true;
+    #####:  454:            BOOST_TEST_FOREACH( cstring, name, m_valid_names ) {
+    %%%%%:  454-block  0
+    %%%%%:  454-block  1
+    %%%%%:  454-block  2
+    %%%%%:  454-block  3
+    %%%%%:  454-block  4
+    %%%%%:  454-block  5
+    %%%%%:  454-block  6
+    %%%%%:  454-block  7
+    %%%%%:  454-block  8
+    %%%%%:  454-block  9
+    %%%%%:  454-block 10
+    %%%%%:  454-block 11
+    %%%%%:  454-block 12
+    %%%%%:  454-block 13
+    %%%%%:  454-block 14
+    %%%%%:  454-block 15
+    %%%%%:  454-block 16
+    %%%%%:  454-block 17
+    $$$$$:  454-block 18
+    $$$$$:  454-block 19
+    $$$$$:  454-block 20
+    $$$$$:  454-block 21
+    #####:  455:                if( first )
+    %%%%%:  455-block  0
+    #####:  456:                    first = false;
+    %%%%%:  456-block  0
+        -:  457:                else
+    #####:  458:                    ostr << '|';
+    %%%%%:  458-block  0
+    #####:  459:                ostr << name;
+    %%%%%:  459-block  0
+        -:  460:            }
+    #####:  461:            ostr << ">";
+    %%%%%:  461-block  0
+        -:  462:        }
+        -:  463:        else
+    #####:  464:            ostr << this->p_value_hint;
+    %%%%%:  464-block  0
+    #####:  465:    }
+    %%%%%:  465-block  0
+------------------
+        -:  466:
+        -:  467:    // Data members
+        -:  468:    std::vector<cstring>    m_valid_names;
+        -:  469:};
+        -:  470:
+        -:  471:
+        -:  472:// ************************************************************************** //
+        -:  473:// **************           runtime::parameters_store          ************** //
+        -:  474:// ************************************************************************** //
+        -:  475:
+        -:  476:class parameters_store {
+        -:  477:    struct lg_compare {
+      186:  478:        bool operator()( cstring lh, cstring rh ) const
+        -:  479:        {
+      186:  480:            return std::lexicographical_compare(lh.begin(), lh.end(),
+      186:  480-block  0
+      186:  481:                                                rh.begin(), rh.end());
+        -:  482:        }
+        -:  483:    };
+        -:  484:public:
+        -:  485:
+        -:  486:    typedef std::map<cstring, basic_param_ptr, lg_compare> storage_type;
+        -:  487:
+        -:  488:    /// Adds parameter into the persistent store
+       28:  489:    void                    add( basic_param const& in )
+        -:  490:    {
+       56:  491:        basic_param_ptr p = in.clone();
+       28:  491-block  0
+       28:  491-block  1
+    $$$$$:  491-block  2
+        -:  492:
+      28*:  493:        BOOST_TEST_I_ASSRT( m_parameters.insert( std::make_pair( cstring(p->p_name), p ) ).second,
+       28:  493-block  0
+       28:  493-block  1
+       28:  493-block  2
+    %%%%%:  493-block  3
+    %%%%%:  493-block  4
+    %%%%%:  493-block  5
+    %%%%%:  493-block  6
+    %%%%%:  493-block  7
+    %%%%%:  493-block  8
+    $$$$$:  493-block  9
+    $$$$$:  493-block 10
+    $$$$$:  493-block 11
+    $$$$$:  493-block 12
+    $$$$$:  493-block 13
+    $$$$$:  493-block 14
+    $$$$$:  493-block 15
+    $$$$$:  493-block 16
+    $$$$$:  493-block 17
+    $$$$$:  493-block 18
+    $$$$$:  493-block 19
+    $$$$$:  493-block 20
+        -:  494:                            duplicate_param() << "Parameter " << p->p_name << " is duplicate." );
+       28:  495:    }
+        -:  496:
+        -:  497:    /// Returns true if there is no parameters registered
+        1:  498:    bool                    is_empty() const    { return m_parameters.empty(); }
+        1:  498-block  0
+        -:  499:    /// Returns map of all the registered parameter
+      522:  500:    storage_type const&     all() const         { return m_parameters; }
+      522:  500-block  0
+        -:  501:    /// Returns true if parameter with psecified name is registered
+        -:  502:    bool                    has( cstring name ) const
+        -:  503:    {
+        -:  504:        return m_parameters.find( name ) != m_parameters.end();
+        -:  505:    }
+        -:  506:    /// Returns map of all the registered parameter
+        -:  507:    basic_param_ptr         get( cstring name ) const
+        -:  508:    {
+        -:  509:        storage_type::const_iterator const& found = m_parameters.find( name );
+        -:  510:        BOOST_TEST_I_ASSRT( found != m_parameters.end(),
+        -:  511:                            unknown_param() << "Parameter " << name << " is unknown." );
+        -:  512:
+        -:  513:        return found->second;
+        -:  514:    }
+        -:  515:
+        -:  516:private:
+        -:  517:    // Data members
+        -:  518:    storage_type            m_parameters;
+        -:  519:};
+        -:  520:
+        -:  521:} // namespace runtime
+        -:  522:} // namespace boost
+        -:  523:
+        -:  524:#include <boost/test/detail/enable_warnings.hpp>
+        -:  525:
+        -:  526:#endif // BOOST_TEST_UTILS_RUNTIME_PARAMETER_HPP

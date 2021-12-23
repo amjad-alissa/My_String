@@ -1,0 +1,797 @@
+        -:    0:Source:F:/Files/vcpkg/installed/x86-windows/include/boost/test/utils/lazy_ostream.hpp
+        -:    0:Graph:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcno
+        -:    0:Data:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1://  (C) Copyright Gennadiy Rozental 2001.
+        -:    2://  Distributed under the Boost Software License, Version 1.0.
+        -:    3://  (See accompanying file LICENSE_1_0.txt or copy at
+        -:    4://  http://www.boost.org/LICENSE_1_0.txt)
+        -:    5:
+        -:    6://  See http://www.boost.org/libs/test for the library home page.
+        -:    7://
+        -:    8://  Description : contains definition for all test tools in test toolbox
+        -:    9:// ***************************************************************************
+        -:   10:
+        -:   11:#ifndef BOOST_TEST_UTILS_LAZY_OSTREAM_HPP
+        -:   12:#define BOOST_TEST_UTILS_LAZY_OSTREAM_HPP
+        -:   13:
+        -:   14:// Boost.Test
+        -:   15:#include <boost/test/detail/config.hpp>
+        -:   16:
+        -:   17:// STL
+        -:   18:#include <iosfwd>
+        -:   19:
+        -:   20:#include <boost/test/detail/suppress_warnings.hpp>
+        -:   21:
+        -:   22://____________________________________________________________________________//
+        -:   23:
+        -:   24:// ************************************************************************** //
+        -:   25:// **************                  lazy_ostream                ************** //
+        -:   26:// ************************************************************************** //
+        -:   27:
+        -:   28:namespace boost {
+        -:   29:namespace unit_test {
+        -:   30:
+        -:   31:class BOOST_TEST_DECL lazy_ostream {
+        -:   32:public:
+     160*:   33:    virtual                 ~lazy_ostream()                                         {}
+------------------
+_ZN5boost9unit_test12lazy_ostreamD0Ev:
+    #####:   33:    virtual                 ~lazy_ostream()                                         {}
+    %%%%%:   33-block  0
+------------------
+_ZN5boost9unit_test12lazy_ostreamD1Ev:
+    #####:   33:    virtual                 ~lazy_ostream()                                         {}
+------------------
+_ZN5boost9unit_test12lazy_ostreamD2Ev:
+      160:   33:    virtual                 ~lazy_ostream()                                         {}
+------------------
+        -:   34:
+      160:   35:    static lazy_ostream&    instance()                                              { return inst; }
+      160:   35-block  0
+        -:   36:
+        4:   37:    friend std::ostream&    operator<<( std::ostream& ostr, lazy_ostream const& o ) { return o( ostr ); }
+        4:   37-block  0
+        -:   38:
+        -:   39:    // access method
+        4:   40:    bool                    empty() const                                           { return m_empty; }
+        4:   40-block  0
+        -:   41:
+        -:   42:    // actual printing interface; to be accessed only by this class and children
+        4:   43:    virtual std::ostream&   operator()( std::ostream& ostr ) const                  { return ostr; }
+        4:   43-block  0
+        -:   44:protected:
+      161:   45:    explicit                lazy_ostream( bool p_empty = true ) : m_empty( p_empty )    {}
+------------------
+_ZN5boost9unit_test12lazy_ostreamC1Eb:
+        1:   45:    explicit                lazy_ostream( bool p_empty = true ) : m_empty( p_empty )    {}
+------------------
+_ZN5boost9unit_test12lazy_ostreamC2Eb:
+      160:   45:    explicit                lazy_ostream( bool p_empty = true ) : m_empty( p_empty )    {}
+------------------
+        -:   46:
+        -:   47:private:
+        -:   48:    // Data members
+        -:   49:    bool                    m_empty;
+        -:   50:    static lazy_ostream     inst;
+        -:   51:};
+        -:   52:
+        -:   53://____________________________________________________________________________//
+        -:   54:
+        -:   55:template<typename PrevType, typename T, typename StorageT=T const&>
+        -:   56:class lazy_ostream_impl : public lazy_ostream {
+        -:   57:public:
+     160*:   58:    lazy_ostream_impl( PrevType const& prev, T const& value )
+        -:   59:    : lazy_ostream( false )
+        -:   60:    , m_prev( prev )
+     160*:   61:    , m_value( value )
+        -:   62:    {
+     160*:   63:    }
+------------------
+_ZN5boost9unit_test17lazy_ostream_implINS1_INS0_12lazy_ostreamEA25_cRA25_KcEENS0_13basic_cstringIS4_EERKS9_EC1ERKS7_SB_:
+    #####:   58:    lazy_ostream_impl( PrevType const& prev, T const& value )
+        -:   59:    : lazy_ostream( false )
+        -:   60:    , m_prev( prev )
+    #####:   61:    , m_value( value )
+    %%%%%:   61-block  0
+        -:   62:    {
+    #####:   63:    }
+------------------
+_ZN5boost9unit_test17lazy_ostream_implINS0_12lazy_ostreamEA16_cRA16_KcEC1ERKS2_S6_:
+    #####:   58:    lazy_ostream_impl( PrevType const& prev, T const& value )
+        -:   59:    : lazy_ostream( false )
+        -:   60:    , m_prev( prev )
+    #####:   61:    , m_value( value )
+    %%%%%:   61-block  0
+        -:   62:    {
+    #####:   63:    }
+------------------
+_ZN5boost9unit_test17lazy_ostream_implINS1_INS0_12lazy_ostreamEA16_cRA16_KcEENS0_13basic_cstringIS4_EERKS9_EC1ERKS7_SB_:
+    #####:   58:    lazy_ostream_impl( PrevType const& prev, T const& value )
+        -:   59:    : lazy_ostream( false )
+        -:   60:    , m_prev( prev )
+    #####:   61:    , m_value( value )
+    %%%%%:   61-block  0
+        -:   62:    {
+    #####:   63:    }
+------------------
+_ZN5boost9unit_test17lazy_ostream_implINS1_INS1_INS0_12lazy_ostreamEA16_cRA16_KcEENS0_13basic_cstringIS4_EERKS9_EEcRS4_EC1ERKSC_SD_:
+    #####:   58:    lazy_ostream_impl( PrevType const& prev, T const& value )
+        -:   59:    : lazy_ostream( false )
+        -:   60:    , m_prev( prev )
+    #####:   61:    , m_value( value )
+    %%%%%:   61-block  0
+        -:   62:    {
+    #####:   63:    }
+------------------
+_ZN5boost9unit_test17lazy_ostream_implINS1_INS1_INS1_INS0_12lazy_ostreamEA16_cRA16_KcEENS0_13basic_cstringIS4_EERKS9_EEcRS4_EENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERKSK_EC1ERKSE_SM_:
+    #####:   58:    lazy_ostream_impl( PrevType const& prev, T const& value )
+        -:   59:    : lazy_ostream( false )
+        -:   60:    , m_prev( prev )
+    #####:   61:    , m_value( value )
+    %%%%%:   61-block  0
+        -:   62:    {
+    #####:   63:    }
+------------------
+_ZN5boost9unit_test17lazy_ostream_implINS1_INS1_INS1_INS1_INS0_12lazy_ostreamEA16_cRA16_KcEENS0_13basic_cstringIS4_EERKS9_EEcRS4_EENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERKSK_EEA26_cRA26_S4_EC1ERKSN_SQ_:
+    #####:   58:    lazy_ostream_impl( PrevType const& prev, T const& value )
+        -:   59:    : lazy_ostream( false )
+        -:   60:    , m_prev( prev )
+    #####:   61:    , m_value( value )
+    %%%%%:   61-block  0
+        -:   62:    {
+    #####:   63:    }
+------------------
+_ZN5boost9unit_test17lazy_ostream_implINS1_INS1_INS1_INS1_INS1_INS0_12lazy_ostreamEA16_cRA16_KcEENS0_13basic_cstringIS4_EERKS9_EEcRS4_EENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERKSK_EEA26_cRA26_S4_EES9_SB_EC1ERKSR_SB_:
+    #####:   58:    lazy_ostream_impl( PrevType const& prev, T const& value )
+        -:   59:    : lazy_ostream( false )
+        -:   60:    , m_prev( prev )
+    #####:   61:    , m_value( value )
+    %%%%%:   61-block  0
+        -:   62:    {
+    #####:   63:    }
+------------------
+_ZN5boost9unit_test17lazy_ostream_implINS1_INS1_INS1_INS1_INS1_INS1_INS0_12lazy_ostreamEA16_cRA16_KcEENS0_13basic_cstringIS4_EERKS9_EEcRS4_EENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERKSK_EEA26_cRA26_S4_EES9_SB_EEcSD_EC1ERKSS_SD_:
+    #####:   58:    lazy_ostream_impl( PrevType const& prev, T const& value )
+        -:   59:    : lazy_ostream( false )
+        -:   60:    , m_prev( prev )
+    #####:   61:    , m_value( value )
+    %%%%%:   61-block  0
+        -:   62:    {
+    #####:   63:    }
+------------------
+_ZN5boost9unit_test17lazy_ostream_implINS1_INS1_INS1_INS1_INS1_INS1_INS1_INS0_12lazy_ostreamEA16_cRA16_KcEENS0_13basic_cstringIS4_EERKS9_EEcRS4_EENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERKSK_EEA26_cRA26_S4_EES9_SB_EEcSD_EESK_SM_EC1ERKST_SM_:
+    #####:   58:    lazy_ostream_impl( PrevType const& prev, T const& value )
+        -:   59:    : lazy_ostream( false )
+        -:   60:    , m_prev( prev )
+    #####:   61:    , m_value( value )
+    %%%%%:   61-block  0
+        -:   62:    {
+    #####:   63:    }
+------------------
+_ZN5boost9unit_test17lazy_ostream_implINS0_12lazy_ostreamEA42_cRA42_KcEC1ERKS2_S6_:
+    #####:   58:    lazy_ostream_impl( PrevType const& prev, T const& value )
+        -:   59:    : lazy_ostream( false )
+        -:   60:    , m_prev( prev )
+    #####:   61:    , m_value( value )
+    %%%%%:   61-block  0
+        -:   62:    {
+    #####:   63:    }
+------------------
+_ZN5boost9unit_test17lazy_ostream_implINS1_INS0_12lazy_ostreamEA42_cRA42_KcEEjRKjEC1ERKS7_S9_:
+    #####:   58:    lazy_ostream_impl( PrevType const& prev, T const& value )
+        -:   59:    : lazy_ostream( false )
+        -:   60:    , m_prev( prev )
+    #####:   61:    , m_value( value )
+    %%%%%:   61-block  0
+        -:   62:    {
+    #####:   63:    }
+------------------
+_ZN5boost9unit_test17lazy_ostream_implINS0_12lazy_ostreamEA11_cRA11_KcEC1ERKS2_S6_:
+    #####:   58:    lazy_ostream_impl( PrevType const& prev, T const& value )
+        -:   59:    : lazy_ostream( false )
+        -:   60:    , m_prev( prev )
+    #####:   61:    , m_value( value )
+    %%%%%:   61-block  0
+        -:   62:    {
+    #####:   63:    }
+------------------
+_ZN5boost9unit_test17lazy_ostream_implINS1_INS0_12lazy_ostreamEA11_cRA11_KcEENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERKSD_EC1ERKS7_SF_:
+    #####:   58:    lazy_ostream_impl( PrevType const& prev, T const& value )
+        -:   59:    : lazy_ostream( false )
+        -:   60:    , m_prev( prev )
+    #####:   61:    , m_value( value )
+    %%%%%:   61-block  0
+        -:   62:    {
+    #####:   63:    }
+------------------
+_ZN5boost9unit_test17lazy_ostream_implINS1_INS1_INS0_12lazy_ostreamEA11_cRA11_KcEENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERKSD_EEA34_cRA34_S4_EC1ERKSG_SJ_:
+    #####:   58:    lazy_ostream_impl( PrevType const& prev, T const& value )
+        -:   59:    : lazy_ostream( false )
+        -:   60:    , m_prev( prev )
+    #####:   61:    , m_value( value )
+    %%%%%:   61-block  0
+        -:   62:    {
+    #####:   63:    }
+------------------
+_ZN5boost9unit_test17lazy_ostream_implINS1_INS1_INS0_12lazy_ostreamEA11_cRA11_KcEENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERKSD_EEA30_cRA30_S4_EC1ERKSG_SJ_:
+    #####:   58:    lazy_ostream_impl( PrevType const& prev, T const& value )
+        -:   59:    : lazy_ostream( false )
+        -:   60:    , m_prev( prev )
+    #####:   61:    , m_value( value )
+    %%%%%:   61-block  0
+        -:   62:    {
+    #####:   63:    }
+------------------
+_ZN5boost9unit_test17lazy_ostream_implINS0_12lazy_ostreamEA25_cRA25_KcEC1ERKS2_S6_:
+    #####:   58:    lazy_ostream_impl( PrevType const& prev, T const& value )
+        -:   59:    : lazy_ostream( false )
+        -:   60:    , m_prev( prev )
+    #####:   61:    , m_value( value )
+    %%%%%:   61-block  0
+        -:   62:    {
+    #####:   63:    }
+------------------
+_ZN5boost9unit_test17lazy_ostream_implINS0_12lazy_ostreamENS_10test_tools9tt_detail14print_helper_tIA17_cEERKS7_EC1ERKS2_S9_:
+        1:   58:    lazy_ostream_impl( PrevType const& prev, T const& value )
+        -:   59:    : lazy_ostream( false )
+        -:   60:    , m_prev( prev )
+        1:   61:    , m_value( value )
+        1:   61-block  0
+        -:   62:    {
+        1:   63:    }
+------------------
+_ZN5boost9unit_test17lazy_ostream_implINS1_INS1_INS0_12lazy_ostreamEA25_cRA25_KcEENS0_13basic_cstringIS4_EERKS9_EEA6_cRA6_S4_EC1ERKSC_SF_:
+    #####:   58:    lazy_ostream_impl( PrevType const& prev, T const& value )
+        -:   59:    : lazy_ostream( false )
+        -:   60:    , m_prev( prev )
+    #####:   61:    , m_value( value )
+    %%%%%:   61-block  0
+        -:   62:    {
+    #####:   63:    }
+------------------
+_ZN5boost9unit_test17lazy_ostream_implINS1_INS1_INS1_INS0_12lazy_ostreamEA25_cRA25_KcEENS0_13basic_cstringIS4_EERKS9_EEA6_cRA6_S4_EEA8_cRA8_S4_EC1ERKSG_SJ_:
+    #####:   58:    lazy_ostream_impl( PrevType const& prev, T const& value )
+        -:   59:    : lazy_ostream( false )
+        -:   60:    , m_prev( prev )
+    #####:   61:    , m_value( value )
+    %%%%%:   61-block  0
+        -:   62:    {
+    #####:   63:    }
+------------------
+_ZN5boost9unit_test17lazy_ostream_implINS0_12lazy_ostreamEA1_cRA1_KcEC1ERKS2_S6_:
+       52:   58:    lazy_ostream_impl( PrevType const& prev, T const& value )
+        -:   59:    : lazy_ostream( false )
+        -:   60:    , m_prev( prev )
+       52:   61:    , m_value( value )
+       52:   61-block  0
+        -:   62:    {
+       52:   63:    }
+------------------
+_ZN5boost9unit_test17lazy_ostream_implINS0_12lazy_ostreamEA52_cRA52_KcEC1ERKS2_S6_:
+    #####:   58:    lazy_ostream_impl( PrevType const& prev, T const& value )
+        -:   59:    : lazy_ostream( false )
+        -:   60:    , m_prev( prev )
+    #####:   61:    , m_value( value )
+    %%%%%:   61-block  0
+        -:   62:    {
+    #####:   63:    }
+------------------
+_ZN5boost9unit_test17lazy_ostream_implINS0_12lazy_ostreamEA49_cRA49_KcEC1ERKS2_S6_:
+        4:   58:    lazy_ostream_impl( PrevType const& prev, T const& value )
+        -:   59:    : lazy_ostream( false )
+        -:   60:    , m_prev( prev )
+        4:   61:    , m_value( value )
+        4:   61-block  0
+        -:   62:    {
+        4:   63:    }
+------------------
+_ZN5boost9unit_test17lazy_ostream_implINS0_12lazy_ostreamENS_10test_tools9tt_detail14print_helper_tIyEERKS6_EC1ERKS2_S8_:
+        6:   58:    lazy_ostream_impl( PrevType const& prev, T const& value )
+        -:   59:    : lazy_ostream( false )
+        -:   60:    , m_prev( prev )
+        6:   61:    , m_value( value )
+        6:   61-block  0
+        -:   62:    {
+        6:   63:    }
+------------------
+_ZN5boost9unit_test17lazy_ostream_implINS0_12lazy_ostreamENS_10test_tools9tt_detail14print_helper_tIiEERKS6_EC1ERKS2_S8_:
+        6:   58:    lazy_ostream_impl( PrevType const& prev, T const& value )
+        -:   59:    : lazy_ostream( false )
+        -:   60:    , m_prev( prev )
+        6:   61:    , m_value( value )
+        6:   61-block  0
+        -:   62:    {
+        6:   63:    }
+------------------
+_ZN5boost9unit_test17lazy_ostream_implINS0_12lazy_ostreamENS_10test_tools9tt_detail14print_helper_tIN12Assignment068MyStringEEERKS8_EC1ERKS2_SA_:
+       28:   58:    lazy_ostream_impl( PrevType const& prev, T const& value )
+        -:   59:    : lazy_ostream( false )
+        -:   60:    , m_prev( prev )
+       28:   61:    , m_value( value )
+       28:   61-block  0
+        -:   62:    {
+       28:   63:    }
+------------------
+_ZN5boost9unit_test17lazy_ostream_implINS0_12lazy_ostreamENS_10test_tools9tt_detail14print_helper_tIbEERKS6_EC1ERKS2_S8_:
+       50:   58:    lazy_ostream_impl( PrevType const& prev, T const& value )
+        -:   59:    : lazy_ostream( false )
+        -:   60:    , m_prev( prev )
+       50:   61:    , m_value( value )
+       50:   61-block  0
+        -:   62:    {
+       50:   63:    }
+------------------
+_ZN5boost9unit_test17lazy_ostream_implINS0_12lazy_ostreamENS_10test_tools9tt_detail14print_helper_tIcEERKS6_EC1ERKS2_S8_:
+        2:   58:    lazy_ostream_impl( PrevType const& prev, T const& value )
+        -:   59:    : lazy_ostream( false )
+        -:   60:    , m_prev( prev )
+        2:   61:    , m_value( value )
+        2:   61-block  0
+        -:   62:    {
+        2:   63:    }
+------------------
+_ZN5boost9unit_test17lazy_ostream_implINS0_12lazy_ostreamENS_10test_tools9tt_detail14print_helper_tIPKcEERKS8_EC1ERKS2_SA_:
+        3:   58:    lazy_ostream_impl( PrevType const& prev, T const& value )
+        -:   59:    : lazy_ostream( false )
+        -:   60:    , m_prev( prev )
+        3:   61:    , m_value( value )
+        3:   61-block  0
+        -:   62:    {
+        3:   63:    }
+------------------
+_ZN5boost9unit_test17lazy_ostream_implINS0_12lazy_ostreamENS_10test_tools9tt_detail14print_helper_tIPcEERKS7_EC1ERKS2_S9_:
+        3:   58:    lazy_ostream_impl( PrevType const& prev, T const& value )
+        -:   59:    : lazy_ostream( false )
+        -:   60:    , m_prev( prev )
+        3:   61:    , m_value( value )
+        3:   61-block  0
+        -:   62:    {
+        3:   63:    }
+------------------
+_ZN5boost9unit_test17lazy_ostream_implINS0_12lazy_ostreamENS_10test_tools9tt_detail14print_helper_tINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEERKSC_EC1ERKS2_SE_:
+        3:   58:    lazy_ostream_impl( PrevType const& prev, T const& value )
+        -:   59:    : lazy_ostream( false )
+        -:   60:    , m_prev( prev )
+        3:   61:    , m_value( value )
+        3:   61-block  0
+        -:   62:    {
+        3:   63:    }
+------------------
+_ZN5boost9unit_test17lazy_ostream_implINS0_12lazy_ostreamENS_10test_tools9tt_detail14print_helper_tIA8_cEERKS7_EC1ERKS2_S9_:
+        1:   58:    lazy_ostream_impl( PrevType const& prev, T const& value )
+        -:   59:    : lazy_ostream( false )
+        -:   60:    , m_prev( prev )
+        1:   61:    , m_value( value )
+        1:   61-block  0
+        -:   62:    {
+        1:   63:    }
+------------------
+_ZN5boost9unit_test17lazy_ostream_implINS0_12lazy_ostreamENS_10test_tools9tt_detail14print_helper_tIA22_cEERKS7_EC1ERKS2_S9_:
+        1:   58:    lazy_ostream_impl( PrevType const& prev, T const& value )
+        -:   59:    : lazy_ostream( false )
+        -:   60:    , m_prev( prev )
+        1:   61:    , m_value( value )
+        1:   61-block  0
+        -:   62:    {
+        1:   63:    }
+------------------
+        -:   64:
+       4*:   65:    virtual std::ostream&   operator()( std::ostream& ostr ) const
+        -:   66:    {
+       4*:   67:        return m_prev(ostr) << m_value;
+        -:   68:    }
+------------------
+_ZNK5boost9unit_test17lazy_ostream_implINS1_INS1_INS0_12lazy_ostreamEA25_cRA25_KcEENS0_13basic_cstringIS4_EERKS9_EEA6_cRA6_S4_EclERSo:
+    #####:   65:    virtual std::ostream&   operator()( std::ostream& ostr ) const
+        -:   66:    {
+    #####:   67:        return m_prev(ostr) << m_value;
+    %%%%%:   67-block  0
+        -:   68:    }
+------------------
+_ZNK5boost9unit_test17lazy_ostream_implINS0_12lazy_ostreamENS_10test_tools9tt_detail14print_helper_tIA17_cEERKS7_EclERSo:
+    #####:   65:    virtual std::ostream&   operator()( std::ostream& ostr ) const
+        -:   66:    {
+    #####:   67:        return m_prev(ostr) << m_value;
+    %%%%%:   67-block  0
+        -:   68:    }
+------------------
+_ZNK5boost9unit_test17lazy_ostream_implINS0_12lazy_ostreamENS_10test_tools9tt_detail14print_helper_tIA22_cEERKS7_EclERSo:
+    #####:   65:    virtual std::ostream&   operator()( std::ostream& ostr ) const
+        -:   66:    {
+    #####:   67:        return m_prev(ostr) << m_value;
+    %%%%%:   67-block  0
+        -:   68:    }
+------------------
+_ZNK5boost9unit_test17lazy_ostream_implINS0_12lazy_ostreamENS_10test_tools9tt_detail14print_helper_tIA8_cEERKS7_EclERSo:
+    #####:   65:    virtual std::ostream&   operator()( std::ostream& ostr ) const
+        -:   66:    {
+    #####:   67:        return m_prev(ostr) << m_value;
+    %%%%%:   67-block  0
+        -:   68:    }
+------------------
+_ZNK5boost9unit_test17lazy_ostream_implINS0_12lazy_ostreamENS_10test_tools9tt_detail14print_helper_tINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEERKSC_EclERSo:
+    #####:   65:    virtual std::ostream&   operator()( std::ostream& ostr ) const
+        -:   66:    {
+    #####:   67:        return m_prev(ostr) << m_value;
+    %%%%%:   67-block  0
+        -:   68:    }
+------------------
+_ZNK5boost9unit_test17lazy_ostream_implINS0_12lazy_ostreamENS_10test_tools9tt_detail14print_helper_tIPcEERKS7_EclERSo:
+    #####:   65:    virtual std::ostream&   operator()( std::ostream& ostr ) const
+        -:   66:    {
+    #####:   67:        return m_prev(ostr) << m_value;
+    %%%%%:   67-block  0
+        -:   68:    }
+------------------
+_ZNK5boost9unit_test17lazy_ostream_implINS0_12lazy_ostreamENS_10test_tools9tt_detail14print_helper_tIPKcEERKS8_EclERSo:
+    #####:   65:    virtual std::ostream&   operator()( std::ostream& ostr ) const
+        -:   66:    {
+    #####:   67:        return m_prev(ostr) << m_value;
+    %%%%%:   67-block  0
+        -:   68:    }
+------------------
+_ZNK5boost9unit_test17lazy_ostream_implINS0_12lazy_ostreamENS_10test_tools9tt_detail14print_helper_tIcEERKS6_EclERSo:
+    #####:   65:    virtual std::ostream&   operator()( std::ostream& ostr ) const
+        -:   66:    {
+    #####:   67:        return m_prev(ostr) << m_value;
+    %%%%%:   67-block  0
+        -:   68:    }
+------------------
+_ZNK5boost9unit_test17lazy_ostream_implINS0_12lazy_ostreamENS_10test_tools9tt_detail14print_helper_tIbEERKS6_EclERSo:
+    #####:   65:    virtual std::ostream&   operator()( std::ostream& ostr ) const
+        -:   66:    {
+    #####:   67:        return m_prev(ostr) << m_value;
+    %%%%%:   67-block  0
+        -:   68:    }
+------------------
+_ZNK5boost9unit_test17lazy_ostream_implINS0_12lazy_ostreamENS_10test_tools9tt_detail14print_helper_tIN12Assignment068MyStringEEERKS8_EclERSo:
+    #####:   65:    virtual std::ostream&   operator()( std::ostream& ostr ) const
+        -:   66:    {
+    #####:   67:        return m_prev(ostr) << m_value;
+    %%%%%:   67-block  0
+        -:   68:    }
+------------------
+_ZNK5boost9unit_test17lazy_ostream_implINS0_12lazy_ostreamENS_10test_tools9tt_detail14print_helper_tIiEERKS6_EclERSo:
+    #####:   65:    virtual std::ostream&   operator()( std::ostream& ostr ) const
+        -:   66:    {
+    #####:   67:        return m_prev(ostr) << m_value;
+    %%%%%:   67-block  0
+        -:   68:    }
+------------------
+_ZNK5boost9unit_test17lazy_ostream_implINS0_12lazy_ostreamENS_10test_tools9tt_detail14print_helper_tIyEERKS6_EclERSo:
+    #####:   65:    virtual std::ostream&   operator()( std::ostream& ostr ) const
+        -:   66:    {
+    #####:   67:        return m_prev(ostr) << m_value;
+    %%%%%:   67-block  0
+        -:   68:    }
+------------------
+_ZNK5boost9unit_test17lazy_ostream_implINS0_12lazy_ostreamEA49_cRA49_KcEclERSo:
+        4:   65:    virtual std::ostream&   operator()( std::ostream& ostr ) const
+        -:   66:    {
+        4:   67:        return m_prev(ostr) << m_value;
+        4:   67-block  0
+        -:   68:    }
+------------------
+_ZNK5boost9unit_test17lazy_ostream_implINS0_12lazy_ostreamEA52_cRA52_KcEclERSo:
+    #####:   65:    virtual std::ostream&   operator()( std::ostream& ostr ) const
+        -:   66:    {
+    #####:   67:        return m_prev(ostr) << m_value;
+    %%%%%:   67-block  0
+        -:   68:    }
+------------------
+_ZNK5boost9unit_test17lazy_ostream_implINS0_12lazy_ostreamEA1_cRA1_KcEclERSo:
+    #####:   65:    virtual std::ostream&   operator()( std::ostream& ostr ) const
+        -:   66:    {
+    #####:   67:        return m_prev(ostr) << m_value;
+    %%%%%:   67-block  0
+        -:   68:    }
+------------------
+_ZNK5boost9unit_test17lazy_ostream_implINS1_INS1_INS1_INS0_12lazy_ostreamEA25_cRA25_KcEENS0_13basic_cstringIS4_EERKS9_EEA6_cRA6_S4_EEA8_cRA8_S4_EclERSo:
+    #####:   65:    virtual std::ostream&   operator()( std::ostream& ostr ) const
+        -:   66:    {
+    #####:   67:        return m_prev(ostr) << m_value;
+    %%%%%:   67-block  0
+        -:   68:    }
+------------------
+_ZNK5boost9unit_test17lazy_ostream_implINS0_12lazy_ostreamEA16_cRA16_KcEclERSo:
+    #####:   65:    virtual std::ostream&   operator()( std::ostream& ostr ) const
+        -:   66:    {
+    #####:   67:        return m_prev(ostr) << m_value;
+    %%%%%:   67-block  0
+        -:   68:    }
+------------------
+_ZNK5boost9unit_test17lazy_ostream_implINS1_INS0_12lazy_ostreamEA25_cRA25_KcEENS0_13basic_cstringIS4_EERKS9_EclERSo:
+    #####:   65:    virtual std::ostream&   operator()( std::ostream& ostr ) const
+        -:   66:    {
+    #####:   67:        return m_prev(ostr) << m_value;
+    %%%%%:   67-block  0
+        -:   68:    }
+------------------
+_ZNK5boost9unit_test17lazy_ostream_implINS0_12lazy_ostreamEA25_cRA25_KcEclERSo:
+    #####:   65:    virtual std::ostream&   operator()( std::ostream& ostr ) const
+        -:   66:    {
+    #####:   67:        return m_prev(ostr) << m_value;
+    %%%%%:   67-block  0
+        -:   68:    }
+------------------
+_ZNK5boost9unit_test17lazy_ostream_implINS1_INS1_INS0_12lazy_ostreamEA11_cRA11_KcEENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERKSD_EEA30_cRA30_S4_EclERSo:
+    #####:   65:    virtual std::ostream&   operator()( std::ostream& ostr ) const
+        -:   66:    {
+    #####:   67:        return m_prev(ostr) << m_value;
+    %%%%%:   67-block  0
+        -:   68:    }
+------------------
+_ZNK5boost9unit_test17lazy_ostream_implINS1_INS1_INS0_12lazy_ostreamEA11_cRA11_KcEENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERKSD_EEA34_cRA34_S4_EclERSo:
+    #####:   65:    virtual std::ostream&   operator()( std::ostream& ostr ) const
+        -:   66:    {
+    #####:   67:        return m_prev(ostr) << m_value;
+    %%%%%:   67-block  0
+        -:   68:    }
+------------------
+_ZNK5boost9unit_test17lazy_ostream_implINS1_INS0_12lazy_ostreamEA11_cRA11_KcEENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERKSD_EclERSo:
+    #####:   65:    virtual std::ostream&   operator()( std::ostream& ostr ) const
+        -:   66:    {
+    #####:   67:        return m_prev(ostr) << m_value;
+    %%%%%:   67-block  0
+        -:   68:    }
+------------------
+_ZNK5boost9unit_test17lazy_ostream_implINS0_12lazy_ostreamEA11_cRA11_KcEclERSo:
+    #####:   65:    virtual std::ostream&   operator()( std::ostream& ostr ) const
+        -:   66:    {
+    #####:   67:        return m_prev(ostr) << m_value;
+    %%%%%:   67-block  0
+        -:   68:    }
+------------------
+_ZNK5boost9unit_test17lazy_ostream_implINS1_INS0_12lazy_ostreamEA42_cRA42_KcEEjRKjEclERSo:
+    #####:   65:    virtual std::ostream&   operator()( std::ostream& ostr ) const
+        -:   66:    {
+    #####:   67:        return m_prev(ostr) << m_value;
+    %%%%%:   67-block  0
+        -:   68:    }
+------------------
+_ZNK5boost9unit_test17lazy_ostream_implINS0_12lazy_ostreamEA42_cRA42_KcEclERSo:
+    #####:   65:    virtual std::ostream&   operator()( std::ostream& ostr ) const
+        -:   66:    {
+    #####:   67:        return m_prev(ostr) << m_value;
+    %%%%%:   67-block  0
+        -:   68:    }
+------------------
+_ZNK5boost9unit_test17lazy_ostream_implINS1_INS1_INS1_INS1_INS1_INS1_INS1_INS0_12lazy_ostreamEA16_cRA16_KcEENS0_13basic_cstringIS4_EERKS9_EEcRS4_EENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERKSK_EEA26_cRA26_S4_EES9_SB_EEcSD_EESK_SM_EclERSo:
+    #####:   65:    virtual std::ostream&   operator()( std::ostream& ostr ) const
+        -:   66:    {
+    #####:   67:        return m_prev(ostr) << m_value;
+    %%%%%:   67-block  0
+        -:   68:    }
+------------------
+_ZNK5boost9unit_test17lazy_ostream_implINS1_INS1_INS1_INS1_INS1_INS1_INS0_12lazy_ostreamEA16_cRA16_KcEENS0_13basic_cstringIS4_EERKS9_EEcRS4_EENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERKSK_EEA26_cRA26_S4_EES9_SB_EEcSD_EclERSo:
+    #####:   65:    virtual std::ostream&   operator()( std::ostream& ostr ) const
+        -:   66:    {
+    #####:   67:        return m_prev(ostr) << m_value;
+    %%%%%:   67-block  0
+        -:   68:    }
+------------------
+_ZNK5boost9unit_test17lazy_ostream_implINS1_INS1_INS1_INS1_INS1_INS0_12lazy_ostreamEA16_cRA16_KcEENS0_13basic_cstringIS4_EERKS9_EEcRS4_EENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERKSK_EEA26_cRA26_S4_EES9_SB_EclERSo:
+    #####:   65:    virtual std::ostream&   operator()( std::ostream& ostr ) const
+        -:   66:    {
+    #####:   67:        return m_prev(ostr) << m_value;
+    %%%%%:   67-block  0
+        -:   68:    }
+------------------
+_ZNK5boost9unit_test17lazy_ostream_implINS1_INS1_INS1_INS1_INS0_12lazy_ostreamEA16_cRA16_KcEENS0_13basic_cstringIS4_EERKS9_EEcRS4_EENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERKSK_EEA26_cRA26_S4_EclERSo:
+    #####:   65:    virtual std::ostream&   operator()( std::ostream& ostr ) const
+        -:   66:    {
+    #####:   67:        return m_prev(ostr) << m_value;
+    %%%%%:   67-block  0
+        -:   68:    }
+------------------
+_ZNK5boost9unit_test17lazy_ostream_implINS1_INS1_INS1_INS0_12lazy_ostreamEA16_cRA16_KcEENS0_13basic_cstringIS4_EERKS9_EEcRS4_EENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERKSK_EclERSo:
+    #####:   65:    virtual std::ostream&   operator()( std::ostream& ostr ) const
+        -:   66:    {
+    #####:   67:        return m_prev(ostr) << m_value;
+    %%%%%:   67-block  0
+        -:   68:    }
+------------------
+_ZNK5boost9unit_test17lazy_ostream_implINS1_INS1_INS0_12lazy_ostreamEA16_cRA16_KcEENS0_13basic_cstringIS4_EERKS9_EEcRS4_EclERSo:
+    #####:   65:    virtual std::ostream&   operator()( std::ostream& ostr ) const
+        -:   66:    {
+    #####:   67:        return m_prev(ostr) << m_value;
+    %%%%%:   67-block  0
+        -:   68:    }
+------------------
+_ZNK5boost9unit_test17lazy_ostream_implINS1_INS0_12lazy_ostreamEA16_cRA16_KcEENS0_13basic_cstringIS4_EERKS9_EclERSo:
+    #####:   65:    virtual std::ostream&   operator()( std::ostream& ostr ) const
+        -:   66:    {
+    #####:   67:        return m_prev(ostr) << m_value;
+    %%%%%:   67-block  0
+        -:   68:    }
+------------------
+        -:   69:private:
+        -:   70:    // Data members
+        -:   71:    PrevType const&         m_prev;
+        -:   72:    StorageT                m_value;
+        -:   73:};
+        -:   74:
+        -:   75://____________________________________________________________________________//
+        -:   76:
+        -:   77:template<typename T>
+        -:   78:inline lazy_ostream_impl<lazy_ostream,T>
+     160*:   79:operator<<( lazy_ostream const& prev, T const& v )
+        -:   80:{
+     160*:   81:    return lazy_ostream_impl<lazy_ostream,T>( prev, v );
+        -:   82:}
+------------------
+_ZN5boost9unit_testlsINS_10test_tools9tt_detail14print_helper_tIiEEEENS0_17lazy_ostream_implINS0_12lazy_ostreamET_RKS8_EERKS7_SA_:
+        6:   79:operator<<( lazy_ostream const& prev, T const& v )
+        -:   80:{
+        6:   81:    return lazy_ostream_impl<lazy_ostream,T>( prev, v );
+        6:   81-block  0
+        -:   82:}
+------------------
+_ZN5boost9unit_testlsIA16_cEENS0_17lazy_ostream_implINS0_12lazy_ostreamET_RKS5_EERKS4_S7_:
+    #####:   79:operator<<( lazy_ostream const& prev, T const& v )
+        -:   80:{
+    #####:   81:    return lazy_ostream_impl<lazy_ostream,T>( prev, v );
+    %%%%%:   81-block  0
+        -:   82:}
+------------------
+_ZN5boost9unit_testlsIA42_cEENS0_17lazy_ostream_implINS0_12lazy_ostreamET_RKS5_EERKS4_S7_:
+    #####:   79:operator<<( lazy_ostream const& prev, T const& v )
+        -:   80:{
+    #####:   81:    return lazy_ostream_impl<lazy_ostream,T>( prev, v );
+    %%%%%:   81-block  0
+        -:   82:}
+------------------
+_ZN5boost9unit_testlsIA11_cEENS0_17lazy_ostream_implINS0_12lazy_ostreamET_RKS5_EERKS4_S7_:
+    #####:   79:operator<<( lazy_ostream const& prev, T const& v )
+        -:   80:{
+    #####:   81:    return lazy_ostream_impl<lazy_ostream,T>( prev, v );
+    %%%%%:   81-block  0
+        -:   82:}
+------------------
+_ZN5boost9unit_testlsIA25_cEENS0_17lazy_ostream_implINS0_12lazy_ostreamET_RKS5_EERKS4_S7_:
+    #####:   79:operator<<( lazy_ostream const& prev, T const& v )
+        -:   80:{
+    #####:   81:    return lazy_ostream_impl<lazy_ostream,T>( prev, v );
+    %%%%%:   81-block  0
+        -:   82:}
+------------------
+_ZN5boost9unit_testlsIA1_cEENS0_17lazy_ostream_implINS0_12lazy_ostreamET_RKS5_EERKS4_S7_:
+       52:   79:operator<<( lazy_ostream const& prev, T const& v )
+        -:   80:{
+       52:   81:    return lazy_ostream_impl<lazy_ostream,T>( prev, v );
+       52:   81-block  0
+        -:   82:}
+------------------
+_ZN5boost9unit_testlsIA52_cEENS0_17lazy_ostream_implINS0_12lazy_ostreamET_RKS5_EERKS4_S7_:
+    #####:   79:operator<<( lazy_ostream const& prev, T const& v )
+        -:   80:{
+    #####:   81:    return lazy_ostream_impl<lazy_ostream,T>( prev, v );
+    %%%%%:   81-block  0
+        -:   82:}
+------------------
+_ZN5boost9unit_testlsIA49_cEENS0_17lazy_ostream_implINS0_12lazy_ostreamET_RKS5_EERKS4_S7_:
+        4:   79:operator<<( lazy_ostream const& prev, T const& v )
+        -:   80:{
+        4:   81:    return lazy_ostream_impl<lazy_ostream,T>( prev, v );
+        4:   81-block  0
+        -:   82:}
+------------------
+_ZN5boost9unit_testlsINS_10test_tools9tt_detail14print_helper_tIyEEEENS0_17lazy_ostream_implINS0_12lazy_ostreamET_RKS8_EERKS7_SA_:
+        6:   79:operator<<( lazy_ostream const& prev, T const& v )
+        -:   80:{
+        6:   81:    return lazy_ostream_impl<lazy_ostream,T>( prev, v );
+        6:   81-block  0
+        -:   82:}
+------------------
+_ZN5boost9unit_testlsINS_10test_tools9tt_detail14print_helper_tIA17_cEEEENS0_17lazy_ostream_implINS0_12lazy_ostreamET_RKS9_EERKS8_SB_:
+        1:   79:operator<<( lazy_ostream const& prev, T const& v )
+        -:   80:{
+        1:   81:    return lazy_ostream_impl<lazy_ostream,T>( prev, v );
+        1:   81-block  0
+        -:   82:}
+------------------
+_ZN5boost9unit_testlsINS_10test_tools9tt_detail14print_helper_tIN12Assignment068MyStringEEEEENS0_17lazy_ostream_implINS0_12lazy_ostreamET_RKSA_EERKS9_SC_:
+       28:   79:operator<<( lazy_ostream const& prev, T const& v )
+        -:   80:{
+       28:   81:    return lazy_ostream_impl<lazy_ostream,T>( prev, v );
+       28:   81-block  0
+        -:   82:}
+------------------
+_ZN5boost9unit_testlsINS_10test_tools9tt_detail14print_helper_tIbEEEENS0_17lazy_ostream_implINS0_12lazy_ostreamET_RKS8_EERKS7_SA_:
+       50:   79:operator<<( lazy_ostream const& prev, T const& v )
+        -:   80:{
+       50:   81:    return lazy_ostream_impl<lazy_ostream,T>( prev, v );
+       50:   81-block  0
+        -:   82:}
+------------------
+_ZN5boost9unit_testlsINS_10test_tools9tt_detail14print_helper_tIcEEEENS0_17lazy_ostream_implINS0_12lazy_ostreamET_RKS8_EERKS7_SA_:
+        2:   79:operator<<( lazy_ostream const& prev, T const& v )
+        -:   80:{
+        2:   81:    return lazy_ostream_impl<lazy_ostream,T>( prev, v );
+        2:   81-block  0
+        -:   82:}
+------------------
+_ZN5boost9unit_testlsINS_10test_tools9tt_detail14print_helper_tIPKcEEEENS0_17lazy_ostream_implINS0_12lazy_ostreamET_RKSA_EERKS9_SC_:
+        3:   79:operator<<( lazy_ostream const& prev, T const& v )
+        -:   80:{
+        3:   81:    return lazy_ostream_impl<lazy_ostream,T>( prev, v );
+        3:   81-block  0
+        -:   82:}
+------------------
+_ZN5boost9unit_testlsINS_10test_tools9tt_detail14print_helper_tIPcEEEENS0_17lazy_ostream_implINS0_12lazy_ostreamET_RKS9_EERKS8_SB_:
+        3:   79:operator<<( lazy_ostream const& prev, T const& v )
+        -:   80:{
+        3:   81:    return lazy_ostream_impl<lazy_ostream,T>( prev, v );
+        3:   81-block  0
+        -:   82:}
+------------------
+_ZN5boost9unit_testlsINS_10test_tools9tt_detail14print_helper_tINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEEEENS0_17lazy_ostream_implINS0_12lazy_ostreamET_RKSE_EERKSD_SG_:
+        3:   79:operator<<( lazy_ostream const& prev, T const& v )
+        -:   80:{
+        3:   81:    return lazy_ostream_impl<lazy_ostream,T>( prev, v );
+        3:   81-block  0
+        -:   82:}
+------------------
+_ZN5boost9unit_testlsINS_10test_tools9tt_detail14print_helper_tIA8_cEEEENS0_17lazy_ostream_implINS0_12lazy_ostreamET_RKS9_EERKS8_SB_:
+        1:   79:operator<<( lazy_ostream const& prev, T const& v )
+        -:   80:{
+        1:   81:    return lazy_ostream_impl<lazy_ostream,T>( prev, v );
+        1:   81-block  0
+        -:   82:}
+------------------
+_ZN5boost9unit_testlsINS_10test_tools9tt_detail14print_helper_tIA22_cEEEENS0_17lazy_ostream_implINS0_12lazy_ostreamET_RKS9_EERKS8_SB_:
+        1:   79:operator<<( lazy_ostream const& prev, T const& v )
+        -:   80:{
+        1:   81:    return lazy_ostream_impl<lazy_ostream,T>( prev, v );
+        1:   81-block  0
+        -:   82:}
+------------------
+        -:   83:
+        -:   84://____________________________________________________________________________//
+        -:   85:
+        -:   86:template<typename PrevPrevType, typename TPrev, typename T>
+        -:   87:inline lazy_ostream_impl<lazy_ostream_impl<PrevPrevType,TPrev>,T>
+    #####:   88:operator<<( lazy_ostream_impl<PrevPrevType,TPrev> const& prev, T const& v )
+        -:   89:{
+        -:   90:    typedef lazy_ostream_impl<PrevPrevType,TPrev> PrevType;
+    #####:   91:    return lazy_ostream_impl<PrevType,T>( prev, v );
+        -:   92:}
+        -:   93:
+        -:   94://____________________________________________________________________________//
+        -:   95:
+        -:   96:#if BOOST_TEST_USE_STD_LOCALE
+        -:   97:
+        -:   98:template<typename R,typename S>
+        -:   99:inline lazy_ostream_impl<lazy_ostream,R& (BOOST_TEST_CALL_DECL *)(S&),R& (BOOST_TEST_CALL_DECL *)(S&)>
+        -:  100:operator<<( lazy_ostream const& prev, R& (BOOST_TEST_CALL_DECL *man)(S&) )
+        -:  101:{
+        -:  102:    typedef R& (BOOST_TEST_CALL_DECL * ManipType)(S&);
+        -:  103:
+        -:  104:    return lazy_ostream_impl<lazy_ostream,ManipType,ManipType>( prev, man );
+        -:  105:}
+        -:  106:
+        -:  107://____________________________________________________________________________//
+        -:  108:
+        -:  109:template<typename PrevPrevType, typename TPrev,typename R,typename S>
+        -:  110:inline lazy_ostream_impl<lazy_ostream_impl<PrevPrevType,TPrev>,R& (BOOST_TEST_CALL_DECL *)(S&),R& (BOOST_TEST_CALL_DECL *)(S&)>
+        -:  111:operator<<( lazy_ostream_impl<PrevPrevType,TPrev> const& prev, R& (BOOST_TEST_CALL_DECL *man)(S&) )
+        -:  112:{
+        -:  113:    typedef R& (BOOST_TEST_CALL_DECL * ManipType)(S&);
+        -:  114:
+        -:  115:    return lazy_ostream_impl<lazy_ostream_impl<PrevPrevType,TPrev>,ManipType,ManipType>( prev, man );
+        -:  116:}
+        -:  117:
+        -:  118://____________________________________________________________________________//
+        -:  119:
+        -:  120:#endif
+        -:  121:
+        -:  122:#define BOOST_TEST_LAZY_MSG( M ) (::boost::unit_test::lazy_ostream::instance() << M)
+        -:  123:
+        -:  124:} // namespace unit_test
+        -:  125:} // namespace boost
+        -:  126:
+        -:  127:#include <boost/test/detail/enable_warnings.hpp>
+        -:  128:
+        -:  129:#endif // BOOST_TEST_UTILS_LAZY_OSTREAM_HPP

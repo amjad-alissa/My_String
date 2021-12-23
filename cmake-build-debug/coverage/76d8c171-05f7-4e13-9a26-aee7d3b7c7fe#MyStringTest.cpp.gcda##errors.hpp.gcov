@@ -1,0 +1,740 @@
+        -:    0:Source:F:/Files/vcpkg/installed/x86-windows/include/boost/test/utils/runtime/errors.hpp
+        -:    0:Graph:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcno
+        -:    0:Data:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1://  (C) Copyright Gennadiy Rozental 2001.
+        -:    2://  Distributed under the Boost Software License, Version 1.0.
+        -:    3://  (See accompanying file LICENSE_1_0.txt or copy at
+        -:    4://  http://www.boost.org/LICENSE_1_0.txt)
+        -:    5:
+        -:    6://  See http://www.boost.org/libs/test for the library home page.
+        -:    7://
+        -:    8://  File        : $RCSfile$
+        -:    9://
+        -:   10://  Version     : $Revision$
+        -:   11://
+        -:   12://  Description : defines runtime parameters setup error
+        -:   13:// ***************************************************************************
+        -:   14:
+        -:   15:#ifndef BOOST_TEST_UTILS_RUNTIME_INIT_ERROR_HPP
+        -:   16:#define BOOST_TEST_UTILS_RUNTIME_INIT_ERROR_HPP
+        -:   17:
+        -:   18:// Boost.Test Runtime parameters
+        -:   19:#include <boost/test/utils/runtime/fwd.hpp>
+        -:   20:
+        -:   21:// Boost.Test
+        -:   22:#include <boost/test/utils/string_cast.hpp>
+        -:   23:
+        -:   24:// Boost.Test
+        -:   25:#include <boost/config.hpp>
+        -:   26:
+        -:   27:// STL
+        -:   28:#include <exception>
+        -:   29:#include <vector>
+        -:   30:
+        -:   31:#include <boost/test/detail/suppress_warnings.hpp>
+        -:   32:
+        -:   33:namespace boost {
+        -:   34:namespace runtime {
+        -:   35:
+        -:   36:// ************************************************************************** //
+        -:   37:// **************             runtime::param_error             ************** //
+        -:   38:// ************************************************************************** //
+        -:   39:
+        -:   40:class BOOST_SYMBOL_VISIBLE param_error : public std::exception {
+        -:   41:public:
+    #####:   42:    ~param_error() BOOST_NOEXCEPT_OR_NOTHROW {}
+------------------
+_ZN5boost7runtime11param_errorD0Ev:
+    #####:   42:    ~param_error() BOOST_NOEXCEPT_OR_NOTHROW {}
+    %%%%%:   42-block  0
+------------------
+_ZN5boost7runtime11param_errorD1Ev:
+    #####:   42:    ~param_error() BOOST_NOEXCEPT_OR_NOTHROW {}
+    %%%%%:   42-block  0
+------------------
+_ZN5boost7runtime11param_errorD2Ev:
+    #####:   42:    ~param_error() BOOST_NOEXCEPT_OR_NOTHROW {}
+    %%%%%:   42-block  0
+------------------
+        -:   43:
+    #####:   44:    virtual const char * what() const BOOST_NOEXCEPT_OR_NOTHROW
+        -:   45:    {
+    #####:   46:        return msg.c_str();
+    %%%%%:   46-block  0
+        -:   47:    }
+        -:   48:
+        -:   49:    cstring     param_name;
+        -:   50:    std::string msg;
+        -:   51:
+        -:   52:protected:
+    #####:   53:    explicit    param_error( cstring param_name_ ) : param_name( param_name_) {}
+    %%%%%:   53-block  0
+        -:   54:};
+        -:   55:
+        -:   56://____________________________________________________________________________//
+        -:   57:
+        -:   58:class BOOST_SYMBOL_VISIBLE init_error : public param_error {
+        -:   59:protected:
+    #####:   60:    explicit    init_error( cstring param_name ) : param_error( param_name ) {}
+    %%%%%:   60-block  0
+    %%%%%:   60-block  1
+    #####:   61:    ~init_error() BOOST_NOEXCEPT_OR_NOTHROW {}
+------------------
+_ZN5boost7runtime10init_errorD0Ev:
+    #####:   61:    ~init_error() BOOST_NOEXCEPT_OR_NOTHROW {}
+    %%%%%:   61-block  0
+------------------
+_ZN5boost7runtime10init_errorD1Ev:
+    #####:   61:    ~init_error() BOOST_NOEXCEPT_OR_NOTHROW {}
+    %%%%%:   61-block  0
+------------------
+_ZN5boost7runtime10init_errorD2Ev:
+    #####:   61:    ~init_error() BOOST_NOEXCEPT_OR_NOTHROW {}
+    %%%%%:   61-block  0
+------------------
+        -:   62:};
+        -:   63:
+        -:   64:class BOOST_SYMBOL_VISIBLE input_error : public param_error {
+        -:   65:protected:
+    #####:   66:    explicit    input_error( cstring param_name ) : param_error( param_name ) {}
+    %%%%%:   66-block  0
+    %%%%%:   66-block  1
+    #####:   67:    ~input_error() BOOST_NOEXCEPT_OR_NOTHROW {}
+------------------
+_ZN5boost7runtime11input_errorD0Ev:
+    #####:   67:    ~input_error() BOOST_NOEXCEPT_OR_NOTHROW {}
+    %%%%%:   67-block  0
+------------------
+_ZN5boost7runtime11input_errorD1Ev:
+    #####:   67:    ~input_error() BOOST_NOEXCEPT_OR_NOTHROW {}
+    %%%%%:   67-block  0
+------------------
+_ZN5boost7runtime11input_errorD2Ev:
+    #####:   67:    ~input_error() BOOST_NOEXCEPT_OR_NOTHROW {}
+    %%%%%:   67-block  0
+------------------
+        -:   68:};
+        -:   69:
+        -:   70://____________________________________________________________________________//
+        -:   71:
+        -:   72:template<typename Derived, typename Base>
+        -:   73:class BOOST_SYMBOL_VISIBLE specific_param_error : public Base {
+        -:   74:protected:
+    #####:   75:    explicit    specific_param_error( cstring param_name ) : Base( param_name ) {}
+------------------
+_ZN5boost7runtime20specific_param_errorINS0_18unrecognized_paramENS0_11input_errorEEC2ENS_9unit_test13basic_cstringIKcEE:
+    #####:   75:    explicit    specific_param_error( cstring param_name ) : Base( param_name ) {}
+    %%%%%:   75-block  0
+    %%%%%:   75-block  1
+------------------
+_ZN5boost7runtime20specific_param_errorINS0_15ambiguous_paramENS0_11input_errorEEC2ENS_9unit_test13basic_cstringIKcEE:
+    #####:   75:    explicit    specific_param_error( cstring param_name ) : Base( param_name ) {}
+    %%%%%:   75-block  0
+    %%%%%:   75-block  1
+------------------
+_ZN5boost7runtime20specific_param_errorINS0_15missing_req_argENS0_11input_errorEEC2ENS_9unit_test13basic_cstringIKcEE:
+    #####:   75:    explicit    specific_param_error( cstring param_name ) : Base( param_name ) {}
+    %%%%%:   75-block  0
+    %%%%%:   75-block  1
+------------------
+_ZN5boost7runtime20specific_param_errorINS0_13duplicate_argENS0_11input_errorEEC2ENS_9unit_test13basic_cstringIKcEE:
+    #####:   75:    explicit    specific_param_error( cstring param_name ) : Base( param_name ) {}
+    %%%%%:   75-block  0
+    %%%%%:   75-block  1
+------------------
+_ZN5boost7runtime20specific_param_errorINS0_12format_errorENS0_11input_errorEEC2ENS_9unit_test13basic_cstringIKcEE:
+    #####:   75:    explicit    specific_param_error( cstring param_name ) : Base( param_name ) {}
+    %%%%%:   75-block  0
+    %%%%%:   75-block  1
+------------------
+_ZN5boost7runtime20specific_param_errorINS0_18invalid_param_specENS0_10init_errorEEC2ENS_9unit_test13basic_cstringIKcEE:
+    #####:   75:    explicit    specific_param_error( cstring param_name ) : Base( param_name ) {}
+    %%%%%:   75-block  0
+    %%%%%:   75-block  1
+------------------
+_ZN5boost7runtime20specific_param_errorINS0_17arg_type_mismatchENS0_10init_errorEEC2ENS_9unit_test13basic_cstringIKcEE:
+    #####:   75:    explicit    specific_param_error( cstring param_name ) : Base( param_name ) {}
+    %%%%%:   75-block  0
+    %%%%%:   75-block  1
+------------------
+_ZN5boost7runtime20specific_param_errorINS0_26access_to_missing_argumentENS0_10init_errorEEC2ENS_9unit_test13basic_cstringIKcEE:
+    #####:   75:    explicit    specific_param_error( cstring param_name ) : Base( param_name ) {}
+    %%%%%:   75-block  0
+    %%%%%:   75-block  1
+------------------
+_ZN5boost7runtime20specific_param_errorINS0_17conflicting_paramENS0_10init_errorEEC2ENS_9unit_test13basic_cstringIKcEE:
+    #####:   75:    explicit    specific_param_error( cstring param_name ) : Base( param_name ) {}
+    %%%%%:   75-block  0
+    %%%%%:   75-block  1
+------------------
+_ZN5boost7runtime20specific_param_errorINS0_15duplicate_paramENS0_10init_errorEEC2ENS_9unit_test13basic_cstringIKcEE:
+    #####:   75:    explicit    specific_param_error( cstring param_name ) : Base( param_name ) {}
+    %%%%%:   75-block  0
+    %%%%%:   75-block  1
+------------------
+_ZN5boost7runtime20specific_param_errorINS0_14invalid_cla_idENS0_10init_errorEEC2ENS_9unit_test13basic_cstringIKcEE:
+    #####:   75:    explicit    specific_param_error( cstring param_name ) : Base( param_name ) {}
+    %%%%%:   75-block  0
+    %%%%%:   75-block  1
+------------------
+    #####:   76:    ~specific_param_error() BOOST_NOEXCEPT_OR_NOTHROW {}
+------------------
+_ZN5boost7runtime20specific_param_errorINS0_17conflicting_paramENS0_10init_errorEED1Ev:
+    #####:   76:    ~specific_param_error() BOOST_NOEXCEPT_OR_NOTHROW {}
+    %%%%%:   76-block  0
+------------------
+_ZN5boost7runtime20specific_param_errorINS0_18invalid_param_specENS0_10init_errorEED2Ev:
+    #####:   76:    ~specific_param_error() BOOST_NOEXCEPT_OR_NOTHROW {}
+    %%%%%:   76-block  0
+------------------
+_ZN5boost7runtime20specific_param_errorINS0_17arg_type_mismatchENS0_10init_errorEED0Ev:
+    #####:   76:    ~specific_param_error() BOOST_NOEXCEPT_OR_NOTHROW {}
+    %%%%%:   76-block  0
+------------------
+_ZN5boost7runtime20specific_param_errorINS0_17arg_type_mismatchENS0_10init_errorEED1Ev:
+    #####:   76:    ~specific_param_error() BOOST_NOEXCEPT_OR_NOTHROW {}
+    %%%%%:   76-block  0
+------------------
+_ZN5boost7runtime20specific_param_errorINS0_17arg_type_mismatchENS0_10init_errorEED2Ev:
+    #####:   76:    ~specific_param_error() BOOST_NOEXCEPT_OR_NOTHROW {}
+    %%%%%:   76-block  0
+------------------
+_ZN5boost7runtime20specific_param_errorINS0_26access_to_missing_argumentENS0_10init_errorEED0Ev:
+    #####:   76:    ~specific_param_error() BOOST_NOEXCEPT_OR_NOTHROW {}
+    %%%%%:   76-block  0
+------------------
+_ZN5boost7runtime20specific_param_errorINS0_26access_to_missing_argumentENS0_10init_errorEED1Ev:
+    #####:   76:    ~specific_param_error() BOOST_NOEXCEPT_OR_NOTHROW {}
+    %%%%%:   76-block  0
+------------------
+_ZN5boost7runtime20specific_param_errorINS0_26access_to_missing_argumentENS0_10init_errorEED2Ev:
+    #####:   76:    ~specific_param_error() BOOST_NOEXCEPT_OR_NOTHROW {}
+    %%%%%:   76-block  0
+------------------
+_ZN5boost7runtime20specific_param_errorINS0_17conflicting_paramENS0_10init_errorEED0Ev:
+    #####:   76:    ~specific_param_error() BOOST_NOEXCEPT_OR_NOTHROW {}
+    %%%%%:   76-block  0
+------------------
+_ZN5boost7runtime20specific_param_errorINS0_18invalid_param_specENS0_10init_errorEED1Ev:
+    #####:   76:    ~specific_param_error() BOOST_NOEXCEPT_OR_NOTHROW {}
+    %%%%%:   76-block  0
+------------------
+_ZN5boost7runtime20specific_param_errorINS0_17conflicting_paramENS0_10init_errorEED2Ev:
+    #####:   76:    ~specific_param_error() BOOST_NOEXCEPT_OR_NOTHROW {}
+    %%%%%:   76-block  0
+------------------
+_ZN5boost7runtime20specific_param_errorINS0_15duplicate_paramENS0_10init_errorEED0Ev:
+    #####:   76:    ~specific_param_error() BOOST_NOEXCEPT_OR_NOTHROW {}
+    %%%%%:   76-block  0
+------------------
+_ZN5boost7runtime20specific_param_errorINS0_15duplicate_paramENS0_10init_errorEED1Ev:
+    #####:   76:    ~specific_param_error() BOOST_NOEXCEPT_OR_NOTHROW {}
+    %%%%%:   76-block  0
+------------------
+_ZN5boost7runtime20specific_param_errorINS0_15duplicate_paramENS0_10init_errorEED2Ev:
+    #####:   76:    ~specific_param_error() BOOST_NOEXCEPT_OR_NOTHROW {}
+    %%%%%:   76-block  0
+------------------
+_ZN5boost7runtime20specific_param_errorINS0_14invalid_cla_idENS0_10init_errorEED0Ev:
+    #####:   76:    ~specific_param_error() BOOST_NOEXCEPT_OR_NOTHROW {}
+    %%%%%:   76-block  0
+------------------
+_ZN5boost7runtime20specific_param_errorINS0_14invalid_cla_idENS0_10init_errorEED1Ev:
+    #####:   76:    ~specific_param_error() BOOST_NOEXCEPT_OR_NOTHROW {}
+    %%%%%:   76-block  0
+------------------
+_ZN5boost7runtime20specific_param_errorINS0_14invalid_cla_idENS0_10init_errorEED2Ev:
+    #####:   76:    ~specific_param_error() BOOST_NOEXCEPT_OR_NOTHROW {}
+    %%%%%:   76-block  0
+------------------
+_ZN5boost7runtime20specific_param_errorINS0_18unrecognized_paramENS0_11input_errorEED0Ev:
+    #####:   76:    ~specific_param_error() BOOST_NOEXCEPT_OR_NOTHROW {}
+    %%%%%:   76-block  0
+------------------
+_ZN5boost7runtime20specific_param_errorINS0_18invalid_param_specENS0_10init_errorEED0Ev:
+    #####:   76:    ~specific_param_error() BOOST_NOEXCEPT_OR_NOTHROW {}
+    %%%%%:   76-block  0
+------------------
+_ZN5boost7runtime20specific_param_errorINS0_12format_errorENS0_11input_errorEED2Ev:
+    #####:   76:    ~specific_param_error() BOOST_NOEXCEPT_OR_NOTHROW {}
+    %%%%%:   76-block  0
+------------------
+_ZN5boost7runtime20specific_param_errorINS0_12format_errorENS0_11input_errorEED1Ev:
+    #####:   76:    ~specific_param_error() BOOST_NOEXCEPT_OR_NOTHROW {}
+    %%%%%:   76-block  0
+------------------
+_ZN5boost7runtime20specific_param_errorINS0_12format_errorENS0_11input_errorEED0Ev:
+    #####:   76:    ~specific_param_error() BOOST_NOEXCEPT_OR_NOTHROW {}
+    %%%%%:   76-block  0
+------------------
+_ZN5boost7runtime20specific_param_errorINS0_13duplicate_argENS0_11input_errorEED2Ev:
+    #####:   76:    ~specific_param_error() BOOST_NOEXCEPT_OR_NOTHROW {}
+    %%%%%:   76-block  0
+------------------
+_ZN5boost7runtime20specific_param_errorINS0_13duplicate_argENS0_11input_errorEED1Ev:
+    #####:   76:    ~specific_param_error() BOOST_NOEXCEPT_OR_NOTHROW {}
+    %%%%%:   76-block  0
+------------------
+_ZN5boost7runtime20specific_param_errorINS0_13duplicate_argENS0_11input_errorEED0Ev:
+    #####:   76:    ~specific_param_error() BOOST_NOEXCEPT_OR_NOTHROW {}
+    %%%%%:   76-block  0
+------------------
+_ZN5boost7runtime20specific_param_errorINS0_15missing_req_argENS0_11input_errorEED2Ev:
+    #####:   76:    ~specific_param_error() BOOST_NOEXCEPT_OR_NOTHROW {}
+    %%%%%:   76-block  0
+------------------
+_ZN5boost7runtime20specific_param_errorINS0_15missing_req_argENS0_11input_errorEED1Ev:
+    #####:   76:    ~specific_param_error() BOOST_NOEXCEPT_OR_NOTHROW {}
+    %%%%%:   76-block  0
+------------------
+_ZN5boost7runtime20specific_param_errorINS0_15missing_req_argENS0_11input_errorEED0Ev:
+    #####:   76:    ~specific_param_error() BOOST_NOEXCEPT_OR_NOTHROW {}
+    %%%%%:   76-block  0
+------------------
+_ZN5boost7runtime20specific_param_errorINS0_15ambiguous_paramENS0_11input_errorEED2Ev:
+    #####:   76:    ~specific_param_error() BOOST_NOEXCEPT_OR_NOTHROW {}
+    %%%%%:   76-block  0
+------------------
+_ZN5boost7runtime20specific_param_errorINS0_15ambiguous_paramENS0_11input_errorEED1Ev:
+    #####:   76:    ~specific_param_error() BOOST_NOEXCEPT_OR_NOTHROW {}
+    %%%%%:   76-block  0
+------------------
+_ZN5boost7runtime20specific_param_errorINS0_15ambiguous_paramENS0_11input_errorEED0Ev:
+    #####:   76:    ~specific_param_error() BOOST_NOEXCEPT_OR_NOTHROW {}
+    %%%%%:   76-block  0
+------------------
+_ZN5boost7runtime20specific_param_errorINS0_18unrecognized_paramENS0_11input_errorEED2Ev:
+    #####:   76:    ~specific_param_error() BOOST_NOEXCEPT_OR_NOTHROW {}
+    %%%%%:   76-block  0
+------------------
+_ZN5boost7runtime20specific_param_errorINS0_18unrecognized_paramENS0_11input_errorEED1Ev:
+    #####:   76:    ~specific_param_error() BOOST_NOEXCEPT_OR_NOTHROW {}
+    %%%%%:   76-block  0
+------------------
+        -:   77:
+        -:   78:public:
+        -:   79:
+        -:   80://____________________________________________________________________________//
+        -:   81:
+        -:   82:#if !defined(BOOST_NO_CXX11_RVALUE_REFERENCES) && \
+        -:   83:    !defined(BOOST_NO_CXX11_REF_QUALIFIERS)
+        -:   84:
+    #####:   85:    Derived operator<<(char const* val) &&
+        -:   86:    {
+    #####:   87:        this->msg.append( val );
+        -:   88:
+    #####:   89:        return static_cast<Derived&&>(*this);
+        -:   90:    }
+------------------
+_ZNO5boost7runtime20specific_param_errorINS0_17arg_type_mismatchENS0_10init_errorEElsEPKc:
+    #####:   85:    Derived operator<<(char const* val) &&
+        -:   86:    {
+    #####:   87:        this->msg.append( val );
+    %%%%%:   87-block  0
+        -:   88:
+    #####:   89:        return static_cast<Derived&&>(*this);
+        -:   90:    }
+------------------
+_ZNO5boost7runtime20specific_param_errorINS0_18invalid_param_specENS0_10init_errorEElsEPKc:
+    #####:   85:    Derived operator<<(char const* val) &&
+        -:   86:    {
+    #####:   87:        this->msg.append( val );
+    %%%%%:   87-block  0
+        -:   88:
+    #####:   89:        return static_cast<Derived&&>(*this);
+        -:   90:    }
+------------------
+_ZNO5boost7runtime20specific_param_errorINS0_15ambiguous_paramENS0_11input_errorEElsEPKc:
+    #####:   85:    Derived operator<<(char const* val) &&
+        -:   86:    {
+    #####:   87:        this->msg.append( val );
+    %%%%%:   87-block  0
+        -:   88:
+    #####:   89:        return static_cast<Derived&&>(*this);
+        -:   90:    }
+------------------
+_ZNO5boost7runtime20specific_param_errorINS0_18unrecognized_paramENS0_11input_errorEElsEPKc:
+    #####:   85:    Derived operator<<(char const* val) &&
+        -:   86:    {
+    #####:   87:        this->msg.append( val );
+    %%%%%:   87-block  0
+        -:   88:
+    #####:   89:        return static_cast<Derived&&>(*this);
+        -:   90:    }
+------------------
+_ZNO5boost7runtime20specific_param_errorINS0_13duplicate_argENS0_11input_errorEElsEPKc:
+    #####:   85:    Derived operator<<(char const* val) &&
+        -:   86:    {
+    #####:   87:        this->msg.append( val );
+    %%%%%:   87-block  0
+        -:   88:
+    #####:   89:        return static_cast<Derived&&>(*this);
+        -:   90:    }
+------------------
+_ZNO5boost7runtime20specific_param_errorINS0_17conflicting_paramENS0_10init_errorEElsEPKc:
+    #####:   85:    Derived operator<<(char const* val) &&
+        -:   86:    {
+    #####:   87:        this->msg.append( val );
+    %%%%%:   87-block  0
+        -:   88:
+    #####:   89:        return static_cast<Derived&&>(*this);
+        -:   90:    }
+------------------
+_ZNO5boost7runtime20specific_param_errorINS0_15missing_req_argENS0_11input_errorEElsEPKc:
+    #####:   85:    Derived operator<<(char const* val) &&
+        -:   86:    {
+    #####:   87:        this->msg.append( val );
+    %%%%%:   87-block  0
+        -:   88:
+    #####:   89:        return static_cast<Derived&&>(*this);
+        -:   90:    }
+------------------
+_ZNO5boost7runtime20specific_param_errorINS0_15duplicate_paramENS0_10init_errorEElsEPKc:
+    #####:   85:    Derived operator<<(char const* val) &&
+        -:   86:    {
+    #####:   87:        this->msg.append( val );
+    %%%%%:   87-block  0
+        -:   88:
+    #####:   89:        return static_cast<Derived&&>(*this);
+        -:   90:    }
+------------------
+_ZNO5boost7runtime20specific_param_errorINS0_14invalid_cla_idENS0_10init_errorEElsEPKc:
+    #####:   85:    Derived operator<<(char const* val) &&
+        -:   86:    {
+    #####:   87:        this->msg.append( val );
+    %%%%%:   87-block  0
+        -:   88:
+    #####:   89:        return static_cast<Derived&&>(*this);
+        -:   90:    }
+------------------
+_ZNO5boost7runtime20specific_param_errorINS0_12format_errorENS0_11input_errorEElsEPKc:
+    #####:   85:    Derived operator<<(char const* val) &&
+        -:   86:    {
+    #####:   87:        this->msg.append( val );
+    %%%%%:   87-block  0
+        -:   88:
+    #####:   89:        return static_cast<Derived&&>(*this);
+        -:   90:    }
+------------------
+_ZNO5boost7runtime20specific_param_errorINS0_26access_to_missing_argumentENS0_10init_errorEElsEPKc:
+    #####:   85:    Derived operator<<(char const* val) &&
+        -:   86:    {
+    #####:   87:        this->msg.append( val );
+    %%%%%:   87-block  0
+        -:   88:
+    #####:   89:        return static_cast<Derived&&>(*this);
+        -:   90:    }
+------------------
+        -:   91:
+        -:   92:    //____________________________________________________________________________//
+        -:   93:
+        -:   94:    template<typename T>
+    #####:   95:    Derived operator<<(T const& val) &&
+        -:   96:    {
+    #####:   97:        this->msg.append( unit_test::utils::string_cast( val ) );
+        -:   98:
+    #####:   99:        return static_cast<Derived&&>(*this);
+        -:  100:    }
+------------------
+_ZNO5boost7runtime20specific_param_errorINS0_17arg_type_mismatchENS0_10init_errorEElsINS_9unit_test13basic_cstringIKcEEEES2_RKT_:
+    #####:   95:    Derived operator<<(T const& val) &&
+        -:   96:    {
+    #####:   97:        this->msg.append( unit_test::utils::string_cast( val ) );
+    %%%%%:   97-block  0
+    %%%%%:   97-block  1
+    $$$$$:   97-block  2
+        -:   98:
+    #####:   99:        return static_cast<Derived&&>(*this);
+        -:  100:    }
+------------------
+_ZNO5boost7runtime20specific_param_errorINS0_26access_to_missing_argumentENS0_10init_errorEElsINS_9unit_test13basic_cstringIKcEEEES2_RKT_:
+    #####:   95:    Derived operator<<(T const& val) &&
+        -:   96:    {
+    #####:   97:        this->msg.append( unit_test::utils::string_cast( val ) );
+    %%%%%:   97-block  0
+    %%%%%:   97-block  1
+    $$$$$:   97-block  2
+        -:   98:
+    #####:   99:        return static_cast<Derived&&>(*this);
+        -:  100:    }
+------------------
+_ZNO5boost7runtime20specific_param_errorINS0_18invalid_param_specENS0_10init_errorEElsINS_9unit_test13basic_cstringIKcEEEES2_RKT_:
+    #####:   95:    Derived operator<<(T const& val) &&
+        -:   96:    {
+    #####:   97:        this->msg.append( unit_test::utils::string_cast( val ) );
+    %%%%%:   97-block  0
+    %%%%%:   97-block  1
+    $$$$$:   97-block  2
+        -:   98:
+    #####:   99:        return static_cast<Derived&&>(*this);
+        -:  100:    }
+------------------
+_ZNO5boost7runtime20specific_param_errorINS0_15ambiguous_paramENS0_11input_errorEElsINS_9unit_test13basic_cstringIKcEEEES2_RKT_:
+    #####:   95:    Derived operator<<(T const& val) &&
+        -:   96:    {
+    #####:   97:        this->msg.append( unit_test::utils::string_cast( val ) );
+    %%%%%:   97-block  0
+    %%%%%:   97-block  1
+    $$$$$:   97-block  2
+        -:   98:
+    #####:   99:        return static_cast<Derived&&>(*this);
+        -:  100:    }
+------------------
+_ZNO5boost7runtime20specific_param_errorINS0_18unrecognized_paramENS0_11input_errorEElsINS_9unit_test13basic_cstringIKcEEEES2_RKT_:
+    #####:   95:    Derived operator<<(T const& val) &&
+        -:   96:    {
+    #####:   97:        this->msg.append( unit_test::utils::string_cast( val ) );
+    %%%%%:   97-block  0
+    %%%%%:   97-block  1
+    $$$$$:   97-block  2
+        -:   98:
+    #####:   99:        return static_cast<Derived&&>(*this);
+        -:  100:    }
+------------------
+_ZNO5boost7runtime20specific_param_errorINS0_13duplicate_argENS0_11input_errorEElsINS_9unit_test13basic_cstringIKcEEEES2_RKT_:
+    #####:   95:    Derived operator<<(T const& val) &&
+        -:   96:    {
+    #####:   97:        this->msg.append( unit_test::utils::string_cast( val ) );
+    %%%%%:   97-block  0
+    %%%%%:   97-block  1
+    $$$$$:   97-block  2
+        -:   98:
+    #####:   99:        return static_cast<Derived&&>(*this);
+        -:  100:    }
+------------------
+_ZNO5boost7runtime20specific_param_errorINS0_13duplicate_argENS0_11input_errorEElsINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEES2_RKT_:
+    #####:   95:    Derived operator<<(T const& val) &&
+        -:   96:    {
+    #####:   97:        this->msg.append( unit_test::utils::string_cast( val ) );
+    %%%%%:   97-block  0
+    %%%%%:   97-block  1
+    $$$$$:   97-block  2
+        -:   98:
+    #####:   99:        return static_cast<Derived&&>(*this);
+        -:  100:    }
+------------------
+_ZNO5boost7runtime20specific_param_errorINS0_12format_errorENS0_11input_errorEElsINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEES2_RKT_:
+    #####:   95:    Derived operator<<(T const& val) &&
+        -:   96:    {
+    #####:   97:        this->msg.append( unit_test::utils::string_cast( val ) );
+    %%%%%:   97-block  0
+    %%%%%:   97-block  1
+    $$$$$:   97-block  2
+        -:   98:
+    #####:   99:        return static_cast<Derived&&>(*this);
+        -:  100:    }
+------------------
+_ZNO5boost7runtime20specific_param_errorINS0_17conflicting_paramENS0_10init_errorEElsINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEES2_RKT_:
+    #####:   95:    Derived operator<<(T const& val) &&
+        -:   96:    {
+    #####:   97:        this->msg.append( unit_test::utils::string_cast( val ) );
+    %%%%%:   97-block  0
+    %%%%%:   97-block  1
+    $$$$$:   97-block  2
+        -:   98:
+    #####:   99:        return static_cast<Derived&&>(*this);
+        -:  100:    }
+------------------
+_ZNO5boost7runtime20specific_param_errorINS0_15missing_req_argENS0_11input_errorEElsINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEES2_RKT_:
+    #####:   95:    Derived operator<<(T const& val) &&
+        -:   96:    {
+    #####:   97:        this->msg.append( unit_test::utils::string_cast( val ) );
+    %%%%%:   97-block  0
+    %%%%%:   97-block  1
+    $$$$$:   97-block  2
+        -:   98:
+    #####:   99:        return static_cast<Derived&&>(*this);
+        -:  100:    }
+------------------
+_ZNO5boost7runtime20specific_param_errorINS0_15duplicate_paramENS0_10init_errorEElsINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEES2_RKT_:
+    #####:   95:    Derived operator<<(T const& val) &&
+        -:   96:    {
+    #####:   97:        this->msg.append( unit_test::utils::string_cast( val ) );
+    %%%%%:   97-block  0
+    %%%%%:   97-block  1
+    $$$$$:   97-block  2
+        -:   98:
+    #####:   99:        return static_cast<Derived&&>(*this);
+        -:  100:    }
+------------------
+_ZNO5boost7runtime20specific_param_errorINS0_14invalid_cla_idENS0_10init_errorEElsINS_9unit_test13basic_cstringIKcEEEES2_RKT_:
+    #####:   95:    Derived operator<<(T const& val) &&
+        -:   96:    {
+    #####:   97:        this->msg.append( unit_test::utils::string_cast( val ) );
+    %%%%%:   97-block  0
+    %%%%%:   97-block  1
+    $$$$$:   97-block  2
+        -:   98:
+    #####:   99:        return static_cast<Derived&&>(*this);
+        -:  100:    }
+------------------
+_ZNO5boost7runtime20specific_param_errorINS0_14invalid_cla_idENS0_10init_errorEElsINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEES2_RKT_:
+    #####:   95:    Derived operator<<(T const& val) &&
+        -:   96:    {
+    #####:   97:        this->msg.append( unit_test::utils::string_cast( val ) );
+    %%%%%:   97-block  0
+    %%%%%:   97-block  1
+    $$$$$:   97-block  2
+        -:   98:
+    #####:   99:        return static_cast<Derived&&>(*this);
+        -:  100:    }
+------------------
+_ZNO5boost7runtime20specific_param_errorINS0_12format_errorENS0_11input_errorEElsINS_9unit_test13basic_cstringIKcEEEES2_RKT_:
+    #####:   95:    Derived operator<<(T const& val) &&
+        -:   96:    {
+    #####:   97:        this->msg.append( unit_test::utils::string_cast( val ) );
+    %%%%%:   97-block  0
+    %%%%%:   97-block  1
+    $$$$$:   97-block  2
+        -:   98:
+    #####:   99:        return static_cast<Derived&&>(*this);
+        -:  100:    }
+------------------
+_ZNO5boost7runtime20specific_param_errorINS0_26access_to_missing_argumentENS0_10init_errorEElsINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEES2_RKT_:
+    #####:   95:    Derived operator<<(T const& val) &&
+        -:   96:    {
+    #####:   97:        this->msg.append( unit_test::utils::string_cast( val ) );
+    %%%%%:   97-block  0
+    %%%%%:   97-block  1
+    $$$$$:   97-block  2
+        -:   98:
+    #####:   99:        return static_cast<Derived&&>(*this);
+        -:  100:    }
+------------------
+        -:  101:
+        -:  102:    //____________________________________________________________________________//
+        -:  103:
+        -:  104:#else
+        -:  105:
+        -:  106:    Derived const& operator<<(char const* val) const
+        -:  107:    {
+        -:  108:        const_cast<specific_param_error<Derived, Base>&>(*this).msg.append( val );
+        -:  109:
+        -:  110:        return static_cast<Derived const&>(*this);
+        -:  111:    }
+        -:  112:
+        -:  113:    //____________________________________________________________________________//
+        -:  114:
+        -:  115:    template<typename T>
+        -:  116:    Derived const& operator<<(T const& val) const
+        -:  117:    {
+        -:  118:        const_cast<specific_param_error<Derived, Base>&>(*this).msg.append( unit_test::utils::string_cast( val ) );
+        -:  119:
+        -:  120:        return static_cast<Derived const&>(*this);
+        -:  121:    }
+        -:  122:
+        -:  123:    //____________________________________________________________________________//
+        -:  124:
+        -:  125:#endif
+        -:  126:
+        -:  127:};
+        -:  128:
+        -:  129:
+        -:  130:
+        -:  131:// ************************************************************************** //
+        -:  132:// **************           specific exception types           ************** //
+        -:  133:// ************************************************************************** //
+        -:  134:
+        -:  135:#define SPECIFIC_EX_TYPE( type, base )                  \
+        -:  136:class BOOST_SYMBOL_VISIBLE type : public specific_param_error<type,base> {   \
+        -:  137:public:                                                 \
+        -:  138:    explicit type( cstring param_name = cstring() )     \
+        -:  139:    : specific_param_error<type,base>( param_name )     \
+        -:  140:    {}                                                  \
+        -:  141:}                                                       \
+        -:  142:/**/
+        -:  143:
+    #####:  144:SPECIFIC_EX_TYPE( invalid_cla_id, init_error );
+    %%%%%:  144-block  0
+    %%%%%:  144-block  1
+    #####:  145:SPECIFIC_EX_TYPE( duplicate_param, init_error );
+    %%%%%:  145-block  0
+    %%%%%:  145-block  1
+    #####:  146:SPECIFIC_EX_TYPE( conflicting_param, init_error );
+    %%%%%:  146-block  0
+    %%%%%:  146-block  1
+        -:  147:SPECIFIC_EX_TYPE( unknown_param, init_error );
+    #####:  148:SPECIFIC_EX_TYPE( access_to_missing_argument, init_error );
+    %%%%%:  148-block  0
+    %%%%%:  148-block  1
+    #####:  149:SPECIFIC_EX_TYPE( arg_type_mismatch, init_error );
+    %%%%%:  149-block  0
+    %%%%%:  149-block  1
+    #####:  150:SPECIFIC_EX_TYPE( invalid_param_spec, init_error );
+    %%%%%:  150-block  0
+    %%%%%:  150-block  1
+        -:  151:
+    #####:  152:SPECIFIC_EX_TYPE( format_error, input_error );
+    %%%%%:  152-block  0
+    %%%%%:  152-block  1
+    #####:  153:SPECIFIC_EX_TYPE( duplicate_arg, input_error );
+    %%%%%:  153-block  0
+    %%%%%:  153-block  1
+    #####:  154:SPECIFIC_EX_TYPE( missing_req_arg, input_error );
+    %%%%%:  154-block  0
+    %%%%%:  154-block  1
+        -:  155:
+        -:  156:#undef SPECIFIC_EX_TYPE
+        -:  157:
+        -:  158:class BOOST_SYMBOL_VISIBLE ambiguous_param : public specific_param_error<ambiguous_param, input_error> {
+        -:  159:public:
+        -:  160:#ifndef BOOST_NO_CXX11_RVALUE_REFERENCES
+    #####:  161:    explicit    ambiguous_param( std::vector<cstring>&& amb_candidates )
+    #####:  162:    : specific_param_error<ambiguous_param,input_error>( "" )
+    #####:  163:    , m_amb_candidates( std::move( amb_candidates ) ) {}
+    %%%%%:  163-block  0
+    %%%%%:  163-block  1
+        -:  164:#else
+        -:  165:    explicit    ambiguous_param( std::vector<cstring> const& amb_candidates )
+        -:  166:    : specific_param_error<ambiguous_param,input_error>( "" )
+        -:  167:    , m_amb_candidates( amb_candidates ) {}
+        -:  168:#endif
+    #####:  169:    ~ambiguous_param() BOOST_NOEXCEPT_OR_NOTHROW {}
+------------------
+_ZN5boost7runtime15ambiguous_paramD0Ev:
+    #####:  169:    ~ambiguous_param() BOOST_NOEXCEPT_OR_NOTHROW {}
+    %%%%%:  169-block  0
+------------------
+_ZN5boost7runtime15ambiguous_paramD1Ev:
+    #####:  169:    ~ambiguous_param() BOOST_NOEXCEPT_OR_NOTHROW {}
+    %%%%%:  169-block  0
+------------------
+        -:  170:
+        -:  171:    std::vector<cstring> m_amb_candidates;
+        -:  172:};
+        -:  173:
+        -:  174:class BOOST_SYMBOL_VISIBLE unrecognized_param : public specific_param_error<unrecognized_param, input_error> {
+        -:  175:public:
+        -:  176:#ifndef BOOST_NO_CXX11_RVALUE_REFERENCES
+    #####:  177:    explicit    unrecognized_param( std::vector<cstring>&& type_candidates )
+    #####:  178:    : specific_param_error<unrecognized_param,input_error>( "" )
+    #####:  179:    , m_typo_candidates( std::move( type_candidates ) ) {}
+    %%%%%:  179-block  0
+    %%%%%:  179-block  1
+        -:  180:#else
+        -:  181:    explicit    unrecognized_param( std::vector<cstring> const& type_candidates )
+        -:  182:    : specific_param_error<unrecognized_param,input_error>( "" )
+        -:  183:    , m_typo_candidates( type_candidates ) {}
+        -:  184:#endif
+    #####:  185:    ~unrecognized_param() BOOST_NOEXCEPT_OR_NOTHROW {}
+------------------
+_ZN5boost7runtime18unrecognized_paramD0Ev:
+    #####:  185:    ~unrecognized_param() BOOST_NOEXCEPT_OR_NOTHROW {}
+    %%%%%:  185-block  0
+------------------
+_ZN5boost7runtime18unrecognized_paramD1Ev:
+    #####:  185:    ~unrecognized_param() BOOST_NOEXCEPT_OR_NOTHROW {}
+    %%%%%:  185-block  0
+------------------
+        -:  186:
+        -:  187:    std::vector<cstring> m_typo_candidates;
+        -:  188:};
+        -:  189:
+        -:  190:} // namespace runtime
+        -:  191:} // namespace boost
+        -:  192:
+        -:  193:#include <boost/test/detail/enable_warnings.hpp>
+        -:  194:
+        -:  195:#endif // BOOST_TEST_UTILS_RUNTIME_INIT_ERROR_HPP

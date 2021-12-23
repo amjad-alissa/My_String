@@ -1,0 +1,176 @@
+        -:    0:Source:F:/Files/vcpkg/installed/x86-windows/include/boost/test/utils/basic_cstring/compare.hpp
+        -:    0:Graph:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcno
+        -:    0:Data:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1://  (C) Copyright Gennadiy Rozental 2001.
+        -:    2://  Distributed under the Boost Software License, Version 1.0.
+        -:    3://  (See accompanying file LICENSE_1_0.txt or copy at
+        -:    4://  http://www.boost.org/LICENSE_1_0.txt)
+        -:    5:
+        -:    6://  See http://www.boost.org/libs/test for the library home page.
+        -:    7://
+        -:    8://  File        : $RCSfile$
+        -:    9://
+        -:   10://  Version     : $Revision$
+        -:   11://
+        -:   12://  Description : class basic_cstring comparisons implementation
+        -:   13:// ***************************************************************************
+        -:   14:
+        -:   15:#ifndef BOOST_TEST_UTILS_BASIC_CSTRING_COMPARE_HPP
+        -:   16:#define BOOST_TEST_UTILS_BASIC_CSTRING_COMPARE_HPP
+        -:   17:
+        -:   18:// Boost.Test
+        -:   19:#include <boost/test/utils/basic_cstring/basic_cstring.hpp>
+        -:   20:
+        -:   21:// STL
+        -:   22:#include <functional>
+        -:   23:#include <cctype>
+        -:   24:
+        -:   25:#include <boost/test/detail/suppress_warnings.hpp>
+        -:   26:
+        -:   27://____________________________________________________________________________//
+        -:   28:
+        -:   29:# if defined(BOOST_NO_STDC_NAMESPACE) && !BOOST_WORKAROUND(__BORLANDC__, <= 0x570)
+        -:   30:namespace std { using ::toupper; }
+        -:   31:# endif
+        -:   32:
+        -:   33:namespace boost {
+        -:   34:
+        -:   35:namespace unit_test {
+        -:   36:
+        -:   37:// ************************************************************************** //
+        -:   38:// **************                case_ins_compare              ************** //
+        -:   39:// ************************************************************************** //
+        -:   40:
+        -:   41:namespace ut_detail {
+        -:   42:
+        -:   43:template<class CharT>
+        -:   44:struct case_ins
+        -:   45:{
+        7:   46:    static bool         eq( CharT c1, CharT c2 ) { return (std::toupper)( c1 ) == (std::toupper)( c2 ); }
+        7:   46-block  0
+    #####:   47:    static bool         lt( CharT c1, CharT c2 ) { return (std::toupper)( c1 ) <  (std::toupper)( c2 ); }
+    %%%%%:   47-block  0
+        -:   48:
+        2:   49:    static int          compare( CharT const* s1, CharT const* s2, std::size_t n )
+        -:   50:    {
+        9:   51:        for( std::size_t i = 0; i < n; ++i ) {
+        2:   51-block  0
+        9:   51-block  1
+        7:   51-block  2
+        7:   52:            if( !eq( s1[i], s2[i] ) )
+        7:   52-block  0
+    #####:   53:                return lt( s1[i], s2[i] ) ? -1 : 1;
+    %%%%%:   53-block  0
+    %%%%%:   53-block  1
+    %%%%%:   53-block  2
+    %%%%%:   53-block  3
+        -:   54:        }
+        2:   55:        return 0;
+        2:   55-block  0
+        -:   56:    }
+        -:   57:};
+        -:   58:
+        -:   59:} // namespace ut_detail
+        -:   60:
+        -:   61:// ************************************************************************** //
+        -:   62:// **************                  case_ins_eq                 ************** //
+        -:   63:// ************************************************************************** //
+        -:   64:
+        -:   65:template<class CharT>
+        -:   66:inline bool
+       13:   67:case_ins_eq( basic_cstring<CharT> x, basic_cstring<CharT> y )
+        -:   68:{
+       13:   69:    return x.size() == y.size() && ut_detail::case_ins<CharT>::compare( x.begin(), y.begin(), x.size() ) == 0;
+       13:   69-block  0
+        2:   69-block  1
+        2:   69-block  2
+       11:   69-block  3
+       13:   69-block  4
+        -:   70:}
+        -:   71:
+        -:   72://____________________________________________________________________________//
+        -:   73:
+        -:   74:// ************************************************************************** //
+        -:   75:// **************                 case_ins_less                ************** //
+        -:   76:// ************************************************************************** //
+        -:   77:
+        -:   78:template<class CharT>
+        -:   79:class case_ins_less
+        -:   80:{
+        -:   81:public:
+        -:   82:    typedef bool result_type;
+        -:   83:    typedef basic_cstring<CharT> first_argument_type;
+        -:   84:    typedef basic_cstring<CharT> second_argument_type;
+        -:   85:
+        -:   86:    bool operator()( basic_cstring<CharT> x, basic_cstring<CharT> y ) const
+        -:   87:    {
+        -:   88:        return x.size() != y.size()
+        -:   89:                ? x.size() < y.size()
+        -:   90:                : ut_detail::case_ins<CharT>::compare( x.begin(), y.begin(), x.size() ) < 0;
+        -:   91:    }
+        -:   92:};
+        -:   93:
+        -:   94://____________________________________________________________________________//
+        -:   95:
+        -:   96:// ************************************************************************** //
+        -:   97:// **************                 operators <,>                ************** //
+        -:   98:// ************************************************************************** //
+        -:   99:
+        -:  100:template<class CharT>
+        -:  101:inline bool
+     1405:  102:operator <( boost::unit_test::basic_cstring<CharT> const& x,
+        -:  103:            boost::unit_test::basic_cstring<CharT> const& y )
+        -:  104:{
+        -:  105:    typedef typename boost::unit_test::basic_cstring<CharT>::traits_type traits_type;
+     1405:  106:    return x.size() != y.size()
+     1405:  106-block  0
+     1405:  107:            ? x.size() < y.size()
+      822:  107-block  0
+     1405:  108:            : traits_type::compare( x.begin(), y.begin(), x.size() ) < 0;
+      583:  108-block  0
+     1405:  108-block  1
+        -:  109:}
+        -:  110:
+        -:  111://____________________________________________________________________________//
+        -:  112:
+        -:  113:template<class CharT>
+        -:  114:inline bool
+        -:  115:operator <=( boost::unit_test::basic_cstring<CharT> const& x,
+        -:  116:            boost::unit_test::basic_cstring<CharT> const& y )
+        -:  117:{
+        -:  118:    return !(y < x);
+        -:  119:}
+        -:  120:
+        -:  121://____________________________________________________________________________//
+        -:  122:
+        -:  123:template<class CharT>
+        -:  124:inline bool
+        -:  125:operator >( boost::unit_test::basic_cstring<CharT> const& x,
+        -:  126:            boost::unit_test::basic_cstring<CharT> const& y )
+        -:  127:{
+        -:  128:    return y < x;
+        -:  129:}
+        -:  130:
+        -:  131://____________________________________________________________________________//
+        -:  132:
+        -:  133:template<class CharT>
+        -:  134:inline bool
+        -:  135:operator >=( boost::unit_test::basic_cstring<CharT> const& x,
+        -:  136:            boost::unit_test::basic_cstring<CharT> const& y )
+        -:  137:{
+        -:  138:    return !(x < y);
+        -:  139:}
+        -:  140:
+        -:  141://____________________________________________________________________________//
+        -:  142:
+        -:  143:} // namespace unit_test
+        -:  144:
+        -:  145:} // namespace boost
+        -:  146:
+        -:  147://____________________________________________________________________________//
+        -:  148:
+        -:  149:#include <boost/test/detail/enable_warnings.hpp>
+        -:  150:
+        -:  151:#endif // BOOST_TEST_BASIC_CSTRING_COMPARE_HPP_071894GER

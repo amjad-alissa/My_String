@@ -1,0 +1,120 @@
+        -:    0:Source:F:/Files/vcpkg/installed/x86-windows/include/boost/test/utils/string_cast.hpp
+        -:    0:Graph:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcno
+        -:    0:Data:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1://  (C) Copyright Gennadiy Rozental 2001.
+        -:    2://  Distributed under the Boost Software License, Version 1.0.
+        -:    3://  (See accompanying file LICENSE_1_0.txt or copy at
+        -:    4://  http://www.boost.org/LICENSE_1_0.txt)
+        -:    5:
+        -:    6://  See http://www.boost.org/libs/test for the library home page.
+        -:    7://
+        -:    8://  File        : $RCSfile$
+        -:    9://
+        -:   10://  Version     : $Revision$
+        -:   11://
+        -:   12://  Description : trivial utility to cast to/from strings
+        -:   13:// ***************************************************************************
+        -:   14:
+        -:   15:#ifndef BOOST_TEST_UTILS_STRING_CAST_HPP
+        -:   16:#define BOOST_TEST_UTILS_STRING_CAST_HPP
+        -:   17:
+        -:   18:// Boost.Test
+        -:   19:#include <boost/test/utils/basic_cstring/basic_cstring.hpp>
+        -:   20:
+        -:   21:// STL
+        -:   22:#include <sstream>
+        -:   23:
+        -:   24:#include <boost/test/detail/suppress_warnings.hpp>
+        -:   25:
+        -:   26://____________________________________________________________________________//
+        -:   27:
+        -:   28:namespace boost {
+        -:   29:namespace unit_test {
+        -:   30:namespace utils {
+        -:   31:
+        -:   32:// ************************************************************************** //
+        -:   33:// **************                  string_cast                 ************** //
+        -:   34:// ************************************************************************** //
+        -:   35:
+        -:   36:template<typename T>
+        -:   37:inline std::string
+    #####:   38:string_cast( T const& t )
+        -:   39:{
+    #####:   40:    std::ostringstream buff;
+    #####:   41:    buff << t;
+    #####:   42:    return buff.str();
+        -:   43:}
+------------------
+_ZN5boost9unit_test5utils11string_castINS0_13basic_cstringIKcEEEENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERKT_:
+    #####:   38:string_cast( T const& t )
+        -:   39:{
+    #####:   40:    std::ostringstream buff;
+    %%%%%:   40-block  0
+    %%%%%:   40-block  1
+    $$$$$:   40-block  2
+    #####:   41:    buff << t;
+    %%%%%:   41-block  0
+    #####:   42:    return buff.str();
+    %%%%%:   42-block  0
+    %%%%%:   42-block  1
+    %%%%%:   42-block  2
+        -:   43:}
+------------------
+_ZN5boost9unit_test5utils11string_castINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEES8_RKT_:
+    #####:   38:string_cast( T const& t )
+        -:   39:{
+    #####:   40:    std::ostringstream buff;
+    %%%%%:   40-block  0
+    %%%%%:   40-block  1
+    $$$$$:   40-block  2
+    #####:   41:    buff << t;
+    %%%%%:   41-block  0
+    #####:   42:    return buff.str();
+    %%%%%:   42-block  0
+    %%%%%:   42-block  1
+    %%%%%:   42-block  2
+        -:   43:}
+------------------
+_ZN5boost9unit_test5utils11string_castIiEENSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERKT_:
+    #####:   38:string_cast( T const& t )
+        -:   39:{
+    #####:   40:    std::ostringstream buff;
+    %%%%%:   40-block  0
+    %%%%%:   40-block  1
+    $$$$$:   40-block  2
+    #####:   41:    buff << t;
+    %%%%%:   41-block  0
+    #####:   42:    return buff.str();
+    %%%%%:   42-block  0
+    %%%%%:   42-block  1
+    %%%%%:   42-block  2
+        -:   43:}
+------------------
+        -:   44:
+        -:   45://____________________________________________________________________________//
+        -:   46:
+        -:   47:// ************************************************************************** //
+        -:   48:// **************                  string_as                 ************** //
+        -:   49:// ************************************************************************** //
+        -:   50:
+        -:   51:template<typename T>
+        -:   52:inline bool
+    #####:   53:string_as( const_string str, T& res )
+        -:   54:{
+    #####:   55:    std::istringstream buff( std::string( str.begin(), str.end() ) );
+    #####:   56:    buff >> res;
+        -:   57:
+    #####:   58:    return !buff.fail() && buff.eof();
+        -:   59:}
+        -:   60:
+        -:   61://____________________________________________________________________________//
+        -:   62:
+        -:   63:} // namespace utils
+        -:   64:} // namespace unit_test
+        -:   65:} // namespace boost
+        -:   66:
+        -:   67:#include <boost/test/detail/enable_warnings.hpp>
+        -:   68:
+        -:   69:#endif // BOOST_TEST_UTILS_STRING_CAST_HPP

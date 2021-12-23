@@ -1,0 +1,346 @@
+        -:    0:Source:F:/Files/vcpkg/installed/x86-windows/include/boost/test/framework.hpp
+        -:    0:Graph:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcno
+        -:    0:Data:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1://  (C) Copyright Gennadiy Rozental 2001.
+        -:    2://  Distributed under the Boost Software License, Version 1.0.
+        -:    3://  (See accompanying file LICENSE_1_0.txt or copy at
+        -:    4://  http://www.boost.org/LICENSE_1_0.txt)
+        -:    5:
+        -:    6://  See http://www.boost.org/libs/test for the library home page.
+        -:    7://
+        -:    8://!@file
+        -:    9://!@brief Defines Unit Test Framework mono-state interfaces.
+        -:   10://! The framework interfaces are based on Monostate design pattern.
+        -:   11:// ***************************************************************************
+        -:   12:
+        -:   13:#ifndef BOOST_TEST_FRAMEWORK_HPP_020805GER
+        -:   14:#define BOOST_TEST_FRAMEWORK_HPP_020805GER
+        -:   15:
+        -:   16:// Boost.Test
+        -:   17:#include <boost/test/detail/global_typedef.hpp>
+        -:   18:#include <boost/test/detail/fwd_decl.hpp>
+        -:   19:#include <boost/test/detail/throw_exception.hpp>
+        -:   20:
+        -:   21:#include <boost/test/detail/suppress_warnings.hpp>
+        -:   22:
+        -:   23:// STL
+        -:   24:#include <stdexcept>
+        -:   25:
+        -:   26://____________________________________________________________________________//
+        -:   27:
+        -:   28:namespace boost {
+        -:   29:
+        -:   30:/// Main namespace for the Unit Test Framework interfaces and implementation
+        -:   31:namespace unit_test {
+        -:   32:
+        -:   33:// ************************************************************************** //
+        -:   34:// **************              init_unit_test_func             ************** //
+        -:   35:// ************************************************************************** //
+        -:   36:
+        -:   37:/// Test module initialization routine signature
+        -:   38:
+        -:   39:/// Different depending on whether BOOST_TEST_ALTERNATIVE_INIT_API is defined or not
+        -:   40:#ifdef BOOST_TEST_ALTERNATIVE_INIT_API
+        -:   41:typedef bool        (*init_unit_test_func)();
+        -:   42:#else
+        -:   43:typedef test_suite* (*init_unit_test_func)( int, char* [] );
+        -:   44:#endif
+        -:   45:
+        -:   46:// ************************************************************************** //
+        -:   47:// **************                   framework                  ************** //
+        -:   48:// ************************************************************************** //
+        -:   49:
+        -:   50:/// Namespace of the Unit Test Framework mono-state
+        -:   51:namespace framework {
+        -:   52:
+        -:   53:/// @name Unit Test Framework initialization and shutdown
+        -:   54:/// @{
+        -:   55:
+        -:   56:/// @brief This function performs initialization of the framework mono-state.
+        -:   57:///
+        -:   58:/// It needs to be called every time before the test is started.
+        -:   59:/// @param[in] init_func test module initialization routine
+        -:   60:/// @param[in] argc command line arguments collection
+        -:   61:/// @param[in] argv command line arguments collection
+        -:   62:BOOST_TEST_DECL void                init( init_unit_test_func init_func, int argc, char* argv[] );
+        -:   63:
+        -:   64:/// This function applies all the decorators and figures out default run status. This argument facilitates an
+        -:   65:/// ability of the test cases to prepare some other test units (primarily used internally for self testing).
+        -:   66:/// @param[in] tu Optional id of the test unit representing root of test tree. If absent, master test suite is used
+        -:   67:BOOST_TEST_DECL void                finalize_setup_phase( test_unit_id tu = INV_TEST_UNIT_ID);
+        -:   68:
+        -:   69:/// This function returns true when testing is in progress (setup is finished).
+        -:   70:BOOST_TEST_DECL bool                test_in_progress();
+        -:   71:
+        -:   72:/// This function shuts down the framework and clears up its mono-state.
+        -:   73:///
+        -:   74:/// It needs to be at the very end of test module execution
+        -:   75:BOOST_TEST_DECL void                shutdown();
+        -:   76:/// @}
+        -:   77:
+        -:   78:/// @name Test unit registration
+        -:   79:/// @{
+        -:   80:
+        -:   81:/// Provides both read and write access to current "leaf" auto test suite during the test unit registration phase.
+        -:   82:///
+        -:   83:/// During auto-registration phase the framework maintain a FIFO queue of test units being registered. New test units become children
+        -:   84:/// of the current "leaf" test suite and if this is test suite it is pushed back into queue and becomes a new leaf.
+        -:   85:/// When test suite registration is completed, a test suite is popped from the back of the queue. Only automatically registered test suites
+        -:   86:/// should be added to this queue. Master test suite is always a zero element in this queue, so if no other test suites are registered
+        -:   87:/// all test cases are added to master test suite.
+        -:   88:
+        -:   89:/// This function facilitates all three possible actions:
+        -:   90:///    - if no argument are provided it returns the current queue leaf test suite
+        -:   91:///    - if test suite is provided and no second argument are set, test suite is added to the queue
+        -:   92:///    - if no test suite are provided and last argument is false, the semantic of this function is similar to queue pop: last element is popped from the queue
+        -:   93:/// @param[in] ts test suite to push back to the queue
+        -:   94:/// @param[in] push_or_pop should we push ts to the queue or pop leaf test suite instead
+        -:   95:/// @returns a reference to the currently active/"leaf" test suite
+        -:   96:BOOST_TEST_DECL test_suite&         current_auto_test_suite( test_suite* ts = 0, bool push_or_pop = true );
+        -:   97:
+        -:   98:/// This function add new test case into the global collection of test units the framework aware of.
+        -:   99:
+        -:  100:/// This function also assignes unique test unit id for every test case. Later on one can use this id to locate
+        -:  101:/// the test case if necessary. This is the way for the framework to maintain weak references between test units.
+        -:  102:/// @param[in]  tc  test case to register
+        -:  103:BOOST_TEST_DECL void                register_test_unit( test_case* tc );
+        -:  104:
+        -:  105:/// This function add new test suite into the global collection of test units the framework aware of.
+        -:  106:
+        -:  107:/// This function also assignes unique test unit id for every test suite. Later on one can use this id to locate
+        -:  108:/// the test case if necessary. This is the way for the framework to maintain weak references between test units.
+        -:  109:/// @param[in]  ts  test suite to register
+        -:  110:BOOST_TEST_DECL void                register_test_unit( test_suite* ts );
+        -:  111:
+        -:  112:/// This function removes the test unit from the collection of known test units and destroys the test unit object.
+        -:  113:
+        -:  114:/// This function also assigns unique test unit id for every test case. Later on one can use this id to located
+        -:  115:/// the test case if necessary. This is the way for the framework to maintain weak references between test units.
+        -:  116:/// @param[in]  tu  test unit to deregister
+        -:  117:BOOST_TEST_DECL void                deregister_test_unit( test_unit* tu );
+        -:  118:
+        -:  119:// This function clears up the framework mono-state.
+        -:  120:
+        -:  121:/// After this call the framework can be reinitialized to perform a second test run during the same program lifetime.
+        -:  122:BOOST_TEST_DECL void                clear();
+        -:  123:/// @}
+        -:  124:
+        -:  125:/// @name Test observer registration
+        -:  126:/// @{
+        -:  127:/// Adds new test execution observer object into the framework's list of test observers.
+        -:  128:
+        -:  129:/// Observer lifetime should exceed the the testing execution timeframe
+        -:  130:/// @param[in]  to  test observer object to add
+        -:  131:BOOST_TEST_DECL void                register_observer( test_observer& to );
+        -:  132:
+        -:  133:/// Excludes the observer object form the framework's list of test observers
+        -:  134:/// @param[in]  to  test observer object to exclude
+        -:  135:BOOST_TEST_DECL void                deregister_observer( test_observer& to );
+        -:  136:
+        -:  137:/// @}
+        -:  138:
+        -:  139:/// @name Global fixtures registration
+        -:  140:/// @{
+        -:  141:
+        -:  142:/// Adds a new global fixture to be setup before any other tests starts and tore down after
+        -:  143:/// any other tests finished.
+        -:  144:/// Test unit fixture lifetime should exceed the testing execution timeframe
+        -:  145:/// @param[in]  tuf  fixture to add
+        -:  146:BOOST_TEST_DECL void                register_global_fixture( global_fixture& tuf );
+        -:  147:
+        -:  148:/// Removes a test global fixture from the framework
+        -:  149:///
+        -:  150:/// Test unit fixture lifetime should exceed the testing execution timeframe
+        -:  151:/// @param[in]  tuf  fixture to remove
+        -:  152:BOOST_TEST_DECL void                deregister_global_fixture( global_fixture& tuf );
+        -:  153:/// @}
+        -:  154:
+        -:  155:/// @name Assertion/uncaught exception context support
+        -:  156:/// @{
+        -:  157:/// Context accessor
+        -:  158:struct BOOST_TEST_DECL context_generator {
+       56:  159:    context_generator() : m_curr_frame( 0 ) {}
+        -:  160:
+        -:  161:    /// Is there any context?
+        -:  162:    bool            is_empty() const;
+        -:  163:
+        -:  164:    /// Give me next frame; empty - last frame
+        -:  165:    const_string    next() const;
+        -:  166:
+        -:  167:private:
+        -:  168:    // Data members
+        -:  169:    mutable unsigned m_curr_frame;
+        -:  170:};
+        -:  171:
+        -:  172:/// Records context frame message.
+        -:  173:
+        -:  174:/// Some context frames are sticky - they can only explicitly cleared by specifying context id. Other (non sticky) context frames cleared after every assertion.
+        -:  175:/// @param[in] context_descr context frame message
+        -:  176:/// @param[in] sticky is this sticky frame or not
+        -:  177:/// @returns id of the newly created frame
+        -:  178:BOOST_TEST_DECL int                 add_context( lazy_ostream const& context_descr, bool sticky );
+        -:  179:/// Erases context frame (when test exits context scope)
+        -:  180:
+        -:  181:/// If context_id is passed clears that specific context frame identified by this id, otherwise clears all non sticky contexts.
+        -:  182:BOOST_TEST_DECL void                clear_context( int context_id = -1 );
+        -:  183:/// Produces an instance of small "delegate" object, which facilitates access to collected context.
+        -:  184:BOOST_TEST_DECL context_generator   get_context();
+        -:  185:/// @}
+        -:  186:
+        -:  187:/// @name Access to registered test units.
+        -:  188:/// @{
+        -:  189:/// This function provides access to the master test suite.
+        -:  190:
+        -:  191:/// There is only only master test suite per test module.
+        -:  192:/// @returns a reference the master test suite instance
+        -:  193:BOOST_TEST_DECL master_test_suite_t& master_test_suite();
+        -:  194:
+        -:  195:/// This function provides an access to the test unit currently being executed.
+        -:  196:
+        -:  197:/// The difference with current_test_case is about the time between a test-suite
+        -:  198:/// is being set up or torn down (fixtures) and when the test-cases of that suite start.
+        -:  199:
+        -:  200:/// This function is only valid during test execution phase.
+        -:  201:/// @see current_test_case_id, current_test_case
+        -:  202:BOOST_TEST_DECL test_unit const&    current_test_unit();
+        -:  203:
+        -:  204:/// This function provides an access to the test case currently being executed.
+        -:  205:
+        -:  206:/// This function is only valid during test execution phase.
+        -:  207:/// @see current_test_case_id
+        -:  208:BOOST_TEST_DECL test_case const&    current_test_case();
+        -:  209:
+        -:  210:/// This function provides an access to an id of the test case currently being executed.
+        -:  211:
+        -:  212:/// This function safer than current_test_case, cause if wont throw if no test case is being executed.
+        -:  213:/// @see current_test_case
+        -:  214:BOOST_TEST_DECL test_unit_id        current_test_case_id(); /* safe version of above */
+        -:  215:
+        -:  216:/// This function provides access to a test unit by id and type combination. It will throw if no test unit located.
+        -:  217:/// @param[in]  tu_id    id of a test unit to locate
+        -:  218:/// @param[in]  tu_type  type of a test unit to locate
+        -:  219:/// @returns located test unit
+        -:  220:BOOST_TEST_DECL test_unit&          get( test_unit_id tu_id, test_unit_type tu_type );
+        -:  221:
+        -:  222:/// This function template provides access to a typed test unit by id
+        -:  223:
+        -:  224:/// It will throw if you specify incorrect test unit type
+        -:  225:/// @tparam UnitType compile time type of test unit to get (test_suite or test_case)
+        -:  226:/// @param  id id of test unit to get
+        -:  227:template<typename UnitType>
+       61:  228:inline UnitType&                    get( test_unit_id id )
+        -:  229:{
+       61:  230:    return static_cast<UnitType&>( get( id, static_cast<test_unit_type>(UnitType::type) ) );
+        -:  231:}
+------------------
+_ZN5boost9unit_test9framework3getINS0_10test_suiteEEERT_m:
+       10:  228:inline UnitType&                    get( test_unit_id id )
+        -:  229:{
+       10:  230:    return static_cast<UnitType&>( get( id, static_cast<test_unit_type>(UnitType::type) ) );
+       10:  230-block  0
+        -:  231:}
+------------------
+_ZN5boost9unit_test9framework3getINS0_9test_unitEEERT_m:
+        1:  228:inline UnitType&                    get( test_unit_id id )
+        -:  229:{
+        1:  230:    return static_cast<UnitType&>( get( id, static_cast<test_unit_type>(UnitType::type) ) );
+        1:  230-block  0
+        -:  231:}
+------------------
+_ZN5boost9unit_test9framework3getINS0_9test_caseEEERT_m:
+       50:  228:inline UnitType&                    get( test_unit_id id )
+        -:  229:{
+       50:  230:    return static_cast<UnitType&>( get( id, static_cast<test_unit_type>(UnitType::type) ) );
+       50:  230-block  0
+        -:  231:}
+------------------
+        -:  232:///@}
+        -:  233:
+        -:  234:/// @name Test initiation interface
+        -:  235:/// @{
+        -:  236:
+        -:  237:/// Initiates test execution
+        -:  238:
+        -:  239:/// This function is used to start the test execution from a specific "root" test unit.
+        -:  240:/// If no root provided, test is started from master test suite. This second argument facilitates an ability of the test cases to
+        -:  241:/// start some other test units (primarily used internally for self testing).
+        -:  242:/// @param[in] tu Optional id of the test unit or test unit itself from which the test is started. If absent, master test suite is used
+        -:  243:/// @param[in] continue_test true == continue test if it was already started, false == restart the test from scratch regardless
+        -:  244:BOOST_TEST_DECL void                run( test_unit_id tu = INV_TEST_UNIT_ID, bool continue_test = true );
+        -:  245:/// Initiates test execution. Same as other overload
+        -:  246:BOOST_TEST_DECL void                run( test_unit const* tu, bool continue_test = true );
+        -:  247:/// @}
+        -:  248:
+        -:  249:/// @name Test events dispatchers
+        -:  250:/// @{
+        -:  251:/// Reports results of assertion to all test observers
+        -:  252:BOOST_TEST_DECL void                assertion_result( unit_test::assertion_result ar );
+        -:  253:/// Reports uncaught exception to all test observers
+        -:  254:BOOST_TEST_DECL void                exception_caught( execution_exception const& );
+        -:  255:/// Reports aborted test unit to all test observers
+        -:  256:BOOST_TEST_DECL void                test_unit_aborted( test_unit const& );
+        -:  257:/// Reports aborted test module to all test observers
+        -:  258:BOOST_TEST_DECL void                test_aborted( );
+        -:  259:/// @}
+        -:  260:
+        -:  261:namespace impl {
+        -:  262:// exclusively for self test
+        -:  263:BOOST_TEST_DECL void                setup_for_execution( test_unit const& );
+        -:  264:BOOST_TEST_DECL void                setup_loggers( );
+        -:  265:
+        -:  266:// Helper for setting the name of the master test suite globally
+        -:  267:struct BOOST_TEST_DECL master_test_suite_name_setter {
+        -:  268:  master_test_suite_name_setter( const_string name );
+        -:  269:};
+        -:  270:
+        -:  271:} // namespace impl
+        -:  272:
+        -:  273:// ************************************************************************** //
+        -:  274:// **************                framework errors              ************** //
+        -:  275:// ************************************************************************** //
+        -:  276:
+        -:  277:/// This exception type is used to report internal Boost.Test framework errors.
+        -:  278:struct BOOST_TEST_DECL internal_error : public std::runtime_error {
+    #####:  279:    internal_error( const_string m ) : std::runtime_error( std::string( m.begin(), m.size() ) ) {}
+    %%%%%:  279-block  0
+    %%%%%:  279-block  1
+    %%%%%:  279-block  2
+    $$$$$:  279-block  3
+    $$$$$:  279-block  4
+    $$$$$:  279-block  5
+        -:  280:};
+        -:  281:
+        -:  282://____________________________________________________________________________//
+        -:  283:
+        -:  284:/// This exception type is used to report test module setup errors.
+        -:  285:struct BOOST_TEST_DECL setup_error : public std::runtime_error {
+    #####:  286:    setup_error( const_string m ) : std::runtime_error( std::string( m.begin(), m.size() ) ) {}
+    %%%%%:  286-block  0
+    %%%%%:  286-block  1
+    %%%%%:  286-block  2
+    $$$$$:  286-block  3
+    $$$$$:  286-block  4
+    $$$$$:  286-block  5
+        -:  287:};
+        -:  288:
+        -:  289:#define BOOST_TEST_SETUP_ASSERT( cond, msg ) BOOST_TEST_I_ASSRT( cond, unit_test::framework::setup_error( msg ) )
+        -:  290:
+        -:  291://____________________________________________________________________________//
+        -:  292:
+        -:  293:struct nothing_to_test {
+    #####:  294:    explicit    nothing_to_test( int rc ) : m_result_code( rc ) {}
+        -:  295:
+        -:  296:    int         m_result_code;
+        -:  297:};
+        -:  298:
+        -:  299://____________________________________________________________________________//
+        -:  300:
+        -:  301:} // namespace framework
+        -:  302:} // unit_test
+        -:  303:} // namespace boost
+        -:  304:
+        -:  305:#include <boost/test/detail/enable_warnings.hpp>
+        -:  306:
+        -:  307:#endif // BOOST_TEST_FRAMEWORK_HPP_020805GER

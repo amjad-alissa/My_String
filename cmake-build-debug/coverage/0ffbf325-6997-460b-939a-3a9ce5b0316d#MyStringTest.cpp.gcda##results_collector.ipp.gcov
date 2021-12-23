@@ -1,0 +1,463 @@
+        -:    0:Source:F:/Files/vcpkg/installed/x86-windows/include/boost/test/impl/results_collector.ipp
+        -:    0:Graph:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcno
+        -:    0:Data:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1://  (C) Copyright Gennadiy Rozental 2001.
+        -:    2://  Distributed under the Boost Software License, Version 1.0.
+        -:    3://  (See accompanying file LICENSE_1_0.txt or copy at
+        -:    4://  http://www.boost.org/LICENSE_1_0.txt)
+        -:    5:
+        -:    6://  See http://www.boost.org/libs/test for the library home page.
+        -:    7://
+        -:    8:/// @file
+        -:    9:/// Test results collecting facility.
+        -:   10:///
+        -:   11:// ***************************************************************************
+        -:   12:
+        -:   13:#ifndef BOOST_TEST_RESULTS_COLLECTOR_IPP_021105GER
+        -:   14:#define BOOST_TEST_RESULTS_COLLECTOR_IPP_021105GER
+        -:   15:
+        -:   16:// Boost.Test
+        -:   17:#include <boost/test/unit_test_log.hpp>
+        -:   18:#include <boost/test/results_collector.hpp>
+        -:   19:#include <boost/test/framework.hpp>
+        -:   20:#include <boost/test/execution_monitor.hpp>
+        -:   21:
+        -:   22:#include <boost/test/tree/test_unit.hpp>
+        -:   23:#include <boost/test/tree/visitor.hpp>
+        -:   24:#include <boost/test/tree/test_case_counter.hpp>
+        -:   25:#include <boost/test/tree/traverse.hpp>
+        -:   26:
+        -:   27:// Boost
+        -:   28:#include <boost/cstdlib.hpp>
+        -:   29:
+        -:   30:// STL
+        -:   31:#include <map>
+        -:   32:
+        -:   33:#include <boost/test/detail/suppress_warnings.hpp>
+        -:   34:
+        -:   35://____________________________________________________________________________//
+        -:   36:
+        -:   37:namespace boost {
+        -:   38:namespace unit_test {
+        -:   39:
+        -:   40:// ************************************************************************** //
+        -:   41:// **************                 test_results                 ************** //
+        -:   42:// ************************************************************************** //
+        -:   43:
+       12:   44:test_results::test_results()
+       12:   44-block  0
+        -:   45:{
+       12:   46:    clear();
+       12:   47:}
+        -:   48:
+        -:   49://____________________________________________________________________________//
+        -:   50:
+        -:   51:bool
+       12:   52:test_results::passed() const
+        -:   53:{
+        -:   54:    // if it is skipped, it is not passed. However, if any children is not failed/aborted
+        -:   55:    // then their skipped status is not taken into account.
+       12:   56:    return  !p_skipped                                  &&
+       12:   56-block  0
+       12:   57:            p_test_cases_failed == 0                    &&
+       12:   57-block  0
+       24:   58:            p_assertions_failed <= p_expected_failures  &&
+       12:   58-block  0
+        -:   59:            // p_test_cases_skipped == 0                   &&
+       12:   60:            !p_timed_out                                 &&
+       12:   60-block  0
+      36*:   61:            p_test_cases_timed_out == 0                  &&
+       12:   61-block  0
+       12:   61-block  1
+    %%%%%:   61-block  2
+       24:   62:            !aborted();
+       12:   62-block  0
+       12:   62-block  1
+        -:   63:}
+        -:   64:
+        -:   65://____________________________________________________________________________//
+        -:   66:
+        -:   67:bool
+       12:   68:test_results::aborted() const
+        -:   69:{
+       12:   70:    return  p_aborted;
+       12:   70-block  0
+        -:   71:}
+        -:   72:
+        -:   73://____________________________________________________________________________//
+        -:   74:
+        -:   75:bool
+    #####:   76:test_results::skipped() const
+        -:   77:{
+    #####:   78:    return  p_skipped;
+    %%%%%:   78-block  0
+        -:   79:}
+        -:   80:
+        -:   81://____________________________________________________________________________//
+        -:   82:
+        -:   83:int
+        1:   84:test_results::result_code() const
+        -:   85:{
+       1*:   86:    return passed() ? exit_success
+        1:   86-block  0
+        1:   86-block  1
+    %%%%%:   86-block  2
+    %%%%%:   86-block  3
+    %%%%%:   86-block  4
+    #####:   87:           : ( (p_assertions_failed > p_expected_failures || p_skipped || p_timed_out || p_test_cases_timed_out )
+    %%%%%:   87-block  0
+    %%%%%:   87-block  1
+    %%%%%:   87-block  2
+    %%%%%:   87-block  3
+        -:   88:                    ? exit_test_failure
+        1:   89:                    : exit_exception_failure );
+        1:   89-block  0
+        -:   90:}
+        -:   91:
+        -:   92://____________________________________________________________________________//
+        -:   93:
+        -:   94:void
+       11:   95:test_results::operator+=( test_results const& tr )
+        -:   96:{
+       11:   97:    p_test_suites.value         += tr.p_test_suites;
+       11:   97-block  0
+       11:   98:    p_assertions_passed.value   += tr.p_assertions_passed;
+       11:   99:    p_assertions_failed.value   += tr.p_assertions_failed;
+       11:  100:    p_warnings_failed.value     += tr.p_warnings_failed;
+       11:  101:    p_test_cases_passed.value   += tr.p_test_cases_passed;
+       11:  102:    p_test_cases_warned.value   += tr.p_test_cases_warned;
+       11:  103:    p_test_cases_failed.value   += tr.p_test_cases_failed;
+       11:  104:    p_test_cases_skipped.value  += tr.p_test_cases_skipped;
+       11:  105:    p_test_cases_aborted.value  += tr.p_test_cases_aborted;
+       11:  106:    p_test_cases_timed_out.value += tr.p_test_cases_timed_out;
+       11:  107:    p_test_suites_timed_out.value += tr.p_test_suites_timed_out;
+       11:  108:    p_duration_microseconds.value += tr.p_duration_microseconds;
+       11:  109:}
+        -:  110:
+        -:  111://____________________________________________________________________________//
+        -:  112:
+        -:  113:void
+       24:  114:test_results::clear()
+        -:  115:{
+       24:  116:    p_test_suites.value         = 0;
+       24:  117:    p_assertions_passed.value   = 0;
+       24:  118:    p_assertions_failed.value   = 0;
+       24:  119:    p_warnings_failed.value     = 0;
+       24:  120:    p_expected_failures.value   = 0;
+       24:  121:    p_test_cases_passed.value   = 0;
+       24:  122:    p_test_cases_warned.value   = 0;
+       24:  123:    p_test_cases_failed.value   = 0;
+       24:  124:    p_test_cases_skipped.value  = 0;
+       24:  125:    p_test_cases_aborted.value  = 0;
+       24:  126:    p_test_cases_timed_out.value = 0;
+       24:  127:    p_test_suites_timed_out.value = 0;
+       24:  128:    p_duration_microseconds.value= 0;
+       24:  129:    p_aborted.value             = false;
+       24:  130:    p_skipped.value             = false;
+       24:  131:    p_timed_out.value           = false;
+       24:  132:}
+        -:  133:
+        -:  134://____________________________________________________________________________//
+        -:  135:
+        -:  136:// ************************************************************************** //
+        -:  137:// **************               results_collector              ************** //
+        -:  138:// ************************************************************************** //
+        -:  139:
+        -:  140:namespace {
+        -:  141:
+        -:  142:struct results_collector_impl {
+        -:  143:    std::map<test_unit_id,test_results> m_results_store;
+        -:  144:};
+        -:  145:
+       97:  146:results_collector_impl& s_rc_impl() { static results_collector_impl the_inst; return the_inst; }
+       97:  146-block  0
+        1:  146-block  1
+        1:  146-block  2
+       97:  146-block  3
+        -:  147:
+        -:  148:} // local namespace
+        -:  149:
+        -:  150://____________________________________________________________________________//
+        -:  151:
+        1:  152:BOOST_TEST_SINGLETON_CONS_IMPL( results_collector_t )
+        1:  152-block  0
+        1:  152-block  1
+        1:  152-block  2
+        1:  152-block  3
+        -:  153:
+        -:  154://____________________________________________________________________________//
+        -:  155:
+        -:  156:void
+        1:  157:results_collector_t::test_start( counter_t )
+        -:  158:{
+        1:  159:    s_rc_impl().m_results_store.clear();
+        1:  159-block  0
+        1:  160:}
+        -:  161:
+        -:  162://____________________________________________________________________________//
+        -:  163:
+        -:  164:void
+       12:  165:results_collector_t::test_unit_start( test_unit const& tu )
+        -:  166:{
+        -:  167:    // init test_results entry
+       12:  168:    test_results& tr = s_rc_impl().m_results_store[tu.p_id];
+       12:  168-block  0
+        -:  169:
+       12:  170:    tr.clear();
+        -:  171:
+       12:  172:    tr.p_expected_failures.value = tu.p_expected_failures;
+       12:  173:}
+        -:  174:
+        -:  175://____________________________________________________________________________//
+        -:  176:
+        -:  177:class results_collect_helper : public test_tree_visitor {
+        -:  178:public:
+        2:  179:    explicit results_collect_helper( test_results& tr, test_unit const& ts ) : m_tr( tr ), m_ts( ts ) {}
+        2:  179-block  0
+        -:  180:
+       10:  181:    void    visit( test_case const& tc )
+        -:  182:    {
+       10:  183:        test_results const& tr = results_collector.results( tc.p_id );
+       10:  183-block  0
+       10:  184:        m_tr += tr;
+        -:  185:
+       10:  186:        if( tr.passed() ) {
+       10:  187:            if( tr.p_warnings_failed )
+       10:  187-block  0
+    #####:  188:                m_tr.p_test_cases_warned.value++;
+    %%%%%:  188-block  0
+        -:  189:            else
+       10:  190:                m_tr.p_test_cases_passed.value++;
+       10:  190-block  0
+        -:  191:        }
+    #####:  192:        else if( tr.p_timed_out )
+    %%%%%:  192-block  0
+    #####:  193:            m_tr.p_test_cases_timed_out.value++;
+    %%%%%:  193-block  0
+    #####:  194:        else if( tr.p_skipped )
+    %%%%%:  194-block  0
+    #####:  195:            m_tr.p_test_cases_skipped.value++;
+    %%%%%:  195-block  0
+        -:  196:        else {
+    #####:  197:            if( tr.p_aborted )
+    %%%%%:  197-block  0
+    #####:  198:                m_tr.p_test_cases_aborted.value++;
+    %%%%%:  198-block  0
+        -:  199:
+    #####:  200:            m_tr.p_test_cases_failed.value++;
+    %%%%%:  200-block  0
+        -:  201:        }
+       10:  202:    }
+        3:  203:    bool    test_suite_start( test_suite const& ts )
+        -:  204:    {
+        3:  205:        if( m_ts.p_id == ts.p_id )
+        3:  205-block  0
+        2:  206:            return true;
+        2:  206-block  0
+        -:  207:
+        1:  208:        m_tr += results_collector.results( ts.p_id );
+        1:  208-block  0
+        1:  209:        m_tr.p_test_suites.value++;
+        -:  210:
+        1:  211:        if( results_collector.results( ts.p_id ).p_timed_out )
+    #####:  212:            m_tr.p_test_suites_timed_out.value++;
+    %%%%%:  212-block  0
+        1:  213:        return false;
+        1:  213-block  0
+        -:  214:    }
+        -:  215:
+        -:  216:private:
+        -:  217:    // Data members
+        -:  218:    test_results&       m_tr;
+        -:  219:    test_unit const&    m_ts;
+        -:  220:};
+        -:  221:
+        -:  222://____________________________________________________________________________//
+        -:  223:
+        -:  224:void
+       12:  225:results_collector_t::test_unit_finish( test_unit const& tu, unsigned long elapsed_in_microseconds )
+        -:  226:{
+       12:  227:    if( tu.p_type == TUT_SUITE ) {
+       12:  227-block  0
+        2:  228:        results_collect_helper ch( s_rc_impl().m_results_store[tu.p_id], tu );
+        2:  228-block  0
+        2:  228-block  1
+    $$$$$:  228-block  2
+        -:  229:
+        2:  230:        traverse_test_tree( tu, ch );
+        -:  231:
+        2:  232:        s_rc_impl().m_results_store[tu.p_id].p_duration_microseconds.value = elapsed_in_microseconds;
+        2:  232-block  0
+        2:  232-block  1
+        -:  233:    }
+        -:  234:    else {
+       10:  235:        test_results & tr = s_rc_impl().m_results_store[tu.p_id];
+       10:  235-block  0
+       10:  236:        tr.p_duration_microseconds.value = elapsed_in_microseconds;
+        -:  237:
+      10*:  238:        bool num_failures_match = tr.p_aborted || tr.p_assertions_failed >= tr.p_expected_failures;
+       10:  238-block  0
+       10:  238-block  1
+    %%%%%:  238-block  2
+       10:  239:        if( !num_failures_match )
+       10:  239-block  0
+    #####:  240:            BOOST_TEST_FRAMEWORK_MESSAGE( "Test case " << tu.full_name() << " has fewer failures than expected" );
+    %%%%%:  240-block  0
+    %%%%%:  240-block  1
+    %%%%%:  240-block  2
+    %%%%%:  240-block  3
+    %%%%%:  240-block  4
+    %%%%%:  240-block  5
+    %%%%%:  240-block  6
+    %%%%%:  240-block  7
+    %%%%%:  240-block  8
+    $$$$$:  240-block  9
+    $$$$$:  240-block 10
+    $$$$$:  240-block 11
+    $$$$$:  240-block 12
+    $$$$$:  240-block 13
+    $$$$$:  240-block 14
+    $$$$$:  240-block 15
+    $$$$$:  240-block 16
+    $$$$$:  240-block 17
+    $$$$$:  240-block 18
+    $$$$$:  240-block 19
+    $$$$$:  240-block 20
+        -:  241:
+      10*:  242:        bool check_any_assertions = tr.p_aborted || (tr.p_assertions_failed != 0) || (tr.p_assertions_passed != 0);
+       10:  242-block  0
+       10:  242-block  1
+       10:  242-block  2
+       10:  242-block  3
+    %%%%%:  242-block  4
+       10:  243:        if( !check_any_assertions )
+       10:  243-block  0
+    #####:  244:            BOOST_TEST_FRAMEWORK_MESSAGE( "Test case " << tu.full_name() << " did not check any assertions" );
+    %%%%%:  244-block  0
+    %%%%%:  244-block  1
+    %%%%%:  244-block  2
+    %%%%%:  244-block  3
+    %%%%%:  244-block  4
+    %%%%%:  244-block  5
+    %%%%%:  244-block  6
+    %%%%%:  244-block  7
+    %%%%%:  244-block  8
+    $$$$$:  244-block  9
+    $$$$$:  244-block 10
+    $$$$$:  244-block 11
+    $$$$$:  244-block 12
+    $$$$$:  244-block 13
+    $$$$$:  244-block 14
+    $$$$$:  244-block 15
+    $$$$$:  244-block 16
+    $$$$$:  244-block 17
+    $$$$$:  244-block 18
+    $$$$$:  244-block 19
+        -:  245:    }
+       12:  246:}
+       12:  246-block  0
+        -:  247:
+        -:  248://____________________________________________________________________________//
+        -:  249:
+        -:  250:void
+    #####:  251:results_collector_t::test_unit_skipped( test_unit const& tu, const_string /*reason*/ )
+        -:  252:{
+    #####:  253:    test_results& tr = s_rc_impl().m_results_store[tu.p_id];
+    %%%%%:  253-block  0
+    #####:  254:    tr.clear();
+        -:  255:
+    #####:  256:    tr.p_skipped.value = true;
+        -:  257:
+    #####:  258:    if( tu.p_type == TUT_SUITE ) {
+    #####:  259:        test_case_counter tcc;
+    %%%%%:  259-block  0
+    $$$$$:  259-block  1
+    #####:  260:        traverse_test_tree( tu, tcc );
+    %%%%%:  260-block  0
+        -:  261:
+    #####:  262:        tr.p_test_cases_skipped.value = tcc.p_count;
+    %%%%%:  262-block  0
+        -:  263:    }
+    #####:  264:}
+    %%%%%:  264-block  0
+        -:  265:
+        -:  266://____________________________________________________________________________//
+        -:  267:
+        -:  268:void
+    #####:  269:results_collector_t::test_unit_timed_out(test_unit const& tu)
+        -:  270:{
+    #####:  271:    test_results& tr = s_rc_impl().m_results_store[tu.p_id];
+    %%%%%:  271-block  0
+    #####:  272:    tr.p_timed_out.value = true;
+    #####:  273:}
+        -:  274:
+        -:  275://____________________________________________________________________________//
+        -:  276:
+        -:  277:void
+       56:  278:results_collector_t::assertion_result( unit_test::assertion_result ar )
+        -:  279:{
+       56:  280:    test_results& tr = s_rc_impl().m_results_store[framework::current_test_case_id()];
+       56:  280-block  0
+        -:  281:
+       56:  282:    switch( ar ) {
+       56:  282-block  0
+       56:  283:    case AR_PASSED: tr.p_assertions_passed.value++; break;
+       56:  283-block  0
+    #####:  284:    case AR_FAILED: tr.p_assertions_failed.value++; break;
+    %%%%%:  284-block  0
+    #####:  285:    case AR_TRIGGERED: tr.p_warnings_failed.value++; break;
+    %%%%%:  285-block  0
+        -:  286:    }
+        -:  287:
+       56:  288:    if( tr.p_assertions_failed == 1 )
+       56:  288-block  0
+    #####:  289:        first_failed_assertion();
+    %%%%%:  289-block  0
+       56:  290:}
+       56:  290-block  0
+        -:  291:
+        -:  292://____________________________________________________________________________//
+        -:  293:
+        -:  294:void
+    #####:  295:results_collector_t::exception_caught( execution_exception const& ex)
+        -:  296:{
+    #####:  297:    test_results& tr = s_rc_impl().m_results_store[framework::current_test_case_id()];
+    %%%%%:  297-block  0
+        -:  298:
+    #####:  299:    tr.p_assertions_failed.value++;
+    #####:  300:    if( ex.code() == execution_exception::timeout_error ) {
+    %%%%%:  300-block  0
+    #####:  301:        tr.p_timed_out.value = true;
+    %%%%%:  301-block  0
+        -:  302:    }
+    #####:  303:}
+    %%%%%:  303-block  0
+        -:  304:
+        -:  305://____________________________________________________________________________//
+        -:  306:
+        -:  307:void
+    #####:  308:results_collector_t::test_unit_aborted( test_unit const& tu )
+        -:  309:{
+    #####:  310:    s_rc_impl().m_results_store[tu.p_id].p_aborted.value = true;
+    %%%%%:  310-block  0
+    #####:  311:}
+        -:  312:
+        -:  313://____________________________________________________________________________//
+        -:  314:
+        -:  315:test_results const&
+       14:  316:results_collector_t::results( test_unit_id id ) const
+        -:  317:{
+       14:  318:    return s_rc_impl().m_results_store[id];
+       14:  318-block  0
+        -:  319:}
+        -:  320:
+        -:  321://____________________________________________________________________________//
+        -:  322:
+        -:  323:} // namespace unit_test
+        -:  324:} // namespace boost
+        -:  325:
+        -:  326:#include <boost/test/detail/enable_warnings.hpp>
+        -:  327:
+        -:  328:#endif // BOOST_TEST_RESULTS_COLLECTOR_IPP_021105GER

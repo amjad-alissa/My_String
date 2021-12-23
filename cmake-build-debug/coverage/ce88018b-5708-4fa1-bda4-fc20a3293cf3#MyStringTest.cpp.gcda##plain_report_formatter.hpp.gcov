@@ -1,0 +1,65 @@
+        -:    0:Source:F:/Files/vcpkg/installed/x86-windows/include/boost/test/output/plain_report_formatter.hpp
+        -:    0:Graph:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcno
+        -:    0:Data:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1://  (C) Copyright Gennadiy Rozental 2001.
+        -:    2://  Distributed under the Boost Software License, Version 1.0.
+        -:    3://  (See accompanying file LICENSE_1_0.txt or copy at
+        -:    4://  http://www.boost.org/LICENSE_1_0.txt)
+        -:    5:
+        -:    6://  See http://www.boost.org/libs/test for the library home page.
+        -:    7://
+        -:    8://  File        : $RCSfile$
+        -:    9://
+        -:   10://  Version     : $Revision$
+        -:   11://
+        -:   12://  Description : plain report formatter implementation
+        -:   13:// ***************************************************************************
+        -:   14:
+        -:   15:#ifndef BOOST_TEST_PLAIN_REPORT_FORMATTER_HPP_020105GER
+        -:   16:#define BOOST_TEST_PLAIN_REPORT_FORMATTER_HPP_020105GER
+        -:   17:
+        -:   18:// Boost.Test
+        -:   19:#include <boost/test/detail/global_typedef.hpp>
+        -:   20:#include <boost/test/results_reporter.hpp>
+        -:   21:
+        -:   22:#include <boost/test/detail/suppress_warnings.hpp>
+        -:   23:
+        -:   24://____________________________________________________________________________//
+        -:   25:
+        -:   26:namespace boost {
+        -:   27:namespace unit_test {
+        -:   28:namespace output {
+        -:   29:
+        -:   30:// ************************************************************************** //
+        -:   31:// **************             plain_report_formatter           ************** //
+        -:   32:// ************************************************************************** //
+        -:   33:
+        -:   34:class plain_report_formatter : public results_reporter::format {
+        -:   35:public:
+        2:   36:    plain_report_formatter() : m_indent( 0 ), m_color_output( false ) {}
+        2:   36-block  0
+        -:   37:
+        -:   38:    // Formatter interface
+        -:   39:    void    results_report_start( std::ostream& ostr );
+        -:   40:    void    results_report_finish( std::ostream& ostr );
+        -:   41:
+        -:   42:    void    test_unit_report_start( test_unit const&, std::ostream& ostr );
+        -:   43:    void    test_unit_report_finish( test_unit const&, std::ostream& ostr );
+        -:   44:
+        -:   45:    void    do_confirmation_report( test_unit const&, std::ostream& ostr );
+        -:   46:
+        -:   47:private:
+        -:   48:    // Data members
+        -:   49:    counter_t m_indent;
+        -:   50:    bool    m_color_output;
+        -:   51:};
+        -:   52:
+        -:   53:} // namespace output
+        -:   54:} // namespace unit_test
+        -:   55:} // namespace boost
+        -:   56:
+        -:   57:#include <boost/test/detail/enable_warnings.hpp>
+        -:   58:
+        -:   59:#endif // BOOST_TEST_PLAIN_REPORT_FORMATTER_HPP_020105GER

@@ -1,0 +1,396 @@
+        -:    0:Source:F:/Files/vcpkg/installed/x86-windows/include/boost/test/impl/xml_log_formatter.ipp
+        -:    0:Graph:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcno
+        -:    0:Data:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1://  (C) Copyright Gennadiy Rozental 2001.
+        -:    2://  Distributed under the Boost Software License, Version 1.0.
+        -:    3://  (See accompanying file LICENSE_1_0.txt or copy at
+        -:    4://  http://www.boost.org/LICENSE_1_0.txt)
+        -:    5:
+        -:    6://  See http://www.boost.org/libs/test for the library home page.
+        -:    7://
+        -:    8://  File        : $RCSfile$
+        -:    9://
+        -:   10://  Version     : $Revision$
+        -:   11://
+        -:   12://  Description : implements OF_XML Log formatter
+        -:   13:// ***************************************************************************
+        -:   14:
+        -:   15:#ifndef BOOST_TEST_XML_LOG_FORMATTER_IPP_020105GER
+        -:   16:#define BOOST_TEST_XML_LOG_FORMATTER_IPP_020105GER
+        -:   17:
+        -:   18:// Boost.Test
+        -:   19:#include <boost/test/output/xml_log_formatter.hpp>
+        -:   20:#include <boost/test/execution_monitor.hpp>
+        -:   21:#include <boost/test/framework.hpp>
+        -:   22:#include <boost/test/tree/test_unit.hpp>
+        -:   23:#include <boost/test/utils/basic_cstring/io.hpp>
+        -:   24:#include <boost/test/utils/xml_printer.hpp>
+        -:   25:
+        -:   26:// Boost
+        -:   27:#include <boost/version.hpp>
+        -:   28:
+        -:   29:// STL
+        -:   30:#include <iostream>
+        -:   31:
+        -:   32:#include <boost/test/detail/suppress_warnings.hpp>
+        -:   33:
+        -:   34://____________________________________________________________________________//
+        -:   35:
+        -:   36:namespace boost {
+        -:   37:namespace unit_test {
+        -:   38:namespace output {
+        -:   39:
+    #####:   40:static const_string tu_type_name( test_unit const& tu )
+        -:   41:{
+    #####:   42:    return tu.p_type == TUT_CASE ? "TestCase" : "TestSuite";
+    %%%%%:   42-block  0
+    %%%%%:   42-block  1
+    %%%%%:   42-block  2
+    %%%%%:   42-block  3
+        -:   43:}
+        -:   44:
+        -:   45:// ************************************************************************** //
+        -:   46:// **************               xml_log_formatter              ************** //
+        -:   47:// ************************************************************************** //
+        -:   48:
+        -:   49:void
+    #####:   50:xml_log_formatter::log_start( std::ostream& ostr, counter_t )
+        -:   51:{
+    #####:   52:    ostr  << "<TestLog>";
+    %%%%%:   52-block  0
+    #####:   53:}
+        -:   54:
+        -:   55://____________________________________________________________________________//
+        -:   56:
+        -:   57:void
+    #####:   58:xml_log_formatter::log_finish( std::ostream& ostr )
+        -:   59:{
+    #####:   60:    ostr  << "</TestLog>";
+    %%%%%:   60-block  0
+    #####:   61:}
+        -:   62:
+        -:   63://____________________________________________________________________________//
+        -:   64:
+        -:   65:void
+    #####:   66:xml_log_formatter::log_build_info( std::ostream& ostr, bool log_build_info )
+        -:   67:{
+    #####:   68:    if( log_build_info ) {
+    %%%%%:   68-block  0
+        -:   69:        ostr  << "<BuildInfo"
+    #####:   70:                << " platform"  << utils::attr_value() << BOOST_PLATFORM
+    %%%%%:   70-block  0
+    %%%%%:   70-block  1
+    $$$$$:   70-block  2
+    #####:   71:                << " compiler"  << utils::attr_value() << BOOST_COMPILER
+    %%%%%:   71-block  0
+    %%%%%:   71-block  1
+    %%%%%:   71-block  2
+    $$$$$:   71-block  3
+    $$$$$:   71-block  4
+    #####:   72:                << " stl"       << utils::attr_value() << BOOST_STDLIB
+    %%%%%:   72-block  0
+    %%%%%:   72-block  1
+    %%%%%:   72-block  2
+    %%%%%:   72-block  3
+    $$$$$:   72-block  4
+    $$$$$:   72-block  5
+    #####:   73:                << " boost=\""  << BOOST_VERSION/100000     << "."
+    %%%%%:   73-block  0
+    %%%%%:   73-block  1
+    %%%%%:   73-block  2
+    #####:   74:                                << BOOST_VERSION/100 % 1000 << "."
+    %%%%%:   74-block  0
+    %%%%%:   74-block  1
+        -:   75:                                << BOOST_VERSION % 100      << '\"'
+    #####:   76:                << "/>";
+    %%%%%:   76-block  0
+    %%%%%:   76-block  1
+    %%%%%:   76-block  2
+        -:   77:    }
+    #####:   78:}
+    %%%%%:   78-block  0
+        -:   79:
+        -:   80://____________________________________________________________________________//
+        -:   81:
+        -:   82:void
+    #####:   83:xml_log_formatter::test_unit_start( std::ostream& ostr, test_unit const& tu )
+        -:   84:{
+    #####:   85:    ostr << "<" << tu_type_name( tu ) << " name" << utils::attr_value() << tu.p_name.get();
+    %%%%%:   85-block  0
+    %%%%%:   85-block  1
+    %%%%%:   85-block  2
+    %%%%%:   85-block  3
+    $$$$$:   85-block  4
+    $$$$$:   85-block  5
+    $$$$$:   85-block  6
+        -:   86:
+    #####:   87:    if( !tu.p_file_name.empty() )
+    %%%%%:   87-block  0
+    #####:   88:        ostr << BOOST_TEST_L( " file" ) << utils::attr_value() << tu.p_file_name
+    %%%%%:   88-block  0
+    %%%%%:   88-block  1
+    %%%%%:   88-block  2
+    $$$$$:   88-block  3
+    $$$$$:   88-block  4
+    #####:   89:             << BOOST_TEST_L( " line" ) << utils::attr_value() << tu.p_line_num;
+    %%%%%:   89-block  0
+    %%%%%:   89-block  1
+    %%%%%:   89-block  2
+    %%%%%:   89-block  3
+    $$$$$:   89-block  4
+    $$$$$:   89-block  5
+    $$$$$:   89-block  6
+        -:   90:
+    #####:   91:    ostr << ">";
+    %%%%%:   91-block  0
+    #####:   92:}
+        -:   93:
+        -:   94://____________________________________________________________________________//
+        -:   95:
+        -:   96:void
+    #####:   97:xml_log_formatter::test_unit_finish( std::ostream& ostr, test_unit const& tu, unsigned long elapsed )
+        -:   98:{
+    #####:   99:    if( tu.p_type == TUT_CASE )
+    %%%%%:   99-block  0
+    #####:  100:        ostr << "<TestingTime>" << elapsed << "</TestingTime>";
+    %%%%%:  100-block  0
+        -:  101:
+    #####:  102:    ostr << "</" << tu_type_name( tu ) << ">";
+    %%%%%:  102-block  0
+    %%%%%:  102-block  1
+    #####:  103:}
+    %%%%%:  103-block  0
+        -:  104:
+        -:  105://____________________________________________________________________________//
+        -:  106:
+        -:  107:void
+    #####:  108:xml_log_formatter::test_unit_skipped( std::ostream& ostr, test_unit const& tu, const_string reason )
+        -:  109:{
+    #####:  110:    ostr << "<" << tu_type_name( tu )
+    #####:  111:         << " name"    << utils::attr_value() << tu.p_name
+    %%%%%:  111-block  0
+    %%%%%:  111-block  1
+    %%%%%:  111-block  2
+    %%%%%:  111-block  3
+    $$$$$:  111-block  4
+    $$$$$:  111-block  5
+    #####:  112:         << " skipped" << utils::attr_value() << "yes"
+    %%%%%:  112-block  0
+    %%%%%:  112-block  1
+    %%%%%:  112-block  2
+    $$$$$:  112-block  3
+    $$$$$:  112-block  4
+    #####:  113:         << " reason"  << utils::attr_value() << reason
+    %%%%%:  113-block  0
+    %%%%%:  113-block  1
+    %%%%%:  113-block  2
+    $$$$$:  113-block  3
+    $$$$$:  113-block  4
+    #####:  114:         << "/>";
+    %%%%%:  114-block  0
+    #####:  115:}
+    %%%%%:  115-block  0
+        -:  116:
+        -:  117://____________________________________________________________________________//
+        -:  118:
+        -:  119:void
+    #####:  120:xml_log_formatter::log_exception_start( std::ostream& ostr, log_checkpoint_data const& checkpoint_data, execution_exception const& ex )
+        -:  121:{
+    #####:  122:    execution_exception::location const& loc = ex.where();
+    %%%%%:  122-block  0
+        -:  123:
+    #####:  124:    ostr << "<Exception file" << utils::attr_value() << loc.m_file_name
+    %%%%%:  124-block  0
+    $$$$$:  124-block  1
+    $$$$$:  124-block  2
+    #####:  125:         << " line"           << utils::attr_value() << loc.m_line_num;
+    %%%%%:  125-block  0
+    %%%%%:  125-block  1
+    %%%%%:  125-block  2
+    $$$$$:  125-block  3
+    $$$$$:  125-block  4
+        -:  126:
+    #####:  127:    if( !loc.m_function.is_empty() )
+    %%%%%:  127-block  0
+    #####:  128:        ostr << " function"   << utils::attr_value() << loc.m_function;
+    %%%%%:  128-block  0
+    %%%%%:  128-block  1
+    %%%%%:  128-block  2
+    $$$$$:  128-block  3
+    $$$$$:  128-block  4
+        -:  129:
+    #####:  130:    ostr << ">" << utils::cdata() << ex.what();
+    %%%%%:  130-block  0
+    %%%%%:  130-block  1
+    %%%%%:  130-block  2
+    $$$$$:  130-block  3
+    $$$$$:  130-block  4
+    $$$$$:  130-block  5
+        -:  131:
+    #####:  132:    if( !checkpoint_data.m_file_name.is_empty() ) {
+    %%%%%:  132-block  0
+    #####:  133:        ostr << "<LastCheckpoint file" << utils::attr_value() << checkpoint_data.m_file_name
+    %%%%%:  133-block  0
+    %%%%%:  133-block  1
+    $$$$$:  133-block  2
+    #####:  134:             << " line"                << utils::attr_value() << checkpoint_data.m_line_num
+    %%%%%:  134-block  0
+    %%%%%:  134-block  1
+    %%%%%:  134-block  2
+    $$$$$:  134-block  3
+    $$$$$:  134-block  4
+    #####:  135:             << ">"
+    %%%%%:  135-block  0
+    #####:  136:             << utils::cdata() << checkpoint_data.m_message
+    %%%%%:  136-block  0
+    %%%%%:  136-block  1
+    %%%%%:  136-block  2
+    $$$$$:  136-block  3
+    $$$$$:  136-block  4
+    $$$$$:  136-block  5
+    #####:  137:             << "</LastCheckpoint>";
+    %%%%%:  137-block  0
+        -:  138:    }
+    #####:  139:}
+    %%%%%:  139-block  0
+        -:  140:
+        -:  141://____________________________________________________________________________//
+        -:  142:
+        -:  143:void
+    #####:  144:xml_log_formatter::log_exception_finish( std::ostream& ostr )
+        -:  145:{
+    #####:  146:    ostr << "</Exception>";
+    %%%%%:  146-block  0
+    #####:  147:}
+        -:  148:
+        -:  149://____________________________________________________________________________//
+        -:  150:
+        -:  151:void
+    #####:  152:xml_log_formatter::log_entry_start( std::ostream& ostr, log_entry_data const& entry_data, log_entry_types let )
+        -:  153:{
+    #####:  154:    static literal_string xml_tags[] = { "Info", "Message", "Warning", "Error", "FatalError" };
+    %%%%%:  154-block  0
+    %%%%%:  154-block  1
+    %%%%%:  154-block  2
+    %%%%%:  154-block  3
+    %%%%%:  154-block  4
+    %%%%%:  154-block  5
+    %%%%%:  154-block  6
+    %%%%%:  154-block  7
+    $$$$$:  154-block  8
+    $$$$$:  154-block  9
+        -:  155:
+    #####:  156:    m_curr_tag = xml_tags[let];
+    %%%%%:  156-block  0
+    #####:  157:    ostr << '<' << m_curr_tag
+    #####:  158:         << BOOST_TEST_L( " file" ) << utils::attr_value() << entry_data.m_file_name
+    %%%%%:  158-block  0
+    %%%%%:  158-block  1
+    $$$$$:  158-block  2
+    $$$$$:  158-block  3
+    #####:  159:         << BOOST_TEST_L( " line" ) << utils::attr_value() << entry_data.m_line_num
+    %%%%%:  159-block  0
+    %%%%%:  159-block  1
+    %%%%%:  159-block  2
+    $$$$$:  159-block  3
+    $$$$$:  159-block  4
+    $$$$$:  159-block  5
+    #####:  160:         << BOOST_TEST_L( "><![CDATA[" );
+    %%%%%:  160-block  0
+    $$$$$:  160-block  1
+        -:  161:
+    #####:  162:    m_value_closed = false;
+    #####:  163:}
+    %%%%%:  163-block  0
+        -:  164:
+        -:  165://____________________________________________________________________________//
+        -:  166:
+        -:  167:void
+    #####:  168:xml_log_formatter::log_entry_value( std::ostream& ostr, const_string value )
+        -:  169:{
+    #####:  170:    utils::print_escaped_cdata( ostr, value );
+    %%%%%:  170-block  0
+    #####:  171:}
+    %%%%%:  171-block  0
+        -:  172:
+        -:  173://____________________________________________________________________________//
+        -:  174:
+        -:  175:void
+    #####:  176:xml_log_formatter::log_entry_finish( std::ostream& ostr )
+        -:  177:{
+    #####:  178:    if( !m_value_closed ) {
+    %%%%%:  178-block  0
+    #####:  179:        ostr << BOOST_TEST_L( "]]>" );
+    %%%%%:  179-block  0
+    $$$$$:  179-block  1
+    #####:  180:        m_value_closed = true;
+    %%%%%:  180-block  0
+        -:  181:    }
+        -:  182:
+    #####:  183:    ostr << BOOST_TEST_L( "</" ) << m_curr_tag << BOOST_TEST_L( ">" );
+    %%%%%:  183-block  0
+    %%%%%:  183-block  1
+    %%%%%:  183-block  2
+    $$$$$:  183-block  3
+        -:  184:
+    #####:  185:    m_curr_tag.clear();
+    %%%%%:  185-block  0
+    #####:  186:}
+        -:  187:
+        -:  188://____________________________________________________________________________//
+        -:  189:
+        -:  190:void
+    #####:  191:xml_log_formatter::entry_context_start( std::ostream& ostr, log_level )
+        -:  192:{
+    #####:  193:    if( !m_value_closed ) {
+    %%%%%:  193-block  0
+    #####:  194:        ostr << BOOST_TEST_L( "]]>" );
+    %%%%%:  194-block  0
+    $$$$$:  194-block  1
+    #####:  195:        m_value_closed = true;
+    %%%%%:  195-block  0
+        -:  196:    }
+        -:  197:
+    #####:  198:    ostr << BOOST_TEST_L( "<Context>" );
+    %%%%%:  198-block  0
+    #####:  199:}
+    %%%%%:  199-block  0
+        -:  200:
+        -:  201://____________________________________________________________________________//
+        -:  202:
+        -:  203:void
+    #####:  204:xml_log_formatter::entry_context_finish( std::ostream& ostr, log_level )
+        -:  205:{
+    #####:  206:    ostr << BOOST_TEST_L( "</Context>" );
+    %%%%%:  206-block  0
+    #####:  207:}
+    %%%%%:  207-block  0
+        -:  208:
+        -:  209://____________________________________________________________________________//
+        -:  210:
+        -:  211:void
+    #####:  212:xml_log_formatter::log_entry_context( std::ostream& ostr, log_level, const_string context_descr )
+        -:  213:{
+    #####:  214:    ostr << BOOST_TEST_L( "<Frame>" ) << utils::cdata() << context_descr << BOOST_TEST_L( "</Frame>" );
+    %%%%%:  214-block  0
+    %%%%%:  214-block  1
+    %%%%%:  214-block  2
+    %%%%%:  214-block  3
+    $$$$$:  214-block  4
+    $$$$$:  214-block  5
+    $$$$$:  214-block  6
+    $$$$$:  214-block  7
+    #####:  215:}
+    %%%%%:  215-block  0
+        -:  216:
+        -:  217://____________________________________________________________________________//
+        -:  218:
+        -:  219:} // namespace output
+        -:  220:} // namespace unit_test
+        -:  221:} // namespace boost
+        -:  222:
+        -:  223:#include <boost/test/detail/enable_warnings.hpp>
+        -:  224:
+        -:  225:#endif // BOOST_TEST_XML_LOG_FORMATTER_IPP_020105GER

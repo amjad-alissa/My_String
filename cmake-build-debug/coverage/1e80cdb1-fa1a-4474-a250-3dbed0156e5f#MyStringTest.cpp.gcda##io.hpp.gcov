@@ -1,0 +1,85 @@
+        -:    0:Source:F:/Files/vcpkg/installed/x86-windows/include/boost/test/utils/basic_cstring/io.hpp
+        -:    0:Graph:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcno
+        -:    0:Data:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1://  (C) Copyright Gennadiy Rozental 2001.
+        -:    2://  Distributed under the Boost Software License, Version 1.0.
+        -:    3://  (See accompanying file LICENSE_1_0.txt or copy at
+        -:    4://  http://www.boost.org/LICENSE_1_0.txt)
+        -:    5:
+        -:    6://  See http://www.boost.org/libs/test for the library home page.
+        -:    7://
+        -:    8://  File        : $RCSfile$
+        -:    9://
+        -:   10://  Version     : $Revision$
+        -:   11://
+        -:   12://  Description : basic_cstring i/o implementation
+        -:   13:// ***************************************************************************
+        -:   14:
+        -:   15:#ifndef BOOST_TEST_UTILS_BASIC_CSTRING_IO_HPP
+        -:   16:#define BOOST_TEST_UTILS_BASIC_CSTRING_IO_HPP
+        -:   17:
+        -:   18:// Boost.Test
+        -:   19:#include <boost/test/utils/basic_cstring/basic_cstring.hpp>
+        -:   20:
+        -:   21:// STL
+        -:   22:#include <iosfwd>
+        -:   23:#include <string>
+        -:   24:
+        -:   25:#include <boost/test/detail/suppress_warnings.hpp>
+        -:   26:
+        -:   27://____________________________________________________________________________//
+        -:   28:
+        -:   29:namespace boost {
+        -:   30:
+        -:   31:namespace unit_test {
+        -:   32:
+        -:   33:#ifdef BOOST_CLASSIC_IOSTREAMS
+        -:   34:
+        -:   35:template<typename CharT>
+        -:   36:inline std::ostream&
+        -:   37:operator<<( std::ostream& os, basic_cstring<CharT> const& str )
+        -:   38:{
+        -:   39:    typedef typename ut_detail::bcs_base_char<CharT>::type char_type;
+        -:   40:    char_type const* const beg = reinterpret_cast<char_type const* const>( str.begin() );
+        -:   41:    char_type const* const end = reinterpret_cast<char_type const* const>( str.end() );
+        -:   42:    os << std::basic_string<char_type>( beg, end - beg );
+        -:   43:
+        -:   44:    return os;
+        -:   45:}
+        -:   46:
+        -:   47:#else
+        -:   48:
+        -:   49:template<typename CharT1, typename Tr,typename CharT2>
+        -:   50:inline std::basic_ostream<CharT1,Tr>&
+      378:   51:operator<<( std::basic_ostream<CharT1,Tr>& os, basic_cstring<CharT2> const& str )
+        -:   52:{
+      378:   53:    CharT1 const* const beg = reinterpret_cast<CharT1 const*>( str.begin() ); // !!
+      378:   53-block  0
+      378:   54:    CharT1 const* const end = reinterpret_cast<CharT1 const*>( str.end() );
+      378:   55:    os << std::basic_string<CharT1,Tr>( beg, end - beg );
+      378:   55-block  0
+      378:   55-block  1
+    $$$$$:   55-block  2
+    $$$$$:   55-block  3
+    $$$$$:   55-block  4
+        -:   56:
+      378:   57:    return os;
+      378:   57-block  0
+        -:   58:}
+        -:   59:
+        -:   60:#endif
+        -:   61:
+        -:   62://____________________________________________________________________________//
+        -:   63:
+        -:   64:
+        -:   65:} // namespace unit_test
+        -:   66:
+        -:   67:} // namespace boost
+        -:   68:
+        -:   69://____________________________________________________________________________//
+        -:   70:
+        -:   71:#include <boost/test/detail/enable_warnings.hpp>
+        -:   72:
+        -:   73:#endif // BOOST_TEST_BASIC_CSTRING_IO_HPP_071894GER

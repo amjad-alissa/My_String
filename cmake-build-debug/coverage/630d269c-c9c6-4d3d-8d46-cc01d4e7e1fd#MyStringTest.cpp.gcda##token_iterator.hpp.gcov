@@ -1,0 +1,584 @@
+        -:    0:Source:F:/Files/vcpkg/installed/x86-windows/include/boost/test/utils/iterator/token_iterator.hpp
+        -:    0:Graph:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcno
+        -:    0:Data:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1://  (C) Copyright Gennadiy Rozental 2001.
+        -:    2://  Distributed under the Boost Software License, Version 1.0.
+        -:    3://  (See accompanying file LICENSE_1_0.txt or copy at
+        -:    4://  http://www.boost.org/LICENSE_1_0.txt)
+        -:    5:
+        -:    6://  See http://www.boost.org/libs/test for the library home page.
+        -:    7://
+        -:    8://  File        : $RCSfile$
+        -:    9://
+        -:   10://  Version     : $Revision$
+        -:   11://
+        -:   12://  Description : token iterator for string and range tokenization
+        -:   13:// ***************************************************************************
+        -:   14:
+        -:   15:#ifndef BOOST_TEST_UTILS_TOKEN_ITERATOR_HPP
+        -:   16:#define BOOST_TEST_UTILS_TOKEN_ITERATOR_HPP
+        -:   17:
+        -:   18:// Boost
+        -:   19:#include <boost/config.hpp>
+        -:   20:#include <boost/detail/workaround.hpp>
+        -:   21:
+        -:   22:#include <boost/iterator/iterator_categories.hpp>
+        -:   23:#include <boost/iterator/iterator_traits.hpp>
+        -:   24:
+        -:   25:#include <boost/test/utils/iterator/input_iterator_facade.hpp>
+        -:   26:#include <boost/test/utils/basic_cstring/basic_cstring.hpp>
+        -:   27:#include <boost/test/utils/named_params.hpp>
+        -:   28:#include <boost/test/utils/foreach.hpp>
+        -:   29:
+        -:   30:// STL
+        -:   31:#include <iosfwd>
+        -:   32:#include <cctype>
+        -:   33:
+        -:   34:#include <boost/test/detail/suppress_warnings.hpp>
+        -:   35:
+        -:   36://____________________________________________________________________________//
+        -:   37:
+        -:   38:#ifdef BOOST_NO_STDC_NAMESPACE
+        -:   39:namespace std{ using ::ispunct; using ::isspace; }
+        -:   40:#endif
+        -:   41:
+        -:   42:namespace boost {
+        -:   43:namespace unit_test {
+        -:   44:namespace utils {
+        -:   45:
+        -:   46:// ************************************************************************** //
+        -:   47:// **************               ti_delimeter_type              ************** //
+        -:   48:// ************************************************************************** //
+        -:   49:
+        -:   50:enum ti_delimeter_type {
+        -:   51:    dt_char,        // character is delimeter if it among explicit list of some characters
+        -:   52:    dt_ispunct,     // character is delimeter if it satisfies ispunct functor
+        -:   53:    dt_isspace,     // character is delimeter if it satisfies isspace functor
+        -:   54:    dt_none         // no character is delimeter
+        -:   55:};
+        -:   56:
+        -:   57:namespace ut_detail {
+        -:   58:
+        -:   59:// ************************************************************************** //
+        -:   60:// **************             default_char_compare             ************** //
+        -:   61:// ************************************************************************** //
+        -:   62:
+        -:   63:template<typename CharT>
+        -:   64:class default_char_compare {
+        -:   65:public:
+       78:   66:    bool operator()( CharT c1, CharT c2 )
+        -:   67:    {
+        -:   68:#ifdef BOOST_CLASSIC_IOSTREAMS
+        -:   69:        return std::string_char_traits<CharT>::eq( c1, c2 );
+        -:   70:#else
+       78:   71:        return std::char_traits<CharT>::eq( c1, c2 );
+       78:   71-block  0
+        -:   72:#endif
+        -:   73:    }
+        -:   74:};
+        -:   75:
+        -:   76:// ************************************************************************** //
+        -:   77:// **************                 delim_policy                 ************** //
+        -:   78:// ************************************************************************** //
+        -:   79:
+        -:   80:template<typename CharT,typename CharCompare>
+        -:   81:class delim_policy {
+        -:   82:    typedef basic_cstring<CharT const> cstring;
+        -:   83:public:
+        -:   84:    // Constructor
+       30:   85:    explicit    delim_policy( ti_delimeter_type type_ = dt_char, cstring delimeters_ = cstring() )
+       30:   86:    : m_type( type_ )
+       30:   86-block  0
+        -:   87:    {
+       30:   88:        set_delimeters( delimeters_ );
+       30:   89:    }
+        -:   90:
+        5:   91:    void        set_delimeters( ti_delimeter_type type_ ) { m_type = type_; }
+       35:   92:    void        set_delimeters( cstring delimeters_ )
+        -:   93:    {
+       35:   94:        m_delimeters = delimeters_;
+       35:   94-block  0
+        -:   95:
+       35:   96:        if( !m_delimeters.is_empty() )
+        5:   97:            m_type = dt_char;
+        5:   97-block  0
+       35:   98:    }
+        -:   99:    void        set_delimeters( nfp::nil ) {}
+      154:  100:    bool        operator()( CharT c )
+        -:  101:    {
+      154:  102:        switch( m_type ) {
+      154:  102-block  0
+       78:  103:        case dt_char: {
+      230:  104:            BOOST_TEST_FOREACH( CharT, delim, m_delimeters )
+       78:  104-block  0
+       78:  104-block  1
+       78:  104-block  2
+       78:  104-block  3
+       78:  104-block  4
+      154:  104-block  5
+      154:  104-block  6
+      154:  104-block  7
+       78:  104-block  8
+       76:  104-block  9
+      154:  104-block 10
+       78:  104-block 11
+       78:  104-block 12
+       78:  104-block 13
+      154:  104-block 14
+       76:  104-block 15
+       76:  104-block 16
+       76:  104-block 17
+       76:  104-block 18
+    $$$$$:  104-block 19
+    $$$$$:  104-block 20
+    $$$$$:  104-block 21
+    $$$$$:  104-block 22
+       78:  105:                if( CharCompare()( delim, c ) )
+       78:  105-block  0
+        2:  106:                    return true;
+        2:  106-block  0
+        -:  107:
+       76:  108:            return false;
+       76:  108-block  0
+        -:  109:        }
+    #####:  110:        case dt_ispunct:
+    #####:  111:            return (std::ispunct)( c ) != 0;
+    %%%%%:  111-block  0
+    #####:  112:        case dt_isspace:
+    #####:  113:            return (std::isspace)( c ) != 0;
+    %%%%%:  113-block  0
+       76:  114:        case dt_none:
+       76:  115:            return false;
+       76:  115-block  0
+        -:  116:        }
+        -:  117:
+    #####:  118:        return false;
+    %%%%%:  118-block  0
+        -:  119:    }
+        -:  120:
+        -:  121:private:
+        -:  122:    // Data members
+        -:  123:    cstring             m_delimeters;
+        -:  124:    ti_delimeter_type   m_type;
+        -:  125:};
+        -:  126:
+        -:  127:// ************************************************************************** //
+        -:  128:// **************                 token_assigner               ************** //
+        -:  129:// ************************************************************************** //
+        -:  130:
+        -:  131:template<typename TraversalTag>
+        -:  132:struct token_assigner {
+        -:  133:#if BOOST_WORKAROUND( BOOST_DINKUMWARE_STDLIB, < 306 )
+        -:  134:    template<typename Iterator, typename C, typename T>
+        -:  135:    static void assign( Iterator b, Iterator e, std::basic_string<C,T>& t )
+        -:  136:    { for( ; b != e; ++b ) t += *b; }
+        -:  137:
+        -:  138:    template<typename Iterator, typename C>
+        -:  139:    static void assign( Iterator b, Iterator e, basic_cstring<C>& t )  { t.assign( b, e ); }
+        -:  140:#else
+        -:  141:    template<typename Iterator, typename Token>
+        6:  142:    static void assign( Iterator b, Iterator e, Token& t )  { t.assign( b, e ); }
+        6:  142-block  0
+        -:  143:#endif
+        -:  144:    template<typename Iterator, typename Token>
+       70:  145:    static void append_move( Iterator& b, Token& )          { ++b; }
+        -:  146:};
+        -:  147:
+        -:  148://____________________________________________________________________________//
+        -:  149:
+        -:  150:template<>
+        -:  151:struct token_assigner<single_pass_traversal_tag> {
+        -:  152:    template<typename Iterator, typename Token>
+        -:  153:    static void assign( Iterator /*b*/, Iterator /*e*/, Token& /*t*/ )  {}
+        -:  154:
+        -:  155:    template<typename Iterator, typename Token>
+        -:  156:    static void append_move( Iterator& b, Token& t )        { t += *b; ++b; }
+        -:  157:};
+        -:  158:
+        -:  159:} // namespace ut_detail
+        -:  160:
+        -:  161:// ************************************************************************** //
+        -:  162:// **************                  modifiers                   ************** //
+        -:  163:// ************************************************************************** //
+        -:  164:
+        -:  165:namespace {
+        -:  166:nfp::keyword<struct dropped_delimeters_t >           dropped_delimeters;
+        -:  167:nfp::keyword<struct kept_delimeters_t >              kept_delimeters;
+        -:  168:nfp::typed_keyword<bool,struct keep_empty_tokens_t > keep_empty_tokens;
+        -:  169:nfp::typed_keyword<std::size_t,struct max_tokens_t > max_tokens;
+        -:  170:}
+        -:  171:
+        -:  172:// ************************************************************************** //
+        -:  173:// **************             token_iterator_base              ************** //
+        -:  174:// ************************************************************************** //
+        -:  175:
+        -:  176:template<typename Derived,
+        -:  177:         typename CharT,
+        -:  178:         typename CharCompare   = ut_detail::default_char_compare<CharT>,
+        -:  179:         typename ValueType     = basic_cstring<CharT const>,
+        -:  180:         typename Reference     = basic_cstring<CharT const>,
+        -:  181:         typename Traversal     = forward_traversal_tag>
+        -:  182:class token_iterator_base
+        -:  183:: public input_iterator_facade<Derived,ValueType,Reference,Traversal> {
+        -:  184:    typedef basic_cstring<CharT const>                                      cstring;
+        -:  185:    typedef ut_detail::delim_policy<CharT,CharCompare>                      delim_policy;
+        -:  186:    typedef input_iterator_facade<Derived,ValueType,Reference,Traversal>    base;
+        -:  187:
+        -:  188:protected:
+        -:  189:    // Constructor
+       15:  190:    explicit    token_iterator_base()
+        -:  191:    : m_is_dropped( dt_isspace )
+        -:  192:    , m_is_kept( dt_ispunct )
+        -:  193:    , m_keep_empty_tokens( false )
+        -:  194:    , m_tokens_left( static_cast<std::size_t>(-1) )
+       15:  195:    , m_token_produced( false )
+       15:  195-block  0
+       15:  195-block  1
+    $$$$$:  195-block  2
+        -:  196:    {
+       15:  197:    }
+       15:  197-block  0
+        -:  198:
+        -:  199:    template<typename Modifier>
+        -:  200:    void
+        5:  201:    apply_modifier( Modifier const& m )
+        -:  202:    {
+        5:  203:        if( m.has( dropped_delimeters ) )
+        5:  204:            m_is_dropped.set_delimeters( m[dropped_delimeters] );
+        -:  205:
+        5:  206:        if( m.has( kept_delimeters ) )
+        5:  207:            m_is_kept.set_delimeters( m[kept_delimeters] );
+        -:  208:
+        5:  209:        if( m.has( keep_empty_tokens ) )
+       1*:  210:            m_keep_empty_tokens = true;
+        -:  211:
+        5:  212:        nfp::opt_assign( m_tokens_left, m, max_tokens );
+        5:  213:    }
+------------------
+_ZN5boost9unit_test5utils19token_iterator_baseINS1_27basic_string_token_iteratorIcNS1_9ut_detail20default_char_compareIcEEEEcS6_NS0_13basic_cstringIKcEESA_NS_9iterators21forward_traversal_tagEE14apply_modifierINS_3nfp23named_parameter_combineINSF_15named_parameterIKNS1_17ti_delimeter_typeENS1_12_GLOBAL__N_117kept_delimeters_tERSJ_EENSG_INSH_IPS9_NSK_20dropped_delimeters_tESO_EENSH_IbNSK_19keep_empty_tokens_tEbEEEEEEEEvRKT_:
+        1:  201:    apply_modifier( Modifier const& m )
+        -:  202:    {
+        1:  203:        if( m.has( dropped_delimeters ) )
+        1:  203-block  0
+        1:  204:            m_is_dropped.set_delimeters( m[dropped_delimeters] );
+        1:  204-block  0
+        -:  205:
+        1:  206:        if( m.has( kept_delimeters ) )
+        1:  206-block  0
+        1:  207:            m_is_kept.set_delimeters( m[kept_delimeters] );
+        1:  207-block  0
+        -:  208:
+        1:  209:        if( m.has( keep_empty_tokens ) )
+        1:  209-block  0
+        1:  210:            m_keep_empty_tokens = true;
+        1:  210-block  0
+        -:  211:
+        1:  212:        nfp::opt_assign( m_tokens_left, m, max_tokens );
+        1:  212-block  0
+        1:  213:    }
+------------------
+_ZN5boost9unit_test5utils19token_iterator_baseINS1_27basic_string_token_iteratorIcNS1_9ut_detail20default_char_compareIcEEEEcS6_NS0_13basic_cstringIKcEESA_NS_9iterators21forward_traversal_tagEE14apply_modifierINS_3nfp23named_parameter_combineINSF_15named_parameterIKNS1_17ti_delimeter_typeENS1_12_GLOBAL__N_117kept_delimeters_tERSJ_EENSH_IPS9_NSK_20dropped_delimeters_tESO_EEEEEEvRKT_:
+        4:  201:    apply_modifier( Modifier const& m )
+        -:  202:    {
+        4:  203:        if( m.has( dropped_delimeters ) )
+        4:  203-block  0
+        4:  204:            m_is_dropped.set_delimeters( m[dropped_delimeters] );
+        4:  204-block  0
+        -:  205:
+        4:  206:        if( m.has( kept_delimeters ) )
+        4:  206-block  0
+        4:  207:            m_is_kept.set_delimeters( m[kept_delimeters] );
+        4:  207-block  0
+        -:  208:
+        4:  209:        if( m.has( keep_empty_tokens ) )
+        4:  209-block  0
+    #####:  210:            m_keep_empty_tokens = true;
+    %%%%%:  210-block  0
+        -:  211:
+        4:  212:        nfp::opt_assign( m_tokens_left, m, max_tokens );
+        4:  212-block  0
+        4:  213:    }
+------------------
+        -:  214:
+        -:  215:    template<typename Iter>
+       11:  216:    bool                    get( Iter& begin, Iter end )
+        -:  217:    {
+        -:  218:        typedef ut_detail::token_assigner<BOOST_DEDUCED_TYPENAME iterator_traversal<Iter>::type> Assigner;
+        -:  219:        Iter check_point;
+        -:  220:
+       11:  221:        this->m_value.clear();
+       11:  221-block  0
+        -:  222:
+       11:  223:        if( !m_keep_empty_tokens ) {
+       8*:  224:            while( begin != end && m_is_dropped( *begin ) )
+        8:  224-block  0
+        4:  224-block  1
+    %%%%%:  224-block  2
+        8:  224-block  3
+        8:  224-block  4
+    #####:  225:                ++begin;
+    %%%%%:  225-block  0
+        -:  226:
+        8:  227:            if( begin == end )
+        8:  227-block  0
+        4:  228:                return false;
+        4:  228-block  0
+        -:  229:
+        4:  230:            check_point = begin;
+        -:  231:
+        4:  232:            if( m_tokens_left == 1 )
+        4:  232-block  0
+    #####:  233:                while( begin != end )
+    %%%%%:  233-block  0
+    #####:  234:                    Assigner::append_move( begin, this->m_value );
+    %%%%%:  234-block  0
+        4:  235:            else if( m_is_kept( *begin ) )
+        4:  235-block  0
+    #####:  236:                Assigner::append_move( begin, this->m_value );
+    %%%%%:  236-block  0
+        -:  237:            else
+       68:  238:                while( begin != end && !m_is_dropped( *begin ) && !m_is_kept( *begin ) )
+       68:  238-block  0
+       64:  238-block  1
+       64:  238-block  2
+       64:  238-block  3
+        4:  238-block  4
+       68:  238-block  5
+       64:  239:                    Assigner::append_move( begin, this->m_value );
+       64:  239-block  0
+        -:  240:
+        4:  241:            --m_tokens_left;
+        4:  241-block  0
+        -:  242:        }
+        -:  243:        else { // m_keep_empty_tokens is true
+        3:  244:            check_point = begin;
+        -:  245:
+        3:  246:            if( begin == end ) {
+        3:  246-block  0
+        1:  247:                if( m_token_produced )
+        1:  247-block  0
+        1:  248:                    return false;
+        1:  248-block  0
+        -:  249:
+    #####:  250:                m_token_produced = true;
+    %%%%%:  250-block  0
+        -:  251:            }
+        2:  252:            if( m_is_kept( *begin ) ) {
+        2:  252-block  0
+    #####:  253:                if( m_token_produced )
+    %%%%%:  253-block  0
+    #####:  254:                    Assigner::append_move( begin, this->m_value );
+    %%%%%:  254-block  0
+        -:  255:
+    #####:  256:                m_token_produced = !m_token_produced;
+    %%%%%:  256-block  0
+        -:  257:            }
+       2*:  258:            else if( !m_token_produced && m_is_dropped( *begin ) )
+        2:  258-block  0
+        1:  258-block  1
+    %%%%%:  258-block  2
+        2:  258-block  3
+        2:  258-block  4
+    #####:  259:                m_token_produced = true;
+    %%%%%:  259-block  0
+        -:  260:            else {
+        2:  261:                if( m_is_dropped( *begin ) )
+        2:  261-block  0
+        1:  262:                    check_point = ++begin;
+        1:  262-block  0
+        -:  263:
+        8:  264:                while( begin != end && !m_is_dropped( *begin ) && !m_is_kept( *begin ) )
+        8:  264-block  0
+        7:  264-block  1
+        6:  264-block  2
+        6:  264-block  3
+        2:  264-block  4
+        8:  264-block  5
+        6:  265:                    Assigner::append_move( begin, this->m_value );
+        6:  265-block  0
+        -:  266:
+        2:  267:                m_token_produced = true;
+        2:  267-block  0
+        -:  268:            }
+        -:  269:        }
+        -:  270:
+        6:  271:        Assigner::assign( check_point, begin, this->m_value );
+        6:  271-block  0
+        -:  272:
+        6:  273:        return true;
+        -:  274:    }
+        -:  275:
+        -:  276:private:
+        -:  277:    // Data members
+        -:  278:    delim_policy            m_is_dropped;
+        -:  279:    delim_policy            m_is_kept;
+        -:  280:    bool                    m_keep_empty_tokens;
+        -:  281:    std::size_t             m_tokens_left;
+        -:  282:    bool                    m_token_produced;
+        -:  283:};
+        -:  284:
+        -:  285:// ************************************************************************** //
+        -:  286:// **************          basic_string_token_iterator         ************** //
+        -:  287:// ************************************************************************** //
+        -:  288:
+        -:  289:template<typename CharT,
+        -:  290:         typename CharCompare = ut_detail::default_char_compare<CharT> >
+        -:  291:class basic_string_token_iterator
+        -:  292:: public token_iterator_base<basic_string_token_iterator<CharT,CharCompare>,CharT,CharCompare> {
+        -:  293:    typedef basic_cstring<CharT const> cstring;
+        -:  294:    typedef token_iterator_base<basic_string_token_iterator<CharT,CharCompare>,CharT,CharCompare> base;
+        -:  295:public:
+       10:  296:    explicit    basic_string_token_iterator() {}
+       10:  296-block  0
+        -:  297:    explicit    basic_string_token_iterator( cstring src )
+        -:  298:    : m_src( src )
+        -:  299:    {
+        -:  300:        this->init();
+        -:  301:    }
+        -:  302:
+        -:  303:    // warning: making the constructor accept anything else than a cstring should
+        -:  304:    // ensure that no temporary object is created during string creation (previous
+        -:  305:    // definition was "template<typename Src, typename Modifier> basic_string_token_iterator( Src src ..."
+        -:  306:    // which may create a temporary string copy when called with an std::string.
+        -:  307:    template<typename Modifier>
+        5:  308:    basic_string_token_iterator( cstring src, Modifier const& m )
+        5:  309:    : m_src( src )
+        -:  310:    {
+        5:  311:        this->apply_modifier( m );
+        -:  312:
+        5:  313:        this->init();
+        5:  314:    }
+------------------
+_ZN5boost9unit_test5utils27basic_string_token_iteratorIcNS1_9ut_detail20default_char_compareIcEEEC2INS_3nfp23named_parameter_combineINS8_15named_parameterIKNS1_17ti_delimeter_typeENS1_12_GLOBAL__N_117kept_delimeters_tERSC_EENS9_INSA_IPKcNSD_20dropped_delimeters_tESI_EENSA_IbNSD_19keep_empty_tokens_tEbEEEEEEEENS0_13basic_cstringISH_EERKT_:
+        1:  308:    basic_string_token_iterator( cstring src, Modifier const& m )
+        1:  309:    : m_src( src )
+        1:  309-block  0
+        -:  310:    {
+        1:  311:        this->apply_modifier( m );
+        -:  312:
+        1:  313:        this->init();
+        1:  314:    }
+------------------
+_ZN5boost9unit_test5utils27basic_string_token_iteratorIcNS1_9ut_detail20default_char_compareIcEEEC2INS_3nfp23named_parameter_combineINS8_15named_parameterIKNS1_17ti_delimeter_typeENS1_12_GLOBAL__N_117kept_delimeters_tERSC_EENSA_IPKcNSD_20dropped_delimeters_tESI_EEEEEENS0_13basic_cstringISH_EERKT_:
+        4:  308:    basic_string_token_iterator( cstring src, Modifier const& m )
+        4:  309:    : m_src( src )
+        4:  309-block  0
+        -:  310:    {
+        4:  311:        this->apply_modifier( m );
+        -:  312:
+        4:  313:        this->init();
+        4:  314:    }
+------------------
+        -:  315:
+        -:  316:private:
+        -:  317:    friend class input_iterator_core_access;
+        -:  318:
+        -:  319:    // input iterator implementation
+       11:  320:    bool        get()
+        -:  321:    {
+       11:  322:        typename cstring::iterator begin = m_src.begin();
+       11:  322-block  0
+       11:  323:        bool res = base::get( begin, m_src.end() );
+        -:  324:
+       11:  325:        m_src.assign( begin, m_src.end() );
+       11:  325-block  0
+        -:  326:
+       11:  327:        return res;
+       11:  327-block  0
+       11:  327-block  1
+        -:  328:    }
+        -:  329:
+        -:  330:    // Data members
+        -:  331:    cstring     m_src;
+        -:  332:};
+        -:  333:
+        -:  334:typedef basic_string_token_iterator<char>       string_token_iterator;
+        -:  335:typedef basic_string_token_iterator<wchar_t>    wstring_token_iterator;
+        -:  336:
+        -:  337:// ************************************************************************** //
+        -:  338:// **************              range_token_iterator            ************** //
+        -:  339:// ************************************************************************** //
+        -:  340:
+        -:  341:template<typename Iter,
+        -:  342:         typename CharCompare = ut_detail::default_char_compare<BOOST_DEDUCED_TYPENAME iterator_value<Iter>::type>,
+        -:  343:         typename ValueType   = std::basic_string<BOOST_DEDUCED_TYPENAME iterator_value<Iter>::type>,
+        -:  344:         typename Reference   = ValueType const&>
+        -:  345:class range_token_iterator
+        -:  346:: public token_iterator_base<range_token_iterator<Iter,CharCompare,ValueType,Reference>,
+        -:  347:                             typename iterator_value<Iter>::type,CharCompare,ValueType,Reference> {
+        -:  348:    typedef basic_cstring<typename ValueType::value_type> cstring;
+        -:  349:    typedef token_iterator_base<range_token_iterator<Iter,CharCompare,ValueType,Reference>,
+        -:  350:                                typename iterator_value<Iter>::type,CharCompare,ValueType,Reference> base;
+        -:  351:public:
+        -:  352:    explicit    range_token_iterator() {}
+        -:  353:    explicit    range_token_iterator( Iter begin, Iter end = Iter() )
+        -:  354:    : m_begin( begin ), m_end( end )
+        -:  355:    {
+        -:  356:        this->init();
+        -:  357:    }
+        -:  358:    range_token_iterator( range_token_iterator const& rhs )
+        -:  359:    : base( rhs )
+        -:  360:    {
+        -:  361:        if( this->m_valid ) {
+        -:  362:            m_begin = rhs.m_begin;
+        -:  363:            m_end   = rhs.m_end;
+        -:  364:        }
+        -:  365:    }
+        -:  366:
+        -:  367:    template<typename Modifier>
+        -:  368:    range_token_iterator( Iter begin, Iter end, Modifier const& m )
+        -:  369:    : m_begin( begin ), m_end( end )
+        -:  370:    {
+        -:  371:        this->apply_modifier( m );
+        -:  372:
+        -:  373:        this->init();
+        -:  374:    }
+        -:  375:
+        -:  376:private:
+        -:  377:    friend class input_iterator_core_access;
+        -:  378:
+        -:  379:    // input iterator implementation
+        -:  380:    bool        get()
+        -:  381:    {
+        -:  382:        return base::get( m_begin, m_end );
+        -:  383:    }
+        -:  384:
+        -:  385:    // Data members
+        -:  386:    Iter m_begin;
+        -:  387:    Iter m_end;
+        -:  388:};
+        -:  389:
+        -:  390:// ************************************************************************** //
+        -:  391:// **************            make_range_token_iterator         ************** //
+        -:  392:// ************************************************************************** //
+        -:  393:
+        -:  394:template<typename Iter>
+        -:  395:inline range_token_iterator<Iter>
+        -:  396:make_range_token_iterator( Iter begin, Iter end = Iter() )
+        -:  397:{
+        -:  398:    return range_token_iterator<Iter>( begin, end );
+        -:  399:}
+        -:  400:
+        -:  401://____________________________________________________________________________//
+        -:  402:
+        -:  403:template<typename Iter,typename Modifier>
+        -:  404:inline range_token_iterator<Iter>
+        -:  405:make_range_token_iterator( Iter begin, Iter end, Modifier const& m )
+        -:  406:{
+        -:  407:    return range_token_iterator<Iter>( begin, end, m );
+        -:  408:}
+        -:  409:
+        -:  410://____________________________________________________________________________//
+        -:  411:
+        -:  412:} // namespace utils
+        -:  413:} // namespace unit_test
+        -:  414:} // namespace boost
+        -:  415:
+        -:  416://____________________________________________________________________________//
+        -:  417:
+        -:  418:#include <boost/test/detail/enable_warnings.hpp>
+        -:  419:
+        -:  420:#endif // BOOST_TEST_UTILS_TOKEN_ITERATOR_HPP
+        -:  421:

@@ -1,0 +1,114 @@
+        -:    0:Source:F:/Files/vcpkg/installed/x86-windows/include/boost/test/impl/unit_test_monitor.ipp
+        -:    0:Graph:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcno
+        -:    0:Data:F:\SoftwareProjects\CLionProjects\C++\My_String\cmake-build-debug\test\CMakeFiles\Boost_Tests_run.dir\MyStringTest.cpp.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1://  (C) Copyright Gennadiy Rozental 2001.
+        -:    2://  Distributed under the Boost Software License, Version 1.0.
+        -:    3://  (See accompanying file LICENSE_1_0.txt or copy at
+        -:    4://  http://www.boost.org/LICENSE_1_0.txt)
+        -:    5:
+        -:    6://  See http://www.boost.org/libs/test for the library home page.
+        -:    7://
+        -:    8://  File        : $RCSfile$
+        -:    9://
+        -:   10://  Version     : $Revision$
+        -:   11://
+        -:   12://  Description : implements specific subclass of Executon Monitor used by Unit
+        -:   13://  Test Framework to monitor test cases run.
+        -:   14:// ***************************************************************************
+        -:   15:
+        -:   16:#ifndef BOOST_TEST_UNIT_TEST_MONITOR_IPP_012205GER
+        -:   17:#define BOOST_TEST_UNIT_TEST_MONITOR_IPP_012205GER
+        -:   18:
+        -:   19:// Boost.Test
+        -:   20:#include <boost/test/unit_test_monitor.hpp>
+        -:   21:#include <boost/test/framework.hpp>
+        -:   22:#include <boost/test/tree/test_unit.hpp>
+        -:   23:#include <boost/test/unit_test_parameters.hpp>
+        -:   24:
+        -:   25:#include <boost/test/detail/suppress_warnings.hpp>
+        -:   26:
+        -:   27://____________________________________________________________________________//
+        -:   28:
+        -:   29:namespace boost {
+        -:   30:namespace unit_test {
+        -:   31:
+        -:   32:// singleton pattern
+        1:   33:BOOST_TEST_SINGLETON_CONS_IMPL(unit_test_monitor_t)
+        1:   33-block  0
+        1:   33-block  1
+        1:   33-block  2
+        1:   33-block  3
+        1:   33-block  4
+        1:   33-block  5
+    $$$$$:   33-block  6
+    $$$$$:   33-block  7
+        -:   34:
+        -:   35:// ************************************************************************** //
+        -:   36:// **************               unit_test_monitor              ************** //
+        -:   37:// ************************************************************************** //
+        -:   38:
+        -:   39:unit_test_monitor_t::error_level
+       13:   40:unit_test_monitor_t::execute_and_translate( boost::function<void ()> const& func, unsigned long int timeout_microseconds )
+        -:   41:{
+        -:   42:    BOOST_TEST_I_TRY {
+       13:   43:        p_catch_system_errors.value     = runtime_config::get<bool>( runtime_config::btrt_catch_sys_errors );
+       13:   43-block  0
+    $$$$$:   43-block  1
+       13:   44:        p_timeout.value                 = timeout_microseconds;
+       13:   45:        p_auto_start_dbg.value          = runtime_config::get<bool>( runtime_config::btrt_auto_start_dbg );
+       13:   45-block  0
+    $$$$$:   45-block  1
+       13:   46:        p_use_alt_stack.value           = runtime_config::get<bool>( runtime_config::btrt_use_alt_stack );
+       13:   46-block  0
+    $$$$$:   46-block  1
+       13:   47:        p_detect_fp_exceptions.value    = runtime_config::get<bool>( runtime_config::btrt_detect_fp_except );
+       13:   47-block  0
+    $$$$$:   47-block  1
+        -:   48:
+       13:   49:        vexecute( func );
+       13:   49-block  0
+        -:   50:    }
+    =====:   51:    BOOST_TEST_I_CATCH( execution_exception, ex ) {
+    $$$$$:   51-block  0
+    $$$$$:   51-block  1
+    $$$$$:   51-block  2
+    =====:   52:        framework::exception_caught( ex );
+    =====:   53:        framework::test_unit_aborted( framework::current_test_unit() );
+    $$$$$:   53-block  0
+    $$$$$:   53-block  1
+        -:   54:
+        -:   55:        // translate execution_exception::error_code to error_level
+    =====:   56:        switch( ex.code() ) {
+    $$$$$:   56-block  0
+    =====:   57:        case execution_exception::no_error:             return test_ok;
+    $$$$$:   57-block  0
+    =====:   58:        case execution_exception::user_error:           return unexpected_exception;
+    $$$$$:   58-block  0
+    =====:   59:        case execution_exception::cpp_exception_error:  return unexpected_exception;
+    $$$$$:   59-block  0
+    =====:   60:        case execution_exception::system_error:         return os_exception;
+    $$$$$:   60-block  0
+    =====:   61:        case execution_exception::timeout_error:        return os_timeout;
+    $$$$$:   61-block  0
+    =====:   62:        case execution_exception::user_fatal_error:
+    =====:   63:        case execution_exception::system_fatal_error:   return fatal_error;
+    $$$$$:   63-block  0
+    =====:   64:        default:                                        return unexpected_exception;
+    $$$$$:   64-block  0
+        -:   65:        }
+        -:   66:    }
+        -:   67:
+       13:   68:    return test_ok;
+       13:   68-block  0
+        -:   69:}
+        -:   70:
+        -:   71://____________________________________________________________________________//
+        -:   72:
+        -:   73:} // namespace unit_test
+        -:   74:} // namespace boost
+        -:   75:
+        -:   76:#include <boost/test/detail/enable_warnings.hpp>
+        -:   77:
+        -:   78:#endif // BOOST_TEST_UNIT_TEST_MONITOR_IPP_012205GER
